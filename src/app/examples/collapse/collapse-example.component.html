@@ -1,0 +1,37 @@
+<h1>Collapse Directive</h1>
+
+<button class="btn btn-primary" (click)="c1 = !c1;">Collapse Directive (Collapsed: {{c1}}) </button>
+
+<div ng0Collapse  [collapsed]="c1" #ref="ng0Collapse">
+        <div class=" mt-3 border p-5">
+                <p id="p1">
+                        this is a collapsable div.
+                </p>
+                <p id="p2">
+                        this is a collapsable div.
+                </p>
+                <p id="p3">
+                        this is a collapsable div.
+                </p>
+                <p>
+                        this is a collapsable div.
+                </p>
+        </div>
+</div>
+
+
+
+<h1>Collapse Component</h1>
+<button class="btn btn-primary" (click)="c2 = !c2">Toggle Collapse</button>
+
+<ng0-collapse [collapsed]="c2">
+        <div class="border mt-3">
+                this is a collapsable div. <br>
+                this is a collapsable div. <br>
+                this is a collapsable div. <br>
+                this is a collapsable div. <br>
+                this is a collapsable div. <br>
+                this is a collapsable div. <br>
+                this is a collapsable div. <br>
+        </div>
+</ng0-collapse>

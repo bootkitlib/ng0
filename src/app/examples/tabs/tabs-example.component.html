@@ -1,0 +1,38 @@
+<div class="card">
+        <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" ng0Nav #nav="ng0Nav" [(activeItem)]="selectedIndex">
+                        <li class="nav-item " [ng0NavItem]="1">
+                                <button class="nav-link" ng0NavLink>Active</button>
+                        </li>
+                        <li class="nav-item" [ng0NavItem]="2">
+                                <button class="nav-link" ng0NavLink>Link</button>
+                        </li>
+                        <li class="nav-item"[ng0NavItem]="3">
+                                <button class="nav-link" ng0NavLink>Link</button>
+                        </li>
+                        <li class="nav-item"[ng0NavItem]="4"  [disabled]="true">
+                                <button class="nav-link" ng0NavLink>Disabled</button>
+                        </li>
+                </ul>
+        </div>
+
+        <div class="card-body">
+                <ng0-tab-content [nav]="nav">
+                        <ng-template [ng0TabPane]="1">
+                                tab 1 content,tab 1 content,tab 1 content,tab 1 content
+                        </ng-template>
+                        <ng-template [ng0TabPane]="2">
+                                tab 2 content
+                        </ng-template>
+                        <ng-template [ng0TabPane]="3">
+                                tab 3
+                        </ng-template>
+                </ng0-tab-content>
+
+        </div>
+</div>
+
+
+<button (click)="selectedIndex = selectedIndex - 1">Previous</button>
+<button (click)="selectedIndex = selectedIndex + 1">Next</button>
+{{selectedIndex}}

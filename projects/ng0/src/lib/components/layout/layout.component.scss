@@ -1,0 +1,11 @@
+:host {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  // transition: padding .2s cubic-bezier(.7,.3,.1,1);
+}
+
+.layout-content {
+  height: 100%;
+  width: 100%;
+}

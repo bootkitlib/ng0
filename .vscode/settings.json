@@ -1,0 +1,7 @@
+{
+    "css.styleSheets": [
+        "src/**/*.css",
+        "src/**/*.scss",
+        "node_modules/bootstrap/dist/css/bootstrap.min.css"
+    ],
+}

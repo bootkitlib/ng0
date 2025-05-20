@@ -1,0 +1,24 @@
+import { transition, trigger, useAnimation } from '@angular/animations';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+// import { fadeInUpAnimation, fadeOutDownAnimation } from '@bootkit/ng0/animations';
+import { DropdownModule } from '@bootkit/ng0/dropdown';
+
+@Component({
+    selector: 'app-dropdown-example',
+    templateUrl: './dropdown-example.component.html',
+    standalone: true,
+    imports: [
+        CommonModule,
+        DropdownModule
+    ],
+    // animations: [
+    //     trigger('dropdownMenu', [
+    //       transition(':enter', [useAnimation(fadeInUpAnimation, { params: {} })]),
+    //       transition(':leave', [useAnimation(fadeOutDownAnimation, { params: {} })]),
+    //     ])
+    //   ]
+})
+export class DropdownExampleComponent {
+    open = false;
+}

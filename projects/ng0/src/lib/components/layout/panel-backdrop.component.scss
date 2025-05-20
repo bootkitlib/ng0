@@ -1,0 +1,20 @@
+@keyframes backdrop-bg {
+  from {
+    background-color: transparent;
+  }
+
+  to {
+    background-color: rgba(0, 0, 0, 0.6);
+  }
+}
+
+:host {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  animation: backdrop-bg .1s;
+}

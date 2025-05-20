@@ -1,0 +1,9 @@
+<div class="popover-arrow"></div>
+<h3 class="popover-header" *ngIf="header">{{header}}</h3>
+<div class="popover-body">
+    @if(_hasTemplate) {
+        <ng-container [ngTemplateOutlet]="$any(content)"></ng-container>
+    }@else{
+        {{content}}
+    }
+</div>

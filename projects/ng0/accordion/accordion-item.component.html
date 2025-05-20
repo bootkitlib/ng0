@@ -1,0 +1,11 @@
+<h6 class="accordion-header">
+    <button class="accordion-button" type="button" [class.collapsed]="collapsed()" (click)="collapsed.set(!collapsed())">
+        {{header()}}
+    </button>
+</h6>
+
+<ng0-collapse [collapsed]="collapsed()">
+    <div class="accordion-body">
+        <ng-content></ng-content>
+    </div>
+</ng0-collapse>

@@ -1,0 +1,8 @@
+<div class="tooltip-arrow"></div>
+<div class="tooltip-inner">
+    @if(_hasTemplate) {
+        <ng-container [ngTemplateOutlet]="content!"></ng-container>
+    }@else{
+        {{content}}
+    }
+</div>

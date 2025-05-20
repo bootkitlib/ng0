@@ -1,0 +1,5 @@
+@for (pane of _panes; track $index) {
+    @if(pane.id() === nav().activeItem()) {
+        <ng-container *ngTemplateOutlet="pane.templateRef;"></ng-container>
+    }
+}

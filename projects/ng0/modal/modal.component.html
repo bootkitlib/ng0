@@ -1,0 +1,32 @@
+@let fullscreenValue=fullscreen();
+@let sizeValue=size();
+<div class="modal d-block"
+     (click)="$event.target == $event.currentTarget ? _onBackdropClick(): ''"
+     [class.modal-static]="_modalStatic()">
+
+  <div class="modal-dialog"
+       [class]="{
+            'modal-dialog-scrollable': scrollable(),
+            'modal-dialog-centered': centered(),
+            'modal-fullscreen': fullscreenValue == 'always',
+            'modal-fullscreen-sm-down': fullscreenValue == 'sm',
+            'modal-fullscreen-md-down': fullscreenValue == 'md',
+            'modal-fullscreen-lg-down': fullscreenValue == 'lg',
+            'modal-fullscreen-xl-down': fullscreenValue == 'xl',
+            'modal-fullscreen-xxl-down': fullscreenValue == 'xxl',
+            'modal-sm': sizeValue == 'sm',
+            'modal-lg': sizeValue == 'lg',
+            'modal-xl': sizeValue == 'xl',
+          }">
+    <div class="modal-content">
+      @if(header()) {
+        <div class="modal-header">
+          <h5 class="modal-title">{{header()}}</h5>
+        </div>
+      }
+
+      <ng-content></ng-content>
+    </div>
+  </div>
+</div>
+<div class="modal-backdrop fade show"></div>

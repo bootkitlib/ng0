@@ -1,0 +1,19 @@
+<div *ngIf="_showToast"
+     class="toast show"
+     [class]="['text-bg-' + (_config?.style ?? 'success')]"
+     @hostTrigger>
+    <div class="toast-header" *ngIf="_title">
+        <span *ngIf="_config.icon" class="me-2" [ngClass]="_config.icon"></span>
+        <strong class="me-auto">{{_title}}</strong>
+        <!-- <small>11 mins ago</small> -->
+        <button *ngIf="_config?.closeButton == undefined || _config?.closeButton"
+                type="button"
+                class="btn-close"
+                aria-label="Close"
+                (click)="_toastRef.close()">
+        </button>
+    </div>
+    <div class="toast-body">
+        {{_message}}
+    </div>
+</div>

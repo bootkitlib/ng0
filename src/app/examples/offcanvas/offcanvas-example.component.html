@@ -1,0 +1,21 @@
+<!-- <ng0-layout1 class="bg-light">
+
+</ng0-layout1> -->
+
+<div class="offcanvas offcanvas-end" ng0Offcanvas [show]="show()" [backdrop]="backdrop" (backdropClick)="onClick()">
+    <div class="offcanvas-header">
+        <h5 class="offcanvas-title">Offcanvas</h5>
+        <button type="button">s</button>
+    </div>
+    <div class="offcanvas-body">
+        Content for the offcanvas goes here. You can place just about any Bootstrap component or custom elements here.
+
+
+        <button (click)="show.set(!show())" class="btn btn-secondary " style="float: right;">Show/Hide</button>
+        <button (click)="backdrop = !backdrop" class="btn btn-secondary " style="float: right;">backdrop</button>
+    </div>
+</div>
+
+
+<button (click)="show.set(!show())" class="btn btn-secondary " style="float: right;">Show/Hide</button>
+<button (click)="backdrop = !backdrop" class="btn btn-secondary " style="float: right;">backdrop</button>

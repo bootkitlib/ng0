@@ -1,0 +1,14 @@
+@import  './../node_modules/bootstrap/scss/bootstrap.scss';
+// @import  '../public/css/bootstrap.css';
+// @import  '../public/css/bootstrap.rtl.css';
+
+@import '@angular/cdk/overlay-prebuilt.css';
+
+// @import '~prismjs/themes/prism.css';
+
+
+body {
+    padding: 5rem;
+    min-height: 100vh;
+}
+

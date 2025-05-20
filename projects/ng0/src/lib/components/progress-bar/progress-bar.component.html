@@ -1,0 +1,9 @@
+<div *ngFor="let bar of bars"
+     [class]="_getItemClass(bar)"
+     [style.width]="_calculatePercent(bar) + '%'"
+     role="progressbar"
+     [attr.aria-valuenow]="_calculatePercent(bar)"
+     [attr.aria-valuemin]="bar.minValue"
+     [attr.aria-valuemax]="bar.maxValue">
+    {{bar.label}}
+</div>

@@ -1,0 +1,60 @@
+<h1>Default</h1>
+<div class="me-5 btn-group" (mouseover)="overlay.show()" (mouseleave)="overlay.hide()">
+    <button class="btn btn-secondary dropdown-toggle"  #toggle>Dropdown Default</button>
+</div>
+<ng-template ng0Overlay #overlay="ng0Overlay" [anchor]="toggle">
+    <ul ng0DropdownMenu [toggle]="toggle" @dropdownMenu>
+        <li><button class="dropdown-item" ng0DropdownItem>Item 1</button></li>
+        <li><button class="dropdown-item" ng0DropdownItem>Item 2</button></li>
+        <li><button class="dropdown-item" ng0DropdownItem>Item 3</button></li>
+    </ul>
+</ng-template>
+
+<div class="me-5 btn-group">
+    <button class="btn btn-secondary dropdown-toggle" (click)="overlay2.toggle()" #toggle2>Dropdown Inside</button>
+
+    <ng-template ng0Overlay #overlay2="ng0Overlay" [anchor]="toggle2">
+        <ul ng0DropdownMenu [toggle]="toggle2" autoClose="inside">
+            <li><button class="dropdown-item" ng0DropdownItem>Item 1</button></li>
+            <li><button class="dropdown-item" ng0DropdownItem>Item 2</button></li>
+            <li><button class="dropdown-item" ng0DropdownItem>Item 3</button></li>
+        </ul>
+    </ng-template>
+</div>
+
+<div class="me-5 btn-group">
+    <button class="btn btn-secondary dropdown-toggle" (click)="overlay3.toggle()" #toggle3>Dropdown outside</button>
+
+    <ng-template ng0Overlay #overlay3="ng0Overlay" [anchor]="toggle3">
+        <ul ng0DropdownMenu [toggle]="toggle3" autoClose="outside">
+            <li><button class="dropdown-item" ng0DropdownItem>Item 1</button></li>
+            <li><button class="dropdown-item" ng0DropdownItem>Item 2</button></li>
+            <li><button class="dropdown-item" ng0DropdownItem>Item 3</button></li>
+        </ul>
+    </ng-template>
+</div>
+
+
+
+<h1>Split</h1>
+ 
+
+<h1>Placements</h1>
+
+<h5>Placement: Bottom</h5>
+
+
+<h5>Placement: Start</h5>
+
+<h5>Placement: End</h5>
+
+<h5>Dropdown Directive</h5>
+<button class="btn btn-secondary" (click)="overlayn.toggle()" #togglen>Toggle</button>
+
+<ng-template ng0Overlay #overlayn="ng0Overlay" [anchor]="togglen">
+    <ul ng0DropdownMenu [toggle]="togglen">
+        <li><button class="dropdown-item" ng0DropdownItem>Item 1</button></li>
+        <li><button class="dropdown-item" ng0DropdownItem>Item 2</button></li>
+        <li><button class="dropdown-item" ng0DropdownItem>Item 3</button></li>
+    </ul>
+</ng-template>
