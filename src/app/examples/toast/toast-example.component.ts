@@ -16,8 +16,8 @@ export class ToastExampleComponent {
 
     show() {
         this.toast.open({
-            message: 'Message!',
-            title: 'Title',
+            body: 'Message!',
+            header: 'Title',
             icon: 'fas fa-user',
             horizontalPosition: 'center',
             verticalPosition: 'top',

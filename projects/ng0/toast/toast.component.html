@@ -1,19 +1,23 @@
-<div *ngIf="_showToast"
-     class="toast show"
-     [class]="['text-bg-' + (_config?.style ?? 'success')]"
-     @hostTrigger>
-    <div class="toast-header" *ngIf="_title">
-        <span *ngIf="_config.icon" class="me-2" [ngClass]="_config.icon"></span>
-        <strong class="me-auto">{{_title}}</strong>
-        <!-- <small>11 mins ago</small> -->
-        <button *ngIf="_config?.closeButton == undefined || _config?.closeButton"
-                type="button"
-                class="btn-close"
-                aria-label="Close"
-                (click)="_toastRef.close()">
-        </button>
-    </div>
-    <div class="toast-body">
-        {{_message}}
-    </div>
+<div class="toast-header" *ngIf="this._config.header">
+    @if(_hasHeaderTemplate) {
+    <ng-container [ngTemplateOutlet]="$any(_config.header)"></ng-container>
+    }@else {
+    <span *ngIf="_config.icon" class="me-2" [ngClass]="_config.icon"></span>
+    <strong class="me-auto">{{this._config.header}}</strong>
+    <small *ngIf="_config.hint">{{_config.hint}}</small>
+    <button *ngIf="_config?.closeButton == undefined || _config?.closeButton"
+            type="button"
+            class="btn-close"
+            aria-label="Close"
+            (click)="toastRef.close()">
+    </button>
+    }
+</div>
+
+<div class="toast-body" *ngIf="this._config.body">
+    @if(_hasBodyTemplate) {
+    <ng-container [ngTemplateOutlet]="$any(_config.body)"></ng-container>
+    }@else {
+    {{this._config.body}}
+    }
 </div>

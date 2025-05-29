@@ -1,12 +1,13 @@
 import { OverlayRef } from "@angular/cdk/overlay";
 import { Subject, timer } from "rxjs";
+import { ToastConfig } from "./types";
 
 export class ToastRef {
     private _isOpen = true;
     private _closedSubject = new Subject<any>();
     public closed = this._closedSubject.asObservable();
 
-    constructor(private overlayRef: OverlayRef) {
+    constructor(public readonly config: ToastConfig, private overlayRef: OverlayRef) {
     }
 
     public get isOpen() {
