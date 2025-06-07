@@ -1,8 +1,8 @@
 <div class="tooltip-arrow"></div>
 <div class="tooltip-inner">
-    @if(_hasTemplate) {
-        <ng-container [ngTemplateOutlet]="content!"></ng-container>
+    @if(hasTemplate) {
+    <ng-container [ngTemplateOutlet]="$any(content)"></ng-container>
     }@else{
-        {{content}}
+    {{content}}
     }
 </div>

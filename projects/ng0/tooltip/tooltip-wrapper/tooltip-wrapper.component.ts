@@ -1,6 +1,6 @@
-import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, OnInit, TemplateRef} from '@angular/core';
+import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { TooltipPlacement } from '../types';
+import { TooltipContent, TooltipPlacement } from '../types';
 
 /**
  * @private
@@ -12,20 +12,36 @@ import { TooltipPlacement } from '../types';
     templateUrl: './tooltip-wrapper.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [CommonModule]
+    imports: [CommonModule],
+    host: {
+        '[class.bs-tooltip-top]': 'placement == "top"',
+        '[class.bs-tooltip-bottom]': 'placement == "bottom"',
+        '[class.bs-tooltip-start]': 'placement == "start"',
+        '[class.bs-tooltip-end]': 'placement == "end"',
+    }
 })
 export class TooltipWrapperComponent implements OnInit {
-    placement!: TooltipPlacement;
-    content!: any;
-    protected _hasTemplate!: boolean;
+    protected placement!: TooltipPlacement;
+    protected content!: TooltipContent;
+    protected hasTemplate!: boolean;
 
-    constructor(private _elementRef: ElementRef,private _renderer: Renderer2) {
+    constructor(
+        private elementRef: ElementRef,
+        private renderer: Renderer2,
+        private changeDetectorRef: ChangeDetectorRef) {
     }
 
     ngOnInit(): void {
-        this._hasTemplate = this.content instanceof TemplateRef;
-        const elm = this._elementRef.nativeElement;
-        this._renderer.setAttribute(elm, 'role', 'tooltip');
-        ['tooltip', 'fade', 'show', 'bs-tooltip-' + this.placement].forEach(c => this._renderer.addClass(elm, c));
+        this.hasTemplate = this.content instanceof TemplateRef;
+        const elm = this.elementRef.nativeElement;
+        this.renderer.setAttribute(elm, 'role', 'tooltip');
+        ['tooltip', 'fade', 'show'].forEach(c => this.renderer.addClass(elm, c));
+    }
+
+    public set(content: any, placement: TooltipPlacement) {
+        this.content = content;
+        this.placement = placement;
+        this.hasTemplate = content instanceof TemplateRef;
+        this.changeDetectorRef.markForCheck();
     }
 }
