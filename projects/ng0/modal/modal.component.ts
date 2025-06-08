@@ -13,7 +13,6 @@ import { ModalCloseRequest } from './types';
     ]
 })
 export class ModalComponent {
-    public header = input<string>();
     public scrollable = input<boolean>(false);
 
     /** Is modal vertically centered? */

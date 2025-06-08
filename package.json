@@ -9,14 +9,9 @@
     "publish": "npm publish ./dist/ng0 --access=public",
     "build-publish": "npm run build && npm run publish",
     "build-link": "npm run build && cd dist/ng0 && npm link",
-    
-    "bootstrap-build": "sass node_modules/bootstrap/scss/bootstrap.scss public/css/bootstrap.css",
-    "bootstrap-build-rtl": "npm run bootstrap-build & rtlcss public/css/bootstrap.css public/css/bootstrap.rtl.css",
-    
     "ng": "ng",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "serve:ssr:BootKitTest": "node dist/boot-kit-test/server/server.mjs"
+    "test": "ng test"
   },
   "private": true,
   "dependencies": {

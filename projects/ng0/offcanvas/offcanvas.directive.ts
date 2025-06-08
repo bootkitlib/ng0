@@ -7,7 +7,7 @@ import { OnInit, ElementRef, Renderer2, effect, HostListener, Directive, input, 
 })
 export class OffcanvasDirective implements OnInit, OnDestroy {
     public show = input(false);
-    public backdrop = input(false);
+    public hasBackdrop = input(false);
 
     @Output()
     public backdropClick = new EventEmitter<MouseEvent>;
@@ -22,14 +22,14 @@ export class OffcanvasDirective implements OnInit, OnDestroy {
     constructor(private _el: ElementRef, private _renderer: Renderer2) {
 
         afterNextRender(() => {
-            if (this.show() && this.backdrop()) {
+            if (this.show() && this.hasBackdrop()) {
                 this._createBackdrop();
             }
         });
 
         effect(() => {
             var show = this.show();
-            var backdrop = untracked(() => this.backdrop());
+            var backdrop = untracked(() => this.hasBackdrop());
 
             if (this._firstShowEffectRun) {
                 if (show) {
@@ -51,7 +51,7 @@ export class OffcanvasDirective implements OnInit, OnDestroy {
         });
 
         effect(() => {
-            var backdrop = this.backdrop();
+            var backdrop = this.hasBackdrop();
             var show = untracked(() => this.show());
 
             if (this._firstBackdropEffectRun) {

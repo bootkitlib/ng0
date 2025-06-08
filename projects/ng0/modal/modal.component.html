@@ -1,5 +1,6 @@
 @let fullscreenValue=fullscreen();
 @let sizeValue=size();
+
 <div class="modal d-block"
      (click)="$event.target == $event.currentTarget ? _onBackdropClick(): ''"
      [class.modal-static]="_modalStatic()">
@@ -19,12 +20,6 @@
             'modal-xl': sizeValue == 'xl',
           }">
     <div class="modal-content">
-      @if(header()) {
-        <div class="modal-header">
-          <h5 class="modal-title">{{header()}}</h5>
-        </div>
-      }
-
       <ng-content></ng-content>
     </div>
   </div>

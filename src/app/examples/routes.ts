@@ -27,6 +27,10 @@ export default [
                 loadChildren: () => import('./tooltip/routes'),
             },
             {
+                path: 'pagination',
+                loadChildren: () => import('./pagination/routes'),
+            },
+            {
                 path: 'popover',
                 loadChildren: () => import('./popover/routes'),
             },

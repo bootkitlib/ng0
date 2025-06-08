@@ -2,7 +2,6 @@ import { Directive, EventEmitter, Injector, OnDestroy, Output, Renderer2, Templa
 import { Alignment, flipPlacement, Placement } from '@bootkit/ng0/common';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
-
 import { getOverlayPosition } from './private/utils';
 import { Subscription } from 'rxjs';
 

@@ -1,11 +1,21 @@
 {
   "name": "@bootkit/ng0",
-  "version": "0.0.1",
+  "version": "0.0.0-alpha.1",
   "description": "Angular+Bootstrap Component Library",
   "homepage": "https://bootkitlib.github.io/",
   "author": "BootKit",
   "bugs": "https://github.com/bootkitlib/angular",
-  "keywords": ["angular", "angular library", "ui library", "ui infrastructure", "component library", "bootstrap", "ng"],
+  "keywords": [
+    "angular",
+    "ng",
+    "bootstrap",
+    "bootkit",
+    "ng0",
+    "angular library",
+    "ui library",
+    "ui infrastructure",
+    "component library"
+  ],
   "peerDependencies": {
     "@angular/common": ">=18.0.0",
     "@angular/core": ">=18.0.0",
