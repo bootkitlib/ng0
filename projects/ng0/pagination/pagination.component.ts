@@ -21,6 +21,8 @@ export class PaginationComponent {
   showPreviousButton = input<boolean>(true);
   showFirstButton = input<boolean>(true);
   showLastButton = input<boolean>(true);
+  get totalPagesCount() { return this._totalPagesCount; }
+
   protected _totalPagesCount: number;
 
   protected _visiblePages = computed(() => {

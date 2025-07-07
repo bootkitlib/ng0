@@ -2,7 +2,10 @@
                 [pageSize]="1"
                 [selectedPage]="selectedPage"
                 (itemClick)="selectedPage = $event"
+
                 [maxVisiblePages]="8">
+
+                <ng-container ngProjectAs="first"> << </ng-container>
 </ng0-pagination>
 
 <!-- <button class="btn btn-secondary me-3" [ng0Popover]="t" placement="bottom" header="header"  triggerBy="focus" >bottom</button> -->

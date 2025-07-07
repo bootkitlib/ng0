@@ -4,31 +4,49 @@
   <ul class="pagination">
     @if(showFirstButton()) {
     <li class="page-item" [class.disabled]="_selectedPage <= 1">
-      <button class="page-link" (click)="itemClick.emit(1)">First</button>
+      <button class="page-link" (click)="itemClick.emit(1)">
+        <ng-content select="first">
+          First
+        </ng-content>
+      </button>
     </li>
     }
 
     @if(showPreviousButton()) {
     <li class="page-item" [class.disabled]="_selectedPage <= 1">
-      <button class="page-link" (click)="itemClick.emit(_selectedPage - 1)">Previous</button>
+      <button class="page-link" (click)="itemClick.emit(_selectedPage - 1)">
+        <ng-content select="previous">
+          Previous
+        </ng-content>
+      </button>
     </li>
     }
 
     @for (page of _visiblePages(); track page) {
-    <li class="page-item"  [class.active]="_selectedPage === page">
-      <button class="page-link" (click)="itemClick.emit(page)">{{page}}</button>
+    <li class="page-item" [class.active]="_selectedPage === page">
+      <button class="page-link" (click)="itemClick.emit(page)">
+          {{page}}
+      </button>
     </li>
     }
 
     @if(showNextButton()) {
     <li class="page-item" [class.disabled]="_selectedPage >= _totalPagesCount">
-      <button class="page-link" (click)="itemClick.emit(_selectedPage + 1)">Next</button>
+      <button class="page-link" (click)="itemClick.emit(_selectedPage + 1)">
+        <ng-content select="next">
+          Next
+        </ng-content>
+      </button>
     </li>
     }
 
     @if(showLastButton()) {
     <li class="page-item" [class.disabled]="_selectedPage >= _totalPagesCount">
-      <button class="page-link" (click)="itemClick.emit(_totalPagesCount)">Last</button>
+      <button class="page-link" (click)="itemClick.emit(_totalPagesCount)">
+        <ng-content select="last">
+          Last
+        </ng-content>
+      </button>
     </li>
     }
   </ul>
