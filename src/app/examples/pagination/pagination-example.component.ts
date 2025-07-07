@@ -14,4 +14,5 @@ import { PopoverDirective } from '@bootkit/ng0/popover';
     ]
 })
 export class PopoverExampleComponent {
+    selectedPage = 1;
 }

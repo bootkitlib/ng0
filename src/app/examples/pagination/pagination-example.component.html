@@ -1,4 +1,8 @@
-<ng0-pagination [totalRecords]="10"></ng0-pagination>
+<ng0-pagination [totalRecords]="17"
+                [pageSize]="1"
+                [selectedPage]="selectedPage"
+                (itemClick)="selectedPage = $event"
+                [maxVisiblePages]="8">
+</ng0-pagination>
 
 <!-- <button class="btn btn-secondary me-3" [ng0Popover]="t" placement="bottom" header="header"  triggerBy="focus" >bottom</button> -->
-
