@@ -1,9 +1,10 @@
 import { Directive, EventEmitter, Injector, OnDestroy, Output, Renderer2, TemplateRef, ViewContainerRef, effect, input, model } from '@angular/core';
-import { Alignment, flipPlacement, Placement } from '@bootkit/ng0/common';
+import { Alignment, Placement } from '@bootkit/ng0/common';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { TemplatePortal } from '@angular/cdk/portal';
 import { getOverlayPosition } from './private/utils';
 import { Subscription } from 'rxjs';
+import { flipPlacement } from 'dist/ng0/common';
 
 /**
  * Directive to manage overlay behavior.

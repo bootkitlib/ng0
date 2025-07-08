@@ -10,7 +10,7 @@ import { DropdownModule } from '@bootkit/ng0/dropdown';
     standalone: true,
     imports: [
         CommonModule,
-        DropdownModule
+        DropdownModule,
     ],
     // animations: [
     //     trigger('dropdownMenu', [
@@ -20,5 +20,9 @@ import { DropdownModule } from '@bootkit/ng0/dropdown';
     //   ]
 })
 export class DropdownExampleComponent {
-    open = false;
+    open1 = false;
+    open2 = false;
+    open3 = false;
+    open4 = false;
+    open5 = false;
 }

@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { DropdownItemDirective } from './dropdown-item.directive';
 import { DropdownMenuDirective } from './dropdown-menu.directive';
+import { OverlayModule } from '@angular/cdk/overlay';
 // import { DropdownToggleDirective } from './dropdown-toggle.directive';
 // import { DropdownComponent } from './dropdown-button.component';
 // import { OverlayModule } from '../overlay';
-import { OverlayModule } from '@bootkit/ng0/overlay';
 
 
 const Items = [
