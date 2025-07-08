@@ -1,5 +1,5 @@
-import { Alignment, Placement } from "./types";
 import { ConnectedPosition } from "@angular/cdk/overlay";
+import { Alignment, flipPlacement, Placement } from "@bootkit/ng0/common";
 
 /**
  * Get the overlay position based on the provided placement and alignment.
@@ -8,7 +8,7 @@ import { ConnectedPosition } from "@angular/cdk/overlay";
  * @param alignment - The alignment of the overlay (e.g., 'start', 'center', 'end').
  * @returns The connected position for the overlay.
  */
-export function getOverlayConnectedPosition(placement: Placement, alignment: Alignment): ConnectedPosition {
+export function getConnectedPosition(placement: Placement, alignment: Alignment): ConnectedPosition {
       let pos = {} as ConnectedPosition;
 
       switch (placement) {
@@ -59,16 +59,9 @@ export function getOverlayConnectedPosition(placement: Placement, alignment: Ali
       return pos;
 }
 
-
-export function flipPlacement(placement: Placement) {
-    switch (placement) {
-        case 'bottom':
-            return 'top'
-        case 'top':
-            return 'bottom'
-        case 'start':
-            return 'end'
-        case 'end':
-            return 'start'
-    }
+export function getConnectedPositions(placement: Placement, alignment: Alignment, includeFlippedPlacement = true): ConnectedPosition[] {
+      return [
+            getConnectedPosition(placement, alignment),
+            ...(includeFlippedPlacement ? [getConnectedPosition(flipPlacement(placement), alignment)] : []),
+      ] ;
 }

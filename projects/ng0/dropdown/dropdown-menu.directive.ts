@@ -1,4 +1,4 @@
-import { Directive, effect, ElementRef, HostListener, input, OnDestroy, Renderer2 } from '@angular/core';
+import { Directive, effect, ElementRef, HostListener, input, model, OnDestroy, Renderer2 } from '@angular/core';
 import { DropdownAutoCloseBehavior } from './types';
 import { Subscription } from 'rxjs';
 import { CdkConnectedOverlay } from '@angular/cdk/overlay';
@@ -18,7 +18,6 @@ export class DropdownMenuDirective implements OnDestroy {
 
     /** Toggles element */
     public toggle = input<any>(undefined);
-    public open = input<boolean>(false);
 
     private _pointerEventsSubscription?: Subscription;
 
@@ -33,25 +32,16 @@ export class DropdownMenuDirective implements OnDestroy {
         this._pointerEventsSubscription = _cdkOverlay.overlayOutsideClick.subscribe(e => {
             if (this.toggle() == undefined || !this.toggle().contains(e.target)) {
                 if (this.autoClose() == 'default' || this.autoClose() == 'outside') {
-                    this._cdkOverlay.overlayRef.detach();
+                    this._cdkOverlay.detachOverlay();
                 }
             }
         });
-
-        // effect(() => {
-        //     var open = this.open();
-        //     if (open) {
-        //         // this._cdkOverlay.overlayRef.
-        //     } else {
-        //         this._cdkOverlay.overlayRef.detach();
-        //     }
-        // })
     }
 
     @HostListener('click')
     private _onClick() {
         if (this.autoClose() == 'default' || this.autoClose() == 'inside') {
-            this._cdkOverlay.overlayRef.detach();
+            this._cdkOverlay.detachOverlay();
         }
     }
 

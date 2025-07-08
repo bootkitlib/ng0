@@ -11,3 +11,16 @@ export function fillArray(start: number, end: number): number[] {
     }
     return result;
 }
+
+export function flipPlacement(placement: Placement) {
+    switch (placement) {
+        case 'bottom':
+            return 'top'
+        case 'top':
+            return 'bottom'
+        case 'start':
+            return 'end'
+        case 'end':
+            return 'start'
+    }
+}

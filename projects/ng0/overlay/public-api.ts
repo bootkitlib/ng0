@@ -1,2 +1,2 @@
-export * from './overlay.directive';
-export * from './overlay.module';
+export * from './utils';
+export * from './positions';
