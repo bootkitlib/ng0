@@ -8,53 +8,56 @@ export default [
         component: BootKitExampleComponent,
     },
     {
-        path: '',
+        path: 'components',
         children: [
             {
                 path: 'accordion',
-                loadChildren: () => import('./accordion/routes')
+                loadChildren: () => import('./components/accordion/routes')
             },
             {
                 path: 'progress',
-                loadChildren: () => import('./progress/routes'),
+                loadChildren: () => import('./components/progress/routes'),
             },
             {
                 path: 'tabs',
-                loadChildren: () => import('./tabs/routes'),
+                loadChildren: () => import('./components/tabs/routes'),
             },
             {
                 path: 'tooltip',
-                loadChildren: () => import('./tooltip/routes'),
+                loadChildren: () => import('./components/tooltip/routes'),
             },
             {
                 path: 'pagination',
-                loadChildren: () => import('./pagination/routes'),
+                loadChildren: () => import('./components/pagination/routes'),
             },
             {
                 path: 'popover',
-                loadChildren: () => import('./popover/routes'),
+                loadChildren: () => import('./components/popover/routes'),
             },
             {
                 path: 'modal',
-                loadChildren: () => import('./modal/routes'),
+                loadChildren: () => import('./components/modal/routes'),
             },
             {
                 path: 'dropdown',
-                loadChildren: () => import('./dropdown/routes'),
+                loadChildren: () => import('./components/dropdown/routes'),
             },
             {
                 path: 'collapse',
-                loadChildren: () => import('./collapse/routes'),
+                loadChildren: () => import('./components/collapse/routes'),
             },
             {
                 path: 'offcanvas',
-                loadChildren: () => import('./offcanvas/routes'),
+                loadChildren: () => import('./components/offcanvas/routes'),
             },
             {
                 path: 'toast',
-                loadChildren: () => import('./toast/routes'),
+                loadChildren: () => import('./components/toast/routes'),
             },
         ]
     },
-
+    {
+        path: 'localization',
+        loadChildren: () => import('./localization/routes')
+    }
 ] satisfies Route[];
