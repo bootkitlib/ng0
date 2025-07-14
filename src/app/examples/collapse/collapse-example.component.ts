@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
-import { CollapseModule } from '@bootkit/ng0/collapse';
+import { CollapseModule } from '@bootkit/ng0/components/collapse';
 
 @Component({
     selector: 'app-collapse-example',

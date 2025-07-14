@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { OffcanvasModule } from '@bootkit/ng0/offcanvas';
+import { OffcanvasModule } from '@bootkit/ng0/components/offcanvas';
 
 @Component({
     selector: 'app-example-bootkitpro-components-offcanvas',

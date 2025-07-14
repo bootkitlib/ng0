@@ -2,7 +2,7 @@ import { transition, trigger, useAnimation } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 // import { fadeInUpAnimation, fadeOutDownAnimation } from '@bootkit/ng0/animations';
-import { DropdownModule } from '@bootkit/ng0/dropdown';
+import { DropdownModule } from '@bootkit/ng0/components/dropdown';
 
 @Component({
     selector: 'app-dropdown-example',

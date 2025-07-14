@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { ModalModule } from '@bootkit/ng0/modal';
+import { ModalModule } from '@bootkit/ng0/components/modal';
  
 @Component({
   selector: 'app-example-bootkit-modal',

@@ -1,5 +1,5 @@
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { AccordionModule } from '@bootkit/ng0/accordion';
+import { AccordionModule } from '@bootkit/ng0/components/accordion';
 
 @Component({
     selector: 'app-accordion-example',

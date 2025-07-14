@@ -1,5 +1,5 @@
 {
-  "name": "app",
+  "name": "bootkit-ng0-app",
   "version": "0.0.0",
   "homepage": "https://bootkitlib.github.io/",
   "author": "BootKit",
@@ -25,14 +25,12 @@
     "@angular/platform-server": "^20.0.0",
     "@angular/router": "^20.0.0",
     "@angular/ssr": "^20.0.4",
-    "@bootkit/angular": "^2.3.1",
-    "@bootkit/ng0": "^0.0.0-alpha.1",
     "bootstrap": "^5.3.7",
     "express": "^5.1.0",
+    "highlight.js": "^11.10.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.0",
-    "highlight.js": "^11.10.0"
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular/build": "^20.0.4",

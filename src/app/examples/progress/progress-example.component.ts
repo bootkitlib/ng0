@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ProgressbarModule } from '@bootkit/ng0/progress';
+import { ProgressbarModule } from '@bootkit/ng0/components/progress';
 
 @Component({
     selector: 'app-examples-bootkitpro-components-progress',

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavModule } from '@bootkit/ng0/nav';
+import { NavModule } from '@bootkit/ng0/components/nav';
 
 @Component({
   selector: 'tabs-example',
