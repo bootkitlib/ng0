@@ -33,37 +33,6 @@ export class HttpService {
     return obs;
   }
 
-  private _handleTransferState<T>(obs: Observable<T>, options: HttpOptions | undefined): Observable<T> {
-    if (!options?.transferState) {
-      return obs;
-    }
-
-    if (!options.id) {
-      throw Error('To use transferState, set request id')
-    }
-
-    let key = makeStateKey<T>(options.id!);
-
-    // Check if data exists in TransferState (to avoid refetching)
-    if (this.transferState.hasKey(key)) {
-      const data = this.transferState.get<T>(key, null!);
-
-      if(options.transferState.clearAfterUse || true) { 
-        this.transferState.remove(key); // Free memory
-      }
-      
-      return of<T>(data);
-    } else {
-      return obs.pipe(
-        tap((d) => {
-          if (isPlatformServer(this.platformId)) {
-            this.transferState.set(key, d);
-          }
-        })
-      )
-    }
-  }
-
   public getResult<T>(url: string, request: DataRequest, options?: HttpOptions): Observable<DataResult<T>> {
     this._eventsSubject.next(new HttpRequestSendEvent(url, options));
     const URL = this.makeUrl(url, options);
@@ -146,9 +115,6 @@ export class HttpService {
     ngOptions.responseType = options.responseType;
     // }
 
-    if (!options.sendAuthToken) {
-    }
-
     ngOptions.headers = this.defaultHeaders;
     ngOptions.reportProgress = options.reportProgress;
     ngOptions.observe = options.observe;
@@ -218,5 +184,36 @@ export class HttpService {
     }
 
     return result;
+  }
+
+    private _handleTransferState<T>(obs: Observable<T>, options: HttpOptions | undefined): Observable<T> {
+    if (!options?.transferState) {
+      return obs;
+    }
+
+    if (!options.id) {
+      throw Error('To use transferState, set request id')
+    }
+
+    let key = makeStateKey<T>(options.id!);
+
+    // Check if data exists in TransferState (to avoid refetching)
+    if (this.transferState.hasKey(key)) {
+      const data = this.transferState.get<T>(key, null!);
+
+      if(options.transferState.clearAfterUse || true) { 
+        this.transferState.remove(key); // Free memory
+      }
+      
+      return of<T>(data);
+    } else {
+      return obs.pipe(
+        tap((d) => {
+          if (isPlatformServer(this.platformId)) {
+            this.transferState.set(key, d);
+          }
+        })
+      )
+    }
   }
 }

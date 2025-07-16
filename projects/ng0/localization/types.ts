@@ -4,19 +4,19 @@ import { Locale } from './locale';
 
 export const LOCALE = new InjectionToken<Locale | LocalizationService>('LOCALE');
 
-export interface LocalizedValidationError {
+export interface TranslatedValidationError {
     /** Error key */
     key: string;
   
     /** Error object */
     value: any;
   
-    /** Error localized text */
+    /** localized error text */
     text?: string;
   }
   
   export interface LocaleChangeEvent {
-    oldLocale?: Locale;
-    newLocale: Locale;
+    old?: Locale;
+    new: Locale;
   }
   

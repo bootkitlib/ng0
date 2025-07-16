@@ -16,8 +16,8 @@ export class EnumPipe implements PipeTransform {
   constructor(localeProvider: LocalizationService) {
     this._locale = localeProvider.get();
 
-    localeProvider.changed.pipe(takeUntilDestroyed()).subscribe(x => {
-      this._locale = x.newLocale;
+    localeProvider.change.pipe(takeUntilDestroyed()).subscribe(x => {
+      this._locale = x.new;
       this._recompute = true;
     });
   }

@@ -1,5 +1,6 @@
-import { formatNumber } from '@angular/common';
 import { Locale } from '@bootkit/ng0/localization';
+
+const formatNumber = (n: number) => n.toLocaleString();
 
 export const FA_IR_LOCALE = new Locale({
     name: 'fa-IR',
@@ -21,8 +22,8 @@ export const FA_IR_LOCALE = new Locale({
             errors: {
                 '*': (e) => 'نامعتبر',
                 required: (e) => `الزامی`,
-                min: (e) => `حداقل: ${formatNumber(e.min, 'fa')}`,
-                max: (e) => `حداکثر: ${formatNumber(e.max, 'fa')}`,
+                min: (e) => `حداقل: ${formatNumber(e.min)}`,
+                max: (e) => `حداکثر: ${formatNumber(e.max)}`,
                 minlength: (e) => `حداقل ${e.requiredLength} کاراکتر`,
                 maxlength: (e) => `حداکثر ${e.requiredLength} کاراکتر`,
                 email: (e) => `ایمیل نامعتبر است`,

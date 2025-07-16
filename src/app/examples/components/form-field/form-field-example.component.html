@@ -1,0 +1,29 @@
+Form Field
+<!-- <form [ngFormOptions]="{updateOn: 'blur'}">
+    <ng0-form-field label="Field 1">
+        <input type="text" class="form-control" name="p1" [(ngModel)]="p1" [required]="true" [minlength]="5">
+    </ng0-form-field>
+
+</form> -->
+
+<form >
+    <ng0-form-field label="Field 1">
+        <input type="number" class="form-control" name="p1" [(ngModel)]="p1" [required]="true" [min]="5" max="10">
+    </ng0-form-field>
+
+    <!-- <jss-form-field label="p2" hint="this is hint">
+        <input type="text" class="form-control" name="p2" [formControl]="p2" [required]="true">
+    </jss-form-field> -->
+</form>
+
+
+
+<!-- <div class="input-group mb-3 was-validated">
+    <span class="input-group-text" id="basic-addon1">@</span>
+    <input type="text" aria-label="First name" class="form-control" required> -->
+    <!-- <div class="form-floating">
+        <input class="form-control" id="floatingPassword">
+        <label for="floatingPassword">Password</label>
+    </div>
+    <input type="text" aria-label="First name" class="form-control"> -->
+<!-- </div> -->

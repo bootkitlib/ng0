@@ -1,5 +1,7 @@
 import { Locale } from '@bootkit/ng0/localization';
 
+const formatNumber = (n: number) => n.toLocaleString();
+
 export const EN_US_LOCALE = new Locale({
     name: 'en-US',
     rtl: false,
@@ -18,11 +20,12 @@ export const EN_US_LOCALE = new Locale({
     form: {
         validation: {
             errors: {
+                '*': (e) => 'Invalid',
                 required: (e) => `Required`,
-                min: (e) => `Minimum value: ${e.requiredMin}`,
-                max: (e) => `Maximum value: ${e.requiredMax}`,
-                minlength: (e) => `Minimum length: ${e.minlength}`,
-                maxlength: (e) => `Maximum length: ${e.maxlength}`,
+                min: (e) => `Minimum: ${formatNumber(e.min)}`,
+                max: (e) => `Maximum: ${formatNumber(e.max)}`,
+                minlength: (e) => `Minimum length: ${e.requiredLength}`,
+                maxlength: (e) => `Maximum length: ${e.requiredLength}`,
                 email: (e) => `Invalid email`,
             }
         }

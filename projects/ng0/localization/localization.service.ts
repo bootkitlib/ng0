@@ -10,7 +10,7 @@ export class LocalizationService {
   private _locales: Locale[] = [];
   private _activeLocale?: Locale;
   private _changeSubject = new Subject<LocaleChangeEvent>();
-  readonly changed = this._changeSubject.asObservable();
+  readonly change = this._changeSubject.asObservable();
 
   constructor() {
   }
@@ -37,7 +37,7 @@ export class LocalizationService {
   set(localeName: string): void {
     const locale = this._locales.find(x => x.name === localeName);
     if (locale) {
-      this._changeSubject.next({ oldLocale: this._activeLocale, newLocale: locale });
+      this._changeSubject.next({ old: this._activeLocale, new: locale });
       this._activeLocale = locale;
       return;
     }
@@ -46,10 +46,7 @@ export class LocalizationService {
   }
 
   /** Gets the active locale */
-  get(): Locale {
-    if (this._activeLocale)
+  get(): Locale | undefined {
       return this._activeLocale;
-
-    throw new Error('No Locale found');
   }
 }

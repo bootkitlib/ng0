@@ -14,8 +14,8 @@ export class DatePipe implements PipeTransform {
   constructor(localeProvider: LocalizationService) {
     this._locale = localeProvider.get();
 
-    localeProvider.changed.pipe(takeUntilDestroyed()).subscribe(x => {
-      this._locale = x.newLocale;
+    localeProvider.change.pipe(takeUntilDestroyed()).subscribe(x => {
+      this._locale = x.new;
     });
   }
 

@@ -15,16 +15,24 @@ export default [
                 loadChildren: () => import('./components/accordion/routes')
             },
             {
-                path: 'progress',
-                loadChildren: () => import('./components/progress/routes'),
+                path: 'collapse',
+                loadChildren: () => import('./components/collapse/routes'),
             },
             {
-                path: 'tabs',
-                loadChildren: () => import('./components/tabs/routes'),
+                path: 'dropdown',
+                loadChildren: () => import('./components/dropdown/routes'),
             },
             {
-                path: 'tooltip',
-                loadChildren: () => import('./components/tooltip/routes'),
+                path: 'formfield',
+                loadChildren: () => import('./components/form-field/routes'),
+            },
+            {
+                path: 'modal',
+                loadChildren: () => import('./components/modal/routes'),
+            },
+            {
+                path: 'offcanvas',
+                loadChildren: () => import('./components/offcanvas/routes'),
             },
             {
                 path: 'pagination',
@@ -35,24 +43,20 @@ export default [
                 loadChildren: () => import('./components/popover/routes'),
             },
             {
-                path: 'modal',
-                loadChildren: () => import('./components/modal/routes'),
+                path: 'progress',
+                loadChildren: () => import('./components/progress/routes'),
             },
             {
-                path: 'dropdown',
-                loadChildren: () => import('./components/dropdown/routes'),
-            },
-            {
-                path: 'collapse',
-                loadChildren: () => import('./components/collapse/routes'),
-            },
-            {
-                path: 'offcanvas',
-                loadChildren: () => import('./components/offcanvas/routes'),
+                path: 'tabs',
+                loadChildren: () => import('./components/tabs/routes'),
             },
             {
                 path: 'toast',
                 loadChildren: () => import('./components/toast/routes'),
+            },
+            {
+                path: 'tooltip',
+                loadChildren: () => import('./components/tooltip/routes'),
             },
         ]
     },

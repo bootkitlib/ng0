@@ -1,0 +1,32 @@
+@if(label()) {
+<label class="form-field-label">
+  {{label()}}
+  <span *ngIf="isRequired && showRequiredIndicator()" class="isc-form-field-required-marker">*</span>
+</label>
+}
+
+@if(inputGroup()) {
+<div class="input-group">
+  <ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+</div>
+}@else {
+<ng-container *ngTemplateOutlet="contentTemplate"></ng-container>
+}
+
+<ng-template #contentTemplate>
+  <ng-content></ng-content>
+</ng-template>
+
+@if(showSubscripts()) {
+<div class="form-field-subscript-wrapper">
+  @if(showErrors() && errorText && (touched || dirty)) {
+  <span class="form-field-error text-danger">
+    {{errorText}}
+  </span>
+  }@if(hint()) {
+  <span class="form-field-hint">
+    {{hint()}}
+  </span>
+  }
+</div>
+}

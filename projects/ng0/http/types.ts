@@ -11,10 +11,10 @@ export interface HttpOptions {
     contentType?: 'json' | 'multipart/form-data';
     reportProgress?: boolean;
     observe?: 'response' | 'body' | 'events';
-    displayServerErrors?: boolean;
-    sendAuthToken?: boolean;
 
-    /** Save response in transfer state */
+    /** 
+     * Save response in transfer state 
+     */
     transferState?: {
         enable: boolean,
         clearAfterUse?: boolean;    
