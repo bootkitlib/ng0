@@ -1,6 +1,7 @@
 import { Directive, TemplateRef, ViewContainerRef, input, effect } from '@angular/core';
-import { ClaimLike } from './types';
+
 import { UserStore } from './user-store';
+import { ClaimLike } from '@bootkit/ng0/common';
 
 @Directive({
   selector: '[ng0Claim]',

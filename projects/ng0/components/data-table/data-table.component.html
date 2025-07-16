@@ -1,0 +1,156 @@
+<div class="table-responsive" [style.height]="height" [class.table-scrollable]="height">
+    <table class="table" [ngClass]="tableClass()">
+        @if(caption()) {
+        <caption>{{caption()}}</caption>
+        }
+
+        <thead *ngIf="showHeader" [ngClass]="tableClass()">
+            <tr>
+                <th *ngIf="_detailRow"></th>
+                <th *ngIf="rowNumber()" class="row-number text-muted">#</th>
+                <th *ngFor="let col of _columns">{{col.title}}</th>
+            </tr>
+        </thead>
+        <thead *ngIf="filterable">
+            <tr>
+                <th *ngIf="_detailRow"></th>
+
+                @if(rowNumber()) {
+                <th></th>
+                }
+
+                <th *ngFor="let col of _columns">
+                    @if(col.filterable) {
+                    @if(col.type == 'text') {
+                    <input [name]="'datatablecol-' + col.field"
+                           type="text"
+                           [maxlength]="50"
+                           class="form-control form-control-sm"
+                           [(ngModel)]="col.filterValue"
+                           (keydown.enter)="reload()">
+                    }@else if(col.type == 'number') {
+                    <input [name]="'datatablecol-' + col.field"
+                           type="number"
+                           class="form-control form-control-sm"
+                           [(ngModel)]="col.filterValue"
+                           (keydown.enter)="reload()">
+                    }
+                    }
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <ng-container *ngIf="_data && _data.length! > 0">
+                <ng-container *ngFor="let row of _data; let i=index">
+                    <tr [class.table-active]="isRowExpanded(row)">
+                        <td class="detail-row-expander" *ngIf="_detailRow">
+                            <button class="btn" (click)="onToggleRowDetailClick(row)"
+                                    *ngIf="_detailRow.showCallback == null || _detailRow.showCallback(row)">
+                                <ng-template [ngIf]="isRowExpanded(row)" [ngIfElse]="collapse"><i
+                                       class="far fa-minus"></i></ng-template>
+                                <ng-template #collapse><i class="far fa-plus"></i> </ng-template>
+                            </button>
+                        </td>
+
+                        <td class="row-number text-muted" *ngIf="rowNumber()">{{pageSize * pageIndex + i + 1}}</td>
+
+                        <td *ngFor="let col of _columns" [ngClass]="col.cellClass" [class.shrinked]="col.shrink"
+                            [class.fw-bold]="col.bold">
+                            @if(col.template){
+                            <ng-template [ngIf]="col.template">
+                                <ng-container
+                                              *ngTemplateOutlet="col.template; context: {$implicit: row}"></ng-container>
+                            </ng-template>
+                            }@else if(col.field){
+                            @let cellValue = _getCellValue(row, col);
+                            <div
+                                 [class.badge]="col.badge"
+                                 [class.text-bg-primary]="col.badge?.primary && cellValue === col.badge?.primary"
+                                 [class.text-bg-secondary]="col.badge?.secondary && cellValue === col.badge?.secondary"
+                                 [class.text-bg-success]="col.badge?.success && cellValue === col.badge?.success"
+                                 [class.text-bg-light]="col.badge && cellValue !== col.badge.success && cellValue !== col.badge.secondary  && cellValue !== col.badge.success ">
+
+                                <ng-container *ngIf="col.type=='text'">
+                                    {{cellValue}}
+                                </ng-container>
+                                <ng-container *ngIf="col.type=='date'">
+                                    <span class="date-time">{{cellValue | ng0Date}}</span>
+                                </ng-container>
+                                <ng-container *ngIf="col.type=='number'">
+                                    {{cellValue | number}}
+                                </ng-container>
+                                <ng-container *ngIf="col.type=='currency'">
+                                    {{cellValue | number}}
+                                </ng-container>
+                                <ng-container *ngIf="$any(col?.type)?.enum">
+                                    {{cellValue | ng0Enum:$any(col.type).enum}}
+                                </ng-container>
+                                <!-- <ng-container *ngIf="$any(col?.type)?.boolean">
+                                    {{cellValue | ng0Bool:$any(col.type).boolean}}
+                                </ng-container> -->
+                                <ng-container *ngIf="$any(col?.type)?.currency">
+                                    {{cellValue | currency:$any(col?.type)?.currency}}
+                                </ng-container>
+
+                                <ng-container *ngIf="cellValue == null && col.emptyCellText">
+                                    {{col.emptyCellText}}
+                                </ng-container>
+
+
+                            </div>
+                            }
+                        </td>
+                    </tr>
+
+                    <tr class="detail-row" *ngIf="_detailRow && isRowExpanded(row)">
+                        <td [attr.colspan]="_columns.length + (rowNumber() ? 1 : 0) + 1" class="ps-2 pb-4">
+                            <ng-container
+                                          *ngTemplateOutlet="_detailRow.templateRef; context: {$implicit: row}"></ng-container>
+                        </td>
+                    </tr>
+                </ng-container>
+
+            </ng-container>
+
+            <tr *ngIf="_data?.length === 0">
+                <td [colSpan]="_columns.length + (rowNumber() ? 1 : 0)" class="text-center text-muted small p-2">
+                    {{'noRecords' | ng0Translate}}
+                </td>
+            </tr>
+            <tr *ngIf="dataSource && dataSource.loading" class="loading-row">
+                <td [colSpan]="_columns.length + (rowNumber() ? 1 : 0)" class="text-center">
+                    <div class="spinner-border text-primary" role="status"></div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<ng0-data-table-paging></ng0-data-table-paging>
+
+<div class="mt-auto" *ngIf="pagination()">
+    <div class="btn-group me-2" role="group">
+        <button type="button"
+                class="btn btn-outline-primary"
+                (click)="onPreviousPageClick()"
+                [disabled]="loading || pageIndex == 0">
+            {{'previous' | ng0Translate}}
+        </button>
+        <button type="button"
+                class="btn btn-outline-primary"
+                (click)="onNextPageClick()"
+                [disabled]="loading || !_totalPages || (pageIndex == _totalPages-1)">
+            {{'next' | ng0Translate}}
+        </button>
+    </div>
+
+    <span *ngIf="_totalPages">
+        {{_formatString( 'dataTablePagination' | ng0Translate, pageIndex+1, _totalPages) }}
+    </span>
+
+
+    <!-- <select class="form-select" style="width: initial;">
+        <option selected>همه رکوردها</option>
+    </select> -->
+</div>

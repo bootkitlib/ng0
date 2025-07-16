@@ -1,4 +1,4 @@
-import { ClaimLike, ClaimObject } from './types';
+import { ClaimLike, ClaimObject } from '@bootkit/ng0/common';
 
 /** User */
 export class User {

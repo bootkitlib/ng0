@@ -1,0 +1,39 @@
+<div class="modal d-block" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{{_config?.title ?? 'warning' | ng0Translate }}</h5>
+            </div>
+
+            <div class="modal-body">
+                {{ _config?.message ?? 'areYouSure' | ng0Translate }}
+            </div>
+
+            <div class="modal-footer">
+                <div>
+                    <button type="button" class="btn btn-success me-1" aria-label="Confirm" [disabled]="_clicked"
+                            (click)="_onClick(true)">
+                        {{'ok' | ng0Translate}}
+                    </button>
+
+                    <button type="button" class="btn btn-secondary" aria-label="Close" [disabled]="_clicked"
+                            (click)="_onClick(false)">
+                        {{'cancel' | ng0Translate}}
+                    </button>
+                </div>
+
+                <div class="ms-auto">
+                    <div class="spinner-border text-success" role="status" *ngIf="_config?.icon == 'loading'">
+                        <span class="visually-hidden">Processing</span>
+                    </div>
+
+                    <svg *ngIf="_config?.icon == 'check'" xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'
+                         width="32" height="32">
+                        <path fill='#0493A8'
+                              d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z' />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,9 @@
+@for(s of _steps; track s.id(); let index = $index) {
+@let show=s.id() === step();
+
+<div [@stepAnimation]="show ? 'show' : 'hide'" [class.d-none]="!show">
+    @if(show) {
+    <ng-container [ngTemplateOutlet]="s.templateRef"></ng-container>
+    }
+</div>
+}
