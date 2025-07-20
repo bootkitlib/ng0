@@ -1,75 +1,84 @@
-import { BooleanInput, coerceBooleanProperty } from '@angular/cdk/coercion';
-import { Input, Directive, HostListener, Output, EventEmitter, Renderer2, ElementRef, OnInit, OnDestroy } from '@angular/core';
-import { HttpRequestSendEvent, HttpService } from '@bootkit/ng0/http';
-import { Subscription } from 'rxjs';
+import { Directive, Renderer2, ElementRef, OnInit, OnDestroy, input, DestroyRef, model, booleanAttribute } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpService } from '@bootkit/ng0/http';
 
 @Directive({
-  selector: 'button[ng0Button], a[ng0Button], input[ng0Button]',
+  selector: 'button[ng0Button], a[ng0Button], input[type=button][ng0Button], input[type=submit][ng0Button], input[type=reset][ng0Button]',
   exportAs: 'ng0Button',
   standalone: true,
   host: {
-    '[class.disabled]': 'disabled',
-    '[prop.disabled]': 'disabled',
-    '[attr.aria-disabled]': 'disabled',
-    '[attr.tabindex]': 'disabled ? "-1" : "" ',
+    '[class.disabled]': 'disabled()',
+    '[prop.disabled]': 'disabled()',
+    '[attr.aria-disabled]': 'disabled()',
+    '[attr.tabindex]': 'disabled() ? "-1" : "" ',
   }
 })
 export class ButtonDirective implements OnInit, OnDestroy {
-  private _disabled = false;
-  private _httpEventSubscription?: Subscription;
   private _loadingElement: any;
 
-  get disabled() { return this._disabled; }
-  set disabled(value: BooleanInput) {
-    this._disabled = coerceBooleanProperty(value);
-  }
+  /**
+   * The IDs of the HTTP requests that this button listens to.
+   * If one of these requests is in progress, it will show a loading indicator or will be disabled based on 'showLoading' and 'disableOnLoading' properties.
+   */
+  public request = input<string | string[] | undefined>(undefined);
 
-  /** Disable the button when some http requests with specified IDs. */
-  @Input() disableOn = new Array<string>();
-  @Input() showLoadingOn = new Array<string>();
+  /** 
+   * Whether the button is disabled or not.
+   */
+  public disabled = model<boolean>(false);
 
-  // Disables and show loading icon on http requests with specified IDs.
-  @Input() waitFor = new Array<string>();
+  /**
+   * Whether to wait for the HTTP response before enabling the button again.
+   * If true, the button will remain disabled until the HTTP request completes.
+   * This is useful for preventing multiple clicks while waiting for a response.
+   * Default is true.
+   */
+  public disableDuringRequest = input(true, {transform: booleanAttribute});
 
-  @Output() safeClick = new EventEmitter<MouseEvent>();
+  /**
+   * Whether to show a loading indicator when the HTTP request is in progress.
+   * If true, a loading spinner will be displayed on the button while the request is being processed.
+   * Default is true.
+   */
+  public loadingIndicator = input(false, {transform: booleanAttribute});
 
-  constructor(private _element: ElementRef, private _renderer: Renderer2, private http: HttpService) {
+  constructor(
+    private _element: ElementRef,
+    private _renderer: Renderer2,
+    private _http: HttpService,
+    private _destroyRef: DestroyRef) {
   }
 
   ngOnInit(): void {
     this._renderer.setStyle(this._element.nativeElement, "position", "relative");
 
-    if (this.waitFor.length > 0) {
-      this.disableOn = [...this.disableOn, ...this.waitFor];
-      this.showLoadingOn = [...this.showLoadingOn, ...this.waitFor];
-    }
+    if (this.request()) {
+      this._http.events.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(e => {
+        var ids = (Array.isArray(this.request()) ? this.request() : [this.request()]) as string[];
 
-    if (this.disableOn || this.showLoadingOn) {
-      this._httpEventSubscription = this.http.events.subscribe(e => {
-        if (this.disableOn?.find(x => x == e?.options?.id)) {
-          if (e instanceof HttpRequestSendEvent) {
-            this.disabled = true;
-          } else {
-            this.disabled = false;
+        if (ids.includes(e?.options?.id)) {
+          let requestInProgress = e.type === 'Send' || e.type === 'Progress';
+
+          if (this.disableDuringRequest()) {
+            this.disabled.set(requestInProgress);
           }
-        }
 
-        if (this.showLoadingOn?.find(x => x == e?.options?.id)) {
-          if (e instanceof HttpRequestSendEvent) {
-            this._showLoading();
-          } else {
-            this._hideLoading();
+          if (this.loadingIndicator()) {
+            if (requestInProgress) {
+              this._showLoading();
+            } else {
+              this._hideLoading();
+            }
           }
         }
       });
     }
   }
 
-  @HostListener('click', ['$event']) private _onClick(e: MouseEvent): void {
-    if (!this._disabled) {
-      this.safeClick.emit(e);
-    }
-  }
+  // @HostListener('click', ['$event']) private _onClick(e: MouseEvent): void {
+  //   if (!this._disabled) {
+  //   }
+  // }
 
   private _showLoading() {
     this._loadingElement = this._renderer.createElement("div");
@@ -85,6 +94,5 @@ export class ButtonDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._httpEventSubscription?.unsubscribe();
   }
 }

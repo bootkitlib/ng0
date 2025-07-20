@@ -3,10 +3,10 @@ import { ContentChild, Directive, Input, TemplateRef } from '@angular/core';
 export type DataTableColumnBadgeValueType = string | number | boolean;
 
 @Directive({
-  selector: 'ng0-data-table-col',
+  selector: 'ng0-table-col',
   standalone: true,
 })
-export class DataTableColumnDirective {
+export class TableColumnDirective {
   @Input() field?: string;
   @Input() title?: string;
   @Input() emptyCellText?: string;

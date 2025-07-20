@@ -7,7 +7,7 @@ export function toDataResult<T=any>(dr: DataRequest) {
     return new Observable(subscriber => {
       source.subscribe({
         next(event) {
-          subscriber.next(new DataResult(dr, event));
+          subscriber.next(new DataResult(event));
         },
         error(error) {
           subscriber.error(error);

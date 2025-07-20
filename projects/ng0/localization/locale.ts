@@ -21,7 +21,7 @@ export class Locale {
    * @returns The translated string or the key itself if not found
    */
   translate(key: string): string {
-    return this.definition.dictionary[key] ?? key;
+    return this.definition.dictionary?.[key] ?? key;
   }
 
   /**

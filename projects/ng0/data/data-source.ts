@@ -4,8 +4,6 @@ import { DataResult } from "./data-result";
 
 export abstract class DataSource<T=any> {
   protected _loading = false;
-  protected changeSubject = new Subject();
-  public readonly change = this.changeSubject.asObservable();
 
   constructor() {
   }

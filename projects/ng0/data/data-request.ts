@@ -1,54 +1,74 @@
+/**
+ * DataRequest class represents a request for data with pagination, filtering, sorting, and field selection.
+ * It is used to encapsulate the parameters needed to fetch data from a data source.
+ * It can be used with various data sources such as HTTP services, in-memory arrays, etc.
+ * 
+ */
 export class DataRequest {
-    constructor(
-        public pageIndex = 0,
-        public pageSize = 10,
-        public computeTotal = true,
-        public filters: DataRequestFilter[] = [],
-        public sort?: DataRequestSort,
-    ) { }
+    public page?: DataRequestPage;
+    public filters?: DataRequestFilter[];
+    public sort?: DataRequestSort;
+    public select?: string[];
+    public computeTotal?: boolean;
 
-    public addFilter(field: string, value: string, operator: DataRequestFilterOperator = DataRequestFilterOperator.EQ) {
-        this.filters.push(new DataRequestFilter(field, value, operator));
-        return this;
-    }
+    constructor(options?: {
+        pageIndex?: number,
+        pageSize?: number,
+        filters?: DataRequestFilter[],
+        sort?: DataRequestSort,
+        select?: string[],
+        computeTotal?: boolean,
+    }) {
+        if (Number.isInteger(options?.pageIndex) && Number.isInteger(options?.pageSize)) {
+            this.page = { index: options!.pageIndex!, size: options!.pageSize! };
+        }
 
-    public sortDescending(field: string) {
-        this.sort = new DataRequestSort(field, false);
-        return this;
-    }
-
-    public sortAscending(field: string) {
-        this.sort = new DataRequestSort(field, true);
-        return this;
-    }
-
-    public static all() {
-        return new DataRequest(0, 1000000, false);
+        this.filters = options?.filters;
+        this.sort = options?.sort;
+        this.select = options?.select;
+        this.computeTotal = options?.computeTotal;
     }
 }
 
-export class DataRequestSort {
-    constructor(
-        public field: string,
-        public asc = true) {
-    }
+/**
+ * Represents a page in a DataRequest.
+ * @property index The index of the page (0-based).
+ * @property size The size of the page (number of items per page).
+ */
+export interface DataRequestPage {
+    index: number;
+    size: number;
 }
 
-export class DataRequestFilter {
-    constructor(
-        public field: string,
-        public value?: string,
-        public operator: DataRequestFilterOperator = DataRequestFilterOperator.EQ) {
-    }
+/**
+ * Represents a sorting option in a DataRequest.
+ * @property field The field to sort by.
+ * @property asc Whether to sort in ascending order.
+ */
+export interface DataRequestSort {
+    field: string;
+    asc?: boolean
 }
 
-export enum DataRequestFilterOperator {
-    EQ = 0,
-    NEQ = 1,    
-    LT = 2,
-    LTE = 3,
-    GT = 4,
-	GTE = 5,
-    LI = 6,
-    SW = 7,
+/**
+ * Represents a filter in a DataRequest.
+ * @property field The field to filter by.
+ * @property value The value to filter by.
+ * @property operator The operator to use for filtering.
+ */
+export interface DataRequestFilter {
+    field: string;
+    value?: string;
+    operator: any;
 }
+
+// export enum DataRequestFilterOperator {
+//     EQ = 0,
+//     NEQ = 1,
+//     LT = 2,
+//     LTE = 3,
+//     GT = 4,
+//     GTE = 5,
+//     LI = 6,
+//     SW = 7,
+// }

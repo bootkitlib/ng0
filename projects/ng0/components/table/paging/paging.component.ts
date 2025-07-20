@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { LocalizationModule } from '@bootkit/ng0/localization';
 
 @Component({
-  selector: 'ng0-data-table-paging',
+  selector: 'ng0-table-paging',
   templateUrl: './paging.component.html',
   // styleUrls: ['./paging.component.scss'],
   standalone: true,
@@ -15,7 +15,7 @@ import { LocalizationModule } from '@bootkit/ng0/localization';
     LocalizationModule
   ]
 })
-export class DataTablePagingComponent implements OnInit, OnDestroy {
+export class TablePagingComponent implements OnInit, OnDestroy {
   // @Input() dataSource!: DataSource;
   @Input() autoLoad = true;
   rowNumber = input<boolean>(false);

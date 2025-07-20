@@ -8,6 +8,14 @@ export default [
         component: BootKitExampleComponent,
     },
     {
+        path: 'localization',
+        loadChildren: () => import('./localization/routes')
+    },
+    {
+        path: 'http',
+        loadChildren: () => import('./http/routes')
+    },
+    {
         path: 'components',
         children: [
             {
@@ -15,8 +23,16 @@ export default [
                 loadChildren: () => import('./components/accordion/routes')
             },
             {
+                path: 'button',
+                loadChildren: () => import('./components/button/routes')
+            },
+            {
                 path: 'collapse',
                 loadChildren: () => import('./components/collapse/routes'),
+            },
+            {
+                path: 'table',
+                loadChildren: () => import('./components/table/routes'),
             },
             {
                 path: 'dropdown',
@@ -60,8 +76,5 @@ export default [
             },
         ]
     },
-    {
-        path: 'localization',
-        loadChildren: () => import('./localization/routes')
-    }
+
 ] satisfies Route[];

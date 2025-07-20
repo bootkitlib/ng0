@@ -38,7 +38,7 @@ import { ToastRef } from './toast-ref';
   providedIn: 'root'
 })
 export class ToastService {
-  private _toastRef: ToastRef;
+  private _toastRef?: ToastRef;
 
   constructor(private _overlayService: Overlay, private _injector: Injector) { }
 
@@ -90,7 +90,7 @@ export class ToastService {
     componentRef.instance.toastRef = this._toastRef = new ToastRef(config, overlayRef);
 
     setTimeout(() => {
-      this._toastRef.close();
+      this._toastRef?.close();
     }, config?.duration ?? 3000);
 
     return this._toastRef;

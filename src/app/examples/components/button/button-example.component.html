@@ -1,0 +1,107 @@
+<section>
+  <h5>Buttons</h5>
+
+  <button class="btn btn-primary" ng0Button>
+    Primary
+  </button>
+
+  <button class="btn btn-secondary" ng0Button>
+    Secondary
+  </button>
+
+  <button class="btn btn-success" ng0Button>
+    success
+  </button>
+
+  <button class="btn btn-danger" ng0Button>
+    Danger
+  </button>
+
+  <button class="btn btn-warning" ng0Button>
+    Warning
+  </button>
+
+  <button class="btn btn-info" ng0Button>
+    Info
+  </button>
+
+  <button class="btn btn-dark" ng0Button>
+    Dark
+  </button>
+</section>
+
+<section>
+  <h5>Disabled Buttons</h5>
+
+  <button class="btn btn-primary" ng0Button [disabled]="true">
+    Primary
+  </button>
+
+  <button class="btn btn-secondary" ng0Button>
+    Secondary
+  </button>
+
+  <button class="btn btn-success" ng0Button>
+    success
+  </button>
+
+  <button class="btn btn-danger" ng0Button>
+    Danger
+  </button>
+
+  <button class="btn btn-warning" ng0Button>
+    Warning
+  </button>
+
+  <button class="btn btn-info" ng0Button>
+    Info
+  </button>
+
+  <button class="btn btn-dark" ng0Button>
+    Dark
+  </button>
+</section>
+
+<section>
+  <h5>Bind to HTTP Requests</h5>
+  <p>
+    You can bind buttons to HTTP requests using the <code>ng0Button</code> directive.
+    This will automatically handle disabling the button while the request is in progress and showing a loading indicator if configured.
+    The button will be enabled again once the request completes.
+    You can also control the behavior of the button using the <code>disableDuringRequest</code> and <code>loadingIndicator</code> inputs.
+    The <code>request</code> input is used to identify the request, which can be useful for tracking multiple requests.
+    
+  </p>
+
+  <p>
+    This button will be disabled while waiting for the HTTP request to complete. <br>
+    (disableDuringRequest="true", loadingIndicator="false")
+  </p>
+
+  <button class="btn btn-primary" ng0Button request="request1" (click)="sendHttpRequest('request1')">
+    Send Request 1
+  </button>
+
+
+  <p class="mt-4">
+    This button will show a loading indicator while waiting for the HTTP request to complete. <br>
+    (disableDuringRequest="false", loadingIndicator="true")
+  </p>
+
+  <button class="btn btn-primary" ng0Button request="request2" [disableDuringRequest]="false" [loadingIndicator]="true"
+          (click)="sendHttpRequest('request2')">
+    Send Request 2
+  </button>
+
+
+  <p class="mt-4">
+    This button will be disabled while the request is in progress, and it will show a loading indicator. <br>
+    (disableDuringRequest="true", loadingIndicator="true")
+  </p>
+
+  <button class="btn btn-primary" ng0Button request="request3" [disableDuringRequest]="true" [loadingIndicator]="true"
+          (click)="sendHttpRequest('request3')">
+    Send Request 3
+  </button>
+
+</section>

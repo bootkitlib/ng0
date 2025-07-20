@@ -23,7 +23,7 @@ export class PaginationComponent {
   showLastButton = input<boolean>(true);
   get totalPagesCount() { return this._totalPagesCount; }
 
-  protected _totalPagesCount: number;
+  protected _totalPagesCount!: number;
 
   protected _visiblePages = computed(() => {
     let selectedPage = this.selectedPage();

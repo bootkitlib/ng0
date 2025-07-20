@@ -1,219 +1,172 @@
-import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { map, Observable, of, Subject, tap } from 'rxjs';
-import { HttpErrorEvent, HttpEvent, HttpOptions, HttpRequestSendEvent, HttpResponseEvent, HttpServiceBaseUrl } from './types';
-import { Inject, Injectable, makeStateKey, Optional, PLATFORM_ID, TransferState } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, of, Subject, tap } from 'rxjs';
+import { HttpRequestOptions, DataResultHttpRequestOptions, HttpRequestEvent } from './types';
+import { inject, Inject, Injectable, Injector, makeStateKey, PLATFORM_ID, runInInjectionContext, TransferState } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { DataRequest, DataResult } from '@bootkit/ng0/data';
+import { DEFAULT_DATA_REQUEST_RESOLVER, HTTP_SERVICE_CONFIG } from './provide';
 
-@Injectable({
-  providedIn: 'root'
-})
+/**
+ * HttpService provides a simple HTTP client for making requests.
+ * It supports GET, POST, PUT, DELETE methods and can handle DataRequest objects.
+ * It also supports transfer state for server-side rendering.
+ * It emits events for request lifecycle: Send, Progress, Complete and Error.
+ * It can be configured with a base URL and a default DataRequest resolver.
+ * It can also handle multipart/form-data requests.
+ */
+@Injectable()
 export class HttpService {
-  private _eventsSubject = new Subject<HttpEvent>();
+  private _eventsSubject = new Subject<HttpRequestEvent>();
   private _baseUrl?: string;
 
   public events = this._eventsSubject.asObservable();
   public defaultHeaders?: HttpHeaders;
 
+  private readonly _config = inject(HTTP_SERVICE_CONFIG);
+  private readonly _dataRequestResolver? = inject(DEFAULT_DATA_REQUEST_RESOLVER, { optional: true });
+
   constructor(
-    private _http: HttpClient,
+    private http: HttpClient,
     private transferState: TransferState,
+    private injector: Injector,
     @Inject(PLATFORM_ID) private platformId: object,
-    @Optional() @Inject(HttpServiceBaseUrl) baseUrl?: string
   ) {
-    this._baseUrl = typeof baseUrl == 'string' ? baseUrl : '';
+    this._baseUrl = this._config.baseUrl ?? '';
   }
 
-  public get<T>(url: string, options?: HttpOptions): Observable<T> {
-    this._eventsSubject.next(new HttpRequestSendEvent(url, options));
-    const URL = this.makeUrl(url, options);
-    const OPTIONS = this.makeHttpClientOptions(options);
-    let obs = this.tap<T>(this._http.get<T>(URL, OPTIONS), url, options);
-    obs = this._handleTransferState(obs, options);
-    return obs;
+  public get<T>(url: string, options?: HttpRequestOptions): Observable<T> {
+    this._verifyOptions(options);
+    const transferStateData = this._findInTransferState<T>(options);
+    if (transferStateData.found) {
+      return of(transferStateData.data!);
+    }
+
+    this._eventsSubject.next({ type: 'Send', url, options });
+    let obs = this.http.get<T>(this._makeUrl(url, options), options as any).pipe(
+      tap(result => {
+        if (isPlatformServer(this.platformId) && options?.transferState) {
+          const key = makeStateKey<T>(options.id);
+          this.transferState.set(key, result as T);
+        }
+      })
+    );
+    return this._handleEvents<T>(obs, url, options);
   }
 
-  public getResult<T>(url: string, request: DataRequest, options?: HttpOptions): Observable<DataResult<T>> {
-    this._eventsSubject.next(new HttpRequestSendEvent(url, options));
-    const URL = this.makeUrl(url, options);
-    options = options || {};
-    options.query = { ...options.query, ...this.mapDataRequesToQueryObject(request) };
-    const OPTIONS = this.makeHttpClientOptions(options);
-    var o = this._http.get<{ data: any[], total: number }>(URL, OPTIONS)
-      .pipe(
-        map((x: any) => new DataResult(request, x.data, x.total))
-      );
 
-    return this.tap(o, url, options);
+  public getDataResult<T>(url: string, request: DataRequest, options?: DataResultHttpRequestOptions): Observable<DataResult<T>> {
+    this._verifyOptions(options);
+    const transferStateData = this._findInTransferState<DataResult<T>>(options);
+    if (transferStateData.found) {
+      return of(transferStateData.data!);
+    }
+
+    this._eventsSubject.next({ type: 'Send', url, options });
+    let resolver = options?.dataRequest?.resolver || this._config.dataRequestResolver || this._dataRequestResolver;
+    if (!resolver) {
+      throw new Error('No HttpDataRequestResolver provided.');
+    }
+
+    const URL = this._makeUrl(url, options);
+    let obs = runInInjectionContext<Observable<DataResult<T>>>(this.injector, resolver.bind(null, URL, request, options));
+    return this._handleEvents(obs, url, options);
   }
 
-  public post<T>(url: string, body: any, options?: HttpOptions): Observable<T> {
-    this._eventsSubject.next(new HttpRequestSendEvent(url, options));
-    const URL = this.makeUrl(url, options);
-    const BODY = this.makeBody(body, options);
-    const OPTIONS = this.makeHttpClientOptions(options);
-    return this.tap<T>(this._http.post(URL, BODY, OPTIONS), url, options);
+  public post<T>(url: string, body: any, options?: HttpRequestOptions): Observable<T> {
+    this._verifyOptions(options);
+    this._eventsSubject.next({ type: 'Send', url, options });
+    const BODY = this._makeBody(body, options);
+    let obs = this.http.post(this._makeUrl(url, options), BODY, options as any) as Observable<T>;
+    return this._handleEvents<T>(obs, url, options);
   }
 
-  public put<T>(url: string, body: any, options?: HttpOptions): Observable<T> {
-    this._eventsSubject.next(new HttpRequestSendEvent(url, options));
-    const URL = this.makeUrl(url, options);
-    const BODY = this.makeBody(body, options);
-    const OPTIONS = this.makeHttpClientOptions(options);
-    return this.tap<T>(this._http.put(URL, BODY, OPTIONS), url, options);
+  public put<T>(url: string, body: any, options?: HttpRequestOptions): Observable<T> {
+    this._verifyOptions(options);
+    this._eventsSubject.next({ type: 'Send', url, options });
+    const BODY = this._makeBody(body, options);
+    let obs = this.http.put(this._makeUrl(url, options), BODY, options as any) as Observable<T>;
+    return this._handleEvents<T>(obs, url, options);
   }
 
-  public delete<T>(url: string, options?: HttpOptions): Observable<T> {
-    this._eventsSubject.next(new HttpRequestSendEvent(url, options));
-    const URL = this.makeUrl(url, options);
-    const OPTIONS = this.makeHttpClientOptions(options);
-    return this.tap<T>(this._http.delete(URL, OPTIONS), url, options);
+  public delete<T>(url: string, options?: HttpRequestOptions): Observable<T> {
+    this._verifyOptions(options);
+    this._eventsSubject.next({ type: 'Send', url, options });
+    let obs = this.http.delete(this._makeUrl(url, options), options as any)
+    return this._handleEvents<T>(obs, url, options);
   }
 
-  private tap<T>(o: Observable<any>, url: string, options?: HttpOptions): Observable<T> {
+  private _makeUrl(url: string, options?: HttpRequestOptions) {
+    return (options?.pathType === 'absolute') ? url : (this._baseUrl + url);
+  }
+
+  private _makeBody(body: any, options?: HttpRequestOptions) {
+    if (options?.contentType === 'multipart/form-data') {
+      const formData = new FormData();
+      for (const key in body) {
+        if (body.hasOwnProperty(key)) {
+          const field = body[key];
+          let value;
+
+          if (typeof field === 'string' || field instanceof File) {
+            value = field;
+          } else if (typeof field === 'number') {
+            value = field.toString();
+          } else if (typeof field === 'object') {
+            value = JSON.stringify(field);
+          }
+
+          if (value) {
+            formData.append(key, value);
+          }
+        }
+      }
+
+      return formData;
+    }
+
+    return body;
+  }
+
+  private _handleEvents<T>(o: Observable<any>, url: string, options?: HttpRequestOptions): Observable<T> {
     return o.pipe(
       tap({
         next: r => {
-          this._eventsSubject.next(new HttpResponseEvent(url, options));
+          this._eventsSubject.next({ type: 'Complete', url, options, response: r });
         },
         error: e => {
-          this._eventsSubject.next(new HttpErrorEvent(url, options))
+          this._eventsSubject.next({ type: 'Error', url, options, error: e });
         }
       })
     )
   }
 
-  private makeUrl(url: string, options?: HttpOptions) {
-    return (options?.pathType === 'absolute') ? url : (this._baseUrl + url);
-  }
-
-  private makeHttpClientOptions(options?: HttpOptions) {
-    if (!options) {
-      return undefined;
-    }
-
-    const ngOptions: any = {};
-
-    // Query String
-    const query = options.query;
-    if (typeof query === 'object') {
-      let params = new HttpParams();
-      for (const key in query) {
-        if (query.hasOwnProperty(key)) {
-          const value = query[key];
-          const type = typeof value;
-          if (type === 'string' || type === 'number' || type === 'boolean') {
-            params = params.set(key, value);
-          }
-        }
+  private _verifyOptions(options?: HttpRequestOptions) {
+    if (options) {
+      if (options.transferState && !options.id) {
+        throw Error('To use transferState, set request id')
       }
-      ngOptions.params = params;
-    }
 
-    // Response Type
-    // if (options.responseType) {
-    ngOptions.responseType = options.responseType;
-    // }
-
-    ngOptions.headers = this.defaultHeaders;
-    ngOptions.reportProgress = options.reportProgress;
-    ngOptions.observe = options.observe;
-
-    return ngOptions;
-  }
-
-  private makeBody(body: any, options?: HttpOptions) {
-    body = this.processBodyFields(body);
-    if (!options || !options.contentType || options.contentType !== 'multipart/form-data') {
-      return body;
-    }
-
-    // contentType is multipart/form-data
-    const formData = new FormData();
-    for (const key in body) {
-      if (body.hasOwnProperty(key)) {
-        const field = body[key];
-        let value;
-
-        if (typeof field === 'string' || field instanceof File) {
-          value = field;
-        } else if (typeof field === 'number') {
-          value = field.toString();
-        } else if (typeof field === 'object') {
-          value = JSON.stringify(field);
-        }
-
-        if (value) {
-          formData.append(key, value);
-        }
+      if (this.transferState && (options.observe == 'events' || options.observe == 'response')) {
+        throw Error('TransferState is only supported with observe == body.');
       }
     }
-    return formData;
   }
 
-  private processBodyFields(body: any) {
-    return body;
-  }
-
-  private mapDataRequesToQueryObject(request: DataRequest) {
-    var result: { [key: string]: any } = {};
-
-    if (!request) {
-      return result;
+  private _findInTransferState<T>(options?: HttpRequestOptions): { found: boolean, data: T | undefined } {
+    if (!options?.transferState || isPlatformServer(this.platformId)) {
+      return { found: false, data: undefined };
     }
 
-    if (Number.isInteger(request.pageIndex) && Number.isInteger(request.pageSize)) {
-      result['page.size'] = request.pageSize;
-      result['page.index'] = request.pageIndex;
-    }
-
-    if (request.sort) {
-      result['sort[field]'] = request.sort.field;
-      result['sort[asc]'] = request.sort.asc;
-    }
-
-    for (let i = 0; i < request.filters.length; i++) {
-      const filter = request.filters[i];
-      result[`filters[${i}].field`] = filter.field;
-      result[`filters[${i}].operator`] = filter.operator;
-      result[`filters[${i}].value`] = filter.value;
-    }
-
-    if (typeof request.computeTotal == 'boolean') {
-      result['ct'] = request.computeTotal;
-    }
-
-    return result;
-  }
-
-    private _handleTransferState<T>(obs: Observable<T>, options: HttpOptions | undefined): Observable<T> {
-    if (!options?.transferState) {
-      return obs;
-    }
-
-    if (!options.id) {
-      throw Error('To use transferState, set request id')
-    }
-
-    let key = makeStateKey<T>(options.id!);
-
-    // Check if data exists in TransferState (to avoid refetching)
+    const key = makeStateKey<T>(options.id);
     if (this.transferState.hasKey(key)) {
       const data = this.transferState.get<T>(key, null!);
-
-      if(options.transferState.clearAfterUse || true) { 
+      if ((options.transferState as any)?.['clearAfterUse']) {
         this.transferState.remove(key); // Free memory
       }
-      
-      return of<T>(data);
-    } else {
-      return obs.pipe(
-        tap((d) => {
-          if (isPlatformServer(this.platformId)) {
-            this.transferState.set(key, d);
-          }
-        })
-      )
+
+      return { found: true, data: data };
     }
+
+    return { found: false, data: undefined };
   }
 }

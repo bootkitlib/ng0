@@ -12,7 +12,7 @@ import { CollapseModule } from '@bootkit/ng0/components/collapse';
 export class CollapseExampleComponent implements OnInit, AfterViewInit {
     c1 = true;
     c2 = false;
-    observer: ResizeObserver;
+    observer!: ResizeObserver;
 
     constructor() {
     }

@@ -1,0 +1,15 @@
+<h5>Data Table</h5>
+
+
+<ng0-table [source]="source3">
+    <!-- <isc-data-table-col field="id" title="شناسه"></isc-data-table-col> -->
+    <ng0-table-col field="id" title="id"></ng0-table-col>
+    <ng0-table-col field="name" title="name"></ng0-table-col>
+    <ng0-table-col field="description" title="description"></ng0-table-col>
+
+    <ng0-table-col cellClass="text-end" [shrink]="true">
+        <ng-template let-row>
+            <a type="button" class="btn btn-secondary" [routerLink]="['..', row.id, 'edit']">View</a>
+        </ng-template>
+    </ng0-table-col>
+</ng0-table>

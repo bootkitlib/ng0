@@ -1,34 +1,43 @@
-import { of } from "rxjs";
+import { of, Subject } from "rxjs";
 import { DataRequest } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
 
 export class ArrayDataSource extends DataSource {
+  private _insertSubject = new Subject<{ items: any[] }>();
+  private _updateSubject = new Subject<{ item: any, index: number }>();
+  private _removeSubject = new Subject<{ item: any, index: number }>();
+
+  public readonly inserted = this._insertSubject.asObservable();
+  public readonly removed = this._removeSubject.asObservable();
+  public readonly updated = this._updateSubject.asObservable();
+
   constructor(private items: any[]) {
     super();
   }
 
   load(request: DataRequest) {
-    var startItem = request.pageIndex * request.pageSize;
-    let result = this.items.slice(startItem, startItem + request.pageSize);
-    return of(new DataResult(request, result, this.items.length));
+    let startItem = request.page!.index * request.page!.size;
+    let resultArray = this.items.slice(startItem, startItem + request.page!.size);
+    let result = new DataResult(resultArray, this.items.length);
+    return of(result);
   }
 
-  remove(item: any) {
-    var idx = this.items!.findIndex(x => x === item);
-    if (idx > -1) {
-      this.items.splice(idx, 1);
-      this.changeSubject.next(0);
+  public remove(item: any) {
+    let index = this.items!.findIndex(x => x === item);
+    if (index > -1) {
+      this.items.splice(index, 1);
+      this._removeSubject.next({ item, index });
     }
   }
 
-  insert(item: any) {
-    var idx = this.items.push(item);
-    this.changeSubject.next(0);
+  public insert(...items: any[]) {
+    this.items.push(items);
+    this._insertSubject.next({ items });
   }
 
-  set(items: any[]) {
-    this.items = items;
-    this.changeSubject.next(0);
-  }
+  // public set(items: any[]) {
+  //   this.items = items;
+  //   // this._removeSubject.next(0);
+  // }
 }

@@ -76,8 +76,8 @@ export class CollapseDirective implements OnInit, OnDestroy {
             animate(this.timings(), style({ height: '*', opacity: '*' })),
         ]);
 
-        this._player.onDone(() => {
-            this._player.destroy()
+        this._player!.onDone(() => {
+            this._player!.destroy()
             this._player = undefined;
         });
     }

@@ -14,7 +14,7 @@ export class TranslatePipe implements PipeTransform {
   private _value!: string;
 
   constructor(localizationService: LocalizationService) {
-    this._locale = localizationService.get();
+    this._locale = localizationService.get()!;
 
     localizationService.change.pipe(takeUntilDestroyed()).subscribe(x => {
       this._locale = x.new;

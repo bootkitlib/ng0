@@ -109,7 +109,7 @@ export class FormFieldComponent implements OnInit, AfterContentInit, OnDestroy {
 
     const invalid = this._ngControl.status === 'INVALID';
     if (invalid) {
-      this._errorText = this._locale?.translateFirstError(this._ngControl.errors, 'Invalid').text;
+      this._errorText = this._locale?.translateFirstError(this._ngControl.errors, 'Invalid')?.text;
     } else {
       this._errorText = undefined;
     }

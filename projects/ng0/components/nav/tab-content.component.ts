@@ -14,7 +14,7 @@ import { NavDirective } from './nav.directive';
 export class TabContentComponent implements OnInit {
     nav = input.required<NavDirective>();
 
-    @ContentChildren(TabPaneDirective) protected _panes: QueryList<TabPaneDirective>;
+    @ContentChildren(TabPaneDirective) protected _panes!: QueryList<TabPaneDirective>;
 
     disabled = input(false);
 

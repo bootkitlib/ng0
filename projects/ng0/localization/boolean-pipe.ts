@@ -11,6 +11,6 @@ export class BooleanPipe implements PipeTransform {
   }
 
   transform(value: any, falseKey = 'true', trueKey: 'false') {
-    return this.localeProvider.get().translate(value ? trueKey : falseKey);
+    return this.localeProvider.get()!.translate(value ? trueKey : falseKey);
   }
 }
