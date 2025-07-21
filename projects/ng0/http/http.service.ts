@@ -1,10 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, of, Subject, tap } from 'rxjs';
-import { HttpRequestOptions, DataResultHttpRequestOptions, HttpRequestEvent } from './types';
+import { HttpRequestOptions, HttpRequestEvent } from './types';
 import { inject, Inject, Injectable, Injector, makeStateKey, PLATFORM_ID, runInInjectionContext, TransferState } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { DataRequest, DataResult } from '@bootkit/ng0/data';
-import { DEFAULT_DATA_REQUEST_RESOLVER, HTTP_SERVICE_CONFIG } from './provide';
+import { HTTP_SERVICE_CONFIG } from './provide';
 
 /**
  * HttpService provides a simple HTTP client for making requests.
@@ -23,7 +23,6 @@ export class HttpService {
   public defaultHeaders?: HttpHeaders;
 
   private readonly _config = inject(HTTP_SERVICE_CONFIG);
-  private readonly _dataRequestResolver? = inject(DEFAULT_DATA_REQUEST_RESOLVER, { optional: true });
 
   constructor(
     private http: HttpClient,
@@ -54,7 +53,7 @@ export class HttpService {
   }
 
 
-  public getDataResult<T>(url: string, request: DataRequest, options?: DataResultHttpRequestOptions): Observable<DataResult<T>> {
+  public getDataResult<T>(url: string, request: DataRequest, options?: HttpRequestOptions): Observable<DataResult<T>> {
     this._verifyOptions(options);
     const transferStateData = this._findInTransferState<DataResult<T>>(options);
     if (transferStateData.found) {
@@ -62,13 +61,17 @@ export class HttpService {
     }
 
     this._eventsSubject.next({ type: 'Send', url, options });
-    let resolver = options?.dataRequest?.resolver || this._config.dataRequestResolver || this._dataRequestResolver;
+    let resolver = options?.dataRequestResolver || this._config.dataRequestResolver;
     if (!resolver) {
       throw new Error('No HttpDataRequestResolver provided.');
     }
 
     const URL = this._makeUrl(url, options);
     let obs = runInInjectionContext<Observable<DataResult<T>>>(this.injector, resolver.bind(null, URL, request, options));
+    if (!(obs instanceof Observable)) {
+      throw Error('HttpDataRequestResolver should return an observable.');
+    }
+
     return this._handleEvents(obs, url, options);
   }
 

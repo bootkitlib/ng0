@@ -3,7 +3,6 @@ import { HttpDataRequestResolver } from "./types";
 import { HttpService } from "./http.service";
 
 export const HTTP_SERVICE_CONFIG = new InjectionToken<HttpServiceConfig>('HttpServiceConfig');
-export const DEFAULT_DATA_REQUEST_RESOLVER = new InjectionToken<HttpDataRequestResolver>('DefaultDataRequestResolver');
 
 /**
  * Configuration for the HttpService.

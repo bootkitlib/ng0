@@ -2,38 +2,6 @@ import { HttpClient, HttpHeaders, HttpParams, HttpRequest, HttpResponse } from '
 import { DataRequest, DataResult } from '@bootkit/ng0/data';
 import { Observable } from 'rxjs';
 
-export interface DataResultHttpRequestOptions {
-    /** Http request ID */
-    id?: any;
-    params?: HttpParams | Record<string, string | number | boolean | ReadonlyArray<string | number | boolean>>;
-    headers?: HttpHeaders | Record<string, string | string[]>;
-    pathType?: 'relative' | 'absolute';
-    /**
-     * Additional data to associate with the request.
-     */
-    tag?: any;
-
-    /**
-     * Resolver function to convert DataRequest to DataResult.
-     */
-    dataRequest?: {
-        resolver: HttpDataRequestResolver;
-
-        /**
-         * Additional parameters to pass to HttpDataRequestResolver.
-         */
-        params: Record<string, string | number | boolean | ReadonlyArray<string | number | boolean>>;
-    };
-
-    /** 
-     * Save response in transfer state 
-     */
-    transferState?: {
-        enable: boolean,
-        clearAfterUse?: boolean;
-    };
-}
-
 export interface HttpRequestOptions {
     /** Http request ID */
     id?: any;
@@ -44,10 +12,16 @@ export interface HttpRequestOptions {
     contentType?: 'json' | 'multipart/form-data';
     reportProgress?: boolean;
     observe?: 'response' | 'body' | 'events';
+
     /**
-     * Additional data to associate with the request.
+     * Additional data to associate with this object.
      */
-    tag?: any;
+    tag?: Record<string, string | number | boolean | ReadonlyArray<string | number | boolean>>;
+
+    /**
+     * HttpDataRequestResolver
+     */
+    dataRequestResolver?: HttpDataRequestResolver;
 
     /** 
      * Save response in transfer state 
@@ -60,6 +34,17 @@ export interface HttpRequestOptions {
         clearAfterUse?: boolean;
     };
 }
+
+/**
+ * HttpDataRequestResolver is a function that takes a URL, a DataRequest, and options,
+ * and returns an Observable that emits a DataResult.
+ * This is used to convert a DataRequest into query parameters or request body for an HTTP request.
+ * @param url The URL to send the request to.
+ * @param dataRequest The DataRequest to convert.
+ * @param options Additional options for the request, such as headers.
+ */
+export type HttpDataRequestResolver<T = any> = (url: string, dataRequest: DataRequest, options?: HttpRequestOptions) => Observable<DataResult<T>>;
+
 
 export interface HttpRequestEventBase {
     type: 'Send' | 'Complete' | 'Progress' | 'Error';
@@ -98,4 +83,3 @@ export type HttpRequestEvent = HttpRequestSendEvent | HttpRequestCompleteEvent |
  * @template T data item type
  * @returns An Observable that emits the DataResult.
  */
-export type HttpDataRequestResolver<T = any> = (url: string, dataRequest: DataRequest, options?: DataResultHttpRequestOptions) => Observable<DataResult<T>>;

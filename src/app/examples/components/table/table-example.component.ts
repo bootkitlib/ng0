@@ -36,9 +36,7 @@ export class DataTableExampleComponent {
         { id: 6, name: 'Item 6', description: 'Description 6' }
     ]);
 
-    source3: DataLoader = req => this.httpService.get<ProductDataResult>('https://dummyjson.com/products', 
-        { params: { limit: req.page!.size, skip: req.page!.size } })
-        .pipe(map(res => new DataResult(res.products, res.total)))
+    source3: DataLoader = req => this.httpService.getDataResult('products', req);
 
     source4 = new AsyncDataSource(req => this.httpService.getDataResult('https://dummyjson.com/products', req));
 

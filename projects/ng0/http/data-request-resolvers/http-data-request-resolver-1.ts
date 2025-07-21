@@ -1,23 +1,22 @@
 import { DataRequest, DataResult } from "@bootkit/ng0/data";
-import { DataResultHttpRequestOptions } from "./types";
+import { HttpRequestOptions } from "../types";
 import { map, Observable } from "rxjs";
 import { HttpClient } from "@angular/common/http";
-import { DEFAULT_DATA_REQUEST_RESOLVER, HttpServiceFeature } from "./provide";
 import { inject } from "@angular/core";
 
 /**
- * Default implementation of HttpDataRequestWriter.
- * It adds DataRequest parameters as headers to the HTTP request.
- * @param httpRequest 
+ * Default implementation of httpDataRequestResolver1.
+ * It adds DataRequest parameters as query string to the HTTP request.
+ * @param url 
  * @param dataRequest 
  * @param options
  * @template T data item type
  * @returns 
  */
-export function defaultHttpDataRequestResolver<T = any>(
+export function httpDataRequestResolver1<T = any>(
     url: string,
     dataRequest: DataRequest,
-    options?: DataResultHttpRequestOptions): Observable<DataResult<T>> {
+    options?: HttpRequestOptions): Observable<DataResult<T>> {
     var query: Record<string, any> = {};
 
     const httpClient = inject(HttpClient);
@@ -55,15 +54,15 @@ export function defaultHttpDataRequestResolver<T = any>(
     );
 }
 
-/**
- * Provides the default HttpDataRequestResolver.
- * This is used to convert a DataRequest into query parameters for the HTTP (GET) request.
- * @returns 
- */
-export function withDefaultDataRequestResolver(): HttpServiceFeature {
-    return {
-        ɵproviders: [
-            { provide: DEFAULT_DATA_REQUEST_RESOLVER, useValue: defaultHttpDataRequestResolver }
-        ]
-    };
-}
+// /**
+//  * Provides httpDataRequestResolver1.
+//  * This is used to convert a DataRequest into query parameters for the HTTP (GET) request.
+//  * @returns 
+//  */
+// export function withHttpDataRequestResolver1(): HttpServiceFeature {
+//     return {
+//         ɵproviders: [
+//             { provide: DEFAULT_DATA_REQUEST_RESOLVER, useValue: HttpDataRequestResolver1 }
+//         ]
+//     };
+// }
