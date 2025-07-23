@@ -15,6 +15,7 @@ export default [
         path: 'http',
         loadChildren: () => import('./http/routes')
     },
+
     {
         path: 'components',
         children: [
@@ -61,6 +62,10 @@ export default [
             {
                 path: 'progress',
                 loadChildren: () => import('./components/progress/routes'),
+            },
+            {
+                path: 'sidenav',
+                loadChildren: () => import('./components/sidenav/routes'),
             },
             {
                 path: 'tabs',
