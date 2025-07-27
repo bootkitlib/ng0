@@ -1,23 +1,23 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { TranslatePipe } from './translate.pipe';
-import { EnumPipe } from './enum.pipe';
-import { BooleanPipe } from './boolean-pipe';
+import { TranslateEnumPipe } from './translate-enum.pipe';
+import { TranslateBooleanPipe } from './translate-boolean-pipe';
 import { DatePipe } from './date.pipe';
 
-const Declarables = [
+const Declares = [
   TranslatePipe,
-  EnumPipe,
-  BooleanPipe,
+  TranslateEnumPipe,
+  TranslateBooleanPipe,
   DatePipe
 ];
 
 @NgModule({
   imports: [
     CommonModule,
-    Declarables
+    ...Declares
   ],
-  exports: Declarables
+  exports: Declares
 })
 export class LocalizationModule {
 }

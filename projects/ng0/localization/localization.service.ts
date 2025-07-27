@@ -15,7 +15,9 @@ export class LocalizationService {
   constructor() {
   }
 
-  /** Adds a Locale */
+  /** 
+   * Adds a Locale 
+   */
   add(locale: Locale): void;
   /** Adds an array of Locales to this LocaleProvider */
   add(locales: Locale[]): void;

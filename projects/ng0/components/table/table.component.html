@@ -84,7 +84,7 @@
                                     {{cellValue | number}}
                                 </ng-container>
                                 <ng-container *ngIf="$any(col?.type)?.enum">
-                                    {{cellValue | ng0Enum:$any(col.type).enum}}
+                                    {{cellValue | ng0TranslateEnum:$any(col.type).enum}}
                                 </ng-container>
                                 <!-- <ng-container *ngIf="$any(col?.type)?.boolean">
                                     {{cellValue | ng0Bool:$any(col.type).boolean}}

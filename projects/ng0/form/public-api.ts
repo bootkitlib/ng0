@@ -7,5 +7,4 @@ export * from './validation/validators/url/url-validator.directive';
 // export * from './validation/first-error.directive';
 
 export * from './focus.directive';
-export * from './digits-only.directive';
 export * from './number.directive';

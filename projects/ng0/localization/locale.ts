@@ -18,30 +18,52 @@ export class Locale {
   /** 
    * Translates a key in the dictionary
    * @param key The key to look up
-   * @returns The translated string or the key itself if not found
+   * @param fallbackValue
+   * @returns The translated string or the fallbackValue if not found
    */
-  translate(key: string): string {
-    return this.definition.dictionary?.[key] ?? key;
+  translate(key: string, fallbackValue?: string): string | undefined {
+    return this.definition.dictionary?.[key] ?? fallbackValue;
   }
 
   /**
    * Translates an enum value 
    * @param enumName The name of the enum 
    * @param enumValue The value of the enum to translate 
+   * @param nullValueKey
+   * @param returnEnumAsFallback
+   * @param fallbackKey
    * @returns The translated string or the enum value itself if not found 
    */
-  translateEnum(enumName: string, enumValue: any): string | undefined {
-    if (this.definition?.enums && this.definition.enums[enumName])
-      return this.definition.enums[enumName][enumValue];
-    else
-      return enumValue;
+
+  translateEnum(enumName: string, enumValue: string | number | null | undefined, returnEnumAsFallback = true): string | undefined {
+    let e = this.definition.enums?.[enumName];
+    if (!e) {
+      return undefined;
+    }
+
+    if (enumValue === null) {
+      return e['[null]'] || e['[empty]'];
+    } else if (enumValue === undefined) {
+      return e['[undefined]'] || e['[empty]'];
+    } else if(enumValue === '') {
+      return e['empty'];
+    }
+
+    var result = e[enumValue];
+
+    if (result) {
+      return result;
+    }
+
+    var fallback = e['[?]'];
+    return fallback ?? (returnEnumAsFallback ? enumValue : undefined);
   }
 
-    /** 
-   * Translates a form validation error
-   * @param errorKey The key of the error to translate
-   * @param error The error object
-   */
+  /** 
+ * Translates a form validation error
+ * @param errorKey The key of the error to translate
+ * @param error The error object
+ */
   translateError(errorKey: string, error: any, fallbackMessage: string | undefined = undefined): string | undefined {
     const errors = this.definition?.form?.validation?.errors;
 
@@ -97,7 +119,7 @@ export class Locale {
    * Clones and extends this object and returns a new Locale (without modifying this object).
    */
   extend(values?: LocaleDefinitionExtend): Locale {
-    return new Locale({
+    const definition = {
       name: this.definition.name,
       rtl: this.definition.rtl,
       dictionary: { ...this.definition.dictionary, ...values?.dictionary },
@@ -107,15 +129,17 @@ export class Locale {
           errors: { ...this.definition?.form?.validation?.errors, ...values?.form?.validation?.errors }
         }
       }
-    });
+    };
+
+    return new Locale(definition);
   }
 
-    /**
-   * 
-   * @param date Date string or timestamp
-   * @returns Formatted date string based on the locale 
-   */
-  formatDate(date: string | number, format: string): string {
+  /**
+ * 
+ * @param date Date string or timestamp
+ * @returns Formatted date string based on the locale 
+ */
+  formatDate(date: Date | string | number, format?: string): string {
     return date ? new Date(date).toLocaleDateString(this.definition.name, { hour: '2-digit', minute: '2-digit' }) : '';
   }
 }

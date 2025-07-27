@@ -1,0 +1,33 @@
+<h1>Localization</h1>
+
+<h5>Localizing Enums:</h5>
+
+<h6>ng0TranslateEnum pipe</h6>
+<p>
+    Example 1 (Done): {{'Done'| ng0TranslateEnum: 'Enum1'}}<br>
+    Example 2 (Failed): {{'Failed'| ng0TranslateEnum: 'Enum1'}}<br>
+    Example 3 (Missing enum item): {{'AMissingEnumItem'| ng0TranslateEnum: 'Enum1'}}<br>
+    Example 4 (empty value localization): {{''| ng0TranslateEnum: 'Enum1'}}<br>
+    Example 5 (null value localization): {{null| ng0TranslateEnum: 'Enum1'}}<br>
+    Example 6 (undefined value localization): {{undefined| ng0TranslateEnum: 'Enum1'}}<br>
+
+</p>
+
+<h6>ng0TranslateBool pipe</h6>
+<p>
+    Example 1: {{true | ng0TranslateBool: 'ok': 'cancel'}} <br>
+    Example 2: {{false | ng0TranslateBool: 'ok': 'cancel'}} <br>
+</p>
+
+<h6>ng0Date pipe</h6>
+<p>
+    {{today | ng0Date}}
+</p>
+
+
+<h6>A dropdown for showing localized enum values</h6>
+<select name="dropdown1" [(ngModel)]="selectedValue" class="form-select" style="width: unset;">
+    @for (item of Enum1 | keyvalue; track $index) {
+    <option [ngValue]="item.value">{{item.value | ng0TranslateEnum: 'Enum1'}}</option>
+    }
+</select>

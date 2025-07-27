@@ -1,6 +1,13 @@
+import { CommonModule } from '@angular/common';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
-import { LocalizationModule } from '@bootkit/ng0/localization';
+import { FormsModule } from '@angular/forms';
+import { LocalizationModule, LocalizationService } from '@bootkit/ng0/localization';
 import { FA_IR_LOCALE } from '@bootkit/ng0/localization/locales/fa-ir';
+
+enum Enum1 {
+    done = 'Done',
+    failed = 'Failed',
+}
 
 @Component({
     selector: 'app-localization-example',
@@ -8,19 +15,34 @@ import { FA_IR_LOCALE } from '@bootkit/ng0/localization/locales/fa-ir';
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [
+        CommonModule,
+        FormsModule,
         LocalizationModule
     ]
 })
 export class LocalizationExampleComponent {
-    constructor() {
+    Enum1 = Enum1
+    today = new Date()
+    selectedValue = Enum1.failed;
+
+    constructor(private localizationService: LocalizationService) {
         var faLocale = FA_IR_LOCALE.extend({
             dictionary:{
                 'hello': 'سلام',
                 'welcome': 'خوش آمدید',
-                'ok': 'تایید - بازنویسی شده',
+            },
+            enums: {
+                Enum1: {
+                    'Done': 'انجام شده',
+                    'Failed': 'ناموفق',
+                    '[?]': '⚠️ نامعلوم',
+                    '[empty]': 'در انتظار پرداخت', // '' or null or undefined
+                    '[null]': '❌ NULL', // exactly null value
+                    '[undefined]': '❌ UNDEFINED' // exactly undefined value
+                }
             }
         });
-        console.log(faLocale.definition);
-        console.log(faLocale.translateError('e5', {a : {}}));
+
+        localizationService.add(faLocale);
     }
 }

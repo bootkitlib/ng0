@@ -2,15 +2,15 @@ import { Pipe, PipeTransform } from '@angular/core';
 import { LocalizationService } from './localization.service';
 
 @Pipe({
-  name: 'ng0Bool',
+  name: 'ng0LocalizeBool',
   standalone: true,
+  pure: false
 })
-export class BooleanPipe implements PipeTransform {
-
-  constructor(private localeProvider: LocalizationService) {
+export class LocalizeBooleanPipe implements PipeTransform {
+  constructor(private _ls: LocalizationService) {
   }
 
   transform(value: any, falseKey = 'true', trueKey: 'false') {
-    return this.localeProvider.get()!.translate(value ? trueKey : falseKey);
+    return this._ls.get()?.translate(value ? trueKey : falseKey);
   }
 }

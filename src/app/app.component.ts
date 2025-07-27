@@ -17,7 +17,7 @@ export class AppComponent {
   title = 'BootKitTest';
 
   constructor(private localizationService: LocalizationService) {
-    localizationService.add(FA_IR_LOCALE);
-    localizationService.add(EN_US_LOCALE);
+    // localizationService.add(FA_IR_LOCALE);
+    // localizationService.add(EN_US_LOCALE);
   }
 }
