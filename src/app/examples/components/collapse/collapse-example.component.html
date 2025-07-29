@@ -1,35 +1,24 @@
-<h1>Collapse Directive</h1>
+<h5>Collapse Directive</h5>
+collapse directive is a simple directive that can be used to collapse any element.
+It uses the `collapsed` input property to determine whether the element should be collapsed or not.
 
-<button class="btn btn-primary" (click)="c1 = !c1;">Collapse Directive (Collapsed: {{c1}}) </button>
+<button class="btn btn-primary mt-3" (click)="c1 = !c1;">Collapse Directive (Collapsed: {{c1}}) </button>
 
-<div ng0Collapse  [collapsed]="c1" #ref="ng0Collapse">
-        <div class=" mt-3 border p-5">
-                <p id="p1">
-                        this is a collapsable div.
-                </p>
-                <p id="p2">
-                        this is a collapsable div.
-                </p>
-                <p id="p3">
-                        this is a collapsable div.
-                </p>
-                <p>
-                        this is a collapsable div.
-                </p>
+<div ng0Collapse [collapsed]="c1" #ref="ng0Collapse" class="">
+        <div class=" mt-3 border">
+                this is a collapsable div. <br>
+                this is a collapsable div. <br>
+                this is a collapsable div. <br>
         </div>
 </div>
 
 
 
-<h1>Collapse Component</h1>
+<h5 class="mt-5">Collapse Component</h5>
 <button class="btn btn-primary" (click)="c2 = !c2">Toggle Collapse</button>
 
-<ng0-collapse [collapsed]="c2">
+<ng0-collapse [collapsed]="c2" class="mt-3">
         <div class="border mt-3">
-                this is a collapsable div. <br>
-                this is a collapsable div. <br>
-                this is a collapsable div. <br>
-                this is a collapsable div. <br>
                 this is a collapsable div. <br>
                 this is a collapsable div. <br>
                 this is a collapsable div. <br>

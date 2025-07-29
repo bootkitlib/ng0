@@ -7,12 +7,11 @@ import { EN_US_LOCALE } from '@bootkit/ng0/localization/locales/en-us';
 @Component({
   selector: 'app-examples-bootkit',
   templateUrl: './bootkit-example.component.html',
+  styleUrl: './bootkit-example.component.scss',
   standalone: true,
   imports: [
     CommonModule,
     RouterModule
-  ],
-  styleUrls: [
   ]
 })
 export class BootKitExampleComponent {

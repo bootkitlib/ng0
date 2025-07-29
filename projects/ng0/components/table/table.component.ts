@@ -55,7 +55,7 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   public pagable = input(true);
 
   /**
-   * If true, the table will show a pagination controls at the bottom.
+   * If true, the table will show pagination controls at the bottom.
    */
   public showPagination = input(true);
 

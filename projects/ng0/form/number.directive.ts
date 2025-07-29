@@ -27,6 +27,7 @@ const Keys = {
   ]
 })
 export class NumberDirective implements ControlValueAccessor {
+  /**  */
   minFractionDigits = input<number | undefined>(3);
   maxFractionDigits = input<number| undefined>(10);
   useGrouping = input<boolean>(false);

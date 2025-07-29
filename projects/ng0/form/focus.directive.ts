@@ -6,6 +6,9 @@ import { Directive, ElementRef, Input, OnChanges, SimpleChanges, OnInit } from '
   standalone: true
 })
 export class FocusDirective implements OnInit, OnChanges {
+  /** 
+   * 
+   */
   @Input() focusOnLoad = true;
   @Input() focusWhen?: boolean;
   private focused = false;

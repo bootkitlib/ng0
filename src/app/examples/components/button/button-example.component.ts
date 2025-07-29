@@ -27,7 +27,7 @@ export class ButtonExampleComponent {
             id: requestId
         }).pipe(
             // Simulate a delay
-            delay(2000),
+            delay(3000),
             takeUntilDestroyed(this.destroyRef)
         ).subscribe();
     }

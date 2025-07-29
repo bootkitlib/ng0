@@ -12,5 +12,10 @@ import { ModalModule } from '@bootkit/ng0/components/modal';
   ]
 })
 export class ModalExampleComponent {
-  show = true;
+  showModal1 = false;
+  showModal2 = false;
+  showModal3 = false;
+  showModal4 = false;
+  showModal5 = false;
+  
 }

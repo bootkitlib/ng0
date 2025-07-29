@@ -1,39 +1,58 @@
-<ng0-modal (closeRequest)="show = false" *ngIf="show" [centered]="false"  size="xl" (backdropClick)="show = false">
+<h5>Modals</h5>
+
+@if(showModal1) {
+<ng0-modal (backdropClick)="showModal1 = false">
+    <div class="modal-body">
+        <p>This is a simple modal</p>
+    </div>
+</ng0-modal>
+}
+
+@if(showModal2) {
+<ng0-modal (backdropClick)="showModal2 = false" (closeRequest)="showModal2 = false">
     <div class="modal-header">
         <h1>Modal Header</h1>
     </div>
     <div class="modal-body">
-        <p>This is a modal</p>
+        <p>This is a modal body</p>
     </div>
-    
-    <!-- <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1>
-    <h1>This is a modal</h1> -->
-
     <div class="modal-footer">
-        aaaaaaaaaa
+        Modal Footer
     </div>
 </ng0-modal>
+}
+
+@if(showModal3) {
+<ng0-modal (closeRequest)="showModal3 = false">
+    <div class="modal-header">
+        <h1>Static backdrop</h1>
+    </div>
+    <div class="modal-body">
+        <p>This is a modal body</p>
+    </div>
+    <div class="modal-footer">
+        Modal Footer
+    </div>
+</ng0-modal>
+}
+
+<div>
+    <button class="btn btn-primary" (click)="showModal1 = true">
+        Show simple modal
+    </button>
+
+    <button class="btn btn-primary ms-2" (click)="showModal2 = true">
+        Show modal with header and footer
+    </button>
+
+    <button class="btn btn-primary ms-2" (click)="showModal3 = true">
+        Static backdrop
+    </button>
+</div>
 
 
-<button (click)="show = true">Show</button>
+<h5 class="mt-5">Size</h5>
+
+<h5 class="mt-5">Allignment</h5>
+
+<h5>Full Screen</h5>
