@@ -15,7 +15,6 @@ export default [
         path: 'http',
         loadChildren: () => import('./http/routes')
     },
-
     {
         path: 'components',
         children: [

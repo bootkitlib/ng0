@@ -13,7 +13,7 @@ export class NavLinkDirective {
 
       @HostListener('click')
       private _onClick() {
-            this._nav.activeItem.set(this._navItem.id);
+            this._nav.activeItem.set(this._navItem.id());
       }
 
       @HostBinding('class.active') 
