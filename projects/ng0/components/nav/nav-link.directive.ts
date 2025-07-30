@@ -8,7 +8,7 @@ import { NavItemDirective } from './nav-item.directive';
       standalone: true,
 })
 export class NavLinkDirective {
-      constructor(public elementRef: ElementRef, private _renderer: Renderer2, private _nav: NavDirective, private _navItem: NavItemDirective) {
+      constructor(public elementRef: ElementRef, private _nav: NavDirective, private _navItem: NavItemDirective) {
       }
 
       @HostListener('click')

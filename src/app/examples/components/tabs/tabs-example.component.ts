@@ -10,5 +10,6 @@ import { NavModule } from '@bootkit/ng0/components/nav';
   ]
 })
 export class TabsExampleComponent {
-  selectedIndex = 1;
+  selectedItem1 = 1;
+  selectedItem2 = 1;
 }

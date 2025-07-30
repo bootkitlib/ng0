@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { NavDirective } from './nav.directive';
 import { NavLinkDirective } from './nav-link.directive';
-import { TabContentComponent } from './tab-content.component';
-import { TabPaneDirective } from './tab-pane.directive';
+import { NavContentContainerComponent } from './nav-content-container.component';
+import { NavContentDirective } from './nav-content.directive';
 import { NavItemDirective } from './nav-item.directive';
 
 const items = [
   NavDirective,
   NavItemDirective,
   NavLinkDirective,
-  TabContentComponent,
-  TabPaneDirective
+  NavContentContainerComponent,
+  NavContentDirective
 ];
 
 @NgModule({

@@ -6,9 +6,16 @@ import { Directive, ElementRef, Renderer2, input, model } from '@angular/core';
       standalone: true,
 })
 export class NavDirective {
+      /**
+       * The active item.
+       */
       activeItem = model<any>(0);
+
+      /**
+       * Whether the navigation is disabled.
+       */
       disabled = input(false);
 
-      constructor(private _elementRef: ElementRef, private _renderer: Renderer2) {
+      constructor() {
       }
 }

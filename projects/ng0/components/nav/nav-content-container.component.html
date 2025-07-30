@@ -1,0 +1,5 @@
+@for (content of _contents; track $index) {
+    @if(content.id() === _activeItem()) {
+        <ng-container *ngTemplateOutlet="content.templateRef;"></ng-container>
+    }
+}

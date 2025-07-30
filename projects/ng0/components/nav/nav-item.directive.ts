@@ -10,6 +10,6 @@ export class NavItemDirective {
       id = input.required<any>({alias: 'ng0NavItem'});
       disabled = input(false);
 
-      constructor(public elementRef: ElementRef, private _renderer: Renderer2, private _nav: NavDirective) {
+      constructor(public elementRef: ElementRef) {
       }
 }
