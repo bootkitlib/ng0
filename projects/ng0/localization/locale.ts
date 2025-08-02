@@ -18,11 +18,11 @@ export class Locale {
   /** 
    * Translates a key in the dictionary
    * @param key The key to look up
-   * @param fallbackValue
+   * @param fallback Optional fallback value if the key is not found
    * @returns The translated string or the fallbackValue if not found
    */
-  translate(key: string, fallbackValue?: string): string | undefined {
-    return this.definition.dictionary?.[key] ?? fallbackValue;
+  translate(key: string, fallback?: string): string | undefined {
+    return this.definition.dictionary?.[key] ?? fallback;
   }
 
   /**

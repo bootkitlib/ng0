@@ -1,29 +1,31 @@
-import { AfterContentInit, Component, ContentChild, ContentChildren, DestroyRef, input, OnDestroy, OnInit, QueryList } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, DestroyRef, Host, HostBinding, input, model, OnDestroy, OnInit, QueryList } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TableColumnDirective } from './table-column.directive';
 import { TableDetailRowDirective } from './table-detail-row.directive';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TablePagingComponent } from './paging/paging.component';
 import { formatString } from '@bootkit/ng0/common';
 import { LocalizationModule } from '@bootkit/ng0/localization';
-import { ArrayDataSource, AsyncDataSource, DataLoader, DataRequest, DataRequestFilter, DataSource } from '@bootkit/ng0/data';
+import { ArrayDataSource, AsyncDataSource, DataLoader, DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataResult, DataSource } from '@bootkit/ng0/data';
+import { PaginationComponent } from '@bootkit/ng0/components/pagination';
 
 @Component({
   selector: 'ng0-table',
   exportAs: 'ng0Table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,
     FormsModule,
     LocalizationModule,
-    TablePagingComponent
+    PaginationComponent
   ]
 })
 export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
+
   /**
    * The data source for the table.
    * This can be an array of data, a function that returns an observable of data,
@@ -52,7 +54,13 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * If true, the table will support pagination.
    * If false, the table will load all records at once.
    */
-  public pagable = input(true);
+  public paging = input(true);
+
+  /**
+   * If true, the table will support sorting.
+   * This will add a sort icon to each column header.
+   */
+  public sortable = input(true);
 
   /**
    * If true, the table will show pagination controls at the bottom.
@@ -66,11 +74,18 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   public pageSize = input(10);
 
   /**
-   * The current page index.
+   * The initial page index to load when the table is initialized.
    * This is only used if pagable is true.
-   * The first page is 0.
+   * The index starts from 1.
+   * Default is 1.
    */
-  public pageIndex = input(0);
+  public initialPageIndex = input(1);
+
+  /**
+   * Maximum number of visible pages.
+   * Default is 10.
+   */
+  public maxVisiblePages = input<number>(10);
 
   /**
    * The CSS class to apply to the table element.
@@ -87,6 +102,11 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * The caption of the table.
    */
   public caption = input<string>();
+
+  /**
+   * The height of the table in pixels.
+   * This can be used to set a fixed height for the table.
+   */
   public height = input<number>();
 
   /**
@@ -103,9 +123,9 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   @ContentChild(TableDetailRowDirective)
   protected _detailRow?: TableDetailRowDirective;
 
-  protected _data?: any[];
-  protected _totalRecords?: number;
-  protected _totalPages?: number;
+  protected _dataResult?: DataResult;
+  protected _lastRequest?: DataRequest; // The last data request made to the data source
+  protected _loadingRequest?: DataRequest; // The current data request being processed
   protected _rowStates = new Map<any, { expanded: boolean }>();
   protected _formatString = formatString;
   private _changeSubscription?: Subscription;
@@ -134,31 +154,49 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
 
   ngAfterContentInit(): void {
     if (this.autoLoad()) {
-      this.reload();
+      this.load(this.initialPageIndex());
     }
   }
 
-  reload() {
-    const filters = this._columns
-      .filter(x => x.filterable && x.filterValue != '' && x.filterValue != undefined)
-      .map(col => ({ field: col.filterField ?? col.field!, value: col.filterValue, operator: 'EQ' }));
-    let pageIndex: number | undefined;
-    let pageSize: number | undefined;
+  /**
+   * Load data for the specified page index (optional).
+   * @param pageIndex The page index to load.
+   */
+  load(pageIndex?: number) {
+    let page: DataRequestPage | undefined;
+    let filters: DataRequestFilter[] = [];
+    let sort: DataRequestSort | undefined;
 
-    if (this.pagable()) {
-      pageIndex = this.pageIndex();
-      pageSize = this.pageSize();
+    if (this.filterable()) {
+      this._columns.forEach(col => {
+        if (col.filterable && col.filterValue != '' && col.filterValue != undefined) {
+          filters.push({ field: col.filterField ?? col.field!, value: col.filterValue, operator: 'EQ' });
+        }
+      });
     }
 
-    var dr = new DataRequest({ pageIndex, pageSize, filters })
-    this._dataSource.load(dr).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(result => {
-      this._data = result.data;
-      this._totalRecords = result.total;
-      this._totalPages = Math.ceil(result.total! / this.pageSize());
+    if (this.paging()) {
+      page = { index: pageIndex || this._lastRequest?.page?.index || 1, size: this.pageSize(), zeroBased: false };
+    }
+
+    if (this.sortable()) {
+      // sort = ...
+    }
+
+    this._loadingRequest = new DataRequest({ page, filters, sort, select: [], computeTotal: true });
+
+    this._dataSource.load(this._loadingRequest).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(result => {
+      this._dataResult = result;
+      this._lastRequest = this._loadingRequest;
+      this._loadingRequest = undefined;
     });
   }
 
-  get loading() {
+  /**
+   * Determines if the table is currently loading data.
+   */
+  @HostBinding('class.ng0-loading')
+  public get loading() {
     return this._dataSource.loading;
   }
 
@@ -173,17 +211,12 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     return value;
   }
 
-  protected onNextPageClick() {
-    // ++this.pageIndex()
-    this.reload();
+
+  protected _onPageChange(pageIndex: number) {
+    this.load(pageIndex);
   }
 
-  protected onPreviousPageClick() {
-    // --this.pageIndex
-    this.reload();
-  }
-
-  protected onToggleRowDetailClick(row: any) {
+  protected _onToggleRowDetailClick(row: any) {
     var state = this._rowStates.get(row)
     if (!state) {
       this._rowStates.set(row, { expanded: true });

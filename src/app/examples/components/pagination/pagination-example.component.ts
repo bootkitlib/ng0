@@ -6,7 +6,6 @@ import { PopoverDirective } from '@bootkit/ng0/components/popover';
 @Component({
     selector: 'app-examples-pagination',
     templateUrl: './pagination-example.component.html',
-    styleUrls: ['./pagination-example.component.css'],
     standalone: true,
     imports: [
         CommonModule,

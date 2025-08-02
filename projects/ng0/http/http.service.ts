@@ -33,6 +33,12 @@ export class HttpService {
     this._baseUrl = this._config.baseUrl ?? '';
   }
 
+  /**
+   * Sends a GET request to the specified URL.
+   * @param url The URL to send the request to.
+   * @param options The options for the request.
+   * @returns An observable of the response.
+   */
   public get<T>(url: string, options?: HttpRequestOptions): Observable<T> {
     this._verifyOptions(options);
     const transferStateData = this._findInTransferState<T>(options);
@@ -53,6 +59,15 @@ export class HttpService {
   }
 
 
+  /**
+   * Sends a DataRequest to the specified URL and returns a DataResult.
+   * This method is used for paginated or filtered data requests.
+   * It uses the configured DataRequestResolver to handle the request. 
+   * @param url The URL to send the request to.
+   * @param request The DataRequest object containing the request parameters.
+   * @param options The options for the request.
+   * @returns An observable of DataResult<T>.
+   */
   public getDataResult<T>(url: string, request: DataRequest, options?: HttpRequestOptions): Observable<DataResult<T>> {
     this._verifyOptions(options);
     const transferStateData = this._findInTransferState<DataResult<T>>(options);
@@ -75,6 +90,13 @@ export class HttpService {
     return this._handleEvents(obs, url, options);
   }
 
+  /**
+   * Sends a POST request to the specified URL with the given body.
+   * @param url The URL to send the request to.
+   * @param body The body of the request.
+   * @param options The options for the request.
+   * @returns An observable of the response.
+   */
   public post<T>(url: string, body: any, options?: HttpRequestOptions): Observable<T> {
     this._verifyOptions(options);
     this._eventsSubject.next({ type: 'Send', url, options });
@@ -83,6 +105,13 @@ export class HttpService {
     return this._handleEvents<T>(obs, url, options);
   }
 
+  /**
+   * Sends a PUT request to the specified URL with the given body.
+   * @param url The URL to send the request to.
+   * @param body The body of the request.
+   * @param options The options for the request.
+   * @returns An observable of the response.
+   */
   public put<T>(url: string, body: any, options?: HttpRequestOptions): Observable<T> {
     this._verifyOptions(options);
     this._eventsSubject.next({ type: 'Send', url, options });
@@ -91,6 +120,12 @@ export class HttpService {
     return this._handleEvents<T>(obs, url, options);
   }
 
+  /**
+   * Sends a DELETE request to the specified URL.
+   * @param url The URL to send the request to.
+   * @param options The options for the request.
+   * @returns An observable of the response.
+   */
   public delete<T>(url: string, options?: HttpRequestOptions): Observable<T> {
     this._verifyOptions(options);
     this._eventsSubject.next({ type: 'Send', url, options });

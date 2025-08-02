@@ -3,20 +3,20 @@
 <nav>
   <ul class="pagination">
     @if(showFirstButton()) {
-    <li class="page-item" [class.disabled]="_selectedPage <= 1">
+    <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage <= 1">
       <button class="page-link" (click)="itemClick.emit(1)">
         <ng-content select="first">
-          First
+          {{'first' | ng0Translate}}
         </ng-content>
       </button>
     </li>
     }
 
     @if(showPreviousButton()) {
-    <li class="page-item" [class.disabled]="_selectedPage <= 1">
-      <button class="page-link" (click)="itemClick.emit(_selectedPage - 1)">
+    <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage <= 1">
+      <button class="page-link" (click)="itemClick.emit(_selectedPage! - 1)">
         <ng-content select="previous">
-          Previous
+          {{'previous' | ng0Translate}}
         </ng-content>
       </button>
     </li>
@@ -25,29 +25,36 @@
     @for (page of _visiblePages(); track page) {
     <li class="page-item" [class.active]="_selectedPage === page">
       <button class="page-link" (click)="itemClick.emit(page)">
-          {{page}}
+        {{page}}
       </button>
     </li>
     }
 
     @if(showNextButton()) {
-    <li class="page-item" [class.disabled]="_selectedPage >= _totalPagesCount">
-      <button class="page-link" (click)="itemClick.emit(_selectedPage + 1)">
+    <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage >= _totalPagesCount">
+      <button class="page-link" (click)="itemClick.emit(_selectedPage! + 1)">
         <ng-content select="next">
-          Next
+          {{'next' | ng0Translate}}
         </ng-content>
       </button>
     </li>
     }
 
     @if(showLastButton()) {
-    <li class="page-item" [class.disabled]="_selectedPage >= _totalPagesCount">
+    <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage >= _totalPagesCount">
       <button class="page-link" (click)="itemClick.emit(_totalPagesCount)">
         <ng-content select="last">
-          Last
+          {{'last' | ng0Translate}}
         </ng-content>
       </button>
     </li>
     }
   </ul>
 </nav>
+
+
+<style>
+  .pagination {
+    margin: 0;
+  }
+</style>

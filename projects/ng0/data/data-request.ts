@@ -12,17 +12,13 @@ export class DataRequest {
     public computeTotal?: boolean;
 
     constructor(options?: {
-        pageIndex?: number,
-        pageSize?: number,
+        page?: DataRequestPage,
         filters?: DataRequestFilter[],
         sort?: DataRequestSort,
         select?: string[],
         computeTotal?: boolean,
     }) {
-        if (Number.isInteger(options?.pageIndex) && Number.isInteger(options?.pageSize)) {
-            this.page = { index: options!.pageIndex!, size: options!.pageSize! };
-        }
-
+        this.page = options?.page;
         this.filters = options?.filters;
         this.sort = options?.sort;
         this.select = options?.select;
@@ -31,13 +27,24 @@ export class DataRequest {
 }
 
 /**
- * Represents a page in a DataRequest.
- * @property index The index of the page (0-based).
- * @property size The size of the page (number of items per page).
+ * Represents a data request page.
  */
 export interface DataRequestPage {
+    /**
+     * Index of the page.
+     * If zeroBased is true, the index starts from 0.
+     */
     index: number;
+
+    /**
+     * Size of the page, i.e., number of items in each page.
+     */
     size: number;
+
+    /**
+     * Indicates if the index is zero-based.
+     */
+    zeroBased: boolean;
 }
 
 /**
