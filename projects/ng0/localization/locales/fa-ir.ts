@@ -29,5 +29,11 @@ export const FA_IR_LOCALE = new Locale({
                 email: (e) => `ایمیل نامعتبر است`,
             }
         }
+    },
+    components: {
+        table: {
+            noRecords: 'رکوردی وجود ندارد',
+            pagingInfo: (info) => `نمایش ${formatNumber(info.firstRecord)}-${formatNumber(info.lastRecord)} از ${formatNumber(info.totalRecords!)} رکورد`
+        }
     }
 });

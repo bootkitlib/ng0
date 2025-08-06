@@ -29,5 +29,11 @@ export const EN_US_LOCALE = new Locale({
                 email: (e) => `Invalid email`,
             }
         }
+    },
+    components: {
+        table: {
+            noRecords: 'No records found.',
+            pagingInfo: (info) => `Showingsdsd ${formatNumber(info.firstRecord)}-${formatNumber(info.lastRecord)} of ${formatNumber(info.totalRecords!)} records`
+        }
     }
 });

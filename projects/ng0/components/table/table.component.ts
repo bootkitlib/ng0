@@ -1,4 +1,4 @@
-import { AfterContentInit, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, DestroyRef, Host, HostBinding, input, model, OnDestroy, OnInit, QueryList } from '@angular/core';
+import { AfterContentInit, Component, ContentChild, ContentChildren, DestroyRef, HostBinding, input, OnDestroy, OnInit, QueryList } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TableColumnDirective } from './table-column.directive';
 import { TableDetailRowDirective } from './table-detail-row.directive';
@@ -6,10 +6,16 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { formatString } from '@bootkit/ng0/common';
-import { LocalizationModule } from '@bootkit/ng0/localization';
-import { ArrayDataSource, AsyncDataSource, DataLoader, DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataResult, DataSource } from '@bootkit/ng0/data';
+import { LocalizationModule, LocalizationService, TableComponentPagingFormatter } from '@bootkit/ng0/localization';
+import { DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataResult, DataSource, convertToDataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { PaginationComponent } from '@bootkit/ng0/components/pagination';
+import { TablePagingOptions } from './types';
 
+/**
+ * TableComponent is a generic table component that can display data in a tabular format.
+ * It supports features like pagination, sorting, filtering, and row details.
+ * It can be used with any data source that implements the DataSource interface.
+ */
 @Component({
   selector: 'ng0-table',
   exportAs: 'ng0Table',
@@ -31,7 +37,7 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * This can be an array of data, a function that returns an observable of data,
    * or an instance of DataSource.
    */
-  public source = input.required<Array<any> | DataLoader | DataSource | undefined | null>();
+  public source = input.required<DataSourceLike<any>>();
 
   /**
    * If true, the table will automatically load data when initialized.
@@ -54,7 +60,18 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * If true, the table will support pagination.
    * If false, the table will load all records at once.
    */
-  public paging = input(true);
+  public pageable = input<TablePagingOptions, TablePagingOptions | boolean>({}, {
+    transform: v => {
+      if (typeof v === 'boolean') {
+        v = {};
+      }
+
+      v.pageSize = v.pageSize ?? 10;
+      v.maxVisiblePages = v.maxVisiblePages ?? 10;
+      v.showPagingControls = v.showPagingControls ?? true;
+      return v;
+    }
+  });
 
   /**
    * If true, the table will support sorting.
@@ -65,13 +82,13 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   /**
    * If true, the table will show pagination controls at the bottom.
    */
-  public showPagination = input(true);
+  // public showPagination = input(true);
 
   /** 
    * The number of records to show per page.
    * This is only used if pagable is true.
    */
-  public pageSize = input(10);
+  // public pageSize = input(10);
 
   /**
    * The initial page index to load when the table is initialized.
@@ -80,12 +97,6 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * Default is 1.
    */
   public initialPageIndex = input(1);
-
-  /**
-   * Maximum number of visible pages.
-   * Default is 10.
-   */
-  public maxVisiblePages = input<number>(10);
 
   /**
    * The CSS class to apply to the table element.
@@ -130,22 +141,16 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   protected _formatString = formatString;
   private _changeSubscription?: Subscription;
   protected _dataSource!: DataSource;
+  protected _pagingFormatter!: TableComponentPagingFormatter;
 
-  constructor(private _destroyRef: DestroyRef) {
+  constructor(private _ls: LocalizationService, private _destroyRef: DestroyRef) {
   }
 
   ngOnInit(): void {
-    if (Array.isArray(this.source())) {
-      this._dataSource = new ArrayDataSource(this.source() as Array<any>);
-    } else if (typeof this.source() == 'function') {
-      this._dataSource = new AsyncDataSource(this.source() as DataLoader);
-    } else if (this.source() instanceof DataSource) {
-      this._dataSource = this.source() as DataSource;
-    } else if (this.source() == undefined) {
-      this._dataSource = new ArrayDataSource([]);
-    } else {
-      throw new Error('Invalid data source provided to ng0-table.');
-    }
+    this._dataSource = convertToDataSource(this.source());
+    const locale = this._ls.get();
+    this._pagingFormatter = locale?.definition.components?.table?.pagingInfo ??
+      ((o) => `Showing ${o.firstRecord}-${o.lastRecord} of ${o.totalRecords} records`);
 
     // this._changeSubscription = this.dataSource().change.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(result => {
     //   this.reload();
@@ -175,8 +180,8 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
       });
     }
 
-    if (this.paging()) {
-      page = { index: pageIndex || this._lastRequest?.page?.index || 1, size: this.pageSize(), zeroBased: false };
+    if (this.pageable()) {
+      page = { index: pageIndex || this._lastRequest?.page?.index || 1, size: this.pageable().pageSize || 10, zeroBased: false };
     }
 
     if (this.sortable()) {
@@ -213,6 +218,8 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
 
 
   protected _onPageChange(pageIndex: number) {
+    debugger
+    
     this.load(pageIndex);
   }
 
@@ -229,6 +236,8 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     var state = this._rowStates.get(row)
     return state == undefined ? false : state.expanded;
   }
+
+
 
   ngOnDestroy(): void {
     this._changeSubscription?.unsubscribe();

@@ -1,6 +1,6 @@
 <h5>Data Table</h5>
 
-<ng0-table [source]="source1" [paging]="true">
+<ng0-table [source]="source1" [pageable]="{}">
     <ng0-table-col field="id" title="id"></ng0-table-col>
     <ng0-table-col field="name" title="name"></ng0-table-col>
     <ng0-table-col field="description" title="description"></ng0-table-col>
@@ -12,8 +12,8 @@
     </ng0-table-col>
 
 
-    <ng-container ngProjectAs="paging-first"> << </ng-container>
+    <!-- <ng-container ngProjectAs="paging-first"> << </ng-container>
     <ng-container ngProjectAs="paging-last">>></ng-container>
     <ng-container ngProjectAs="paging-next"> > </ng-container>
-    <ng-container ngProjectAs="paging-previous"> < </ng-container>
+    <ng-container ngProjectAs="paging-previous"> < </ng-container> -->
 </ng0-table>

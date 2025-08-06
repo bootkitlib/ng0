@@ -1,5 +1,7 @@
-@let data = _dataResult?.data;
-@let pageIndex = _lastRequest?.page?.index;
+@let $data = _dataResult?.data;
+@let $pageIndex = _lastRequest?.page?.index;
+@let $pagable = pageable();
+@let $anyRecords = $data && $data.length > 0 ;
 
 <div class="table-responsive" [style.height]="height()" [class.table-scrollable]="height()! > 0">
     <table class="table" [ngClass]="tableClass()">
@@ -44,8 +46,8 @@
         </thead>
 
         <tbody>
-            <ng-container *ngIf="data && data.length! > 0">
-                <ng-container *ngFor="let row of data; let i=index">
+            <ng-container *ngIf="$data && $data.length! > 0">
+                <ng-container *ngFor="let row of $data; let i=index">
                     <tr [class.table-active]="isRowExpanded(row)">
                         <td class="detail-row-expander" *ngIf="_detailRow">
                             <button class="btn" (click)="_onToggleRowDetailClick(row)"
@@ -57,8 +59,8 @@
                         </td>
 
                         <td class="row-number text-muted" *ngIf="showRowNumbers()">
-                            @if(pageIndex != undefined) {
-                            {{pageSize() * pageIndex + i + 1}}
+                            @if($pageIndex != undefined) {
+                            {{pageable().pageSize! * $pageIndex + i + 1}}
                             }@else {
                             }
                         </td>
@@ -119,7 +121,7 @@
 
             </ng-container>
 
-            <tr *ngIf="data?.length === 0">
+            <tr *ngIf="$data?.length === 0">
                 <td [colSpan]="_columns.length + (showRowNumbers() ? 1 : 0)" class="text-center text-muted small p-2">
                     {{'noRecords' | ng0Translate}}
                 </td>
@@ -128,29 +130,22 @@
     </table>
 </div>
 
+
 <div class="ng0-table-footer d-flex align-items-baseline">
-    @if(paging() && showPagination() && data) {
-    @let firstItem = pageSize() * (pageIndex! - 1) + 1;
-    @let lastItem = firstItem + data.length - 1;
-    @let totalItems = _dataResult?.total!;
+    @if($pagable && $pagable.showPagingControls && $anyRecords) {
+    @let firstRecord = $pagable.pageSize! * ($pageIndex! - 1) + 1;
+    @let lastRecord = firstRecord + $data.length - 1;
+    @let totalRecords = _dataResult?.total!;
 
-    <div class="ng0-paging-options">
-        <select name="pageSizeOptions" class=" form-select w-auto d-inline-block">
-            <option [ngValue]="10" selected>10</option>
-        </select>
-    </div>
-
-    <div class="ng0-paging-controls ms-2">
+    <div class="ng0-table-paging-pages me-2">
         <ng0-pagination class="mb-0 d-inline-block"
-                        [showFirstButton]="false"
-                        [showLastButton]="false"
-                        [showNextButton]="false"
-                        [showPreviousButton]="false"
+                        [showFirstLastButtons]="$pagable.showFirstLastButtons == true"
+                        [showNextPreviousButtons]="$pagable.showNextPreviousButtons == true"
                         [totalRecords]="_dataResult?.total!"
-                        [pageSize]="pageSize()"
-                        [selectedPage]="pageIndex"
+                        [pageSize]="pageable().pageSize!"
+                        [selectedPage]="$pageIndex"
                         (itemClick)="_onPageChange($event)"
-                        [maxVisiblePages]="maxVisiblePages()">
+                        [maxVisiblePages]="$pagable.maxVisiblePages!">
 
             <ng-container ngProjectAs="first">
                 <ng-content select="paging-first">
@@ -178,12 +173,22 @@
         </ng0-pagination>
     </div>
 
-    <div class="ng0-paging-info ms-auto">
+    @if($pagable.showPageSizeOptions || $pagable.showPageSizeOptions == undefined) {
+    <div class="ng0-table-paging-options">
+        <select name="pageSizeOptions" class=" form-select w-auto d-inline-block">
+            <option [ngValue]="10" selected>10</option>
+        </select>
+    </div>
+    }
+
+    @if($pagable.showPagingInfo == undefined || $pagable.showPagingInfo) {
+    <div class="ng0-table-paging-info ms-auto">
         <ng-content select="paging-info">
-            {{'showing' | ng0Translate}} {{firstItem}}-{{lastItem}} {{'of' | ng0Translate}} {{totalItems}} {{'records' |
-            ng0Translate}}
+            {{_pagingFormatter({firstRecord, lastRecord, totalRecords, currentPage: $pageIndex! })}}
         </ng-content>
     </div>
+    }
+
     }
 </div>
 

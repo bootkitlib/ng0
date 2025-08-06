@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, ChangeDetectionStrategy, input, computed, Output, EventEmitter } from '@angular/core';
 import { TranslatePipe } from '@bootkit/ng0/localization';
 
@@ -5,9 +6,10 @@ import { TranslatePipe } from '@bootkit/ng0/localization';
   selector: 'ng0-pagination',
   exportAs: 'ng0Pagination',
   templateUrl: './pagination.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush,
+  // changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
+    CommonModule,
     TranslatePipe
   ]
 })
@@ -34,28 +36,16 @@ export class PaginationComponent {
   public maxVisiblePages = input<number>(10);
 
   /**
-   * Show first button.
+   * Show first and last buttons.
    * Default is true.
    */
-  public showNextButton = input<boolean>(true);
+  public showNextPreviousButtons = input<boolean | undefined>(true);
 
   /**
-   * Show previous button.
+   * Show first and last buttons.
    * Default is true.
    */
-  public showPreviousButton = input<boolean>(true);
-
-  /**
-   * Show first button.
-   * Default is true.
-   */
-  public showFirstButton = input<boolean>(true);
-
-  /**
-   * Show last button.
-   * Default is true.
-   */
-  public showLastButton = input<boolean>(true);
+  public showFirstLastButtons = input<boolean | undefined>(true);
 
   /**
    * Total number of pages.
@@ -66,7 +56,7 @@ export class PaginationComponent {
 
   /**
    * Emits the selected page index when a page is clicked.
-   * The index starts from 0.
+   * The index starts from 1.
    */
   @Output() public itemClick = new EventEmitter<number>();
 
@@ -115,4 +105,11 @@ export class PaginationComponent {
 
     return indices;
   });
+
+  public _onPageChange(pageIndex: number) {
+    debugger
+    console.log('click')
+    this.itemClick.emit(pageIndex);
+  }
+
 }

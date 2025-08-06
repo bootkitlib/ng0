@@ -25,3 +25,4 @@ export abstract class DataSource<T=any> {
 
   abstract load(request: DataRequest): Observable<DataResult>;
 }
+

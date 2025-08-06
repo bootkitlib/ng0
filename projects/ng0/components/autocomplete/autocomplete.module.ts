@@ -1,16 +1,18 @@
 import { NgModule } from '@angular/core';
-import { AutocompleteComponent } from './autocomplete.component';
+import { AutocompleteContainerComponent } from './autocomplete-container.component';
 import { AutocompleteTriggerDirective } from './autocomplete-trigger.directive';
+import { AutocompleteComponent } from './autocomplete.component';
+
+
+const items = [
+    AutocompleteContainerComponent,
+    AutocompleteTriggerDirective,
+    AutocompleteComponent
+]
 
 @NgModule({
-    imports: [
-        AutocompleteComponent,
-        AutocompleteTriggerDirective
-    ],
-    exports: [
-        AutocompleteComponent,
-        AutocompleteTriggerDirective
-    ]
+    imports: items,
+    exports: items
 })
 export class AutocompleteModule {
 }

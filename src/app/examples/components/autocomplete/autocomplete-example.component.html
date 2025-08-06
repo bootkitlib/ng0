@@ -1,0 +1,13 @@
+<h5>Autocomplete</h5>
+
+<input type="text"
+       class="form-control"
+       name="fruit"
+       [(ngModel)]="fruit"
+       ng0Autocomplete
+       [formatter]="formatter"
+       [source]="[{name: 'Apple', value: 'apple'}, {name: 'Banana', value: 'banana'}, {name: 'Cherry', value: 'cherry'}, {name: 'Date', value: 'date'}]"/>
+
+<ng0-autocomplete>
+
+</ng0-autocomplete>

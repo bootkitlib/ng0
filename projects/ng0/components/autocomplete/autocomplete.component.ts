@@ -1,23 +1,16 @@
-import { Component, ElementRef, OnInit, Renderer2 } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 
 @Component({
     selector: 'ng0-autocomplete',
-    exportAs: 'ng0Autocomplete',
-    templateUrl: './autocomplete.component.html',
+    template: '',
     standalone: true,
+    imports: [CommonModule],
     // changeDetection: ChangeDetectionStrategy.OnPush,
-    styles: `:host {display: block;}`
 })
-export class AutocompleteComponent implements OnInit {
+export class AutocompleteComponent {
 
-    constructor(
-        private _element: ElementRef,
-        private _renderer: Renderer2,
-        
-        ) {
-        // this._renderer.addClass(this._element.nativeElement, 'accordion');
+    constructor() {
     }
 
-    ngOnInit(): void {
-    }
 }

@@ -17,7 +17,24 @@ export class AppComponent {
   title = 'BootKitTest';
 
   constructor(private localizationService: LocalizationService) {
-    // localizationService.add(FA_IR_LOCALE);
-    // localizationService.add(EN_US_LOCALE);
+
+    var faLocale = FA_IR_LOCALE.extend({
+      dictionary: {
+        'hello': 'سلام',
+        'welcome': 'خوش آمدید',
+      },
+      enums: {
+        Enum1: {
+          'Done': 'انجام شده',
+          'Failed': 'ناموفق',
+          '[?]': '⚠️ نامعلوم',
+          '[empty]': 'در انتظار پرداخت', // '' or null or undefined
+          '[null]': '❌ NULL', // exactly null value
+          '[undefined]': '❌ UNDEFINED' // exactly undefined value
+        }
+      }
+    });
+
+    localizationService.add(faLocale);
   }
 }

@@ -2,11 +2,7 @@ import { Route } from '@angular/router';
 import { BootKitExampleComponent } from './bootkit-example.component';
 
 export default [
-    {
-        path: '',
-        pathMatch: 'full',
-        component: BootKitExampleComponent,
-    },
+
     {
         path: 'localization',
         loadChildren: () => import('./localization/routes')
@@ -21,6 +17,10 @@ export default [
             {
                 path: 'accordion',
                 loadChildren: () => import('./components/accordion/routes')
+            },
+            {
+                path: 'autocomplete',
+                loadChildren: () => import('./components/autocomplete/routes')
             },
             {
                 path: 'button',
@@ -80,5 +80,9 @@ export default [
             },
         ]
     },
-
+    {
+        path: '',
+        pathMatch: 'full',
+        component: BootKitExampleComponent,
+    },
 ] satisfies Route[];

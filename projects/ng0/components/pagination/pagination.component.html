@@ -2,7 +2,7 @@
 
 <nav>
   <ul class="pagination">
-    @if(showFirstButton()) {
+    @if(showFirstLastButtons() || showFirstLastButtons() == undefined) {
     <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage <= 1">
       <button class="page-link" (click)="itemClick.emit(1)">
         <ng-content select="first">
@@ -12,7 +12,7 @@
     </li>
     }
 
-    @if(showPreviousButton()) {
+    @if(showNextPreviousButtons() || showNextPreviousButtons() == undefined) {
     <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage <= 1">
       <button class="page-link" (click)="itemClick.emit(_selectedPage! - 1)">
         <ng-content select="previous">
@@ -24,13 +24,13 @@
 
     @for (page of _visiblePages(); track page) {
     <li class="page-item" [class.active]="_selectedPage === page">
-      <button class="page-link" (click)="itemClick.emit(page)">
+      <button class="page-link" (click)="_onPageChange(page)">
         {{page}}
       </button>
     </li>
     }
 
-    @if(showNextButton()) {
+    @if(showNextPreviousButtons() || showNextPreviousButtons() == undefined) {
     <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage >= _totalPagesCount">
       <button class="page-link" (click)="itemClick.emit(_selectedPage! + 1)">
         <ng-content select="next">
@@ -40,7 +40,7 @@
     </li>
     }
 
-    @if(showLastButton()) {
+    @if(showFirstLastButtons() || showFirstLastButtons() == undefined) {
     <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage >= _totalPagesCount">
       <button class="page-link" (click)="itemClick.emit(_totalPagesCount)">
         <ng-content select="last">
@@ -52,7 +52,7 @@
   </ul>
 </nav>
 
-
+<button (click)="_onPageChange(0)">sdf</button>
 <style>
   .pagination {
     margin: 0;

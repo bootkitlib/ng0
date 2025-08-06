@@ -31,6 +31,19 @@ export interface LocaleDefinition {
       errors?: LocaleValidationErrorTranslators
     }
   }
+  components?: {
+    table?: {
+      /**
+       * No records found message.
+       */
+      noRecords?: string;
+
+      /**
+       * A format function to format the paging info.
+       */
+      pagingInfo?: TableComponentPagingFormatter;
+    }
+  }
 
   // date?: {
   //   calendars?: {
@@ -45,14 +58,28 @@ export interface LocaleDefinition {
   // }
 };
 
+/**
+ * A function to format the paging info of a table.
+ * 
+ */
+export type TableComponentPagingFormatter = (info: {
+  /**
+   * The first record in the current page.
+   */
+  firstRecord: number,
 
-export type LocaleDefinitionExtend = {
-  dictionary?: LocaleDictionary;
-  enums?: LocaleEnums,
-  form?: {
-    validation?: {
-      /** Form validation error translators. */
-      errors?: LocaleValidationErrorTranslators
-    }
-  }
-};
+  /**
+   * The last record in the current page.
+   */
+  lastRecord: number,
+
+  /**
+   * The total number of records.
+   */
+  totalRecords?: number,
+
+  /**
+   * The current page index.
+   */
+  currentPage: number
+}) => string;

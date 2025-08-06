@@ -1,4 +1,4 @@
-import { LocaleDefinitionExtend, LocaleDefinition } from "./locale-definition";
+import { LocaleDefinition } from "./locale-definition";
 import { TranslatedValidationError } from "./types";
 
 /** Locale */
@@ -118,20 +118,8 @@ export class Locale {
   /**
    * Clones and extends this object and returns a new Locale (without modifying this object).
    */
-  extend(values?: LocaleDefinitionExtend): Locale {
-    const definition = {
-      name: this.definition.name,
-      rtl: this.definition.rtl,
-      dictionary: { ...this.definition.dictionary, ...values?.dictionary },
-      enums: { ...this.definition.enums, ...values?.enums },
-      form: {
-        validation: {
-          errors: { ...this.definition?.form?.validation?.errors, ...values?.form?.validation?.errors }
-        }
-      }
-    };
-
-    return new Locale(definition);
+  extend(definition?: Omit<LocaleDefinition, 'name'>): Locale {
+    return new Locale({...this.definition, ...definition });
   }
 
   /**

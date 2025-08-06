@@ -15,12 +15,6 @@
     "paths": {
       "@bootkit/ng0/*": [
         "./projects/ng0/*"
-      ],
-      "@app/common": [
-        "./src/app/common"
-      ],
-      "local-ir": [
-        "./dist/local-ir"
       ]
     },
     "esModuleInterop": true,

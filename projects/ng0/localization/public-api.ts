@@ -1,4 +1,5 @@
 export * from './locale';
+export * from './locale-definition';
 export * from './localization.service';
 export * from './localization.module';
 export * from './types';

@@ -59,14 +59,31 @@ export interface DataRequestSort {
 
 /**
  * Represents a filter in a DataRequest.
- * @property field The field to filter by.
- * @property value The value to filter by.
- * @property operator The operator to use for filtering.
  */
 export interface DataRequestFilter {
-    field: string;
+    /**
+     * The field to filter by.
+     * It can be a string representing the property name of the data items.
+     */
+    field?: string;
+
+    /**
+     * The value to filter by.
+     * It can be a string, number, or any other type depending on the field.
+     */
     value?: string;
-    operator: any;
+
+    /**
+     * The operator to use for filtering.
+     * It can be one of the standard filter operators like Contains, StartsWith, EndsWith, Equals, etc.
+     */
+    operator?: string;
+
+    /**
+     * Indicates if the filter is case-sensitive.
+     * Default is false.
+     */
+    caseSensitive?: boolean;
 }
 
 // export enum DataRequestFilterOperator {
