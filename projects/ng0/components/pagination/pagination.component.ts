@@ -6,7 +6,7 @@ import { TranslatePipe } from '@bootkit/ng0/localization';
   selector: 'ng0-pagination',
   exportAs: 'ng0Pagination',
   templateUrl: './pagination.component.html',
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,

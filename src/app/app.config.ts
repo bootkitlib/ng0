@@ -1,5 +1,5 @@
 import { ApplicationConfig, inject, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withDebugTracing, withRouterConfig } from '@angular/router';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 // import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -20,15 +20,16 @@ const appDataResolver: HttpDataRequestResolver = (url, request, options) => {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    // provideAnimations(),
+    provideAnimations(),
     provideZoneChangeDetection({ eventCoalescing: false }),
+    // provideRouter(routes, withDebugTracing()),
     provideRouter(routes),
     // provideClientHydration(),
     provideHttpClient(),
-    // provideHttpService({
-    //   baseUrl: 'https://dummyjson.com/',
-    //   // dataRequestResolver: httpDataRequestResolver1,
-    // })
+    provideHttpService({
+      baseUrl: 'https://dummyjson.com/',
+      // dataRequestResolver: httpDataRequestResolver1,
+    })
     // { provide: NZ_I18N, useValue: en_US },
     // { provide: LOCALE, useClass: LocaleProvider },
     // { provide: APP_CONFIGURATION, useValue: APP_CONFIGS },

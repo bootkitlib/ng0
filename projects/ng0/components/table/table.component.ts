@@ -218,8 +218,6 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
 
 
   protected _onPageChange(pageIndex: number) {
-    debugger
-    
     this.load(pageIndex);
   }
 

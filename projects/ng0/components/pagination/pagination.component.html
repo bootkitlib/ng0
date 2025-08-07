@@ -24,7 +24,7 @@
 
     @for (page of _visiblePages(); track page) {
     <li class="page-item" [class.active]="_selectedPage === page">
-      <button class="page-link" (click)="_onPageChange(page)">
+      <button class="page-link" (click)="itemClick.emit(page)">
         {{page}}
       </button>
     </li>
@@ -52,7 +52,6 @@
   </ul>
 </nav>
 
-<button (click)="_onPageChange(0)">sdf</button>
 <style>
   .pagination {
     margin: 0;

@@ -9,22 +9,37 @@
         <!-- <caption>{{caption()}}</caption> -->
         }
 
-        <thead *ngIf="showHeader" [ngClass]="headerClass()">
+        @if(showHeader()) {
+        <thead [ngClass]="headerClass()">
             <tr>
-                <th *ngIf="_detailRow"></th>
-                <th *ngIf="showRowNumbers()" class="row-number text-muted">#</th>
-                <th *ngFor="let col of _columns">{{col.title}}</th>
+                @if(_detailRow) {
+                <th></th>
+                }
+
+                @if(showRowNumbers()) {
+                <th class="row-number text-muted">#</th>
+                }
+
+                @for (col of _columns; track $index) {
+                <th>{{col.title}}</th>
+                }
             </tr>
         </thead>
-        <thead *ngIf="filterable()">
+        }
+
+        @if(filterable()) {
+        <thead>
             <tr>
-                <th *ngIf="_detailRow"></th>
+                @if(_detailRow) {
+                <th></th>
+                }
 
                 @if(showRowNumbers()) {
                 <th></th>
                 }
 
-                <th *ngFor="let col of _columns">
+                @for (col of _columns; track $index) {
+                <th>
                     @if(col.filterable) {
                     @if(col.type == 'text') {
                     <input [name]="'datatablecol-' + col.field"
@@ -42,11 +57,15 @@
                     }
                     }
                 </th>
+                }
+
             </tr>
         </thead>
+        }
 
         <tbody>
-            <ng-container *ngIf="$data && $data.length! > 0">
+            @if($data && $data.length! > 0) {
+                @for (row of $data; track $index) {
                 <ng-container *ngFor="let row of $data; let i=index">
                     <tr [class.table-active]="isRowExpanded(row)">
                         <td class="detail-row-expander" *ngIf="_detailRow">
@@ -118,8 +137,10 @@
                         </td>
                     </tr>
                 </ng-container>
-
-            </ng-container>
+                }
+            }
+        
+      
 
             <tr *ngIf="$data?.length === 0">
                 <td [colSpan]="_columns.length + (showRowNumbers() ? 1 : 0)" class="text-center text-muted small p-2">

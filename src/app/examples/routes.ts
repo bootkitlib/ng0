@@ -2,7 +2,11 @@ import { Route } from '@angular/router';
 import { BootKitExampleComponent } from './bootkit-example.component';
 
 export default [
-
+    {
+        path: '',
+        pathMatch: 'full',
+        component: BootKitExampleComponent,
+    },
     {
         path: 'localization',
         loadChildren: () => import('./localization/routes')
@@ -79,10 +83,5 @@ export default [
                 loadChildren: () => import('./components/tooltip/routes'),
             },
         ]
-    },
-    {
-        path: '',
-        pathMatch: 'full',
-        component: BootKitExampleComponent,
-    },
+    }
 ] satisfies Route[];
