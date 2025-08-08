@@ -28,7 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideHttpService({
       baseUrl: 'https://dummyjson.com/',
-      // dataRequestResolver: httpDataRequestResolver1,
+      dataRequestResolver: httpDataRequestResolver1,
     })
     // { provide: NZ_I18N, useValue: en_US },
     // { provide: LOCALE, useClass: LocaleProvider },

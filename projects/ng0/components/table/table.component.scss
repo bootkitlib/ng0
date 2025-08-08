@@ -2,8 +2,18 @@
   display: flex;
   flex-direction: column;
   position: relative;
-  min-height: 300px;
 }
+
+@starting-style {
+  .ng0-table-loading-cover {
+    background-color: rgba(0, 0, 0, 0);
+  }
+}
+
+table {
+  margin-bottom: 0;
+}
+
 
 tbody {
   position: relative;
@@ -27,12 +37,14 @@ td {
   right: 0;
   bottom: 0;
   background-color: rgb(0 0 0 / 5%);
-  transition: background-color 1s;
+  transition: background-color .2s;
   z-index: 1000;
   display: flex;
-  align-items: center;  
+  align-items: center;
   justify-content: center;
+
 }
+
 
 .table-scrollable {
   overflow-y: auto;
@@ -57,4 +69,8 @@ td {
     top: 0px;
     /* table head will be placed from the top of the table and sticks to it */
   }
+}
+
+.ng0-table-footer {
+  margin-top: .5rem;
 }

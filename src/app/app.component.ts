@@ -18,23 +18,23 @@ export class AppComponent {
 
   constructor(private localizationService: LocalizationService) {
 
-    // var faLocale = FA_IR_LOCALE.extend({
-    //   dictionary: {
-    //     'hello': 'سلام',
-    //     'welcome': 'خوش آمدید',
-    //   },
-    //   enums: {
-    //     Enum1: {
-    //       'Done': 'انجام شده',
-    //       'Failed': 'ناموفق',
-    //       '[?]': '⚠️ نامعلوم',
-    //       '[empty]': 'در انتظار پرداخت', // '' or null or undefined
-    //       '[null]': '❌ NULL', // exactly null value
-    //       '[undefined]': '❌ UNDEFINED' // exactly undefined value
-    //     }
-    //   }
-    // });
+    var faLocale = FA_IR_LOCALE.extend({
+      dictionary: {
+        'hello': 'سلام',
+        'welcome': 'خوش آمدید',
+      },
+      enums: {
+        Enum1: {
+          'Done': 'انجام شده',
+          'Failed': 'ناموفق',
+          '[?]': '⚠️ نامعلوم',
+          '[empty]': 'در انتظار پرداخت', // '' or null or undefined
+          '[null]': '❌ NULL', // exactly null value
+          '[undefined]': '❌ UNDEFINED' // exactly undefined value
+        }
+      }
+    });
 
-    // localizationService.add(faLocale);
+    localizationService.add(faLocale);
   }
 }

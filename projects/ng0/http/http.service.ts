@@ -76,7 +76,7 @@ export class HttpService {
     }
 
     this._eventsSubject.next({ type: 'Send', url, options });
-    let resolver = options?.dataRequestResolver || this._config.dataRequestResolver;
+    let resolver = this._config.dataRequestResolver;
     if (!resolver) {
       throw new Error('No HttpDataRequestResolver provided.');
     }

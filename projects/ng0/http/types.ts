@@ -18,11 +18,6 @@ export interface HttpRequestOptions {
      */
     tag?: Record<string, string | number | boolean | ReadonlyArray<string | number | boolean>>;
 
-    /**
-     * HttpDataRequestResolver
-     */
-    dataRequestResolver?: HttpDataRequestResolver;
-
     /** 
      * Save response in transfer state 
      * 
@@ -44,7 +39,6 @@ export interface HttpRequestOptions {
  * @param options Additional options for the request, such as headers.
  */
 export type HttpDataRequestResolver<T = any> = (url: string, dataRequest: DataRequest, options?: HttpRequestOptions) => Observable<DataResult<T>>;
-
 
 export interface HttpRequestEventBase {
     type: 'Send' | 'Complete' | 'Progress' | 'Error';

@@ -38,6 +38,11 @@ export interface LocaleDefinition {
        */
       noRecords?: string;
 
+      /** 
+       * Error message displayed when loading data fails. 
+       */
+      loadError?: string;
+
       /**
        * A format function to format the paging info.
        */

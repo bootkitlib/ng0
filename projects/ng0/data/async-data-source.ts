@@ -1,4 +1,4 @@
-import { Observable, tap } from "rxjs";
+import { catchError, Observable, tap } from "rxjs";
 import { DataRequest } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
@@ -24,11 +24,15 @@ export class AsyncDataSource extends DataSource {
   }
 
   load(request: DataRequest) {
-    this.setLoading(true);
+    this.loading.set(true);
 
     return this.loader(request).pipe(
+      catchError(err => {
+        this.loading.set(false);
+        throw err;
+      }),
       tap(res => {
-        this.setLoading(false);
+        this.loading.set(false);
       })
     )
   }

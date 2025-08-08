@@ -1,4 +1,4 @@
-import { AfterContentInit, Component, ContentChild, ContentChildren, DestroyRef, HostBinding, input, OnDestroy, OnInit, QueryList } from '@angular/core';
+import { AfterContentInit, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, DestroyRef, HostBinding, input, OnDestroy, OnInit, QueryList, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TableColumnDirective } from './table-column.directive';
 import { TableDetailRowDirective } from './table-detail-row.directive';
@@ -12,7 +12,7 @@ import { PaginationComponent } from '@bootkit/ng0/components/pagination';
 import { TablePagingOptions } from './types';
 
 /**
- * TableComponent is a generic table component that can display data in a tabular format.
+ * A generic table component that can display data in a tabular format.
  * It supports features like pagination, sorting, filtering, and row details.
  * It can be used with any data source that implements the DataSource interface.
  */
@@ -21,7 +21,7 @@ import { TablePagingOptions } from './types';
   exportAs: 'ng0Table',
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   imports: [
     CommonModule,
@@ -60,12 +60,17 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * If true, the table will support pagination.
    * If false, the table will load all records at once.
    */
-  public pageable = input<TablePagingOptions, TablePagingOptions | boolean>({}, {
+  public pageable = input<TablePagingOptions | undefined, TablePagingOptions | boolean>(undefined, {
     transform: v => {
-      if (typeof v === 'boolean') {
+      if (v === undefined || v === null || v === false) {
+        return undefined;
+      }
+
+      if (v === true) {
         v = {};
       }
 
+      v.pageIndex = v.pageIndex ?? 1;
       v.pageSize = v.pageSize ?? 10;
       v.maxVisiblePages = v.maxVisiblePages ?? 10;
       v.showPagingControls = v.showPagingControls ?? true;
@@ -78,25 +83,6 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * This will add a sort icon to each column header.
    */
   public sortable = input(true);
-
-  /**
-   * If true, the table will show pagination controls at the bottom.
-   */
-  // public showPagination = input(true);
-
-  /** 
-   * The number of records to show per page.
-   * This is only used if pagable is true.
-   */
-  // public pageSize = input(10);
-
-  /**
-   * The initial page index to load when the table is initialized.
-   * This is only used if pagable is true.
-   * The index starts from 1.
-   * Default is 1.
-   */
-  public initialPageIndex = input(1);
 
   /**
    * The CSS class to apply to the table element.
@@ -126,6 +112,32 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    */
   public filterable = input(false);
 
+  /**
+   * The indicator to show while the table is loading data for the first time.
+   */
+  public loadingIndicator = input<'none' | 'simple' | 'spinner', boolean | 'none' | 'simple' | 'spinner'>('spinner', {
+    transform: v => {
+      if (typeof v === 'boolean') {
+        return v ? 'spinner' : 'none';
+      }
+      return v;
+    }
+  });
+
+  /** If true, the table will show a loading cover while data is being loaded.
+   * This can be used to prevent user interaction with the table while loading.
+   * This cover is not displayed when the table is loading for the first time.
+   * Instead, the table will show a loading based on loadingIndicator settings.
+   */
+  public loadingCover = input<'none' | 'simple' | 'spinner', boolean | 'none' | 'simple' | 'spinner'>('spinner', {
+    transform: v => {
+      if (typeof v === 'boolean') {
+        return v ? 'spinner' : 'none';
+      }
+      return v;
+    }
+  });
+
   // @Input() rowColor?: (row: any) => BootstrapColor;
 
   @ContentChildren(TableColumnDirective)
@@ -134,7 +146,7 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   @ContentChild(TableDetailRowDirective)
   protected _detailRow?: TableDetailRowDirective;
 
-  protected _dataResult?: DataResult;
+  protected _dataResult = signal<DataResult | undefined>(undefined);
   protected _lastRequest?: DataRequest; // The last data request made to the data source
   protected _loadingRequest?: DataRequest; // The current data request being processed
   protected _rowStates = new Map<any, { expanded: boolean }>();
@@ -142,8 +154,9 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   private _changeSubscription?: Subscription;
   protected _dataSource!: DataSource;
   protected _pagingFormatter!: TableComponentPagingFormatter;
+  protected _lastError?: any;
 
-  constructor(private _ls: LocalizationService, private _destroyRef: DestroyRef) {
+  constructor(protected _ls: LocalizationService, private _destroyRef: DestroyRef) {
   }
 
   ngOnInit(): void {
@@ -155,19 +168,21 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     // this._changeSubscription = this.dataSource().change.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(result => {
     //   this.reload();
     // });
+
+    if (this.autoLoad()) {
+      this.load(this.pageable()?.pageIndex);
+    }
   }
 
   ngAfterContentInit(): void {
-    if (this.autoLoad()) {
-      this.load(this.initialPageIndex());
-    }
+
   }
 
   /**
    * Load data for the specified page index (optional).
    * @param pageIndex The page index to load.
    */
-  load(pageIndex?: number) {
+  public load(pageIndex?: number) {
     let page: DataRequestPage | undefined;
     let filters: DataRequestFilter[] = [];
     let sort: DataRequestSort | undefined;
@@ -181,7 +196,11 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     }
 
     if (this.pageable()) {
-      page = { index: pageIndex || this._lastRequest?.page?.index || 1, size: this.pageable().pageSize || 10, zeroBased: false };
+      page = {
+        index: pageIndex || this._lastRequest?.page?.index || 1,
+        size: this._lastRequest?.page?.size || 10,
+        zeroBased: false
+      };
     }
 
     if (this.sortable()) {
@@ -190,19 +209,27 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
 
     this._loadingRequest = new DataRequest({ page, filters, sort, select: [], computeTotal: true });
 
-    this._dataSource.load(this._loadingRequest).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(result => {
-      this._dataResult = result;
-      this._lastRequest = this._loadingRequest;
-      this._loadingRequest = undefined;
-    });
+    this._dataSource.load(this._loadingRequest)
+      .pipe(takeUntilDestroyed(this._destroyRef)).subscribe({
+        next: result => {
+          this._dataResult.set(result);
+          this._lastRequest = this._loadingRequest;
+          this._loadingRequest = undefined;
+          this._lastError = undefined;
+        }, error: err => {
+          this._lastError = err;
+          this._lastRequest = this._loadingRequest;
+          this._loadingRequest = undefined;
+        }
+      });
   }
 
   /**
    * Determines if the table is currently loading data.
    */
   @HostBinding('class.ng0-loading')
-  public get loading() {
-    return this._dataSource.loading;
+  public get isLoading() {
+    return this._dataSource.isLoading;
   }
 
   protected _getCellValue(row: any, col: TableColumnDirective) {
@@ -234,8 +261,6 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     var state = this._rowStates.get(row)
     return state == undefined ? false : state.expanded;
   }
-
-
 
   ngOnDestroy(): void {
     this._changeSubscription?.unsubscribe();

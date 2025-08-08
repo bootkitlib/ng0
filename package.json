@@ -11,7 +11,9 @@
     "build-link": "npm run build && cd dist/ng0 && npm link",
     "ng": "ng",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "css:bootstrap:build": "sass node_modules/bootstrap/scss/bootstrap.scss public/css/bootstrap.css",
+    "css:bootstrap:build-rtl": "npm run css:bootstrap:build & rtlcss public/css/bootstrap.css public/css/bootstrap.rtl.css"
   },
   "private": true,
   "dependencies": {
@@ -26,11 +28,10 @@
     "@angular/router": "^20.1.0",
     "@angular/ssr": "^20.1.5",
     "express": "^5.1.0",
+    "highlight.js": "^11.10.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.15.0",
-    "bootstrap": "^5.3.7",
-    "highlight.js": "^11.10.0"
+    "zone.js": "~0.15.0"
   },
   "devDependencies": {
     "@angular/build": "^20.1.5",
@@ -45,9 +46,11 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
-    "typescript": "~5.8.2",
     "ng-packagr": "^20.1.0",
+    "prettier": "3.6.2",
     "rtlcss": "^4.3.0",
-    "sass": "^1.89.2"
+    "sass": "^1.89.2",
+    "bootstrap": "^5.3.7",
+    "typescript": "~5.8.2"
   }
 }

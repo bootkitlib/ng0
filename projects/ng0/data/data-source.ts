@@ -1,28 +1,27 @@
 import { Observable, Subject } from "rxjs";
 import { DataRequest } from "./data-request";
 import { DataResult } from "./data-result";
+import { signal } from "@angular/core";
 
+/**
+ * Abstract base class for data sources.
+ * This class provides a common interface for loading data from various sources.
+ */
 export abstract class DataSource<T=any> {
-  protected _loading = false;
+  protected loading = signal(false);
 
   constructor() {
   }
 
-  get loading() { return this._loading; }
-  protected setLoading(value: boolean) {
-    this._loading = value;
-  }
+  /**
+   * Indicates whether the data source is currently loading data.
+   */
+  public isLoading = this.loading.asReadonly();
 
-  // get data() { return this._data; }
-  // protected set data(value: any[] | undefined) {
-  //   this._data = value;
-  // }
-
-  // get totallRecords() { return this._totallRecords; }
-  // protected set totallRecords(value: number | undefined) {
-  //   this._totallRecords= value;
-  // }
-
+  /**
+   * Loads data from the data source.
+   * @param request The data request object containing pagination, sorting, and filtering information.
+   */
   abstract load(request: DataRequest): Observable<DataResult>;
 }
 

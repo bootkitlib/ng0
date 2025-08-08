@@ -1,4 +1,5 @@
-import { ContentChild, Directive, Input, TemplateRef } from '@angular/core';
+import { ContentChild, Directive, input, Input, TemplateRef } from '@angular/core';
+import { TableCellType } from './types';
 
 export type DataTableColumnBadgeValueType = string | number | boolean;
 
@@ -9,19 +10,16 @@ export type DataTableColumnBadgeValueType = string | number | boolean;
 export class TableColumnDirective {
   @Input() field?: string;
   @Input() title?: string;
-  @Input() emptyCellText?: string;
+  emptyCellText = input<string>();
 
-  /** Column type */
-  @Input() type: 'text' | 'number' | 'currency' | 'date' | 'time' | {
-    enum?: string,
-    boolean?: {falseKey?: string, trueKey?: string},
-    currency?: string,
-  } = 'text';
+  /**
+   * Type of the table cell.
+   */
+  type = input<TableCellType>();
   @ContentChild(TemplateRef) template?: TemplateRef<any>;
   @Input() cellClass?: string | string[] | { [klass: string]: any; } | null | undefined;
   @Input() shrink = false;
   @Input() bold = false;
-  @Input() badge?: { primary?: DataTableColumnBadgeValueType, secondary?: DataTableColumnBadgeValueType, success?: DataTableColumnBadgeValueType };
   @Input() filterable = false;
   @Input() filterValue?: string;
   @Input() filterField?: string;
