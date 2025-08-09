@@ -1,5 +1,5 @@
 import { ArrayDataSource } from "./array-data-source";
-import { AsyncDataSource, DataLoaderFunction } from "./async-data-source";
+import { AsyncDataSource, DataLoader } from "./async-data-source";
 import { DataSource } from "./data-source";
 
 /**
@@ -8,7 +8,7 @@ import { DataSource } from "./data-source";
  * It can be an array of data, a function that returns an observable of data,
  * or an instance of DataSource.
  */
-export type DataSourceLike<T = any> = Array<any> | DataLoaderFunction<T> | DataSource<T> | undefined | null;
+export type DataSourceLike<T = any> = Array<any> | DataLoader<T> | DataSource<T> | undefined | null;
 
 
 /**

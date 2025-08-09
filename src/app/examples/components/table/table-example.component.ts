@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TableModule } from '@bootkit/ng0/components/table';
-import { ArrayDataSource, AsyncDataSource, DataLoaderFunction, DataRequest, DataResult } from '@bootkit/ng0/data';
+import { ArrayDataSource, AsyncDataSource, DataLoader, DataRequest, DataResult } from '@bootkit/ng0/data';
 import { HttpService } from '@bootkit/ng0/http';
 import { delay, map, of } from 'rxjs';
 import { Array1, Array2 } from './data';
@@ -27,7 +27,7 @@ interface ProductDataResult {
 export class DataTableExampleComponent {
     source1 = Array1;
     source2 = new ArrayDataSource(Array2);
-    source3: DataLoaderFunction = req => this.httpService.get('products', {
+    source3: DataLoader = req => this.httpService.get('products', {
         // transferState: {},
         id: 'products',
         params: {
