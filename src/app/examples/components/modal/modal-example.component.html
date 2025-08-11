@@ -1,58 +1,224 @@
-<h5>Modals</h5>
+<h5>Modals – Basics & Behavior</h5>
 
-@if(showModal1) {
-<ng0-modal (backdropClick)="showModal1 = false">
+<!-- Basic -->
+@if (showSimple()) {
+  <ng0-modal (backdropClick)="showSimple.set(false)" (closeRequest)="showSimple.set(false)">
     <div class="modal-body">
-        <p>This is a simple modal</p>
+      <p>This is a simple modal.</p>
     </div>
-</ng0-modal>
+  </ng0-modal>
 }
 
-@if(showModal2) {
-<ng0-modal (backdropClick)="showModal2 = false" (closeRequest)="showModal2 = false">
+<!-- With header & footer -->
+@if (showHeaderFooter()) {
+  <ng0-modal (backdropClick)="showHeaderFooter.set(false)" (closeRequest)="showHeaderFooter.set(false)">
     <div class="modal-header">
-        <h1>Modal Header</h1>
+      <h1 class="modal-title fs-5">Header / Footer</h1>
+      <button class="btn-close" (click)="showHeaderFooter.set(false)"></button>
     </div>
     <div class="modal-body">
-        <p>This is a modal body</p>
+      <p>Body content…</p>
     </div>
     <div class="modal-footer">
-        Modal Footer
+      <button class="btn btn-secondary" (click)="showHeaderFooter.set(false)">Close</button>
+      <button class="btn btn-primary">Save changes</button>
     </div>
-</ng0-modal>
+  </ng0-modal>
 }
 
-@if(showModal3) {
-<ng0-modal (closeRequest)="showModal3 = false">
+<!-- Static backdrop (shake, no close on backdrop) -->
+@if (showStatic()) {
+  <ng0-modal backdrop="static" (closeRequest)="showStatic.set(false)">
     <div class="modal-header">
-        <h1>Static backdrop</h1>
+      <h1 class="modal-title fs-5">Static backdrop</h1>
+      <button class="btn-close" (click)="showStatic.set(false)"></button>
     </div>
     <div class="modal-body">
-        <p>This is a modal body</p>
+      <p>Backdrop clicks won’t close this modal.</p>
     </div>
     <div class="modal-footer">
-        Modal Footer
+      <button class="btn btn-secondary" (click)="showStatic.set(false)">OK</button>
     </div>
-</ng0-modal>
+  </ng0-modal>
 }
 
-<div>
-    <button class="btn btn-primary" (click)="showModal1 = true">
-        Show simple modal
-    </button>
+<!-- No backdrop action (click does nothing), still closes on Esc -->
+@if (showNoBackdrop()) {
+  <ng0-modal backdrop="none" (closeRequest)="showNoBackdrop.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">Backdrop = none</h1>
+      <button class="btn-close" (click)="showNoBackdrop.set(false)"></button>
+    </div>
+    <div class="modal-body">
+      <p>Backdrop clicks are ignored. Press Esc or use buttons.</p>
+    </div>
+  </ng0-modal>
+}
 
-    <button class="btn btn-primary ms-2" (click)="showModal2 = true">
-        Show modal with header and footer
-    </button>
+<!-- Disable Esc -->
+@if (showNoEsc()) {
+  <ng0-modal [closeOnEsc]="false" (backdropClick)="showNoEsc.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">Esc disabled</h1>
+      <button class="btn-close" (click)="showNoEsc.set(false)"></button>
+    </div>
+    <div class="modal-body">
+      <p>Pressing Esc won’t close this modal.</p>
+    </div>
+  </ng0-modal>
+}
 
-    <button class="btn btn-primary ms-2" (click)="showModal3 = true">
-        Static backdrop
-    </button>
+<div class="mb-3">
+  <button class="btn btn-primary me-2" (click)="showSimple.set(true)">Simple</button>
+  <button class="btn btn-primary me-2" (click)="showHeaderFooter.set(true)">Header & Footer</button>
+  <button class="btn btn-primary me-2" (click)="showStatic.set(true)">Static backdrop</button>
+  <button class="btn btn-primary me-2" (click)="showNoBackdrop.set(true)">Backdrop: none</button>
+  <button class="btn btn-primary me-2" (click)="showNoEsc.set(true)">Esc disabled</button>
 </div>
 
+<hr class="my-4">
 
-<h5 class="mt-5">Size</h5>
+<h5>Size</h5>
 
-<h5 class="mt-5">Allignment</h5>
+@if (showSm()) {
+  <ng0-modal size="sm" (backdropClick)="showSm.set(false)" (closeRequest)="showSm.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">size="sm"</h1>
+      <button class="btn-close" (click)="showSm.set(false)"></button>
+    </div>
+    <div class="modal-body">Small dialog</div>
+  </ng0-modal>
+}
+@if (showDefault()) {
+  <ng0-modal size="default" (backdropClick)="showDefault.set(false)" (closeRequest)="showDefault.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">size="default"</h1>
+      <button class="btn-close" (click)="showDefault.set(false)"></button>
+    </div>
+    <div class="modal-body">Default dialog</div>
+  </ng0-modal>
+}
+@if (showLg()) {
+  <ng0-modal size="lg" (backdropClick)="showLg.set(false)" (closeRequest)="showLg.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">size="lg"</h1>
+      <button class="btn-close" (click)="showLg.set(false)"></button>
+    </div>
+    <div class="modal-body">Large dialog</div>
+  </ng0-modal>
+}
+@if (showXl()) {
+  <ng0-modal size="xl" (backdropClick)="showXl.set(false)" (closeRequest)="showXl.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">size="xl"</h1>
+      <button class="btn-close" (click)="showXl.set(false)"></button>
+    </div>
+    <div class="modal-body">Extra large dialog</div>
+  </ng0-modal>
+}
+
+<div class="mb-3">
+  <button class="btn btn-outline-secondary me-2" (click)="showSm.set(true)">sm</button>
+  <button class="btn btn-outline-secondary me-2" (click)="showDefault.set(true)">default</button>
+  <button class="btn btn-outline-secondary me-2" (click)="showLg.set(true)">lg</button>
+  <button class="btn btn-outline-secondary me-2" (click)="showXl.set(true)">xl</button>
+</div>
+
+<hr class="my-4">
+
+<h5>Alignment & Scrollable</h5>
+
+@if (showCentered()) {
+  <ng0-modal [centered]="true" (backdropClick)="showCentered.set(false)" (closeRequest)="showCentered.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">Centered</h1>
+      <button class="btn-close" (click)="showCentered.set(false)"></button>
+    </div>
+    <div class="modal-body">This dialog is vertically centered.</div>
+  </ng0-modal>
+}
+
+@if (showScrollable()) {
+  <ng0-modal [scrollable]="true" (backdropClick)="showScrollable.set(false)" (closeRequest)="showScrollable.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">Scrollable</h1>
+      <button class="btn-close" (click)="showScrollable.set(false)"></button>
+    </div>
+    <div class="modal-body" style="max-height: 60vh">
+      <p *ngFor="let i of longList">{{ i }} — Lorem ipsum dolor sit amet…</p>
+    </div>
+  </ng0-modal>
+}
+
+<div class="mb-3">
+  <button class="btn btn-outline-secondary me-2" (click)="showCentered.set(true)">Centered</button>
+  <button class="btn btn-outline-secondary me-2" (click)="showScrollable.set(true)">Scrollable</button>
+</div>
+
+<hr class="my-4">
 
 <h5>Full Screen</h5>
+
+@if (showFsAlways()) {
+  <ng0-modal fullscreen="always" (backdropClick)="showFsAlways.set(false)" (closeRequest)="showFsAlways.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">fullscreen="always"</h1>
+      <button class="btn-close" (click)="showFsAlways.set(false)"></button>
+    </div>
+    <div class="modal-body">Always full-screen on all breakpoints.</div>
+  </ng0-modal>
+}
+@if (showFsSm()) {
+  <ng0-modal fullscreen="sm" (backdropClick)="showFsSm.set(false)" (closeRequest)="showFsSm.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">fullscreen="sm"</h1>
+      <button class="btn-close" (click)="showFsSm.set(false)"></button>
+    </div>
+    <div class="modal-body">Full-screen on ≤ sm.</div>
+  </ng0-modal>
+}
+@if (showFsMd()) {
+  <ng0-modal fullscreen="md" (backdropClick)="showFsMd.set(false)" (closeRequest)="showFsMd.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">fullscreen="md"</h1>
+      <button class="btn-close" (click)="showFsMd.set(false)"></button>
+    </div>
+    <div class="modal-body">Full-screen on ≤ md.</div>
+  </ng0-modal>
+}
+@if (showFsLg()) {
+  <ng0-modal fullscreen="lg" (backdropClick)="showFsLg.set(false)" (closeRequest)="showFsLg.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">fullscreen="lg"</h1>
+      <button class="btn-close" (click)="showFsLg.set(false)"></button>
+    </div>
+    <div class="modal-body">Full-screen on ≤ lg.</div>
+  </ng0-modal>
+}
+@if (showFsXl()) {
+  <ng0-modal fullscreen="xl" (backdropClick)="showFsXl.set(false)" (closeRequest)="showFsXl.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">fullscreen="xl"</h1>
+      <button class="btn-close" (click)="showFsXl.set(false)"></button>
+    </div>
+    <div class="modal-body">Full-screen on ≤ xl.</div>
+  </ng0-modal>
+}
+@if (showFsXxl()) {
+  <ng0-modal fullscreen="xxl" (backdropClick)="showFsXxl.set(false)" (closeRequest)="showFsXxl.set(false)">
+    <div class="modal-header">
+      <h1 class="modal-title fs-5">fullscreen="xxl"</h1>
+      <button class="btn-close" (click)="showFsXxl.set(false)"></button>
+    </div>
+    <div class="modal-body">Full-screen on ≤ xxl.</div>
+  </ng0-modal>
+}
+
+<div class="mb-3">
+  <button class="btn btn-outline-secondary me-2" (click)="showFsAlways.set(true)">always</button>
+  <button class="btn btn-outline-secondary me-2" (click)="showFsSm.set(true)">sm</button>
+  <button class="btn btn-outline-secondary me-2" (click)="showFsMd.set(true)">md</button>
+  <button class="btn btn-outline-secondary me-2" (click)="showFsLg.set(true)">lg</button>
+  <button class="btn btn-outline-secondary me-2" (click)="showFsXl.set(true)">xl</button>
+  <button class="btn btn-outline-secondary me-2" (click)="showFsXxl.set(true)">xxl</button>
+</div>
