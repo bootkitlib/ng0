@@ -46,6 +46,10 @@ export default [
                 path: 'modal',
                 loadChildren: () => import('./components/modal/routes'),
             },
+          {
+            path: 'divider',
+            loadChildren: () => import('./components/divider/routes'),
+          },
             {
                 path: 'offcanvas',
                 loadChildren: () => import('./components/offcanvas/routes'),
