@@ -1,7 +1,7 @@
 import { ClaimLike } from "./security-types";
 
 /** Base class of all menu items  */
-export interface MenuItemBase<DataType = any> {
+export interface MenuItem {
     type: 'group' | 'text' | 'divider';
     id?: any;
     disabled?: boolean;
@@ -9,29 +9,9 @@ export interface MenuItemBase<DataType = any> {
     show?: boolean;
     claim?: ClaimLike;
     parent?: MenuItem;
-    data?: DataType;
-}
-
-/** Section Menu Item  */
-export interface GroupMenuItem<DataType = any> extends MenuItemBase<DataType>{
-    type: 'group';
-    text: string;
+    text?: string;
     expanded?: boolean;
     icon?: string;
-    children: Array<MenuItem<DataType>>;
+    children?: MenuItem[];
+    routerLink?: string | string[];
 }
-
-/** Text Menu Item */
-export interface TextMenuItem<DataType = any> extends MenuItemBase<DataType> {
-    type: 'text';
-    text: string;
-    routerLink?: string[];
-    icon?: string;
-}
-
-/** Divider Menu Item */
-export interface DividerMenuItem<DataType = any> extends MenuItemBase<DataType> {
-    type: 'divider';
-}
-
-export type MenuItem<DataType = any> = TextMenuItem<DataType> | DividerMenuItem<DataType> | GroupMenuItem<DataType>;
