@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 import { SidenavMode, SidenavPosition } from './types';
 import { BackdropComponent } from '@bootkit/ng0/components/backdrop';
 
+/**
+ * This component is used to display a sidenav panel.
+ * It can be positioned on the left or right side of the screen.
+ * It can be opened or closed and can have a backdrop.
+ */
 @Component({
   selector: 'ng0-sidenav',
   templateUrl: './sidenav.component.html',
@@ -14,9 +19,11 @@ import { BackdropComponent } from '@bootkit/ng0/components/backdrop';
   ],
   host: {
     "[style.width]": "sidenavWidth() + 'px'",
+    "[style.z-index]": "zIndex()",
     "[class.ng0-sidenav-start]": "position() == 'start'",
     "[class.ng0-sidenav-end]": "position() == 'end'",
     "[class.ng0-sidenav-open]": "open()",
+    "[class.ng0-sidenav-show-backdrop]": "true",
     "[class.ng0-sidenav-fixed]": "fixedInViewport()",
   }
 })
@@ -24,11 +31,12 @@ export class SidenavComponent implements OnInit, OnDestroy {
   public open = input(true);
   public mode = input<SidenavMode>('push');
   public hasBackdrop = input(true);
+  public zIndex = input<number>();
   public position = input<SidenavPosition>('start');
   public sidenavWidth = input.required<number>();
   public fixedInViewport = input(false);
   @Output() public backdropClick = new EventEmitter<MouseEvent>();
-  private _backdropRef?: ComponentRef<any>;
+  private _backdropRef?: ComponentRef<BackdropComponent>;
   private _backdropClickHandlerUnlisten?: () => void;
 
 
@@ -38,22 +46,10 @@ export class SidenavComponent implements OnInit, OnDestroy {
       var mode = this.mode();
       var open = this.open();
 
-      if (mode == 'over' && hasBackdrop) {
-
-        if (open) {
-          this._backdropRef = this._vcr.createComponent(BackdropComponent, {});
-          const backdropElm = this._backdropRef.location.nativeElement;
-          this._backdropClickHandlerUnlisten = _renderer.listen(backdropElm, 'click', (e) => {
-            this.backdropClick.emit(e);
-          });
-
-          // Move backdrop element before Host element
-          const hostElm = this._elmentRef.nativeElement;
-          const parentElm = hostElm.parentNode;
-          this._renderer.insertBefore(parentElm, backdropElm, hostElm);
-        } else {
-          this._backdropRef?.destroy();
-        }
+      if (mode == 'over' && hasBackdrop && open) {
+        this._createBackdrop();
+      } else {
+        this._destroyBackdrop();
       }
     });
   }
@@ -61,7 +57,32 @@ export class SidenavComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
   }
 
-  ngOnDestroy(): void {
+  private _createBackdrop() {
+    this._backdropRef = this._vcr.createComponent(BackdropComponent);
+    const backdropElm = this._backdropRef.location.nativeElement;
+    this._backdropRef.instance.fixed.set(this.fixedInViewport());
+    if(this.zIndex() != undefined) {
+      this._renderer.setStyle(backdropElm, 'z-index', this.zIndex());
+    }
+    this._backdropClickHandlerUnlisten = this._renderer.listen(backdropElm, 'click', (e) => {
+      this.backdropClick.emit(e);
+    });
+
+    // Move backdrop element before Host element
+    const hostElm = this._elmentRef.nativeElement;
+    const parentElm = hostElm.parentNode;
+    this._renderer.insertBefore(parentElm, backdropElm, hostElm);
+  }
+
+  private _destroyBackdrop() {
     this._backdropClickHandlerUnlisten?.();
+    this._backdropRef?.destroy();
+
+    this._backdropClickHandlerUnlisten = undefined;
+    this._backdropRef = undefined;
+  }
+
+  ngOnDestroy(): void {
+    this._destroyBackdrop();
   }
 }

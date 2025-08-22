@@ -2,8 +2,8 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  transition: transform 100ms ease-in-out;
   overflow-x: hidden;
+  transition: transform var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-function);
 
   &.ng0-sidenav-fixed {
     position: fixed !important;
@@ -13,7 +13,8 @@
     inset-inline-start: 0;
     transform: translateX(-100%);
 
-    :dir(rtl) &, body[dir=rtl] & {
+    :dir(rtl) &,
+    body[dir=rtl] & {
       transform: translateX(100%);
     }
 
@@ -26,7 +27,8 @@
     inset-inline-end: 0;
     transform: translateX(100%);
 
-    :dir(rtl) &, body[dir=rtl] & {
+    :dir(rtl) &,
+    body[dir=rtl] & {
       transform: translateX(-100%);
     }
 
@@ -34,6 +36,4 @@
       transform: translateX(0) !important;
     }
   }
-
-
 }

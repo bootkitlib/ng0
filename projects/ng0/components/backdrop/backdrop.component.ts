@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import {
   trigger,
   transition,
@@ -6,10 +6,13 @@ import {
   animate,
 } from '@angular/animations';
 
+/**
+ * This component is used to display a backdrop behind another component.
+ */
 @Component({
   selector: 'ng0-backdrop',
   template: '',
-  styleUrl: 'backdrop.component.css',
+  styleUrl: 'backdrop.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   animations: [
@@ -25,6 +28,9 @@ import {
   ],
   host: {
     '[@fade]': '', // Binds the animation trigger to the host
+    '[class.fixed]': "fixed()"
   }
 })
-export class BackdropComponent {}
+export class BackdropComponent {
+  public readonly fixed = signal(false);
+}

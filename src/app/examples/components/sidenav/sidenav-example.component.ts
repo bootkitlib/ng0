@@ -1,6 +1,6 @@
 import { Component, ChangeDetectionStrategy, signal, input } from '@angular/core';
 import { SidenavMode, SidenavModule, SidenavPosition } from '@bootkit/ng0/components/sidenav';
-
+import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
 @Component({
     selector: 'app-examples-sidenav',
@@ -8,27 +8,32 @@ import { SidenavMode, SidenavModule, SidenavPosition } from '@bootkit/ng0/compon
     // changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [
-        SidenavModule
+        SidenavModule,
+        // LayoutModule
     ]
 })
 export class SidenavExampleComponent {
-
     sidenav1 = {
-        open: signal(false),
-        fixed: signal(false),
-        mode: signal<SidenavMode>('push'),
         position: signal<SidenavPosition>('start'),
-        width: 100
+        open: signal(false),
+        fixed: signal(true),
+        mode: signal<SidenavMode>('push'),
+        width: 100,
+        hasBackdrop: signal(true)
     }
 
     sidenav2 = {
+        position: signal<SidenavPosition>('start'),
         open: signal(false),
         fixed: signal(false),
         mode: signal<SidenavMode>('over'),
-        position: signal<SidenavPosition>('end'),
-        width: 200
+        width: 200,
+        hasBackdrop: signal(true)
     }
 
-    constructor() {
+    constructor(private observer: BreakpointObserver) {
+        observer.observe(Breakpoints.Medium).subscribe(res => {
+            console.log(res)
+        })
     }
 }

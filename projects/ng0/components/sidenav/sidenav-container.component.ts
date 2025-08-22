@@ -2,6 +2,9 @@ import { Component, computed, ContentChildren, EventEmitter, HostBinding, OnInit
 import { CommonModule } from '@angular/common';
 import { SidenavComponent } from './sidenav.component';
 
+/**
+ * This component is used to contain multiple sidenav components and manage their layout.
+ */
 @Component({
   selector: 'ng0-sidenav-container',
   templateUrl: './sidenav-container.component.html',
@@ -19,18 +22,15 @@ import { SidenavComponent } from './sidenav.component';
 export class SidenavContainerComponent implements OnInit {
 
   @Output() backdropClick = new EventEmitter();
-  @ContentChildren(SidenavComponent) protected sidenavs!: QueryList<SidenavComponent>;
-
-  @HostBinding('class.float-aside')
-  protected _floatAside = false;
+  @ContentChildren(SidenavComponent) protected _sidenavs!: QueryList<SidenavComponent>;
 
   protected _contentPaddingStart = computed(() => {
-    let widths = this.sidenavs.filter(x => x.open() && x.position() == 'start' && x.mode() == 'push').map(x => x.sidenavWidth());
+    let widths = this._sidenavs.filter(x => x.open() && x.position() == 'start' && x.mode() == 'push').map(x => x.sidenavWidth());
     return widths.length == 0 ? '0' : `${Math.max(...widths)}px`;
   });
 
   protected _contentPaddingEnd = computed(() => {
-    let widths = this.sidenavs.filter(x => x.open() && x.position() == 'end' && x.mode() == 'push').map(x => x.sidenavWidth());
+    let widths = this._sidenavs.filter(x => x.open() && x.position() == 'end' && x.mode() == 'push').map(x => x.sidenavWidth());
     return widths.length == 0 ? '0' : `${Math.max(...widths)}px`;
   });
 

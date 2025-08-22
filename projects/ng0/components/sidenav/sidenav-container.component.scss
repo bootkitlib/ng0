@@ -1,7 +1,12 @@
+$sidenav-transition-duration: 100ms;
+$sidenav-transition-timing-function: ease-in-out;
+
 :host {
+  --ng0-sidenav-transition-duration: #{$sidenav-transition-duration};
+  --ng0-sidenav-transition-function: #{$sidenav-transition-timing-function};
+
   position: relative;
-  transition: padding .1s;
+  transition: padding var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-function);
   display: block;
   overflow-x: hidden;
 }
-
