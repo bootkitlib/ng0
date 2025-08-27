@@ -2,7 +2,7 @@
 @let sizeValue=size();
 
 <div class="modal d-block"
-     (click)="$event.target == $event.currentTarget ? _onBackdropClick(): ''"
+     (click)="$event.target == $event.currentTarget ? _onBackdropClick($event): ''"
      [class.modal-static]="_modalStatic()">
 
   <div class="modal-dialog"
