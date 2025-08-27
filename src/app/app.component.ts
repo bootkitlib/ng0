@@ -25,10 +25,11 @@ export class AppComponent {
       },
       enums: {
         Enum1: {
+          1: 'One',
           'Done': 'انجام شده',
           'Failed': 'ناموفق',
-          '[?]': '⚠️ نامعلوم',
-          '[empty]': 'در انتظار پرداخت', // '' or null or undefined
+          // '[?]': '⚠️ نامعلوم',
+          '[empty]': 'مقدار null یا  "" یا undefined', // '' or null or undefined
           '[null]': '❌ NULL', // exactly null value
           '[undefined]': '❌ UNDEFINED' // exactly undefined value
         }

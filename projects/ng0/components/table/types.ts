@@ -73,7 +73,7 @@ export type TableCellType = 'number' | 'currency' | 'date' | 'time' | {
       /** The name of the enum to use for translation */
       name: string,
 
-      returnEnumAsFallback: boolean
+      fallback?: string
     },
 
     /** Boolean formatting options */

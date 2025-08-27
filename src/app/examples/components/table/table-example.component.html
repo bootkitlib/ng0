@@ -4,6 +4,7 @@
     <ng0-table-col field="id" title="id"></ng0-table-col>
     <ng0-table-col field="name" title="name"></ng0-table-col>
     <ng0-table-col field="description" title="description"></ng0-table-col>
+    <ng0-table-col field="id" [type]="{enum: {name: 'Enum1' }}" title="Enum"></ng0-table-col>
 
     <ng0-table-col cellClass="text-end" [shrink]="true">
         <ng-template let-row>

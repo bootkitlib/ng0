@@ -24,9 +24,9 @@ export class LocalizeEnumPipe implements PipeTransform {
    * @param fallbackKey 
    * @returns 
    */
-  transform(enumValue: string | number | null | undefined, enumName: string, returnEnumAsFallback = true): any {
+  transform(enumValue: string | number | null | undefined, enumName: string, fallback?: string): any {
     if (this._recompute) {
-      this._value = this._ls.get()?.translateEnum(enumName, enumValue, returnEnumAsFallback);
+      this._value = this._ls.get()?.translateEnum(enumName, enumValue, fallback);
       this._recompute = false;
     }
 

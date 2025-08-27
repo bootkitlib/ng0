@@ -19,7 +19,7 @@ export class TranslateEnumPipe implements PipeTransform {
    * @param fallbackKey 
    * @returns 
    */
-  transform(enumValue: string | number | null | undefined, enumName: string, returnEnumAsFallback = true): any {
-    return this._ls.get()?.translateEnum(enumName, enumValue, returnEnumAsFallback);
+  transform(enumValue: string | number | null | undefined, enumName: string, fallback?: string): any {
+    return this._ls.get()?.translateEnum(enumName, enumValue, fallback);
   }
 }

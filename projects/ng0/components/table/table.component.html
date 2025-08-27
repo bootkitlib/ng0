@@ -147,7 +147,7 @@
                           } @else if (type == "currency") {
                             {{ cellValue | currency }}
                           } @else if (type.enum) {
-                            {{ cellValue | ng0TranslateEnum: type.enum : type.returnEnumAsFallback }}
+                            {{ cellValue | ng0TranslateEnum: type.enum.name : type.enum.fallback }}
                           } @else if (type.boolean || type == "boolean") {
                             {{ cellValue | ng0LocalizeBool: type.boolean.false ?? "false" : type.boolean.false ?? "true" }}
                           }

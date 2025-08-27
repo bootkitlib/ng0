@@ -35,28 +35,22 @@ export class Locale {
    * @returns The translated string or the enum value itself if not found 
    */
 
-  translateEnum(enumName: string, enumValue: string | number | null | undefined, returnEnumAsFallback = true): string | undefined {
+  translateEnum(enumName: string, enumValue: string | number | null | undefined, fallback?: string): string | undefined {
     let e = this.definition.enums?.[enumName];
+
     if (!e) {
-      return undefined;
+      return fallback || enumValue?.toString();
     }
 
     if (enumValue === null) {
       return e['[null]'] || e['[empty]'];
     } else if (enumValue === undefined) {
       return e['[undefined]'] || e['[empty]'];
-    } else if(enumValue === '') {
+    } else if (enumValue === '') {
       return e['empty'];
+    } else {
+      return e[enumValue] || e['[?]'] || fallback || enumValue?.toString();
     }
-
-    var result = e[enumValue];
-
-    if (result) {
-      return result;
-    }
-
-    var fallback = e['[?]'];
-    return fallback ?? (returnEnumAsFallback ? enumValue : undefined);
   }
 
   /** 
@@ -119,7 +113,7 @@ export class Locale {
    * Clones and extends this object and returns a new Locale (without modifying this object).
    */
   extend(definition?: Omit<LocaleDefinition, 'name'>): Locale {
-    return new Locale({...this.definition, ...definition });
+    return new Locale({ ...this.definition, ...definition });
   }
 
   /**
