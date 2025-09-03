@@ -1,8 +1,8 @@
 import { ClaimLike } from "./security-types";
 
-/** Base class of all menu items  */
+/** Menu item  */
 export interface MenuItem {
-    type: 'group' | 'text' | 'divider';
+    type?: string;
     id?: any;
     disabled?: boolean;
     active?: boolean;

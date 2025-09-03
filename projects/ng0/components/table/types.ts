@@ -66,7 +66,7 @@ export interface TablePagingOptions {
  * This can be a primitive type like 'number', 'currency', 'date', 'time',
  * or an object with specific formatting options.
  */
-export type TableCellType = 'number' | 'currency' | 'date' | 'time' | {
+export type TableCellType = 'text' | 'number' | 'currency' | 'date' | 'time' | {
 
     /** Enum formatting options */
     enum?: {

@@ -1,28 +1,28 @@
-import { ContentChild, Directive, input, Input, TemplateRef } from '@angular/core';
+import { ContentChild, Directive, input, Input, model, TemplateRef } from '@angular/core';
 import { TableCellType } from './types';
-
-export type DataTableColumnBadgeValueType = string | number | boolean;
 
 @Directive({
   selector: 'ng0-table-col',
   standalone: true,
 })
 export class TableColumnDirective {
-  @Input() field?: string;
-  @Input() title?: string;
+  field = input<string>();
+  title = input<string>();
   emptyCellText = input<string>();
 
   /**
    * Type of the table cell.
    */
-  type = input<TableCellType>();
+  type = input<TableCellType>('text');
+  cellClass = input<string | string[] | { [klass: string]: any; } | null>();
+
+  /** Deprecated */
+  bold = input(false);
+  shrink = input(false);
+  filterable = input(true);
+  filterValue = model<any>();
+  filterField = input<string>();
   @ContentChild(TemplateRef) template?: TemplateRef<any>;
-  @Input() cellClass?: string | string[] | { [klass: string]: any; } | null | undefined;
-  @Input() shrink = false;
-  @Input() bold = false;
-  @Input() filterable = false;
-  @Input() filterValue?: string;
-  @Input() filterField?: string;
 
   constructor() {
   }

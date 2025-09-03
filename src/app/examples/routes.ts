@@ -82,6 +82,11 @@ export default [
                 path: 'tooltip',
                 loadChildren: () => import('./components/tooltip/routes'),
             },
+            {
+                path: 'vertical-menu',
+                loadChildren: () => import('./components/vertical-menu/routes'),
+            },
+            
         ]
     }
 ] satisfies Route[];

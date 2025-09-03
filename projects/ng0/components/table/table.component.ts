@@ -188,11 +188,11 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     let sort: DataRequestSort | undefined;
 
     if (this.filterable()) {
-      this._columns.forEach(col => {
-        if (col.filterable && col.filterValue != '' && col.filterValue != undefined) {
-          filters.push({ field: col.filterField ?? col.field!, value: col.filterValue, operator: 'EQ' });
-        }
-      });
+      // this._columns.forEach(col => {
+      //   if (col.filterable && col.filterValue != '' && col.filterValue != undefined) {
+      //     filters.push({ field: col.filterField ?? col.field!, value: col.filterValue, operator: 'EQ' });
+      //   }
+      // });
     }
 
     if (this.pageable()) {
@@ -233,7 +233,7 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   protected _getCellValue(row: any, col: TableColumnDirective) {
-    var subFields = col.field!.split('.');
+    var subFields = col.field()!.split('.');
     let value = row[subFields[0]];
     for (let i = 1; i < subFields.length; i++) {
       if (value == null) break;

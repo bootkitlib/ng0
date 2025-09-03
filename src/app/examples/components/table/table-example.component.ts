@@ -27,17 +27,17 @@ interface ProductDataResult {
 export class DataTableExampleComponent {
     source1 = Array1;
     source2 = new ArrayDataSource(Array2);
-    source3: DataLoader = req => this.httpService.get('products', {
-        // transferState: {},
-        id: 'products',
-        params: {
-            // limit: req.page?.size!,
-            // skip: (req.page?.index! - 1) * req.page?.size!
-        }
-    }).pipe(
-        map((r: any) => new DataResult(r.products, r.total)),
-        delay(0)
-    );
+    // source3: DataLoader = req => this.httpService.get('products', {
+    //     // transferState: {},
+    //     id: 'products',
+    //     params: {
+    //         // limit: req.page?.size!,
+    //         // skip: (req.page?.index! - 1) * req.page?.size!
+    //     }
+    // }).pipe(
+    //     map((r: any) => new DataResult(r.products, r.total)),
+    //     delay(0)
+    // );
     source4 = new AsyncDataSource(req => this.httpService.getDataResult('invalid-path', req));
     source5 = new AsyncDataSource(req => of(new DataResult(Array1, Array1.length)).pipe(delay(2000)));
 
