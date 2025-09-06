@@ -3,7 +3,7 @@ import { NgControl } from '@angular/forms';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { BehaviorSubject, startWith, switchMap } from 'rxjs';
 import { DataResult, DataRequest } from '@bootkit/ng0/data';
-import { DataSourceLike, StandardFilterOperators, convertToDataSource } from '@bootkit/ng0/data/types';
+import { DataSourceLike, FilterOperators, convertToDataSource } from '@bootkit/ng0/data/types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AutocompleteContainerComponent } from './autocomplete-container.component';
 import { ComponentPortal } from '@angular/cdk/portal';
@@ -97,7 +97,7 @@ export class AutocompleteTriggerDirective implements OnInit, OnDestroy {
         this._instance.dataResult$ = this._ngControl!.control!.valueChanges.pipe(
             startWith(this.formatter()(this._ngControl!.control!.value)),
             switchMap(v => {
-                let request = new DataRequest({ filters: v ? [{ value: this.formatter()(v), operator: StandardFilterOperators.Contains }] : [] });
+                let request = new DataRequest({ filters: v ? [{ value: this.formatter()(v), operator: FilterOperators.Contains }] : [] });
                 return this.source().load(request);
             })
         )

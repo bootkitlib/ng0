@@ -2,7 +2,7 @@ import { delay, of, Subject, tap } from "rxjs";
 import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
-import { StandardFilterOperators } from "./types";
+import { FilterOperators } from "./types";
 
 /**
  * An implementation of DataSource that uses an array as the data source.
@@ -22,44 +22,49 @@ export class ArrayDataSource extends DataSource {
   }
 
   load(request: DataRequest) {
-    let items: Array<any>;
+    let filteredValues = [...this.items];
+    let result: any[];
 
-    if (request.page) {
-      let startItemIndex = (request.page.zeroBased ? request.page.index : request.page.index - 1) * request.page.size;
-      items = this.items.slice(startItemIndex, startItemIndex + request.page.size);
-    } else {
-      items = [...this.items];
-    }
-
+    // Filtering
     if (Array.isArray(request.filters) && request.filters.length > 0) {
-      // Apply filters
-
       request.filters.forEach(filter => {
-        let filterFunction = getFilterFunction(filter);
+        if (!filter.field) {
+          throw Error('DataRequestFilter "field" cannot be null.');
+        }
 
-        for (let i = 0; i < items.length; i++) {
-          let item = items[i];
-          let value = filter.field ? item[filter.field] : item;
-          if (!filterFunction(value, filter.value)) {
-            items.splice(i, 1);
+        let isPassedByFilter = getFilterFunction(filter);
+
+        for (let i = 0; i < filteredValues.length; i++) {
+          let row = filteredValues[i];
+          if (!isPassedByFilter(row[filter.field], filter.value)) {
+            filteredValues.splice(i, 1);
             i--; // Adjust index after removal
           }
         }
       });
     }
 
-    if (request.sort) {
-      // Apply sorting
+    // Pagination
+    if (request.page) {
+      let startItemIndex = (request.page.zeroBased ? request.page.index : request.page.index - 1) * request.page.size;
+      result = filteredValues.slice(startItemIndex, startItemIndex + request.page.size);
+    } else {
+      result = filteredValues;
     }
 
-    let result = new DataResult(items, this.items.length);
+    // Sorting
+    if (request.sort) {
+
+    }
+
+    let dataResult = new DataResult(result, filteredValues.length);
 
     // this._loading = true;
     // return of(result).pipe(
     //   delay(5000),
     //   tap(x => this._loading = false)
     // );
-    return of(result);
+    return of(dataResult);
   }
 
   public remove(item: any) {
@@ -81,38 +86,53 @@ export class ArrayDataSource extends DataSource {
   // }
 }
 
-function getFilterFunction(filter: DataRequestFilter): (item: any, filter: any) => boolean {
-  let operator = filter.operator || StandardFilterOperators.Contains;
-  let caseSensitive = filter.caseSensitive || false;
+function getFilterFunction(requestfilter: DataRequestFilter): (cellValue: any, filterValue: any) => boolean {
+  let operator = requestfilter.operator || FilterOperators.Contains;
+  let caseSensitive = requestfilter.caseSensitive || false;
 
-  if(filter.value === undefined || filter.value === null) {
-    return (item: any) => true; // No filter applied
-  }
+  // if (requestfilter.value === undefined || requestfilter.value === null) {
+  //   return (item: any) => true; // No filter applied
+  // }
 
-  switch (filter.operator) {
-    case StandardFilterOperators.Contains:
+  switch (requestfilter.operator) {
+    case FilterOperators.Contains:
       return caseSensitive ?
         (item: string, filter: string) => item.includes(filter) :
         (item: string, filter: string) => item.toLowerCase().includes(filter.toLowerCase());
 
-    case StandardFilterOperators.StartsWith:
+    case FilterOperators.StartsWith:
       return caseSensitive ?
         (item: string, filter: string) => item.startsWith(filter) :
         (item: string, filter: string) => item.toLowerCase().startsWith(filter.toLowerCase());
 
-    case StandardFilterOperators.EndsWith:
+    case FilterOperators.EndsWith:
       return caseSensitive ?
         (item: string, filter: string) => item.endsWith(filter) :
         (item: string, filter: string) => item.toLowerCase().endsWith(filter.toLowerCase());
 
-    case StandardFilterOperators.Equals:
-      if (typeof filter.value === 'string') {
+    case FilterOperators.Equals:
+      if (typeof requestfilter.value === 'string') {
         return caseSensitive ?
-          (item: string, filter: string) => item === filter :
-          (item: string, filter: string) => item.toLowerCase() === filter.toLowerCase();
+          (item: string, filter: string) => item == filter :
+          (item: string, filter: string) => item.toString().toLowerCase() === filter.toLowerCase();
       } else {
-        return (item: any, filter: any) => item === filter.value;
+        return (item: any, filter: any) => item === filter;
       }
+
+    case FilterOperators.LessThan:
+      return (item: any, filter: any) => item < filter;
+
+    case FilterOperators.LessThanOrEqual:
+      return (item: any, filter: any) => item <= filter;
+
+    case FilterOperators.GreaterThan:
+      return (item: any, filter: any) => item > filter;
+
+    case FilterOperators.GreaterThanOrEqual:
+      return (item: any, filter: any) => item >= filter;
+
+    case FilterOperators.NotEquals:
+      return (item: any, filter: any) => item !== filter;
 
     default:
       throw new Error(`filter operator: ${operator} is not implemented in ArrayDataSource.`);

@@ -1,13 +1,13 @@
 <h5>Data Table</h5>
 
-<ng0-table [source]="source2" [pageable]="true" [loadingIndicator]="'spinner'" [showHeader]="true"
+<ng0-table [source]="source1" [pageable]="true" [loadingIndicator]="'spinner'" [showHeader]="true"
            [filterable]="true"
            
            [loadingCover]="false" [autoLoad]="true" [height]="200" [showRowNumbers]="true">
-    <ng0-table-col field="id" title="id" [bold]="true"></ng0-table-col>
+    <ng0-table-col field="id" type="number" title="Id" [bold]="true"></ng0-table-col>
     <ng0-table-col field="name" title="name" [filterable]="true"></ng0-table-col>
     <ng0-table-col field="description" title="description"></ng0-table-col>
-    <ng0-table-col field="id" [type]="{enum: {name: 'Enum1' }}" title="Enum"></ng0-table-col>
+    <!-- <ng0-table-col field="id" [type]="{enum: {name: 'Enum1' }}" title="Enum"></ng0-table-col> -->
 
     <ng0-table-col cellClass="text-end" [shrink]="true">
         <ng-template let-row>

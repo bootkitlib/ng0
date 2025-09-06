@@ -31,11 +31,11 @@ export function convertToDataSource<T>(source: DataSourceLike): DataSource<T> {
 }
 
 /**
- * StandardFilterOperators is an enumeration of standard filter operators
+ * FilterOperators is an enumeration of standard filter operators
  * that can be used in data requests to filter data.
  * It includes operators like Contains, StartsWith, EndsWith, and Equals.
  */
-export enum StandardFilterOperators {
+export enum FilterOperators {
   /**
    * A filter that matches items that contain the specified value.
    */

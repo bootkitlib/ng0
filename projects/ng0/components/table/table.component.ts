@@ -7,9 +7,11 @@ import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { formatString } from '@bootkit/ng0/common';
 import { LocalizationModule, LocalizationService, TableComponentPagingFormatter } from '@bootkit/ng0/localization';
-import { DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataResult, DataSource, convertToDataSource, DataSourceLike } from '@bootkit/ng0/data';
+import { DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataResult, DataSource, convertToDataSource, DataSourceLike, FilterOperators } from '@bootkit/ng0/data';
 import { PaginationComponent } from '@bootkit/ng0/components/pagination';
 import { TablePagingOptions } from './types';
+import { OverlayModule } from '@angular/cdk/overlay';
+import { NumberDirective } from '@bootkit/ng0/form';
 
 /**
  * A generic table component that can display data in a tabular format.
@@ -27,11 +29,12 @@ import { TablePagingOptions } from './types';
     CommonModule,
     FormsModule,
     LocalizationModule,
-    PaginationComponent
+    PaginationComponent,
+    NumberDirective,
+    OverlayModule
   ]
 })
 export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
-
   /**
    * The data source for the table.
    * This can be an array of data, a function that returns an observable of data,
@@ -156,10 +159,15 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   protected _pagingFormatter!: TableComponentPagingFormatter;
   protected _lastError?: any;
 
+
   constructor(protected _ls: LocalizationService, private _destroyRef: DestroyRef) {
   }
 
   ngOnInit(): void {
+
+  }
+
+  ngAfterContentInit(): void {
     this._dataSource = convertToDataSource(this.source());
     const locale = this._ls.get();
     this._pagingFormatter = locale?.definition.components?.table?.pagingInfo ??
@@ -174,10 +182,6 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     }
   }
 
-  ngAfterContentInit(): void {
-
-  }
-
   /**
    * Load data for the specified page index (optional).
    * @param pageIndex The page index to load.
@@ -188,11 +192,11 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     let sort: DataRequestSort | undefined;
 
     if (this.filterable()) {
-      // this._columns.forEach(col => {
-      //   if (col.filterable && col.filterValue != '' && col.filterValue != undefined) {
-      //     filters.push({ field: col.filterField ?? col.field!, value: col.filterValue, operator: 'EQ' });
-      //   }
-      // });
+      this._columns.forEach(col => {
+        if (col.filterable() && col.filterValue() != '' && col.filterValue() != undefined) {
+          filters.push({ field: col.filterField() ?? col.field(), value: col.filterValue(), operator: col.filterOperator() });
+        }
+      });
     }
 
     if (this.pageable()) {
@@ -260,6 +264,21 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   protected isRowExpanded(row: any) {
     var state = this._rowStates.get(row)
     return state == undefined ? false : state.expanded;
+  }
+
+  protected _onToggleFilterOperator(col: TableColumnDirective) {
+    if (col.showFilterOperators()) {
+      col.showFilterOperators.set(false)
+    } else {
+      this._columns.forEach(x => x.showFilterOperators.set(false));
+      col.showFilterOperators.set(true)
+    }
+  }
+
+  protected _onSelectFilterOperator(col: TableColumnDirective, filterOperator: string) {
+    col.filterOperator.set(filterOperator);
+    this._columns.forEach(x => x.showFilterOperators.set(false));
+    this.load(0);
   }
 
   ngOnDestroy(): void {

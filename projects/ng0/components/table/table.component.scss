@@ -74,3 +74,17 @@ td {
 .ng0-table-footer {
   margin-top: .5rem;
 }
+
+.fade-in {
+  animation: fade-in .5s;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

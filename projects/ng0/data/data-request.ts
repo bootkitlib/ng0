@@ -80,7 +80,7 @@ export interface DataRequestFilter {
     operator?: string;
 
     /**
-     * Indicates if the filter is case-sensitive.
+     * Indicates if the filter is case-sensitive. only for text columns.
      * Default is false.
      */
     caseSensitive?: boolean;
