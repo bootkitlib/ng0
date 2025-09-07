@@ -16,6 +16,10 @@ export default [
         loadChildren: () => import('./http/routes')
     },
     {
+        path: 'form',
+        loadChildren: () => import('./form/routes')
+    },
+    {
         path: 'components',
         children: [
             {
@@ -86,7 +90,7 @@ export default [
                 path: 'vertical-menu',
                 loadChildren: () => import('./components/vertical-menu/routes'),
             },
-            
+
         ]
     }
 ] satisfies Route[];

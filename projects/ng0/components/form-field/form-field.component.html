@@ -23,7 +23,7 @@
   <span class="form-field-error text-danger">
     {{errorText}}
   </span>
-  }@if(hint()) {
+  }@else if(hint()) {
   <span class="form-field-hint">
     {{hint()}}
   </span>
