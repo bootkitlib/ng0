@@ -10,9 +10,15 @@ import { httpDataRequestResolver1 } from '@bootkit/ng0/http';
 import { map } from 'rxjs';
 import { DataResult } from '@bootkit/ng0/data';
 
-const appDataResolver: HttpDataRequestResolver = (url, request, options) => {
+const appHttpDataRequestResolver: HttpDataRequestResolver = (url, request, options) => {
   let http = inject(HttpClient);
-  return http.get<{ products: any[], total: number }>(url, {}).pipe(
+  return http.get<{ products: any[], total: number }>(url, {
+    params: {
+      limit: request.page?.size ?? 10,
+      skip: (request.page?.index! - 1) * request.page?.size!,
+      q: request.filters?.at(0)?.value?.toString() ?? ''
+    }
+  }).pipe(
     map(x => new DataResult(x.products, x.total))
   )
 }
@@ -28,7 +34,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(),
     provideHttpService({
       baseUrl: 'https://dummyjson.com/',
-      dataRequestResolver: httpDataRequestResolver1,
+      dataRequestResolver: appHttpDataRequestResolver,
     })
     // { provide: NZ_I18N, useValue: en_US },
     // { provide: LOCALE, useClass: LocaleProvider },

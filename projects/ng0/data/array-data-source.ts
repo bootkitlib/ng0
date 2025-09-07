@@ -2,7 +2,6 @@ import { delay, of, Subject, tap } from "rxjs";
 import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
-import { FilterOperators } from "./types";
 
 /**
  * An implementation of DataSource that uses an array as the data source.
@@ -87,7 +86,7 @@ export class ArrayDataSource extends DataSource {
 }
 
 function getFilterFunction(requestfilter: DataRequestFilter): (cellValue: any, filterValue: any) => boolean {
-  let operator = requestfilter.operator || FilterOperators.Contains;
+  let operator = requestfilter.operator || 'contains';
   let caseSensitive = requestfilter.caseSensitive || false;
 
   // if (requestfilter.value === undefined || requestfilter.value === null) {
@@ -95,22 +94,22 @@ function getFilterFunction(requestfilter: DataRequestFilter): (cellValue: any, f
   // }
 
   switch (requestfilter.operator) {
-    case FilterOperators.Contains:
+    case 'contains':
       return caseSensitive ?
         (item: string, filter: string) => item.includes(filter) :
         (item: string, filter: string) => item.toLowerCase().includes(filter.toLowerCase());
 
-    case FilterOperators.StartsWith:
+    case 'startsWith':
       return caseSensitive ?
         (item: string, filter: string) => item.startsWith(filter) :
         (item: string, filter: string) => item.toLowerCase().startsWith(filter.toLowerCase());
 
-    case FilterOperators.EndsWith:
+    case 'endsWith':
       return caseSensitive ?
         (item: string, filter: string) => item.endsWith(filter) :
         (item: string, filter: string) => item.toLowerCase().endsWith(filter.toLowerCase());
 
-    case FilterOperators.Equals:
+    case 'eq':
       if (typeof requestfilter.value === 'string') {
         return caseSensitive ?
           (item: string, filter: string) => item == filter :
@@ -119,19 +118,19 @@ function getFilterFunction(requestfilter: DataRequestFilter): (cellValue: any, f
         return (item: any, filter: any) => item === filter;
       }
 
-    case FilterOperators.LessThan:
+    case 'lt':
       return (item: any, filter: any) => item < filter;
 
-    case FilterOperators.LessThanOrEqual:
+    case 'lte':
       return (item: any, filter: any) => item <= filter;
 
-    case FilterOperators.GreaterThan:
+    case 'gt':
       return (item: any, filter: any) => item > filter;
 
-    case FilterOperators.GreaterThanOrEqual:
+    case 'gte':
       return (item: any, filter: any) => item >= filter;
 
-    case FilterOperators.NotEquals:
+    case 'ne':
       return (item: any, filter: any) => item !== filter;
 
     default:

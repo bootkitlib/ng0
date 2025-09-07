@@ -31,55 +31,16 @@ export function convertToDataSource<T>(source: DataSourceLike): DataSource<T> {
 }
 
 /**
- * FilterOperators is an enumeration of standard filter operators
- * that can be used in data requests to filter data.
- * It includes operators like Contains, StartsWith, EndsWith, and Equals.
+ * LogicalOperator is a list of predefined logical operators that can be used in data requests to filter data.
  */
-export enum FilterOperators {
-  /**
-   * A filter that matches items that contain the specified value.
-   */
-  Contains = 'contains',
-
-  /**
-   * A filter that matches items that start with the specified value.
-   */
-  StartsWith = 'startsWith',
-
-  /**
-   * A filter that matches items that end with the specified value.
-   */
-  EndsWith = 'endsWith',
-
-  /**
-   * A filter that matches items that are equal to the specified value.
-   */
-  Equals = 'equals',
-
-  /**
-   * A filter that matches items that are not equal to the specified value.
-   */
-  NotEquals = 'notEquals',
-
-  /**
-   * A filter that matches items that are greater than the specified value.
-   */
-  GreaterThan = 'greaterThan',
-
-  /**
-   * A filter that matches items that are greater than or equal to the specified value.
-   */
-  GreaterThanOrEqual = 'greaterThanOrEqual',
-
-  /**
-   * A filter that matches items that are less than the specified value.
-   */
-  LessThan = 'lessThan',
-
-  /**
-   * A filter that matches items that are less than or equal to the specified value.
-   */
-  LessThanOrEqual = 'lessThanOrEqual',
-
-  
-}
+export type LogicalOperator =
+  | 'contains'
+  | 'endsWith'
+  | 'startsWith'
+  | 'like'
+  | 'eq'
+  | 'ne'
+  | 'gt'
+  | 'gte'
+  | 'lt'
+  | 'lte';

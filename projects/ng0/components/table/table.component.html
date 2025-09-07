@@ -127,7 +127,7 @@
             <li>
               <button class="dropdown-item" [class.active]="item == col.filterOperator()"
                       (click)="_onSelectFilterOperator(col, item)">
-                {{item}}
+                {{_ls.get()?.definition?.data?.logicalOperators?.[item] ?? item }}
               </button>
             </li>
             }
@@ -183,7 +183,7 @@
 
     @for (col of _columns; track $index) {
     <td
-        [ngClass]="col.cellClass"
+        [ngClass]="col.cellClass()"
         [class.shrinked]="col.shrink()"
         [class.fw-bold]="col.bold()">
       @if (col.template) {

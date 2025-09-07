@@ -30,7 +30,12 @@ export interface LocaleDefinition {
       /** Form validation error translators. */
       errors?: LocaleValidationErrorTranslators
     }
-  }
+  },
+  data?: {
+    logicalOperators?: {
+      [operator: string]: string
+    }
+  },
   components?: {
     table?: {
       /**

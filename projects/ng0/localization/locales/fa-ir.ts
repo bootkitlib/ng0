@@ -35,5 +35,19 @@ export const FA_IR_LOCALE = new Locale({
             noRecords: 'رکوردی وجود ندارد',
             pagingInfo: (info) => `نمایش ${formatNumber(info.firstRecord)}-${formatNumber(info.lastRecord)} از ${formatNumber(info.totalRecords!)} رکورد`
         }
+    },
+    data: {
+        logicalOperators: {
+            contains: 'شامل',
+            startsWith: 'شروع',
+            endsWith: 'پایان',
+            eq: 'مساوی',
+            gt: 'بزرگتر',
+            gte: 'بزرگتر یا مساوی',
+            lt: 'کوچکتر',
+            lte: 'کوچکتر یا مساوی',
+            ne: 'مخالف',
+            
+        }
     }
 });

@@ -1,6 +1,5 @@
 import { ContentChild, Directive, input, Input, model, OnInit, signal, TemplateRef } from '@angular/core';
 import { TableCellType } from './types';
-import { FilterOperators } from '@bootkit/ng0/data';
 
 @Directive({
   selector: 'ng0-table-col',
@@ -20,7 +19,7 @@ export class TableColumnDirective implements OnInit {
   /** Deprecated */
   bold = input(false);
   shrink = input(false);
-  filterable = input(true);
+  filterable = input(false);
   filterValue = model<any>();
   filterField = input<string>();
   filterOperator = model<string>();
@@ -34,32 +33,20 @@ export class TableColumnDirective implements OnInit {
 
   ngOnInit(): void {
     if (this.filterOperator() == undefined) {
-      this.filterOperator.set(this.type() == 'text' ? FilterOperators.Contains : FilterOperators.Equals);
+      this.filterOperator.set(this.type() == 'text' ? 'contains' : 'eq');
     }
   }
 
-  public getFilterOperators() {
-    if (this.filterOperators())
-      return this.filterOperators();
+  public getFilterOperators(): string[] {
+    let op = this.filterOperators();
+    if (op && op.length > 0)
+      return op;
 
     let type = this.type();
     if (type == 'number' || type == 'currency' || type == 'date' || type == 'time') {
-      return [
-        FilterOperators.Equals,
-        FilterOperators.GreaterThan,
-        FilterOperators.GreaterThanOrEqual,
-        FilterOperators.LessThan,
-        FilterOperators.LessThanOrEqual,
-        FilterOperators.NotEquals,
-      ]
+      return ['eq', 'ne', 'gt', 'gte', 'lt', 'lte',]
     } else if (type == 'text') {
-      return [
-        FilterOperators.Contains,
-        FilterOperators.EndsWith,
-        FilterOperators.Equals,
-        FilterOperators.NotEquals,
-        FilterOperators.StartsWith,
-      ]
+      return ['contains', 'startsWith', 'endsWith', 'eq', 'ne']
     } else {
       return []
     }
