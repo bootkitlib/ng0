@@ -71,6 +71,10 @@ export default [
                 loadChildren: () => import('./components/progress/routes'),
             },
             {
+                path: 'select',
+                loadChildren: () => import('./components/select/routes'),
+            },
+            {
                 path: 'sidenav',
                 loadChildren: () => import('./components/sidenav/routes'),
             },

@@ -1,0 +1,13 @@
+<h1>Default</h1>
+
+<div class="input-group">
+    <ng0-select [source]="source1" [(ngModel)]="selectedValue1">
+        <ng-template let-item>
+            {{ item.name }}
+        </ng-template>
+    </ng0-select>
+
+    <span class="input-group-text">Hi</span>
+</div>
+
+Bound value: {{ selectedValue1 }}

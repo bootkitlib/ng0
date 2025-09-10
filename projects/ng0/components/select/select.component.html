@@ -1,0 +1,18 @@
+{{_selectedValue()}}
+
+<ng-template cdkConnectedOverlay
+             [cdkConnectedOverlayOrigin]="_el.nativeElement"
+             [cdkConnectedOverlayOpen]="open()"
+             (detach)="open.set(false)">
+    <ul cdkListbox
+        [cdkListboxValue]="[_selectedValue()]"
+        (cdkListboxValueChange)="_onValueChange($event)"
+        class="dropdown-menu"
+        [class.is-open]="open()">
+        @for (item of _items(); track $index) {
+        <li cdkOption class="dropdown-item" [cdkOption]="item" (click)="open.set(false)">
+            {{ item }}
+        </li>
+        }
+    </ul>
+</ng-template>
