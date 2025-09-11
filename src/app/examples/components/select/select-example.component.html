@@ -14,13 +14,14 @@
 <section class="mb-5">
     <h5>Default</h5>
     <div class="input-group">
-        <ng0-select [source]="source1" [(ngModel)]="selectedValue1">
+        <ng0-select name="x" [source]="source1" [(ngModel)]="selectedValue1" [disabled]="false">
             <ng-template let-item>
-                {{ item.name }}
+                <span>🎵</span>
+                <strong>{{item}}</strong>
             </ng-template>
         </ng0-select>
 
-        <span class="input-group-text">Hi</span>
+
     </div>
 
     Bound value: {{ selectedValue1 }}

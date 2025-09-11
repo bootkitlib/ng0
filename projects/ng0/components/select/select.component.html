@@ -6,7 +6,7 @@
              (overlayOutsideClick)="open.set(false)"
              (detach)="open.set(false)">
     <ul class="dropdown-menu"
-        [tabindex]="-1"
+        [attr.tabindex]="_isDisabled() ? undefined : -1"
         [class.is-open]="open()">
 
         @for (o of _options(); track $index) {
@@ -17,7 +17,11 @@
             [class.ng0-option-selected]="o === _selectedValue()"
             (click)="select($index); open.set(false)"
             (keyup.enter)="open.set(false)">
-            {{ o }}
+            @if(_optionTemplate) {
+            <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: o }" />
+            } @else {
+            {{o}}
+            }
         </li>
         }
     </ul>

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { convertToDataSource, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -27,11 +27,13 @@ import { Overlay, OverlayModule } from '@angular/cdk/overlay';
     }],
     host: {
         '[class.is-open]': 'open()',
-        '[attr.aria-activedescendant]': '_activeIndex() > -1 ? ("ng0-option-" + _activeIndex()) : undefined'
+        '[attr.aria-activedescendant]': '_activeIndex() > -1 ? ("ng0-option-" + _activeIndex()) : undefined',
+        '[attr.disabled]': '_isDisabled()',
+        '[attr.aria-disabled]': '_isDisabled()'
     }
 })
 export class SelectComponent implements OnInit, ControlValueAccessor {
-    
+
     /**
      * The data source for the select component.
      * This can be an array of data, a function that returns an observable of data,
@@ -41,28 +43,24 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         transform: v => convertToDataSource(v)
     });
 
+    /** 
+     * Indicates whether the dropdown is open or closed.
+     */
+    public readonly open = model(false);
+
     protected readonly _options = signal<any[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _selectedIndex = signal<number>(-1);
     protected readonly _selectedValue = signal<any>(undefined);
     protected readonly _activeIndex = signal<number>(-1);
     protected readonly _activeValue = signal<any>(undefined);
+    @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
     protected _onChangeCallback!: (value: any) => void;
     protected _onTouchedCallback!: (value: any) => void;
-    private _overlay = inject(Overlay);
-    // @ViewChild(CdkListbox) _listbox?: CdkListbox<any>;
-
-    /** 
-     * Indicates whether the dropdown is open or closed.
-     */
-    public readonly open = model(false);
 
     constructor(protected _el: ElementRef, private _renderer: Renderer2, private _destroyRef: DestroyRef) {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
         this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
-        // this._hostOrigin = this._overlay.position()
-        //             .flexibleConnectedTo(this.el.nativeElement)
-        //             .withPositions(getConnectedPositions('bottom', 'start', true));
     }
 
     ngOnInit(): void {
@@ -168,6 +166,9 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         }
     }
 
+    /**
+     * Selects an option by index
+     */
     public select(index: number) {
         let optionsCount = this._options().length;
         if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
@@ -189,14 +190,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         this._activeIndex.set(index);
         this._activeValue.set(this._options()[index]);
     }
-
-    // protected _onValueChange($event: ListboxValueChangeEvent<any>) {
-    //     let value = $event.value[0];
-    //     this._selectedValue.set(value);
-    //     this._onChangeCallback!(value);
-    //     $event.option?.focus();
-    //     // this.open.set(false);
-    // }
 
     writeValue(obj: any): void {
         let index = this._options().findIndex(x => x === obj);
