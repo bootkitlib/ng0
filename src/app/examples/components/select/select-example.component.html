@@ -1,13 +1,34 @@
-<h1>Default</h1>
+<section class="mb-5">
+    <h5>Native select element</h5>
 
-<div class="input-group">
-    <ng0-select [source]="source1" [(ngModel)]="selectedValue1">
-        <ng-template let-item>
-            {{ item.name }}
-        </ng-template>
-    </ng0-select>
+    <div class="input-group">
+        <select class="form-select">
+            @for (item of source1; track $index) {
+            <option>{{item}}</option>
+            }
+        </select>
+    </div>
 
-    <span class="input-group-text">Hi</span>
-</div>
+</section>
 
-Bound value: {{ selectedValue1 }}
+<section class="mb-5">
+    <h5>Default</h5>
+    <div class="input-group">
+        <ng0-select [source]="source1" [(ngModel)]="selectedValue1">
+            <ng-template let-item>
+                {{ item.name }}
+            </ng-template>
+        </ng0-select>
+
+        <span class="input-group-text">Hi</span>
+    </div>
+
+    Bound value: {{ selectedValue1 }}
+</section>
+
+<section>
+    <h5>This page should be scrollable!</h5>
+    <div style="height: 150vh; background: linear-gradient(white, lightgray);">
+        Scroll down to see the select component at the bottom of the page.
+    </div>
+</section>

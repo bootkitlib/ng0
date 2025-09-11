@@ -3,15 +3,21 @@
 <ng-template cdkConnectedOverlay
              [cdkConnectedOverlayOrigin]="_el.nativeElement"
              [cdkConnectedOverlayOpen]="open()"
+             (overlayOutsideClick)="open.set(false)"
              (detach)="open.set(false)">
-    <ul cdkListbox
-        [cdkListboxValue]="[_selectedValue()]"
-        (cdkListboxValueChange)="_onValueChange($event)"
-        class="dropdown-menu"
+    <ul class="dropdown-menu"
+        [tabindex]="-1"
         [class.is-open]="open()">
-        @for (item of _items(); track $index) {
-        <li cdkOption class="dropdown-item" [cdkOption]="item" (click)="open.set(false)">
-            {{ item }}
+
+        @for (o of _options(); track $index) {
+        <li
+            [id]="'ng0-option-' + $index"
+            class="dropdown-item"
+            [class.active]="o === _activeValue()"
+            [class.ng0-option-selected]="o === _selectedValue()"
+            (click)="select($index); open.set(false)"
+            (keyup.enter)="open.set(false)">
+            {{ o }}
         </li>
         }
     </ul>

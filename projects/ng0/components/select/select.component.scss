@@ -13,3 +13,8 @@ ul {
         border-top: none;
     }
 }
+
+.ng0-option-selected {
+    background-color: var(--bs-dark);
+    color: var(--bs-light);
+}

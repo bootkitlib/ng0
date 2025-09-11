@@ -1,12 +1,10 @@
-import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, HostBinding, ContentChild, effect, AfterViewInit, input, OnInit, DestroyRef, signal, ViewChild, model, HostListener, inject, forwardRef } from '@angular/core';
+import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { convertToDataSource, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DataRequest } from 'dist/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { FlexibleConnectedPositionStrategyOrigin, Overlay, OverlayModule } from '@angular/cdk/overlay';
-import { getConnectedPositions } from '@bootkit/ng0/components/overlay';
-import { CdkListboxModule, ListboxValueChangeEvent } from '@angular/cdk/listbox';
+import { Overlay, OverlayModule } from '@angular/cdk/overlay';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -21,7 +19,6 @@ import { CdkListboxModule, ListboxValueChangeEvent } from '@angular/cdk/listbox'
     imports: [
         CommonModule,
         OverlayModule,
-        CdkListboxModule
     ],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
@@ -29,11 +26,12 @@ import { CdkListboxModule, ListboxValueChangeEvent } from '@angular/cdk/listbox'
         multi: true
     }],
     host: {
-        '[class.is-open]': 'open()'
+        '[class.is-open]': 'open()',
+        '[attr.aria-activedescendant]': '_activeIndex() > -1 ? ("ng0-option-" + _activeIndex()) : undefined'
     }
 })
 export class SelectComponent implements OnInit, ControlValueAccessor {
-
+    
     /**
      * The data source for the select component.
      * This can be an array of data, a function that returns an observable of data,
@@ -43,12 +41,16 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         transform: v => convertToDataSource(v)
     });
 
-    protected readonly _items = signal<any[]>([]);
+    protected readonly _options = signal<any[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
+    protected readonly _selectedIndex = signal<number>(-1);
     protected readonly _selectedValue = signal<any>(undefined);
-    protected _onChangeCallback?: (value: any) => void;
-    protected _onTouchedCallback?: (value: any) => void;
+    protected readonly _activeIndex = signal<number>(-1);
+    protected readonly _activeValue = signal<any>(undefined);
+    protected _onChangeCallback!: (value: any) => void;
+    protected _onTouchedCallback!: (value: any) => void;
     private _overlay = inject(Overlay);
+    // @ViewChild(CdkListbox) _listbox?: CdkListbox<any>;
 
     /** 
      * Indicates whether the dropdown is open or closed.
@@ -57,6 +59,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
     constructor(protected _el: ElementRef, private _renderer: Renderer2, private _destroyRef: DestroyRef) {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
+        this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
         // this._hostOrigin = this._overlay.position()
         //             .flexibleConnectedTo(this.el.nativeElement)
         //             .withPositions(getConnectedPositions('bottom', 'start', true));
@@ -65,12 +68,12 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     ngOnInit(): void {
         var r = new DataRequest();
         this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            this._items.set(res.data);
+            this._options.set(res.data);
         })
     }
 
     @HostListener('click', ['$event'])
-    private _onClick() {
+    private _onHostClick() {
         if (this._isDisabled())
             return;
 
@@ -78,15 +81,129 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         // this._onTouchedCallback?.(this._selectedValue());
     }
 
-    protected _onValueChange($event: ListboxValueChangeEvent<any>) {
-        let value = $event.value[0];
-        this._selectedValue.set(value);
-        this._onChangeCallback!(value);
-        // this.open.set(false);
+    @HostListener('keydown', ['$event'])
+    protected _onHostKeydown(e: KeyboardEvent) {
+        let open = this.open();
+
+        if (this._isDisabled())
+            return;
+
+        let optionsCount = this._options().length;
+        if (optionsCount == 0) {
+            return;
+        }
+
+        switch (e.key) {
+            case 'ArrowDown':
+                if (open) {
+                    if (this._activeIndex() < optionsCount - 1) {
+                        this.active(this._activeIndex() + 1);
+                    }
+                } else {
+                    if (this._selectedIndex()! < optionsCount - 1) {
+                        this.select(this._selectedIndex() + 1)
+                    }
+                }
+                e.preventDefault();
+                break;
+
+            case 'ArrowUp':
+                if (open) {
+                    if (this._activeIndex() > 0) {
+                        this.active(this._activeIndex()! - 1);
+                    }
+                } else {
+                    if (this._selectedIndex() > 0) {
+                        this.select(this._selectedIndex()! - 1)
+                    }
+                }
+                e.preventDefault();
+                break;
+
+            case 'Enter':
+                if (open) {
+                    if (this._activeIndex() == this._selectedIndex()) {
+                        this.open.set(false);
+                    } else {
+                        this.select(this._activeIndex());
+                        this.open.set(false);
+                    }
+                } else {
+                    this.open.set(true);
+                }
+                e.preventDefault();
+                break;
+
+            case ' ':
+                if (!open) {
+                    this.open.set(true);
+                }
+                e.preventDefault();
+                break;
+
+            case 'Escape':
+                this.open.set(false);
+                e.preventDefault();
+                break;
+
+            case 'Home':
+                if (open) {
+                    this.active(0);
+                } else {
+                    this.select(0)
+                }
+
+                e.preventDefault();
+                break;
+
+            case 'End':
+                if (open) {
+                    this.active(optionsCount - 1);
+                } else {
+                    this.select(optionsCount - 1);
+                }
+
+                e.preventDefault();
+                break;
+        }
     }
 
+    public select(index: number) {
+        let optionsCount = this._options().length;
+        if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
+            return;
+        }
+
+        let value = this._options()[index];
+        this._selectedIndex.set(index)
+        this._selectedValue.set(value)
+        this._activeIndex.set(index)
+        this._activeValue.set(value)
+        this._onChangeCallback(value)
+    }
+
+    /**
+     * Sets an option as active
+     */
+    active(index: number) {
+        this._activeIndex.set(index);
+        this._activeValue.set(this._options()[index]);
+    }
+
+    // protected _onValueChange($event: ListboxValueChangeEvent<any>) {
+    //     let value = $event.value[0];
+    //     this._selectedValue.set(value);
+    //     this._onChangeCallback!(value);
+    //     $event.option?.focus();
+    //     // this.open.set(false);
+    // }
+
     writeValue(obj: any): void {
+        let index = this._options().findIndex(x => x === obj);
+        this._selectedIndex.set(index);
         this._selectedValue.set(obj);
+        this._activeIndex.set(index);
+        this._activeValue.set(obj);
     }
 
     registerOnChange(fn: any): void {
