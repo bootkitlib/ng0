@@ -1,26 +1,46 @@
-{{_selectedValue()}}
+{{ _items()[_selectedItemIndex()]?.value }}
 
 <ng-template cdkConnectedOverlay
              [cdkConnectedOverlayOrigin]="_el.nativeElement"
+             [cdkConnectedOverlayPositionStrategy]="_positionStrategy"
+             [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
              [cdkConnectedOverlayOpen]="open()"
+             [cdkConnectedOverlayPush]="false"
+             [cdkConnectedOverlayPanelClass]="['ng0-select-dropdown-container', 'shadow']"
+             [cdkConnectedOverlayWidth]="_el.nativeElement.clientWidth"
+             [cdkConnectedOverlayHeight]="200"
              (overlayOutsideClick)="open.set(false)"
-             (detach)="open.set(false)">
-    <ul class="dropdown-menu"
+             (attach)="_onOverlayAttach()"
+             (detach)="_onOverlayDetach()">
+
+    @if(filter()) {
+    <div class="ng0-select-filter-container border-bottom">
+        <input #filterInput
+               type="text" class="ng0-select-filter-input form-control form-control-sm"
+               [attr.placeholder]="filterPlaceholder()"
+               (keydown)="_onKeydown($event, true)"
+               (blur)="_onFilterBlur()"
+               (input)="_filterItems($event.target.value)">
+    </div>
+    }
+
+    <ul class="ng0-select-dropdown"
         [attr.tabindex]="_isDisabled() ? undefined : -1"
         [class.is-open]="open()">
 
-        @for (o of _options(); track $index) {
+        @for (i of _items(); track $index) {
         <li
-            [id]="'ng0-option-' + $index"
-            class="dropdown-item"
-            [class.active]="o === _activeValue()"
-            [class.ng0-option-selected]="o === _selectedValue()"
+            [attr.id]="i.id"
+            class="ng0-select-item"
+            [class.ng0-select-item-active]="i.active"
+            [class.ng0-select-item-selected]="i.selected"
+            [class.ng0-select-item-filtered]="i.filtered"
             (click)="select($index); open.set(false)"
             (keyup.enter)="open.set(false)">
             @if(_optionTemplate) {
-            <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: o }" />
+            <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: i.value}" />
             } @else {
-            {{o}}
+            {{i}}
             }
         </li>
         }
