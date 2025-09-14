@@ -2,16 +2,18 @@ import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SelectModule } from '@bootkit/ng0/components/select';
+import { SelectLabelDirective } from "@bootkit/ng0/components/select/select-label.directive";
 
 @Component({
     selector: 'app-examples-select',
     templateUrl: './select-example.component.html',
     standalone: true,
     imports: [
-        CommonModule,
-        SelectModule,
-        FormsModule
-    ]
+    CommonModule,
+    SelectModule,
+    FormsModule,
+    SelectLabelDirective
+]
 })
 export class SelectExampleComponent implements OnInit {
     source1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];

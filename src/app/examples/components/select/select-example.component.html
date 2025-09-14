@@ -14,11 +14,16 @@
 <section class="mb-5">
     <h5>Default</h5>
     <div class="input-group">
-        <ng0-select name="x" [source]="source2" [(ngModel)]="selectedValue1" [disabled]="false">
-            <ng-template let-item>
-                <span>🎵</span>
+        <ng0-select name="x" [source]="source2" [(ngModel)]="selectedValue1" [disabled]="false" [filterable]="true" filterPlaceholder="Type to filter">
+            <ng-template ng0SelectOption let-item>
+                <span>🎵</span> <br>
                 <strong>{{item}}</strong>
             </ng-template>
+            <ng-template ng0SelectLabel let-item>
+                <span>🎵</span> <br>
+                <strong>{{item}}</strong>
+            </ng-template>
+            
         </ng0-select>
 
 

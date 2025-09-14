@@ -1,4 +1,4 @@
-import { Directive, Optional, TemplateRef } from '@angular/core';
+import { Directive, TemplateRef } from '@angular/core';
 
 /**
  * Directive representing an item within a select component.
@@ -12,5 +12,5 @@ import { Directive, Optional, TemplateRef } from '@angular/core';
     standalone: true,
 })
 export class SelectOptionDirective {
-    constructor(public readonly templateRef?: TemplateRef<any>) {}
+    constructor(public readonly templateRef: TemplateRef<any>) { }
 }

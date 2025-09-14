@@ -1,4 +1,10 @@
-{{ _items()[_selectedItemIndex()]?.value }}
+@let value = _selectedItemIndex() > -1 ? _items()[_selectedItemIndex()].value : undefined;
+
+@if(_labelDirective?.templateRef) {
+<ng-container *ngTemplateOutlet="_labelDirective!.templateRef; context: { $implicit: value}" />
+} @else {
+{{ value }}
+}
 
 <ng-template cdkConnectedOverlay
              [cdkConnectedOverlayOrigin]="_el.nativeElement"
@@ -6,14 +12,14 @@
              [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
              [cdkConnectedOverlayOpen]="open()"
              [cdkConnectedOverlayPush]="false"
+             [cdkConnectedOverlayFlexibleDimensions]="true"
              [cdkConnectedOverlayPanelClass]="['ng0-select-dropdown-container', 'shadow']"
              [cdkConnectedOverlayWidth]="_el.nativeElement.clientWidth"
-             [cdkConnectedOverlayHeight]="200"
              (overlayOutsideClick)="open.set(false)"
              (attach)="_onOverlayAttach()"
              (detach)="_onOverlayDetach()">
 
-    @if(filter()) {
+    @if(filterable()) {
     <div class="ng0-select-filter-container border-bottom">
         <input #filterInput
                type="text" class="ng0-select-filter-input form-control form-control-sm"
@@ -37,8 +43,8 @@
             [class.ng0-select-item-filtered]="i.filtered"
             (click)="select($index); open.set(false)"
             (keyup.enter)="open.set(false)">
-            @if(_optionTemplate) {
-            <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: i.value}" />
+            @if(_optionDirective?.templateRef) {
+            <ng-container *ngTemplateOutlet="_optionDirective!.templateRef; context: { $implicit: i.value}" />
             } @else {
             {{i}}
             }

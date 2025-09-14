@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, afterNextRender, ViewEncapsulation, DOCUMENT } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, afterNextRender, ViewEncapsulation, DOCUMENT, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { convertToDataSource, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -6,7 +6,11 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CdkConnectedOverlay, FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { getConnectedPositions } from '@bootkit/ng0/components/overlay';
 import { Subscription } from 'rxjs';
+import { CompareFunction, defaultCompareFunction } from '@bootkit/ng0/common';
 import { SelectListItem } from './types';
+import { SelectOptionDirective } from './public-api';
+import { SelectLabelDirective } from './select-label.directive';
+
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -49,26 +53,28 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * Indicates whether the dropdown is open or closed.
      */
     public readonly open = model(false);
-    public readonly filter = input(false);
+    public readonly filterable = input(false);
     public readonly filterPlaceholder = input('');
+    public readonly compare = input<CompareFunction>(defaultCompareFunction);
 
     protected readonly _items = signal<SelectListItem[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _selectedItemIndex = signal<number>(-1);
     protected readonly _activeItemIndex = signal<number>(-1);
-    @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
+    @ContentChild(SelectOptionDirective) protected _optionDirective?: SelectOptionDirective;
+    @ContentChild(SelectLabelDirective) protected _labelDirective?: SelectLabelDirective;
     protected _onChangeCallback!: (value: any) => void;
     protected _onTouchedCallback!: (value: any) => void;
     protected _overlay = inject(Overlay);
     protected _viewportRuler = inject(ViewportRuler);
     protected _document = inject(DOCUMENT);
+    protected _changeDetectorRef = inject(ChangeDetectorRef);
     @ViewChild(CdkConnectedOverlay) _connectedOverlay!: CdkConnectedOverlay;
 
     protected _positionStrategy!: FlexibleConnectedPositionStrategy;
     protected _scrollStrategy!: ScrollStrategy;
     protected _resizeObserver?: ResizeObserver;
     protected _resizeObserverInitialized = false;
-    protected _filterValue = signal('');
     private _viewpoerRulerSubscription?: Subscription;
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
     private static _idCounter = 1;
@@ -142,7 +148,9 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     }
 
     writeValue(obj: any): void {
-        let index = this._items().findIndex(x => x.value === obj);
+        let compare = this.compare();
+        let index = this._items().findIndex(x => compare(x.value, obj));
+
         if (index > -1) {
             var item = this._items()[index];
             item.active = true;
@@ -265,24 +273,16 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         // use setTimeout to allow next element receives the focus.
         setTimeout(() => {
             if (!this._el.nativeElement.matches(':focus')) {
-                this.open.set(false);
+                // this.open.set(false);
             }
         }, 0);
     }
 
-    protected _filterItems(value: any) {
-        let filter = this._filterValue();
-        if (!this.filter() || filter == '' || filter == null) {
-            return false;
-        }
-
-        let valueType = typeof value;
-        if (valueType == 'number') {
-            return (value as number).toString() !== filter;
-        } else if (valueType == 'string')
-            return (value as string).toLowerCase().includes(filter.toLowerCase())
-        else {
-            return value === filter
+    protected _filterItems(filter: string) {
+        if (filter == null || filter.trim() == '') {
+            this._items().forEach(x => x.filtered = false);
+        } else {
+            this._items().forEach(x => x.filtered = this.compare()(x.value, filter) != 0);
         }
     }
 
@@ -291,7 +291,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
         this._listenToResizeEvents();
 
-        if (this.filter()) {
+        if (this.filterable()) {
             setTimeout(() => {
                 this._filterElementRef?.nativeElement.focus();
             }, 0);
@@ -304,8 +304,9 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
     protected _onOverlayDetach() {
         this._unlistenFromResizeEvents();
-        if (this.filter()) {
+        if (this.filterable()) {
             this._el?.nativeElement.focus();
+            this._items().forEach(x => x.filtered = false);
         }
     }
 
