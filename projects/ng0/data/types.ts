@@ -1,6 +1,7 @@
 import { ArrayDataSource } from "./array-data-source";
 import { AsyncDataSource, DataLoader } from "./async-data-source";
 import { DataSource } from "./data-source";
+import { getEnumValues } from "@bootkit/ng0/common";
 
 /**
  * DataSourceLike is a type that can be used to represent any data source
@@ -8,8 +9,13 @@ import { DataSource } from "./data-source";
  * It can be an array of data, a function that returns an observable of data,
  * or an instance of DataSource.
  */
-export type DataSourceLike<T = any> = Array<any> | DataLoader<T> | DataSource<T> | undefined | null;
-
+export type DataSourceLike<T = any> =
+  Array<any> |
+  DataLoader<T> |
+  DataSource<T> |
+  Record<string, string | number> | // enum: extract enum or object values
+  undefined |
+  null;
 
 /**
  * Converts a data source like an array, function, or DataSource into a DataSource instance.
@@ -25,6 +31,8 @@ export function convertToDataSource<T>(source: DataSourceLike): DataSource<T> {
     return source;
   } else if (source === undefined || source === null) {
     return new ArrayDataSource([]);
+  } else if (typeof source === 'object') {
+    return new ArrayDataSource(getEnumValues(source));
   } else {
     throw new Error('Invalid source parameter.');
   }

@@ -1,14 +1,18 @@
-@let value = _selectedItemIndex() > -1 ? _items()[_selectedItemIndex()].value : undefined;
+@if(_selectedItemIndex() > -1) {
+@let value = _options()[_selectedItemIndex()].value;
+@let formattedValue = formatter()(value);
 
-@if(_labelDirective?.templateRef) {
-<ng-container *ngTemplateOutlet="_labelDirective!.templateRef; context: { $implicit: value}" />
-} @else {
-{{ value }}
+@if(formattedValue == null || formattedValue == '') {
+&nbsp;
+}@else {
+{{formattedValue}}
+}
+}@else {
+&nbsp;
 }
 
 <ng-template cdkConnectedOverlay
              [cdkConnectedOverlayOrigin]="_el.nativeElement"
-             [cdkConnectedOverlayPositionStrategy]="_positionStrategy"
              [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
              [cdkConnectedOverlayOpen]="open()"
              [cdkConnectedOverlayPush]="false"
@@ -22,7 +26,8 @@
     @if(filterable()) {
     <div class="ng0-select-filter-container border-bottom">
         <input #filterInput
-               type="text" class="ng0-select-filter-input form-control form-control-sm"
+               type="text"
+               class="ng0-select-filter-input form-control form-control-sm"
                [attr.placeholder]="filterPlaceholder()"
                (keydown)="_onKeydown($event, true)"
                (blur)="_onFilterBlur()"
@@ -34,19 +39,24 @@
         [attr.tabindex]="_isDisabled() ? undefined : -1"
         [class.is-open]="open()">
 
-        @for (i of _items(); track $index) {
+        @for (option of _options(); track $index) {
         <li
-            [attr.id]="i.id"
-            class="ng0-select-item"
-            [class.ng0-select-item-active]="i.active"
-            [class.ng0-select-item-selected]="i.selected"
-            [class.ng0-select-item-filtered]="i.filtered"
+            [attr.id]="option.id"
+            class="ng0-select-option"
+            [class.ng0-select-option-active]="option.isActive"
+            [class.ng0-select-option-selected]="option.isSelected"
+            [class.ng0-select-option-filtered]="option.isFiltered"
             (click)="select($index); open.set(false)"
             (keyup.enter)="open.set(false)">
-            @if(_optionDirective?.templateRef) {
-            <ng-container *ngTemplateOutlet="_optionDirective!.templateRef; context: { $implicit: i.value}" />
+            @if(_optionTemplate) {
+            <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: option}" />
             } @else {
-            {{i}}
+            @let v = formatter()(option.value);
+            @if(v) {
+            {{v}}
+            }@else {
+            &nbsp;
+            }
             }
         </li>
         }

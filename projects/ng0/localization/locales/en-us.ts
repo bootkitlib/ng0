@@ -1,4 +1,5 @@
 import { Locale } from '@bootkit/ng0/localization';
+import { on } from 'events';
 
 const formatNumber = (n: number) => n.toLocaleString();
 
@@ -28,6 +29,16 @@ export const EN_US_LOCALE = new Locale({
                 maxlength: (e) => `Maximum length: ${e.requiredLength}`,
                 email: (e) => `Invalid email`,
             }
+        }
+    },
+        formatters: {
+        boolean: {
+            Default: ['Yes', 'No'],
+            ActiveInactive: ['Active', 'Inactive'],
+            YesNo: ['Yes', 'No'],
+            TrueFalse: ['True', 'False'],
+            EnableDisable: ['Enabled', 'Disabled'],
+            OnOff: ['On', 'Off'],
         }
     },
     components: {

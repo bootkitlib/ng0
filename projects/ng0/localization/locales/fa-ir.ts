@@ -30,6 +30,16 @@ export const FA_IR_LOCALE = new Locale({
             }
         }
     },
+    formatters: {
+        boolean: {
+            Default: ['بله', 'خیر', ''],
+            ActiveInactive: ['فعال', 'غیرفعال', ''],
+            YesNo: ['بله', 'خیر', ''],
+            TrueFalse: ['درست', 'غلط', ''],
+            EnableDisable: ['فعال', 'غیرفعال', ''],
+            OnOff: ['روشن', 'خاموش', ''],
+        }
+    },
     components: {
         table: {
             noRecords: 'رکوردی وجود ندارد',
@@ -47,7 +57,7 @@ export const FA_IR_LOCALE = new Locale({
             lt: 'کوچکتر',
             lte: 'کوچکتر یا مساوی',
             ne: 'مخالف',
-            
+
         }
     }
 });

@@ -1,16 +1,13 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, afterNextRender, ViewEncapsulation, DOCUMENT, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectorRef, ChangeDetectionStrategy, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { convertToDataSource, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { CdkConnectedOverlay, FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
-import { getConnectedPositions } from '@bootkit/ng0/components/overlay';
+import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { CompareFunction, defaultCompareFunction } from '@bootkit/ng0/common';
-import { SelectListItem } from './types';
-import { SelectOptionDirective } from './public-api';
-import { SelectLabelDirective } from './select-label.directive';
-
+import { CompareFunction, defaultCompareFunction, defaultFilterFunction, defaultFormatFunction, FilterFunction, FormatFunction, IdGenerator, ListItem } from '@bootkit/ng0/common';
+import { LocalizationService } from '@bootkit/ng0/localization';
+import { defaultValueExtractorFunction, ValueExtractorFunction } from '@bootkit/ng0/common/value-extractor';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -22,7 +19,7 @@ import { SelectLabelDirective } from './select-label.directive';
     styleUrl: './select.component.scss',
     standalone: true,
     encapsulation: ViewEncapsulation.None,
-    // changeDetection: ChangeDetectionStrategy.OnPush,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         CommonModule,
         OverlayModule,
@@ -34,7 +31,7 @@ import { SelectLabelDirective } from './select-label.directive';
     }],
     host: {
         '[class.is-open]': 'open()',
-        '[attr.aria-activedescendant]': '_activeItemIndex() > -1 ? (_items()[_activeItemIndex()].id) : undefined',
+        '[attr.aria-activedescendant]': '_activeItemIndex() > -1 ? (_options()[_activeItemIndex()].id) : undefined',
         '[attr.disabled]': '_isDisabled()',
         '[attr.aria-disabled]': '_isDisabled()'
     }
@@ -45,7 +42,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * This can be an array of data, a function that returns an observable of data,
      * or an instance of DataSource.
      */
-    public source = input.required<DataSource<any>, DataSourceLike<any>>({
+    public readonly source = input.required<DataSource<any>, DataSourceLike<any>>({
         transform: v => convertToDataSource(v)
     });
 
@@ -53,42 +50,95 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * Indicates whether the dropdown is open or closed.
      */
     public readonly open = model(false);
-    public readonly filterable = input(false);
-    public readonly filterPlaceholder = input('');
-    public readonly compare = input<CompareFunction>(defaultCompareFunction);
 
-    protected readonly _items = signal<SelectListItem[]>([]);
+    /**
+     * Indicates whether the dropdown is filterable.
+     */
+    public readonly filterable = input(false);
+
+    /**
+     * Placeholder text for the filter input field.
+     */
+    public readonly filterPlaceholder = input('');
+
+    /**
+     * Custom compare function to determine equality between two items.
+     * Default is a simple equality check.
+     */
+    public readonly compareFunction = input<CompareFunction>(defaultCompareFunction);
+
+    /**
+     * Custom value extractor function to extract the value of any object.
+     */
+    public readonly valueExtractor = input<ValueExtractorFunction, ValueExtractorFunction | string>(
+        defaultValueExtractorFunction, {
+        transform: (v) => {
+            if (typeof v === 'function')
+                return v;
+            if (typeof v === 'string') {
+                return (item: any) => item ? item[v] : undefined;
+            }
+
+            throw Error('invalid formatter');
+        }
+    });
+
+    /**
+     * Custom filter function to filter items based on a filter value.
+     * Default checks if the item contains the filter value (case-insensitive).
+     */
+    public readonly filterFunction = input<FilterFunction>(defaultFilterFunction);
+
+    /**
+     * Custom format function to convert an item to a string for display.
+     * Default converts the item to a string using its toString method.
+     */
+
+    public readonly formatter = input<FormatFunction, FormatFunction | string | { field: string }>(defaultFormatFunction, {
+        transform: v => {
+            if (typeof v === 'function')
+                return v;
+            else if (typeof v === 'string') {
+                let locale = this._ls.get();
+                if (locale == null) {
+                    throw Error('')
+                }
+
+                return locale.getFormatter(v);
+            } else if (typeof v === 'object' && v != null && 'field' in v) {
+                return (item: any) => (item && item[v.field]) ?? '';
+            }
+
+            throw Error('invalid formatter');
+        }
+    });
+
+    public readonly valueField = input<string | undefined>(undefined);
+
+    protected readonly _options = signal<ListItem[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _selectedItemIndex = signal<number>(-1);
     protected readonly _activeItemIndex = signal<number>(-1);
-    @ContentChild(SelectOptionDirective) protected _optionDirective?: SelectOptionDirective;
-    @ContentChild(SelectLabelDirective) protected _labelDirective?: SelectLabelDirective;
-    protected _onChangeCallback!: (value: any) => void;
-    protected _onTouchedCallback!: (value: any) => void;
-    protected _overlay = inject(Overlay);
-    protected _viewportRuler = inject(ViewportRuler);
-    protected _document = inject(DOCUMENT);
-    protected _changeDetectorRef = inject(ChangeDetectorRef);
-    @ViewChild(CdkConnectedOverlay) _connectedOverlay!: CdkConnectedOverlay;
 
+    @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
     protected _positionStrategy!: FlexibleConnectedPositionStrategy;
     protected _scrollStrategy!: ScrollStrategy;
-    protected _resizeObserver?: ResizeObserver;
-    protected _resizeObserverInitialized = false;
+    private _resizeObserver?: ResizeObserver;
+    private _resizeObserverInitialized = false;
     private _viewpoerRulerSubscription?: Subscription;
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
-    private static _idCounter = 1;
+    private _onChangeCallback!: (value: any) => void;
+    private _onTouchedCallback!: (value: any) => void;
+
+    private _viewportRuler = inject(ViewportRuler);
+    private _overlay = inject(Overlay);
+    private _document = inject(DOCUMENT);
+    private _ls = inject(LocalizationService);
+
 
     constructor(protected _el: ElementRef<HTMLDivElement>, private _renderer: Renderer2, private _destroyRef: DestroyRef) {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
         this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
-
-        this._positionStrategy = this._overlay.position()
-            .flexibleConnectedTo(this._el.nativeElement)
-            .withPositions(getConnectedPositions('bottom', 'start'))
-            .withFlexibleDimensions(false)
-            .withPush(false);
-
         this._scrollStrategy = this._overlay.scrollStrategies.block();
     }
 
@@ -96,11 +146,11 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         var r = new DataRequest();
         this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
             let items = res.data.map(x => ({
-                id: 'ng0-select-item-' + (SelectComponent._idCounter++).toString(),
+                id: 'ng0-select-item-' + IdGenerator.next().toString(),
                 value: x,
-            }) as SelectListItem);
+            }) as ListItem);
 
-            this._items.set(items);
+            this._options.set(items);
         })
     }
 
@@ -108,19 +158,20 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * Selects an option by index
      */
     public select(index: number) {
-        let optionsCount = this._items().length;
+        let optionsCount = this._options().length;
         if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
-            return;
+            throw new Error('Index out of range');
         }
 
+        // Deselect previous selected item
         if (this._selectedItemIndex() > -1) {
-            this._items()[this._selectedItemIndex()].selected = false
+            this._options()[this._selectedItemIndex()].isSelected = false
         }
 
-        let item = this._items()[index];
-        item.selected = true;
         this._selectedItemIndex.set(index);
-        this._activeItemIndex.set(index);
+        let item = this._options()[index];
+        item.isSelected = true;
+
         this._onChangeCallback(item.value);
     }
 
@@ -129,35 +180,42 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      */
     public active(index: number) {
         if (this._activeItemIndex() > -1) {
-            this._items()[this._activeItemIndex()].active = false
+            this._options()[this._activeItemIndex()].isActive = false
         }
 
         this._activeItemIndex.set(index);
-        let item = this._items()[index]
-        item.active = true;
+        let item = this._options()[index]
+        item.isActive = true;
 
         if (this.open()) {
             this.scrollItemIntoView(this._activeItemIndex(), 'nearest');
         }
     }
 
+    /**
+     * Scrolls the item at the specified index into view within the dropdown list.
+     * @param index The index of the item to scroll into view.
+     * @param position The vertical alignment of the item after scrolling.
+     *                 Can be 'start', 'center', 'end', or 'nearest'.
+     *                 Default is 'nearest'.
+     * @param behavior The scrolling behavior.
+     */
     public scrollItemIntoView(index: number, position?: ScrollLogicalPosition, behavior?: ScrollBehavior) {
-        let item = this._items()[index];
+        let item = this._options()[index];
         let elm = this._document.getElementById(item.id) as HTMLUListElement;
         elm!.scrollIntoView({ block: position, behavior: behavior });
     }
 
     writeValue(obj: any): void {
-        let compare = this.compare();
-        let index = this._items().findIndex(x => compare(x.value, obj));
+        let compare = this.compareFunction();
+        let index = this._options().findIndex(x => compare(x.value, obj) === 0);
 
         if (index > -1) {
-            var item = this._items()[index];
-            item.active = true;
-            item.selected = true;
+            var item = this._options()[index];
+            item.isActive = true;
+            item.isSelected = true;
 
             this._selectedItemIndex.set(index);
-            this._activeItemIndex.set(index);
         }
     }
 
@@ -173,15 +231,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         this._isDisabled.set(isDisabled);
     }
 
-    @HostListener('click', ['$event'])
-    private _onHostClick(e: MouseEvent) {
-        if (this._isDisabled())
-            return;
-
-        this.open.update(x => !x);
-        // this._onTouchedCallback?.(this._selectedValue());
-    }
-
     @HostListener('keydown', ['$event'])
     protected _onKeydown(e: KeyboardEvent, firedByFilter: boolean = false) {
         let open = this.open();
@@ -189,7 +238,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         if (this._isDisabled())
             return;
 
-        let optionsCount = this._items().length;
+        let optionsCount = this._options().length;
         if (optionsCount == 0) {
             return;
         }
@@ -273,17 +322,14 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         // use setTimeout to allow next element receives the focus.
         setTimeout(() => {
             if (!this._el.nativeElement.matches(':focus')) {
-                // this.open.set(false);
+                this.open.set(false);
             }
         }, 0);
     }
 
     protected _filterItems(filter: string) {
-        if (filter == null || filter.trim() == '') {
-            this._items().forEach(x => x.filtered = false);
-        } else {
-            this._items().forEach(x => x.filtered = this.compare()(x.value, filter) != 0);
-        }
+        let filterFunc = this.filterFunction();
+        this._options().forEach(x => x.isFiltered = !filterFunc(x.value, filter));
     }
 
     protected _onOverlayAttach() {
@@ -306,7 +352,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         this._unlistenFromResizeEvents();
         if (this.filterable()) {
             this._el?.nativeElement.focus();
-            this._items().forEach(x => x.filtered = false);
+            this._options().forEach(x => x.isFiltered = false);
         }
     }
 
@@ -340,5 +386,14 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         this._resizeObserver?.disconnect();
         this._resizeObserver = undefined;
         this._resizeObserverInitialized = false;
+    }
+
+    @HostListener('click', ['$event'])
+    private _onHostClick(e: MouseEvent) {
+        if (this._isDisabled())
+            return;
+
+        this.open.update(x => !x);
+        // this._onTouchedCallback?.(this._selectedValue());
     }
 }

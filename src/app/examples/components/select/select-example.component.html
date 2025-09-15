@@ -1,40 +1,182 @@
-<section class="mb-5">
-    <h5>Native select element</h5>
+<div class="row g-3">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Native select</h5>
 
-    <div class="input-group">
-        <select class="form-select">
-            @for (item of source1; track $index) {
-            <option>{{item}}</option>
-            }
-        </select>
+                <div class="input-group">
+                    <select class="form-select">
+                        @for (item of stringArray; track $index) {
+                        <option>{{item}}</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
     </div>
 
-</section>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to string[]</h5>
+                <div class="input-group">
+                    <ng0-select name="stringArray" [source]="stringArray" [(ngModel)]="stringValue1">
+                    </ng0-select>
+                </div>
+            </div>
 
-<section class="mb-5">
-    <h5>Default</h5>
-    <div class="input-group">
-        <ng0-select name="x" [source]="source2" [(ngModel)]="selectedValue1" [disabled]="false" [filterable]="true" filterPlaceholder="Type to filter">
-            <ng-template ng0SelectOption let-item>
-                <span>🎵</span> <br>
-                <strong>{{item}}</strong>
-            </ng-template>
-            <ng-template ng0SelectLabel let-item>
-                <span>🎵</span> <br>
-                <strong>{{item}}</strong>
-            </ng-template>
-            
-        </ng0-select>
-
-
+            <div class="card-footer">
+                Bound value: {{ stringValue1 }}
+            </div>
+        </div>
     </div>
 
-    Bound value: {{ selectedValue1 }}
-</section>
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to number[]</h5>
+                <div class="input-group">
+                    <ng0-select name="numberArray" [source]="numberArray" [(ngModel)]="numberValue1">
+                    </ng0-select>
+                </div>
+            </div>
 
-<section>
-    <h5>This page should be scrollable!</h5>
-    <div style="height: 150vh; background: linear-gradient(white, lightgray);">
-        Scroll down to see the select component at the bottom of the page.
+            <div class="card-footer">
+                Bound value: {{ numberValue1 }}
+            </div>
+        </div>
     </div>
-</section>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to boolean values</h5>
+                <p>
+                    Using localization formatters for boolean values you can display different text for true/false
+                    values.
+                    The formatters are defined in the locale files.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Default
+                        <ng0-select name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue1"
+                                    formatter="boolean">
+                        </ng0-select>
+
+                        boolean 1: {{ booleanValue1 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        On/Off
+                        <ng0-select name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue2"
+                                    formatter="boolean:OnOff">
+                        </ng0-select>
+                        boolean 2: {{ booleanValue2 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        Enable/Disable
+                        <ng0-select name="booleanValue3" [source]="[true, false]" [(ngModel)]="booleanValue3"
+                                    formatter="boolean:EnableDisable">
+                        </ng0-select>
+                        boolean 3: {{ booleanValue3 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        Active/Inactive
+                        <ng0-select name="booleanValue4" [source]="[true, false]" [(ngModel)]="booleanValue4"
+                                    formatter="boolean:ActiveInactive">
+                        </ng0-select>
+                        boolean 4: {{ booleanValue4 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to Enums</h5>
+                pass an Enum as source and use the enum formatter to display the enum names.
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Sexuality
+                        <ng0-select name="sexuality" [source]="Sexuality" [(ngModel)]="enum1"
+                                    formatter="enum:Sexuality">
+                        </ng0-select>
+
+                        enum 1: {{ enum1 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to objects</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Default
+                        <ng0-select name="booleanValue2" [source]="objects1" [(ngModel)]="booleanValue1" valueField="id"
+                                    [formatter]="{field: 'name'}">
+                        </ng0-select>
+
+                        boolean 1: {{ booleanValue1 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Custom item template</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Sexuality
+                        <ng0-select name="sexuality" [source]="['Male', 'Female', 'Other']"
+                                    [(ngModel)]="enum1">
+                        </ng0-select>
+
+                        enum 1: {{ enum1 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Handle empty item</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Default
+                        <ng0-select name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue1"
+                                    formatter="boolean">
+                        </ng0-select>
+
+                        boolean 1: {{ booleanValue1 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

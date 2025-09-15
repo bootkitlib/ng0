@@ -1,9 +1,9 @@
+import { FormatFunction } from "@bootkit/ng0/common";
 import { LocaleDefinition } from "./locale-definition";
 import { TranslatedValidationError } from "./types";
 
 /** Locale */
 export class Locale {
-
   constructor(public readonly definition: LocaleDefinition) {
   }
 
@@ -29,9 +29,7 @@ export class Locale {
    * Translates an enum value 
    * @param enumName The name of the enum 
    * @param enumValue The value of the enum to translate 
-   * @param nullValueKey
-   * @param returnEnumAsFallback
-   * @param fallbackKey
+   * @param fallback
    * @returns The translated string or the enum value itself if not found 
    */
 
@@ -123,5 +121,47 @@ export class Locale {
  */
   formatDate(date: Date | string | number, format?: string): string {
     return date ? new Date(date).toLocaleDateString(this.definition.name, { hour: '2-digit', minute: '2-digit' }) : '';
+  }
+
+  /**
+   * Returns a formatter function by its name and parameters.
+   * @param format The format string in the form of "formatterName:param1:param2:..."
+   * @returns A FormatFunction
+   */
+  getFormatter(format: string): FormatFunction {
+    let parts = format.split(':');
+    let name: string = parts[0];
+    let params = parts.length > 1 ? parts.slice(1) : [];
+
+    switch (name) {
+      case 'boolean':
+        let booleanKind = params.length > 0 ? params[0] : 'Default';
+        let f = this.definition.formatters?.boolean?.[booleanKind];
+        if (!Array.isArray(f)) {
+          throw new Error(`Boolean formatter is not defined in locale ${this.definition.name}`);
+        }
+
+        return (value?: boolean) => {
+          return value === true ? f[0] : (value === false ? f[1] : f[2]);
+        }
+
+      case 'enum':
+        let enumName = params[0];
+        if (!enumName) {
+          // throw new Error('Enum name is required for enum formatter');
+          return (enumValue: string | number) => enumValue?.toString() ?? '';
+        }
+
+        return (enumValue: string | number) => {
+          return this.translateEnum(enumName, enumValue, enumValue.toString())!;
+        }
+      default:
+        let customFormatter = this.definition.formatters?.custom?.[name];
+        if (customFormatter) {
+          return customFormatter;
+        }
+
+        throw new Error(`formatter is not defined in locale ${this.definition.name}`);
+    }
   }
 }

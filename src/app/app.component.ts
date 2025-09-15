@@ -32,7 +32,12 @@ export class AppComponent {
           '[empty]': 'مقدار null یا  "" یا undefined', // '' or null or undefined
           '[null]': '❌ NULL', // exactly null value
           '[undefined]': '❌ UNDEFINED' // exactly undefined value
-        }
+        },
+        Sexuality: {
+          'Male': 'مرد',
+          'Female': 'زن',
+          'Other': 'سایر',
+        },
       }
     });
 

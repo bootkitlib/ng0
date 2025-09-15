@@ -1,0 +1,18 @@
+/**
+ * Compare function type.
+ * @param a First value to compare.
+ * @param b Second value to compare.
+ * @returns -1 if a < b, 1 if a > b, 0 if a === b
+ */
+export type CompareFunction = (a: any, b: any) => number;
+
+/**
+ * Default compare function.
+ * @param a 
+ * @param b 
+ * @returns -1 if a < b, 1 if a > b, 0 if a === b
+ */
+export function defaultCompareFunction(a: any, b: any): number {
+    return a === b ? 0 : a < b ? -1 : 1;
+}
+

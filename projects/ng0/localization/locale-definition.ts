@@ -1,3 +1,5 @@
+import { FormatFunction } from "@bootkit/ng0/common";
+
 /** Locale dictionary */
 export type LocaleDictionary = { [key: string]: string; };
 export type LocaleEnums = { [enumName: string]: { [enumValue: string]: string } };
@@ -10,6 +12,37 @@ export type LocaleValidationErrorTranslator = (error: any) => string;
 export type LocaleValidationErrorTranslators = {
   [key: string]: LocaleValidationErrorTranslator;
 };
+
+/**
+ * A function to format the paging info of a table.
+ * 
+ */
+export type TableComponentPagingFormatter = (info: {
+  /**
+   * The first record in the current page.
+   */
+  firstRecord: number,
+
+  /**
+   * The last record in the current page.
+   */
+  lastRecord: number,
+
+  /**
+   * The total number of records.
+   */
+  totalRecords?: number,
+
+  /**
+   * The current page index.
+   */
+  currentPage: number
+}) => string;
+
+/**
+ * A function to format boolean values.
+ */
+export type BooleanValueFormatter = (value?: boolean, ...options: any[]) => string;
 
 
 /** 
@@ -52,44 +85,35 @@ export interface LocaleDefinition {
        * A format function to format the paging info.
        */
       pagingInfo?: TableComponentPagingFormatter;
+    },
+    select?: {
+      placeholder?: string;
     }
+  },
+
+  formatters?: {
+    boolean?: {
+      [booleanKind: string]: string[] // [false, true]
+    },
+    enum?: {
+      [enumName: string]: { [enumValue: string]: string }
+    }
+    custom?: {
+      [formatterName: string]: FormatFunction,
+    },
+    // date?: {
+    //   calendars?: {
+    //     [calendar: string]: {
+    //       days: string[],
+    //       daysShort: string[],
+    //       months: string[],
+    //       monthsShort: string[],
+    //     }
+    //   }
+    // };
+    // }
   }
 
-  // date?: {
-  //   calendars?: {
-  //     [calendar: string]: {
-  //       days: string[],
-  //       daysShort: string[],
-  //       months: string[],
-  //       monthsShort: string[],
-  //     }
-  //   }
-  // };
-  // }
+
 };
 
-/**
- * A function to format the paging info of a table.
- * 
- */
-export type TableComponentPagingFormatter = (info: {
-  /**
-   * The first record in the current page.
-   */
-  firstRecord: number,
-
-  /**
-   * The last record in the current page.
-   */
-  lastRecord: number,
-
-  /**
-   * The total number of records.
-   */
-  totalRecords?: number,
-
-  /**
-   * The current page index.
-   */
-  currentPage: number
-}) => string;

@@ -1,4 +1,5 @@
-import { Placement } from "./types";
+export type Placement = 'start' | 'end' | 'top' | 'bottom';
+export type Alignment = 'start' | 'center' | 'end';
 
 /**
  * Flips the placement direction.
@@ -17,3 +18,5 @@ export function flipPlacement(placement: Placement) {
             return 'start'
     }
 }
+
+
