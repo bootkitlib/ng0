@@ -1,4 +1,4 @@
-import { ValueFormatterFunction } from "@bootkit/ng0/common";
+import { ValueFormatterFunction } from "./value-formatter";
 
 /** Locale dictionary */
 export type LocaleDictionary = { [key: string]: string; };

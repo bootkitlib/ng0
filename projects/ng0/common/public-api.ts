@@ -10,4 +10,3 @@ export * from './enum';
 export * from './id-generator';
 export * from './value-comparer';
 export * from './value-extractor';
-export * from './value-formatter';

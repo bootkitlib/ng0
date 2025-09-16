@@ -1,6 +1,6 @@
 import { LocaleDefinition } from "./locale-definition";
 import { TranslatedValidationError } from "./types";
-import { ValueFormatterFunction } from "@bootkit/ng0/common";
+import { ValueFormatterFunction } from "./value-formatter";
 
 /** Locale */
 export class Locale {

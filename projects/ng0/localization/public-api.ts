@@ -3,6 +3,7 @@ export * from './locale-definition';
 export * from './localization.service';
 export * from './localization.module';
 export * from './types';
+export * from './value-formatter';
 
 // Pure pipes
 export * from './translate.pipe';

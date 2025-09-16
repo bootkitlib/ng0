@@ -21,7 +21,7 @@ enum Sexuality {
         FormsModule,
     ]
 })
-export class SelectExampleComponent implements OnInit {
+export class SelectExampleComponent {
     stringArray = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
     numberArray = Array.from({ length: 30 }, (_, i) => i + 1);
     objects1 = [
@@ -43,27 +43,12 @@ export class SelectExampleComponent implements OnInit {
     selectedObjectId3?: number;
     selectedObjectId4?: number;
     selectedObjectId5?: number;
+    stringValue2?: string;
 
     Sexuality = getEnumValues(Sexuality);
 
     enum1?: boolean;
 
-
-
     width = signal('200px');
 
-    /**
-     *
-     */
-    constructor() {
-        // afterNextRender(() => {
-        //     setTimeout(() => {
-        //         this.width.set('200px');
-        //     }, 2000);
-        // })
-
-    }
-    ngOnInit(): void {
-
-    }
 }

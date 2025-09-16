@@ -1,13 +1,13 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectorRef, ChangeDetectionStrategy, computed } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { convertToDataSource, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { defaultFilterFunction, FilterFunction, SelectOption, defaultValueComparer, defaultValueFormatter, IdGenerator, ValueComparerFunction, ValueFormatterFunction } from '@bootkit/ng0/common';
-import { LocalizationService } from '@bootkit/ng0/localization';
-import { defaultValueExtractor, ValueExtractorFunction } from '@bootkit/ng0/common';
+import { defaultFilterFunction, FilterFunction, SelectOption, IdGenerator, ValueExtractorAttribute } from '@bootkit/ng0/common';
+import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { defaultValueExtractor } from '@bootkit/ng0/common';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -37,6 +37,25 @@ import { defaultValueExtractor, ValueExtractorFunction } from '@bootkit/ng0/comm
     }
 })
 export class SelectComponent implements OnInit, ControlValueAccessor {
+    private _viewportRuler = inject(ViewportRuler);
+    private _overlay = inject(Overlay);
+    private _document = inject(DOCUMENT);
+    private _ls = inject(LocalizationService);
+    private _resizeObserver?: ResizeObserver;
+    private _resizeObserverInitialized = false;
+    private _viewpoerRulerSubscription?: Subscription;
+    @ViewChild('filterInput') private _filterElementRef?: ElementRef;
+    private _onChangeCallback!: (value: any) => void;
+    private _onTouchedCallback!: (value: any) => void;
+
+    protected readonly _options = signal<SelectOption[]>([]);
+    protected readonly _isDisabled = signal<boolean>(false);
+    protected readonly _selectedItemIndex = signal<number>(-1);
+    protected readonly _activeItemIndex = signal<number>(-1);
+    @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
+    protected _positionStrategy!: FlexibleConnectedPositionStrategy;
+    protected _scrollStrategy!: ScrollStrategy;
+
     /**
      * The data source for the select component.
      * This can be an array of data, a function that returns an observable of data,
@@ -52,16 +71,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     public readonly open = model(false);
 
     /**
-     * Indicates whether the dropdown is filterable.
-     */
-    public readonly filterable = input(false);
-
-    /**
-     * Placeholder text for the filter input field.
-     */
-    public readonly filterPlaceholder = input('');
-
-    /**
      * Custom compare function to determine equality between two items.
      * Default is a simple equality check.
      */
@@ -70,70 +79,33 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     /**
      * Custom value extractor function to extract the value of any object.
      */
-    public readonly valueExtractor = input<ValueExtractorFunction, ValueExtractorFunction | string>(
-        defaultValueExtractor, {
-        transform: (v) => {
-            if (typeof v === 'function')
-                return v;
-            if (typeof v === 'string') {
-                return (item: any) => item ? item[v] : undefined;
-            }
-
-            throw Error('invalid value extractor');
-        }
+    public readonly extractBy = input(defaultValueExtractor, {
+        transform: ValueExtractorAttribute
     });
-
-    /**
-     * Custom filter function to filter items based on a filter value.
-     * Default checks if the item contains the filter value (case-insensitive).
-     */
-    public readonly filterFunction = input<FilterFunction>(defaultFilterFunction);
 
     /**
      * Custom format function to convert an item to a string for display.
      * Default converts the item to a string using its toString method.
      */
+    public readonly formatBy = input(defaultValueFormatter, {
+        transform: ValueFormatterAttribute(this._ls.get())
+    });
 
-    public readonly formatter =
-        input<ValueFormatterFunction, ValueFormatterFunction | string | { field: string }>(defaultValueFormatter, {
-            transform: v => {
-                if (typeof v === 'function')
-                    return v;
-                else if (typeof v === 'string') {
-                    let locale = this._ls.get();
-                    if (locale == null) {
-                        throw Error('')
-                    }
+    /**
+     * Indicates whether the dropdown is filterable.
+     */
+    public readonly filterable = input(false, { transform: booleanAttribute });
 
-                    return locale.getFormatter(v);
-                } else if (typeof v === 'object' && v != null && 'field' in v) {
-                    return (item: any) => (item && item[v.field]) ?? '';
-                }
+    /**
+     * Placeholder text for the filter input field.
+     */
+    public readonly filterPlaceholder = input('');
 
-                throw Error('invalid formatter');
-            }
-        });
-
-    protected readonly _options = signal<SelectOption[]>([]);
-    protected readonly _isDisabled = signal<boolean>(false);
-    protected readonly _selectedItemIndex = signal<number>(-1);
-    protected readonly _activeItemIndex = signal<number>(-1);
-
-    @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
-    protected _positionStrategy!: FlexibleConnectedPositionStrategy;
-    protected _scrollStrategy!: ScrollStrategy;
-    private _resizeObserver?: ResizeObserver;
-    private _resizeObserverInitialized = false;
-    private _viewpoerRulerSubscription?: Subscription;
-    @ViewChild('filterInput') private _filterElementRef?: ElementRef;
-    private _onChangeCallback!: (value: any) => void;
-    private _onTouchedCallback!: (value: any) => void;
-
-    private _viewportRuler = inject(ViewportRuler);
-    private _overlay = inject(Overlay);
-    private _document = inject(DOCUMENT);
-    private _ls = inject(LocalizationService);
-
+    /**
+     * Custom filter function to filter items based on a filter value.
+     * Default checks if the item contains the filter value (case-insensitive).
+     */
+    public readonly filterBy = input<FilterFunction>(defaultFilterFunction);
 
     constructor(protected _el: ElementRef<HTMLDivElement>, private _renderer: Renderer2, private _destroyRef: DestroyRef) {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
@@ -148,7 +120,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
                 id: 'ng0-select-item-' + IdGenerator.next().toString(),
                 value: x,
             }) as SelectOption);
-
             this._options.set(options);
         })
     }
@@ -171,7 +142,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         let item = this._options()[index];
         item.isSelected = true;
 
-        this._onChangeCallback(this.valueExtractor()(item.value));
+        this._onChangeCallback(this.extractBy()(item.value));
     }
 
     /**
@@ -206,7 +177,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     }
 
     writeValue(obj: any): void {
-        let index = this._options().findIndex(x => this.valueExtractor()(x.value) == obj);
+        let index = this._options().findIndex(x => this.extractBy()(x.value) == obj);
 
         if (index > -1) {
             var item = this._options()[index];
@@ -326,7 +297,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     }
 
     protected _filterItems(filter: string) {
-        let filterFunc = this.filterFunction();
+        let filterFunc = this.filterBy();
         this._options().forEach(x => x.isFiltered = !filterFunc(x.value, filter));
     }
 

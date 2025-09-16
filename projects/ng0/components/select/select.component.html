@@ -1,6 +1,6 @@
 @if(_selectedItemIndex() > -1) {
 @let value = _options()[_selectedItemIndex()].value;
-@let formattedValue = formatter()(value);
+@let formattedValue = formatBy()(value);
 
 @if(formattedValue == null || formattedValue == '') {
 &nbsp;
@@ -51,7 +51,7 @@
             @if(_optionTemplate) {
             <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: option}" />
             } @else {
-            @let v = formatter()(option.value);
+            @let v = formatBy()(option.value);
             @if(v) {
             {{v}}
             }@else {

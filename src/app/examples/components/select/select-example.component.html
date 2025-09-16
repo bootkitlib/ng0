@@ -1,4 +1,4 @@
-<div class="row g-3">
+<div class="row g-4">
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
@@ -52,16 +52,16 @@
             <div class="card-body">
                 <h5 class="card-title">Bind to boolean values</h5>
                 <p>
-                    Using localization formatters for boolean values you can display different text for true/false
+                    Using localization formatBys for boolean values you can display different text for true/false
                     values.
-                    The formatters are defined in the locale files.
+                    The formatBys are defined in the locale files.
                 </p>
 
                 <div class="row">
                     <div class="col-xl-3">
                         Default
                         <ng0-select name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue1"
-                                    formatter="boolean">
+                                    formatBy="boolean">
                         </ng0-select>
 
                         Value: {{ booleanValue1 }}
@@ -70,7 +70,7 @@
                     <div class="col-xl-3">
                         On/Off
                         <ng0-select name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue2"
-                                    formatter="boolean:OnOff">
+                                    formatBy="boolean:OnOff">
                         </ng0-select>
                         Value: {{ booleanValue2 }}
                     </div>
@@ -78,7 +78,7 @@
                     <div class="col-xl-3">
                         Enable/Disable
                         <ng0-select name="booleanValue3" [source]="[true, false]" [(ngModel)]="booleanValue3"
-                                    formatter="boolean:EnableDisable">
+                                    formatBy="boolean:EnableDisable">
                         </ng0-select>
                         Value: {{ booleanValue3 }}
                     </div>
@@ -86,7 +86,7 @@
                     <div class="col-xl-3">
                         Active/Inactive
                         <ng0-select name="booleanValue4" [source]="[true, false]" [(ngModel)]="booleanValue4"
-                                    formatter="boolean:ActiveInactive">
+                                    formatBy="boolean:ActiveInactive">
                         </ng0-select>
                         Value: {{ booleanValue4 }}
                     </div>
@@ -99,7 +99,7 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Bind to Enums</h5>
-                pass an Enum as source and use the enum formatter to display the enum names.
+                pass an Enum as source and use the enum formatBy to display the enum names.
                 <p>
                 </p>
 
@@ -107,7 +107,7 @@
                     <div class="col-xl-3">
                         Sexuality
                         <ng0-select name="sexuality" [source]="Sexuality" [(ngModel)]="enum1"
-                                    formatter="enum:Sexuality">
+                                    formatBy="enum:Sexuality">
                         </ng0-select>
 
                         Value: {{ enum1 }}
@@ -135,11 +135,11 @@
                     </div>
 
                     <div class="col-xl-3">
-                        With ValueFormatter
+                        With ValueformatBy
                         <ng0-select name="selectedObjectId2"
                                     [source]="objects1"
                                     [(ngModel)]="selectedObjectId2"
-                                    [formatter]="{field: 'name'}">
+                                    formatBy="field:name">
                         </ng0-select>
 
                         Value: {{ selectedObjectId2 }}
@@ -154,23 +154,23 @@
 
                 <div class="row">
                     <div class="col-xl-3">
-                        With ValueExtractor
+                        With extractBy
                         <ng0-select name="selectedObjectId3"
                                     [source]="objects1"
                                     [(ngModel)]="selectedObjectId3"
-                                    valueExtractor="id">
+                                    extractBy="id">
                         </ng0-select>
 
                         Value: {{ selectedObjectId3 }}
                     </div>
 
                     <div class="col-xl-3">
-                        With ValueFormatter + ValueExtractor
+                        With ValueformatBy + extractBy
                         <ng0-select name="selectedObjectId4"
                                     [source]="objects1"
                                     [(ngModel)]="selectedObjectId4"
-                                    valueExtractor="id"
-                                    [formatter]="{field: 'name'}">
+                                    extractBy="id"
+                                    formatBy="field:name">
                         </ng0-select>
 
                         Value: {{ selectedObjectId4 }}
@@ -194,9 +194,41 @@
                         <ng0-select name="selectedObjectId5"
                                     [source]="objects1"
                                     [(ngModel)]="selectedObjectId5"
-                                    [formatter]="{field: 'name'}">
+                                    extractBy="id"
+                                    formatBy="field:name">
                             <ng-template let-option>
-                                ❤️ This is option <strong>{{option.value.id}}</strong>
+                                <div class="py-1">
+                                    ❤️ This is <strong>option {{option.value.id}}</strong> <br>
+                                    <small class="text-muted">This is extra info about item {{option.value.id}}</small>
+                                </div>
+                            </ng-template>
+                        </ng0-select>
+
+                        Value: {{ selectedObjectId5 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Filter</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: String[]
+                        <ng0-select name="stringValue2"
+                                    [source]="stringArray"
+                                    [(ngModel)]="stringValue2"
+                                    extractBy="id"
+                                    formatBy="field:name"
+                                    filterable="true">
+                            <ng-template let-option>
+                                ❤️ {{option.value}}
                             </ng-template>
                         </ng0-select>
 
@@ -218,7 +250,7 @@
                     <div class="col-xl-3">
                         Default
                         <ng0-select name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue1"
-                                    formatter="boolean">
+                                    formatBy="boolean">
                         </ng0-select>
 
                         boolean 1: {{ booleanValue1 }}
