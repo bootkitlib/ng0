@@ -5,9 +5,9 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { CompareFunction, defaultCompareFunction, defaultFilterFunction, defaultFormatFunction, FilterFunction, FormatFunction, IdGenerator, ListItem } from '@bootkit/ng0/common';
+import { defaultFilterFunction, FilterFunction, SelectOption, defaultValueComparer, defaultValueFormatter, IdGenerator, ValueComparerFunction, ValueFormatterFunction } from '@bootkit/ng0/common';
 import { LocalizationService } from '@bootkit/ng0/localization';
-import { defaultValueExtractorFunction, ValueExtractorFunction } from '@bootkit/ng0/common/value-extractor';
+import { defaultValueExtractor, ValueExtractorFunction } from '@bootkit/ng0/common';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -65,13 +65,13 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * Custom compare function to determine equality between two items.
      * Default is a simple equality check.
      */
-    public readonly compareFunction = input<CompareFunction>(defaultCompareFunction);
+    // public readonly compareFunction = input<ValueComparerFunction>(defaultValueComparer);
 
     /**
      * Custom value extractor function to extract the value of any object.
      */
     public readonly valueExtractor = input<ValueExtractorFunction, ValueExtractorFunction | string>(
-        defaultValueExtractorFunction, {
+        defaultValueExtractor, {
         transform: (v) => {
             if (typeof v === 'function')
                 return v;
@@ -79,7 +79,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
                 return (item: any) => item ? item[v] : undefined;
             }
 
-            throw Error('invalid formatter');
+            throw Error('invalid value extractor');
         }
     });
 
@@ -94,28 +94,27 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * Default converts the item to a string using its toString method.
      */
 
-    public readonly formatter = input<FormatFunction, FormatFunction | string | { field: string }>(defaultFormatFunction, {
-        transform: v => {
-            if (typeof v === 'function')
-                return v;
-            else if (typeof v === 'string') {
-                let locale = this._ls.get();
-                if (locale == null) {
-                    throw Error('')
+    public readonly formatter =
+        input<ValueFormatterFunction, ValueFormatterFunction | string | { field: string }>(defaultValueFormatter, {
+            transform: v => {
+                if (typeof v === 'function')
+                    return v;
+                else if (typeof v === 'string') {
+                    let locale = this._ls.get();
+                    if (locale == null) {
+                        throw Error('')
+                    }
+
+                    return locale.getFormatter(v);
+                } else if (typeof v === 'object' && v != null && 'field' in v) {
+                    return (item: any) => (item && item[v.field]) ?? '';
                 }
 
-                return locale.getFormatter(v);
-            } else if (typeof v === 'object' && v != null && 'field' in v) {
-                return (item: any) => (item && item[v.field]) ?? '';
+                throw Error('invalid formatter');
             }
+        });
 
-            throw Error('invalid formatter');
-        }
-    });
-
-    public readonly valueField = input<string | undefined>(undefined);
-
-    protected readonly _options = signal<ListItem[]>([]);
+    protected readonly _options = signal<SelectOption[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _selectedItemIndex = signal<number>(-1);
     protected readonly _activeItemIndex = signal<number>(-1);
@@ -145,12 +144,12 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     ngOnInit(): void {
         var r = new DataRequest();
         this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            let items = res.data.map(x => ({
+            let options = res.data.map(x => ({
                 id: 'ng0-select-item-' + IdGenerator.next().toString(),
                 value: x,
-            }) as ListItem);
+            }) as SelectOption);
 
-            this._options.set(items);
+            this._options.set(options);
         })
     }
 
@@ -172,7 +171,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         let item = this._options()[index];
         item.isSelected = true;
 
-        this._onChangeCallback(item.value);
+        this._onChangeCallback(this.valueExtractor()(item.value));
     }
 
     /**
@@ -207,8 +206,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     }
 
     writeValue(obj: any): void {
-        let compare = this.compareFunction();
-        let index = this._options().findIndex(x => compare(x.value, obj) === 0);
+        let index = this._options().findIndex(x => this.valueExtractor()(x.value) == obj);
 
         if (index > -1) {
             var item = this._options()[index];

@@ -1,4 +1,4 @@
-import { ArrayDataSource } from "@bootkit/ng0/data";
+import { LocalDataSource } from "@bootkit/ng0/data";
 
 export const Array1 = new Array<any>();
 export const Array2 = new Array<any>();

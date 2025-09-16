@@ -9,7 +9,7 @@ export type ValueExtractorFunction = (a: any) => any;
  * @param a The input value
  * @returns the input value
  */
-export function defaultValueExtractorFunction(a: any): any {
+export function defaultValueExtractor(a: any): any {
     return a;
 }
 

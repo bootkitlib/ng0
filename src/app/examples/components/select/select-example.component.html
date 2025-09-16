@@ -6,7 +6,7 @@
 
                 <div class="input-group">
                     <select class="form-select">
-                        @for (item of stringArray; track $index) {
+                        @for (item of numberArray; track $index) {
                         <option>{{item}}</option>
                         }
                     </select>
@@ -26,7 +26,7 @@
             </div>
 
             <div class="card-footer">
-                Bound value: {{ stringValue1 }}
+                Value: {{ stringValue1 }}
             </div>
         </div>
     </div>
@@ -42,7 +42,7 @@
             </div>
 
             <div class="card-footer">
-                Bound value: {{ numberValue1 }}
+                Value: {{ numberValue1 }}
             </div>
         </div>
     </div>
@@ -64,7 +64,7 @@
                                     formatter="boolean">
                         </ng0-select>
 
-                        boolean 1: {{ booleanValue1 }}
+                        Value: {{ booleanValue1 }}
                     </div>
 
                     <div class="col-xl-3">
@@ -72,7 +72,7 @@
                         <ng0-select name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue2"
                                     formatter="boolean:OnOff">
                         </ng0-select>
-                        boolean 2: {{ booleanValue2 }}
+                        Value: {{ booleanValue2 }}
                     </div>
 
                     <div class="col-xl-3">
@@ -80,7 +80,7 @@
                         <ng0-select name="booleanValue3" [source]="[true, false]" [(ngModel)]="booleanValue3"
                                     formatter="boolean:EnableDisable">
                         </ng0-select>
-                        boolean 3: {{ booleanValue3 }}
+                        Value: {{ booleanValue3 }}
                     </div>
 
                     <div class="col-xl-3">
@@ -88,7 +88,7 @@
                         <ng0-select name="booleanValue4" [source]="[true, false]" [(ngModel)]="booleanValue4"
                                     formatter="boolean:ActiveInactive">
                         </ng0-select>
-                        boolean 4: {{ booleanValue4 }}
+                        Value: {{ booleanValue4 }}
                     </div>
                 </div>
             </div>
@@ -110,7 +110,7 @@
                                     formatter="enum:Sexuality">
                         </ng0-select>
 
-                        enum 1: {{ enum1 }}
+                        Value: {{ enum1 }}
                     </div>
                 </div>
             </div>
@@ -123,18 +123,61 @@
                 <h5 class="card-title">Bind to objects</h5>
                 <p>
                 </p>
-
                 <div class="row">
                     <div class="col-xl-3">
                         Default
-                        <ng0-select name="booleanValue2" [source]="objects1" [(ngModel)]="booleanValue1" valueField="id"
+                        <ng0-select name="selectedObjectId1"
+                                    [source]="objects1"
+                                    [(ngModel)]="selectedObjectId1">
+                        </ng0-select>
+
+                        Value: {{ selectedObjectId1 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        With ValueFormatter
+                        <ng0-select name="selectedObjectId2"
+                                    [source]="objects1"
+                                    [(ngModel)]="selectedObjectId2"
                                     [formatter]="{field: 'name'}">
                         </ng0-select>
 
-                        boolean 1: {{ booleanValue1 }}
+                        Value: {{ selectedObjectId2 }}
                     </div>
                 </div>
             </div>
+
+            <div class="card-footer">
+                <h5 class="card-title">Use in forms</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        With ValueExtractor
+                        <ng0-select name="selectedObjectId3"
+                                    [source]="objects1"
+                                    [(ngModel)]="selectedObjectId3"
+                                    valueExtractor="id">
+                        </ng0-select>
+
+                        Value: {{ selectedObjectId3 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        With ValueFormatter + ValueExtractor
+                        <ng0-select name="selectedObjectId4"
+                                    [source]="objects1"
+                                    [(ngModel)]="selectedObjectId4"
+                                    valueExtractor="id"
+                                    [formatter]="{field: 'name'}">
+                        </ng0-select>
+
+                        Value: {{ selectedObjectId4 }}
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
@@ -147,12 +190,17 @@
 
                 <div class="row">
                     <div class="col-xl-3">
-                        Sexuality
-                        <ng0-select name="sexuality" [source]="['Male', 'Female', 'Other']"
-                                    [(ngModel)]="enum1">
+                        Select an object
+                        <ng0-select name="selectedObjectId5"
+                                    [source]="objects1"
+                                    [(ngModel)]="selectedObjectId5"
+                                    [formatter]="{field: 'name'}">
+                            <ng-template let-option>
+                                ❤️ This is option <strong>{{option.value.id}}</strong>
+                            </ng-template>
                         </ng0-select>
 
-                        enum 1: {{ enum1 }}
+                        Value: {{ selectedObjectId5 }}
                     </div>
                 </div>
             </div>

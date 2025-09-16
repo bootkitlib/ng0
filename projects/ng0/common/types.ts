@@ -5,7 +5,7 @@ export const RTL = new InjectionToken<boolean>('RTL Direction');
 /**
  * List item interface.
  */
-export interface ListItem {
+export interface SelectOption {
     id: string,
     value: any,
     isFiltered: boolean,

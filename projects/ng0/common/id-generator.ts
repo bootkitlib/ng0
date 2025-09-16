@@ -1,5 +1,3 @@
-import { Injectable } from "@angular/core";
-
 export abstract class IdGenerator {
     private static _idCounter = 0;
 

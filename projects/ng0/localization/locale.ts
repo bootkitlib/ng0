@@ -1,6 +1,6 @@
-import { FormatFunction } from "@bootkit/ng0/common";
 import { LocaleDefinition } from "./locale-definition";
 import { TranslatedValidationError } from "./types";
+import { ValueFormatterFunction } from "@bootkit/ng0/common";
 
 /** Locale */
 export class Locale {
@@ -128,7 +128,7 @@ export class Locale {
    * @param format The format string in the form of "formatterName:param1:param2:..."
    * @returns A FormatFunction
    */
-  getFormatter(format: string): FormatFunction {
+  getFormatter(format: string): ValueFormatterFunction {
     let parts = format.split(':');
     let name: string = parts[0];
     let params = parts.length > 1 ? parts.slice(1) : [];

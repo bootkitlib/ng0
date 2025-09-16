@@ -1,4 +1,4 @@
-import { FormatFunction } from "@bootkit/ng0/common";
+import { ValueFormatterFunction } from "@bootkit/ng0/common";
 
 /** Locale dictionary */
 export type LocaleDictionary = { [key: string]: string; };
@@ -38,12 +38,6 @@ export type TableComponentPagingFormatter = (info: {
    */
   currentPage: number
 }) => string;
-
-/**
- * A function to format boolean values.
- */
-export type BooleanValueFormatter = (value?: boolean, ...options: any[]) => string;
-
 
 /** 
  * Locale definition
@@ -99,7 +93,7 @@ export interface LocaleDefinition {
       [enumName: string]: { [enumValue: string]: string }
     }
     custom?: {
-      [formatterName: string]: FormatFunction,
+      [formatterName: string]: ValueFormatterFunction,
     },
     // date?: {
     //   calendars?: {
@@ -113,7 +107,5 @@ export interface LocaleDefinition {
     // };
     // }
   }
-
-
 };
 

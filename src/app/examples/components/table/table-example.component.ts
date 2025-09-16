@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TableModule } from '@bootkit/ng0/components/table';
-import { ArrayDataSource, AsyncDataSource, DataLoader, DataRequest, DataResult, DataSourceLike } from '@bootkit/ng0/data';
+import { LocalDataSource, RemoteDataSource, DataLoader, DataRequest, DataResult, DataSourceLike } from '@bootkit/ng0/data';
 import { HttpService } from '@bootkit/ng0/http';
 import { delay, map, of } from 'rxjs';
 import { Array1, Array2 } from './data';

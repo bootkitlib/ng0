@@ -1,5 +1,5 @@
-import { ArrayDataSource } from "./array-data-source";
-import { AsyncDataSource, DataLoader } from "./async-data-source";
+import { LocalDataSource } from "./local-data-source";
+import { RemoteDataSource, DataLoader } from "./remote-data-source";
 import { DataSource } from "./data-source";
 import { getEnumValues } from "@bootkit/ng0/common";
 
@@ -24,15 +24,15 @@ export type DataSourceLike<T = any> =
  */
 export function convertToDataSource<T>(source: DataSourceLike): DataSource<T> {
   if (Array.isArray(source)) {
-    return new ArrayDataSource(source);
+    return new LocalDataSource(source);
   } else if (typeof source == 'function') {
-    return new AsyncDataSource(source);
+    return new RemoteDataSource(source);
   } else if (source instanceof DataSource) {
     return source;
   } else if (source === undefined || source === null) {
-    return new ArrayDataSource([]);
+    return new LocalDataSource([]);
   } else if (typeof source === 'object') {
-    return new ArrayDataSource(getEnumValues(source));
+    return new LocalDataSource(getEnumValues(source));
   } else {
     throw new Error('Invalid source parameter.');
   }
@@ -52,3 +52,11 @@ export type LogicalOperator =
   | 'gte'
   | 'lt'
   | 'lte';
+
+
+export interface DataSourceChangeEvent {
+  changes: Array<{
+    item: any;
+    type: 'insert' | 'update' | 'delete'
+  }>
+}

@@ -2,20 +2,13 @@ import { delay, of, Subject, tap } from "rxjs";
 import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
+import { DataSourceChangeEvent } from "./types";
 
 /**
  * An implementation of DataSource that uses an array as the data source.
  * This is useful for static data or when you want to manage the data manually.
  */
-export class ArrayDataSource extends DataSource {
-  private _insertSubject = new Subject<{ items: any[] }>();
-  private _updateSubject = new Subject<{ item: any, index: number }>();
-  private _removeSubject = new Subject<{ item: any, index: number }>();
-
-  public readonly inserted = this._insertSubject.asObservable();
-  public readonly removed = this._removeSubject.asObservable();
-  public readonly updated = this._updateSubject.asObservable();
-
+export class LocalDataSource extends DataSource {
   constructor(private items: any[]) {
     super();
   }
@@ -66,23 +59,24 @@ export class ArrayDataSource extends DataSource {
     return of(dataResult);
   }
 
-  public remove(item: any) {
+  public delete(item: any) {
     let index = this.items!.findIndex(x => x === item);
     if (index > -1) {
       this.items.splice(index, 1);
-      this._removeSubject.next({ item, index });
+      let event: DataSourceChangeEvent = { changes: [{ item, type: 'delete' }] };
+
+      this.changeSubject.next(event);
     }
   }
 
   public insert(...items: any[]) {
     this.items.push(items);
-    this._insertSubject.next({ items });
-  }
+    let event: DataSourceChangeEvent = {
+      changes: items.map(x => ({ item: x, type: 'insert' }))
+    };
 
-  // public set(items: any[]) {
-  //   this.items = items;
-  //   // this._removeSubject.next(0);
-  // }
+    this.changeSubject.next(event);
+  }
 }
 
 function getFilterFunction(requestfilter: DataRequestFilter): (cellValue: any, filterValue: any) => boolean {
