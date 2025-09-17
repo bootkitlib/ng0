@@ -2,6 +2,36 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
+                <h5 class="card-title">Bind to RemoteDataSource</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: RemoteDataSource
+                        <ng0-select name="numberValue2" class="form-select-lg"
+                                    [source]="fakeRemoteDataSource1"
+                                    [(ngModel)]="numberValue2">
+                        </ng0-select>
+
+                        Value: {{ numberValue2 }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">Add new Item</button>
+                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">Remove First
+                    Item</button>
+                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">Replace First Item
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
                 <h5 class="card-title">Native select</h5>
 
                 <div class="input-group">
@@ -135,7 +165,7 @@
                     </div>
 
                     <div class="col-xl-3">
-                        With ValueformatBy
+                        With formatBy
                         <ng0-select name="selectedObjectId2"
                                     [source]="objects1"
                                     [(ngModel)]="selectedObjectId2"
@@ -148,8 +178,8 @@
             </div>
 
             <div class="card-footer">
-                <h5 class="card-title">Use in forms</h5>
                 <p>
+                    Use in forms:
                 </p>
 
                 <div class="row">
@@ -165,7 +195,7 @@
                     </div>
 
                     <div class="col-xl-3">
-                        With ValueformatBy + extractBy
+                        With formatBy + extractBy
                         <ng0-select name="selectedObjectId4"
                                     [source]="objects1"
                                     [(ngModel)]="selectedObjectId4"
@@ -180,6 +210,37 @@
 
         </div>
     </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to LocalDataSource</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: LocalDataSource
+                        <ng0-select name="stringValue2"
+                                    [source]="localDatasource1"
+                                    [(ngModel)]="stringValue2">
+                        </ng0-select>
+                        Value: {{ stringValue2 }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">Add new Item</button>
+                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">Remove First
+                    Item</button>
+                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">Replace First Item
+                </button>
+            </div>
+        </div>
+    </div>
+
+
 
     <div class="col-xl-12">
         <div class="card">

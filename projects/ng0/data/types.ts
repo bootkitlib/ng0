@@ -53,10 +53,31 @@ export type LogicalOperator =
   | 'lt'
   | 'lte';
 
+export interface DataSourceChange {
+  type: 'insert' | 'replace' | 'remove';
+}
+
+export interface DataSourceItemInsert extends DataSourceChange {
+  type: 'insert'
+
+  /** Insert index */
+  index?: number;
+  items: any[];
+}
+
+export interface DataSourceItemReplace extends DataSourceChange {
+  type: 'replace'
+  index: number;
+  value: any;
+}
+
+export interface DataSourceItemRemove extends DataSourceChange {
+  type: 'remove'
+  index: number;
+  count?: number
+}
+
 
 export interface DataSourceChangeEvent {
-  changes: Array<{
-    item: any;
-    type: 'insert' | 'update' | 'delete'
-  }>
+  changes: Array<DataSourceItemInsert | DataSourceItemReplace | DataSourceItemRemove>
 }

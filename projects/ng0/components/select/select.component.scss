@@ -2,13 +2,22 @@ ng0-select {
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
-
+    display: flex !important;
+    align-items: center;
     &.is-open {
         // border-end-start-radius: 0;
     }
 
     &.disabled {
         background-color: var(--bs-secondary-bg);
+    }
+
+    &.ng0-select-loading {
+        // background-image: none !important;
+    }
+
+    .ng0-select-spinner {
+
     }
 }
 
@@ -68,6 +77,7 @@ ng0-select {
 
         li {
             overflow: hidden;
+            cursor: pointer;
             padding: var(--ng0-select-item-padding-y) var(--ng0-select-item-padding-x);
 
             &:hover {

@@ -1,14 +1,19 @@
-import { delay, of, Subject, tap } from "rxjs";
+import { of } from "rxjs";
 import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
-import { DataSourceChangeEvent } from "./types";
+import { ValueExtractorFunction } from "@bootkit/ng0/common";
+import { signal } from "@angular/core";
 
 /**
  * An implementation of DataSource that uses an array as the data source.
  * This is useful for static data or when you want to manage the data manually.
  */
 export class LocalDataSource extends DataSource {
+  readonly type = 'local';
+  public valueExtractor = signal<ValueExtractorFunction>
+  // public valueComparer = signal<ValueComparerFunction>
+
   constructor(private items: any[]) {
     super();
   }
@@ -59,23 +64,29 @@ export class LocalDataSource extends DataSource {
     return of(dataResult);
   }
 
-  public delete(item: any) {
-    let index = this.items!.findIndex(x => x === item);
-    if (index > -1) {
-      this.items.splice(index, 1);
-      let event: DataSourceChangeEvent = { changes: [{ item, type: 'delete' }] };
-
-      this.changeSubject.next(event);
+  public remove(index: any) {
+    if (index < 0) {
+      throw Error('Invalid index');
     }
+
+    this.items.splice(index, 1);
+    this.changeSubject.next({ changes: [{ type: 'remove', index, count: 1 }] });
   }
 
-  public insert(...items: any[]) {
-    this.items.push(items);
-    let event: DataSourceChangeEvent = {
-      changes: items.map(x => ({ item: x, type: 'insert' }))
-    };
+  public insert(index: number, ...items: any[]) {
+    this.items.splice(index, 0, ...items);
+    this.changeSubject.next({ changes: [{ type: 'insert', items, index }] });
+  }
 
-    this.changeSubject.next(event);
+  public push(...items: any[]) {
+    let insertIndex = this.items.length;
+    this.items.push(items);
+    this.changeSubject.next({ changes: [{ type: 'insert', items, index: insertIndex }] });
+  }
+
+  public replace(index: number, newValue: any) {
+    this.items[index] = newValue;
+    this.changeSubject.next({ changes: [{ type: 'replace', value: newValue, index }] });
   }
 }
 

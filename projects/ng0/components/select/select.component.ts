@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { convertToDataSource, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -31,6 +31,7 @@ import { defaultValueExtractor } from '@bootkit/ng0/common';
     }],
     host: {
         '[class.is-open]': 'open()',
+        '[class.ng0-select-loading]': 'source().isLoading()',
         '[attr.aria-activedescendant]': '_activeItemIndex() > -1 ? (_options()[_activeItemIndex()].id) : undefined',
         '[attr.disabled]': '_isDisabled()',
         '[attr.aria-disabled]': '_isDisabled()'
@@ -41,6 +42,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     private _overlay = inject(Overlay);
     private _document = inject(DOCUMENT);
     private _ls = inject(LocalizationService);
+    private _changeDetector = inject(ChangeDetectorRef);
     private _resizeObserver?: ResizeObserver;
     private _resizeObserverInitialized = false;
     private _viewpoerRulerSubscription?: Subscription;
@@ -116,12 +118,28 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     ngOnInit(): void {
         var r = new DataRequest();
         this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            let options = res.data.map(x => ({
-                id: 'ng0-select-item-' + IdGenerator.next().toString(),
-                value: x,
-            }) as SelectOption);
-            this._options.set(options);
+            this._insertOptions(0, ...res.data)
         })
+
+        this._handleDataSourceChange();
+    }
+
+    private _handleDataSourceChange() {
+        let options = this._options();
+        this.source().change.subscribe(e => {
+            e.changes.forEach(change => {
+                switch (change.type) {
+                    case 'insert':
+                        this._insertOptions(change.index!, ...change.items);
+                        break;
+                    case 'replace':
+                        options[change.index].value = change.value;
+                        break;
+                    case 'remove':
+                        options.splice(change.index, change.count);
+                }
+            });
+        });
     }
 
     /**
@@ -174,6 +192,17 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         let item = this._options()[index];
         let elm = this._document.getElementById(item.id) as HTMLUListElement;
         elm!.scrollIntoView({ block: position, behavior: behavior });
+    }
+
+    protected _insertOptions(index?: number, ...items: any[]) {
+        var options = items.map(x => ({ id: this._getNextOptionId(), value: x }))
+        if (Number.isInteger(index)) {
+            this._options().splice(index!, 0, ...options);
+        } else {
+            this._options().push(...options);
+        }
+
+        this._changeDetector.markForCheck();
     }
 
     writeValue(obj: any): void {
@@ -323,6 +352,10 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             this._el?.nativeElement.focus();
             this._options().forEach(x => x.isFiltered = false);
         }
+    }
+
+    private _getNextOptionId() {
+        return `ng0-select-item-${IdGenerator.next().toString()}`;
     }
 
     private _listenToResizeEvents() {

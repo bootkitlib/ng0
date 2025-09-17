@@ -10,6 +10,8 @@ import { ValueComparerFunction, ValueExtractorFunction } from "@bootkit/ng0/comm
  * This class provides a common interface for loading data from various sources.
  */
 export abstract class DataSource<T = any> {
+  abstract readonly type: 'local' | 'remote'; 
+  
   protected changeSubject = new Subject<DataSourceChangeEvent>();
   protected loading = signal(false);
 
@@ -22,8 +24,7 @@ export abstract class DataSource<T = any> {
    * Indicates whether the data source is currently loading data.
    */
   public isLoading = this.loading.asReadonly();
-  public valueExtractor = signal<ValueExtractorFunction>
-  // public valueComparer = signal<ValueComparerFunction>
+
 
   /**
    * Loads data from the data source.

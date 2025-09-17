@@ -11,6 +11,12 @@
 &nbsp;
 }
 
+@if(source().isLoading()) {
+<div class="spinner-border text-success spinner-border-sm ng0-select-spinner" role="status">
+    <span class="visually-hidden">Loading...</span>
+</div>
+}
+
 <ng-template cdkConnectedOverlay
              [cdkConnectedOverlayOrigin]="_el.nativeElement"
              [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
