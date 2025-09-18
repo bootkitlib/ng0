@@ -4,7 +4,7 @@ ng0-select {
     -moz-user-select: none;
     display: flex !important;
     align-items: center;
-    &.is-open {
+    &.ng0-select-open {
         // border-end-start-radius: 0;
     }
 

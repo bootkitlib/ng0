@@ -1,14 +1,9 @@
-@if(_selectedItemIndex() > -1) {
-@let value = _options()[_selectedItemIndex()].value;
-@let formattedValue = formatBy()(value);
+@let formattedValue = formatBy()(_value());
 
 @if(formattedValue == null || formattedValue == '') {
 &nbsp;
 }@else {
 {{formattedValue}}
-}
-}@else {
-&nbsp;
 }
 
 @if(source().isLoading()) {
@@ -49,10 +44,10 @@
         <li
             [attr.id]="option.id"
             class="ng0-select-option"
-            [class.ng0-select-option-active]="option.isActive"
-            [class.ng0-select-option-selected]="option.isSelected"
-            [class.ng0-select-option-filtered]="option.isFiltered"
-            (click)="select($index); open.set(false)"
+            [class.ng0-select-option-active]="$index == _activeOptionIndex()"
+            [class.ng0-select-option-selected]="isSelected(option.value)"
+            [class.ng0-select-option-filtered]="!option.show"
+            (click)="_selectByIndex($index); open.set(false)"
             (keyup.enter)="open.set(false)">
             @if(_optionTemplate) {
             <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: option}" />

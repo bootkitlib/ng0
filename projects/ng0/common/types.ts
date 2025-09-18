@@ -8,7 +8,5 @@ export const RTL = new InjectionToken<boolean>('RTL Direction');
 export interface SelectOption {
     id: string,
     value: any,
-    isFiltered?: boolean,
-    isActive?: boolean,
-    isSelected?: boolean,
+    show?: boolean,
 }

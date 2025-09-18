@@ -30,9 +30,9 @@ import { defaultValueExtractor } from '@bootkit/ng0/common';
         multi: true
     }],
     host: {
-        '[class.is-open]': 'open()',
+        '[class.ng0-select-open]': 'open()',
         '[class.ng0-select-loading]': 'source().isLoading()',
-        '[attr.aria-activedescendant]': '_activeItemIndex() > -1 ? (_options()[_activeItemIndex()].id) : undefined',
+        '[attr.aria-activedescendant]': '_activeOptionIndex() > -1 ? (_options()[_activeOptionIndex()].id) : undefined',
         '[attr.disabled]': '_isDisabled()',
         '[attr.aria-disabled]': '_isDisabled()'
     }
@@ -46,14 +46,15 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     private _resizeObserver?: ResizeObserver;
     private _resizeObserverInitialized = false;
     private _viewpoerRulerSubscription?: Subscription;
+    protected _value = signal<any>(undefined);
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
     private _onChangeCallback!: (value: any) => void;
     private _onTouchedCallback!: (value: any) => void;
 
     protected readonly _options = signal<SelectOption[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
-    protected readonly _selectedItemIndex = signal<number>(-1);
-    protected readonly _activeItemIndex = signal<number>(-1);
+    protected readonly _selectedOptionIndex = signal<number>(-1);
+    protected readonly _activeOptionIndex = signal<number>(-1);
     @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
     protected _positionStrategy!: FlexibleConnectedPositionStrategy;
     protected _scrollStrategy!: ScrollStrategy;
@@ -145,38 +146,37 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     /**
      * Selects an option by index
      */
-    public select(index: number) {
+    protected _selectByIndex(index: number) {
         let optionsCount = this._options().length;
         if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
             throw new Error('Index out of range');
         }
 
-        // Deselect previous selected item
-        if (this._selectedItemIndex() > -1) {
-            this._options()[this._selectedItemIndex()].isSelected = false
+        if (index == this._selectedOptionIndex()) {
+            return;
         }
 
-        this._selectedItemIndex.set(index);
-        let item = this._options()[index];
-        item.isSelected = true;
+        let option = this._options()[index];
+        this._value = this.extractBy()(option.value);
+        this._onChangeCallback(this._value);
+    }
 
-        this._onChangeCallback(this.extractBy()(item.value));
+    public isSelected(value: any) {
+        let v = this.extractBy()(value);
+        return v === this._value();
     }
 
     /**
      * Sets an option as active
      */
     public active(index: number) {
-        if (this._activeItemIndex() > -1) {
-            this._options()[this._activeItemIndex()].isActive = false
+        if (index < 0) {
+            throw Error();
         }
 
-        this._activeItemIndex.set(index);
-        let item = this._options()[index]
-        item.isActive = true;
-
+        this._activeOptionIndex.set(index);
         if (this.open()) {
-            this.scrollItemIntoView(this._activeItemIndex(), 'nearest');
+            this.scrollItemIntoView(this._activeOptionIndex(), 'nearest');
         }
     }
 
@@ -195,7 +195,13 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     }
 
     protected _insertOptions(index?: number, ...items: any[]) {
-        var options = items.map(x => ({ id: this._getNextOptionId(), value: x }))
+        // let filter = this.filterBy()()
+        var options = items.map(x => ({ 
+            id: this._getNextOptionId(), 
+            value: x,
+            show: true
+        }) as SelectOption)
+
         if (Number.isInteger(index)) {
             this._options().splice(index!, 0, ...options);
         } else {
@@ -206,15 +212,8 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     }
 
     writeValue(obj: any): void {
-        let index = this._options().findIndex(x => this.extractBy()(x.value) == obj);
-
-        if (index > -1) {
-            var item = this._options()[index];
-            item.isActive = true;
-            item.isSelected = true;
-
-            this._selectedItemIndex.set(index);
-        }
+        let value = this.extractBy()(obj)
+        this._value.set(value);
     }
 
     registerOnChange(fn: any): void {
@@ -244,12 +243,12 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         switch (e.key) {
             case 'ArrowDown':
                 if (open) {
-                    if (this._activeItemIndex() < optionsCount - 1) {
-                        this.active(this._activeItemIndex() + 1);
+                    if (this._activeOptionIndex() < optionsCount - 1) {
+                        this.active(this._activeOptionIndex() + 1);
                     }
                 } else {
-                    if (this._selectedItemIndex()! < optionsCount - 1) {
-                        this.select(this._selectedItemIndex() + 1)
+                    if (this._selectedOptionIndex()! < optionsCount - 1) {
+                        this._selectByIndex(this._selectedOptionIndex() + 1)
                     }
                 }
                 e.preventDefault();
@@ -257,12 +256,12 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
             case 'ArrowUp':
                 if (open) {
-                    if (this._activeItemIndex() > 0) {
-                        this.active(this._activeItemIndex()! - 1);
+                    if (this._activeOptionIndex() > 0) {
+                        this.active(this._activeOptionIndex()! - 1);
                     }
                 } else {
-                    if (this._selectedItemIndex() > 0) {
-                        this.select(this._selectedItemIndex()! - 1)
+                    if (this._selectedOptionIndex() > 0) {
+                        this._selectByIndex(this._selectedOptionIndex()! - 1)
                     }
                 }
                 e.preventDefault();
@@ -270,10 +269,10 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
             case 'Enter':
                 if (open) {
-                    if (this._activeItemIndex() == this._selectedItemIndex()) {
+                    if (this._activeOptionIndex() == this._selectedOptionIndex()) {
                         this.open.set(false);
                     } else {
-                        this.select(this._activeItemIndex());
+                        this._selectByIndex(this._activeOptionIndex());
                         this.open.set(false);
                     }
                 } else {
@@ -298,7 +297,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
                 if (open) {
                     this.active(0);
                 } else {
-                    this.select(0)
+                    this._selectByIndex(0)
                 }
 
                 e.preventDefault();
@@ -308,7 +307,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
                 if (open) {
                     this.active(optionsCount - 1);
                 } else {
-                    this.select(optionsCount - 1);
+                    this._selectByIndex(optionsCount - 1);
                 }
 
                 e.preventDefault();
@@ -327,11 +326,11 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
     protected _filterItems(filter: string) {
         let filterFunc = this.filterBy();
-        this._options().forEach(x => x.isFiltered = !filterFunc(x.value, filter));
+        this._options().forEach(x => x.show = filterFunc(x.value, filter));
     }
 
     protected _onOverlayAttach() {
-        this._activeItemIndex.set(this._selectedItemIndex())
+        this._activeOptionIndex.set(this._selectedOptionIndex())
 
         this._listenToResizeEvents();
 
@@ -341,8 +340,8 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             }, 0);
         }
 
-        if (this._selectedItemIndex() > -1) {
-            this.scrollItemIntoView(this._selectedItemIndex(), 'start', 'instant');
+        if (this._selectedOptionIndex() > -1) {
+            this.scrollItemIntoView(this._selectedOptionIndex(), 'start', 'instant');
         }
     }
 
@@ -350,7 +349,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         this._unlistenFromResizeEvents();
         if (this.filterable()) {
             this._el?.nativeElement.focus();
-            this._options().forEach(x => x.isFiltered = false);
+            this._options().forEach(x => x.show = false);
         }
     }
 

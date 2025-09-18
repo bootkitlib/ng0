@@ -37,12 +37,12 @@ export class SelectExampleComponent {
         { id: 5, name: 'Option 5' },
     ];
     localDatasource1 = new LocalDataSource(["Option 1", "Option 2", "Option 3"]);
-    fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(2000)))
+    fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(100)))
 
     stringValue1?: string;
     stringValue2?: string;
     numberValue1?: number;
-    numberValue2?: number;
+    numberValue2 = 1;
     booleanValue1?: boolean;
     booleanValue2?: boolean;
     booleanValue3?: boolean;

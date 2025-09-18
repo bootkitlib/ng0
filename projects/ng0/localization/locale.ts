@@ -152,8 +152,8 @@ export class Locale {
           return (enumValue: string | number) => enumValue?.toString() ?? '';
         }
 
-        return (enumValue: string | number) => {
-          return this.translateEnum(enumName, enumValue, enumValue.toString())!;
+        return (enumValue?: string | number | null) => {
+          return this.translateEnum(enumName, enumValue, enumValue?.toString())!;
         }
       default:
         let customFormatter = this.definition.formatters?.custom?.[name];

@@ -11,15 +11,15 @@ export type ValueFormatterLike = ValueFormatterFunction | string;
 
 /**
  * Default format function.
- * @param item The item to format.
+ * @param value The item to format.
  * @returns The formatted string.
  */
-export function defaultValueFormatter(item: any): string {
-    if (item == null) {
+export function defaultValueFormatter(value: any): string {
+    if (value == null) {
         return '';
     }
 
-    return item.toString();
+    return value.toString();
 }
 
 export function ValueFormatterAttribute
@@ -30,7 +30,7 @@ export function ValueFormatterAttribute
         else if (typeof v === 'string') {
             if (v.startsWith('field:')) {
                 let fieldName = v.substring(6);
-                return (item: any, ...options: any[]) => (item[fieldName]?.toString() as string) ?? '';
+                return (item: any, ...options: any[]) => (item?.[fieldName]?.toString() as string) ?? '';
             } else {
                 if (locale == null) {
                     throw Error('For using locale value formatters, provide a locale object.')
