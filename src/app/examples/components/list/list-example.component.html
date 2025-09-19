@@ -1,0 +1,339 @@
+<div class="row g-4">
+
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Native list</h5>
+
+                <div class="input-group">
+                    <select class="form-select" multiple>
+                        @for (item of numberArray; track $index) {
+                        <option>{{item}}</option>
+                        }
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to Array (single selection)</h5>
+                <p>Single selection without controls</p>
+                <ng0-list name="stringArray" [source]="stringArray" [(ngModel)]="stringValue1">
+                </ng0-list>
+                Value: {{ stringValue1 }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to Array (single selection)</h5>
+                <p>Single selection with controls</p>
+                <ng0-list name="numberArray" [source]="numberArray" [(ngModel)]="numberValue1">
+                </ng0-list>
+
+                Value: {{ numberValue1 }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to Array (multi selection)</h5>
+                <p>multi selection without controls</p>
+                <ng0-list name="stringValues1" [source]="stringArray" [(ngModel)]="stringValues1" multiple="true">
+                </ng0-list>
+                Value: {{ stringValues1 }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to Array (multi selection)</h5>
+                <p>multi selection with controls</p>
+                <ng0-list name="stringValues2" [source]="stringArray" [(ngModel)]="stringValues2">
+                </ng0-list>
+
+                Value: {{ stringValues2 }}
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to boolean values</h5>
+                <p>
+                    Using localization formatBys for boolean values you can display different text for true/false
+                    values.
+                    The formatBys are defined in the locale files.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Default
+                        <ng0-list name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue1"
+                                  formatBy="boolean">
+                        </ng0-list>
+
+                        Value: {{ booleanValue1 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        On/Off
+                        <ng0-list name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue2"
+                                  formatBy="boolean:OnOff">
+                        </ng0-list>
+                        Value: {{ booleanValue2 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        Enable/Disable
+                        <ng0-list name="booleanValue3" [source]="[true, false]" [(ngModel)]="booleanValue3"
+                                  formatBy="boolean:EnableDisable">
+                        </ng0-list>
+                        Value: {{ booleanValue3 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        Active/Inactive
+                        <ng0-list name="booleanValue4" [source]="[true, false]" [(ngModel)]="booleanValue4"
+                                  formatBy="boolean:ActiveInactive">
+                        </ng0-list>
+                        Value: {{ booleanValue4 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to Enums</h5>
+                pass an Enum as source and use the enum formatBy to display the enum names.
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Sexuality
+                        <ng0-list name="sexuality" [source]="Sexuality" [(ngModel)]="enum1"
+                                  formatBy="enum:Sexuality">
+                        </ng0-list>
+
+                        Value: {{ enum1 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to objects</h5>
+                <p>
+                </p>
+                <div class="row">
+                    <div class="col-xl-3">
+                        Default
+                        <ng0-list name="selectedObjectId1"
+                                  [source]="objects1"
+                                  [(ngModel)]="selectedObjectId1">
+                        </ng0-list>
+
+                        Value: {{ selectedObjectId1 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        With formatBy
+                        <ng0-list name="selectedObjectId2"
+                                  [source]="objects1"
+                                  [(ngModel)]="selectedObjectId2"
+                                  formatBy="field:name">
+                        </ng0-list>
+
+                        Value: {{ selectedObjectId2 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        With extractBy
+                        <ng0-list name="selectedObjectId3"
+                                  [source]="objects1"
+                                  [(ngModel)]="selectedObjectId3"
+                                  extractBy="id">
+                        </ng0-list>
+
+                        Value: {{ selectedObjectId3 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        With formatBy + extractBy
+                        <ng0-list name="selectedObjectId4"
+                                  [source]="objects1"
+                                  [(ngModel)]="selectedObjectId4"
+                                  extractBy="id"
+                                  formatBy="field:name">
+                        </ng0-list>
+
+                        Value: {{ selectedObjectId4 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to LocalDataSource</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: LocalDataSource
+                        <ng0-list name="stringValue2"
+                                    [source]="localDatasource1"
+                                    [(ngModel)]="stringValue2">
+                        </ng0-list>
+                        Value: {{ stringValue2 }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">Add new Item</button>
+                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">Remove First
+                    Item</button>
+                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">Replace First Item
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Custom item template</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Select an object
+                        <ng0-list name="selectedObjectId5"
+                                    [source]="objects1"
+                                    [(ngModel)]="selectedObjectId5"
+                                    extractBy="id"
+                                    formatBy="field:name">
+                            <ng-template let-option>
+                                <div class="py-1">
+                                    ❤️ This is <strong>option {{option.value.id}}</strong> <br>
+                                    <small class="text-muted">This is extra info about item {{option.value.id}}</small>
+                                </div>
+                            </ng-template>
+                        </ng0-list>
+
+                        Value: {{ selectedObjectId5 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Filter</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: String[]
+                        <ng0-list name="stringValue2"
+                                    [source]="stringArray"
+                                    [(ngModel)]="stringValue2"
+                                    extractBy="id"
+                                    formatBy="field:name"
+                                    filterable="true">
+                            <ng-template let-option>
+                                ❤️ {{option.value}}
+                            </ng-template>
+                        </ng0-list>
+
+                        Value: {{ selectedObjectId5 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Handle empty item</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Default
+                        <ng0-list name="booleanValue2" [source]="[true, false]" [(ngModel)]="booleanValue1"
+                                    formatBy="boolean">
+                        </ng0-list>
+
+                        boolean 1: {{ booleanValue1 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to RemoteDataSource</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: RemoteDataSource
+                        <ng0-list name="numberValue2"
+                                  [source]="fakeRemoteDataSource1"
+                                  [(ngModel)]="numberValue2">
+                        </ng0-list>
+
+                        Value: {{ numberValue2 }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">Add new Item</button>
+                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">Remove First
+                    Item</button>
+                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">Replace First Item
+                </button>
+            </div>
+        </div>
+    </div> -->
+
+</div>

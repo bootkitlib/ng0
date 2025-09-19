@@ -157,8 +157,8 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         }
 
         let option = this._options()[index];
-        this._value = this.extractBy()(option.value);
-        this._onChangeCallback(this._value);
+        this._value.set(this.extractBy()(option.value));
+        this._onChangeCallback(this._value());
     }
 
     public isSelected(value: any) {
@@ -196,8 +196,8 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
     protected _insertOptions(index?: number, ...items: any[]) {
         // let filter = this.filterBy()()
-        var options = items.map(x => ({ 
-            id: this._getNextOptionId(), 
+        var options = items.map(x => ({
+            id: this._getNextOptionId(),
             value: x,
             show: true
         }) as SelectOption)
@@ -240,6 +240,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             return;
         }
 
+        debugger
         switch (e.key) {
             case 'ArrowDown':
                 if (open) {

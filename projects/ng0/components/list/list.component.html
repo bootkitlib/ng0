@@ -1,0 +1,15 @@
+@for (i of _items(); track $index) {
+@if(i.show) {
+<div class="ng0-list-item"
+     [attr.id]="i.id"
+     [class.ng0-list-item-active]="$index == _activeOptionIndex()"
+     [class.ng0-list-item-selected]="i.selected"
+     (click)="_toggleSelection($index);">
+    @if(_optionTemplate) {
+    <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: i}" />
+    } @else {
+    {{formatBy()(i.value)}}
+    }
+</div>
+}
+}

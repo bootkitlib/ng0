@@ -1,0 +1,37 @@
+:host {
+    overflow-y: auto;
+    overflow-x: hidden;
+    user-select: none;
+    display: block;
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+
+    &.disabled {
+        background-color: var(--bs-secondary-bg);
+    }
+
+    &:focus {
+        outline: 0;
+        // border: var(--bs-focus-ring-width) solid var( --bs-focus-ring-color);
+        box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) var(--bs-focus-ring-blur, 0) var(--bs-focus-ring-width) var(--bs-focus-ring-color);
+    }
+}
+
+.ng0-list-item {
+    cursor: pointer;
+    padding: 0.25rem 1rem;
+
+    &:hover {
+        background-color: var(--bs-tertiary-bg);
+    }
+
+    &.ng0-list-item-selected {
+        background-color: var(--bs-primary);
+        color: var(--bs-light);
+    }
+
+    &.ng0-list-item-active:not(.ng0-list-item-selected) {
+        background-color: var(--bs-gray-300);
+        color: var(--bs-body);
+    }
+}

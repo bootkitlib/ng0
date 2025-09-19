@@ -51,6 +51,10 @@ export default [
                 loadChildren: () => import('./components/form-field/routes'),
             },
             {
+                path: 'list',
+                loadChildren: () => import('./components/list/routes'),
+            },
+            {
                 path: 'modal',
                 loadChildren: () => import('./components/modal/routes'),
             },
