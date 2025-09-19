@@ -5,11 +5,25 @@
      [class.ng0-list-item-active]="$index == _activeOptionIndex()"
      [class.ng0-list-item-selected]="i.selected"
      (click)="_toggleSelection($index);">
-    @if(_optionTemplate) {
-    <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: i}" />
-    } @else {
-    {{formatBy()(i.value)}}
+
+    @if(indicator()) {
+    <div class="ng0-list-item-indicator form-check">
+        <input class="form-check-input"
+               [checked]="i.selected"
+               [attr.type]="multiple() ? 'checkbox' : 'radio'"
+               [attr.name]="i.id"
+               [attr.id]="i.id">
+    </div>
     }
+
+    <div class="ng0-list-item-content">
+        @if(_optionTemplate) {
+        <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: i}" />
+        } @else {
+        {{formatBy()(i.value)}}
+        }
+    </div>
+
 </div>
 }
 }

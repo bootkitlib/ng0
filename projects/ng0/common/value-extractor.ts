@@ -14,7 +14,6 @@ export function defaultValueExtractor(a: any): any {
     return a;
 }
 
-
 export function ValueExtractorAttribute(v: ValueExtractorLike): ValueExtractorFunction {
     if (typeof v === 'function')
         return v;
@@ -24,5 +23,3 @@ export function ValueExtractorAttribute(v: ValueExtractorLike): ValueExtractorFu
 
     throw Error('invalid value extractor');
 }
-
-

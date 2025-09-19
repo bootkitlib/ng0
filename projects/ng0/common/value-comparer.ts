@@ -6,6 +6,7 @@
  */
 export type ValueComparerFunction = (a: any, b: any) => number;
 
+export type ValueComparerLike = ValueComparerFunction | string;
 
 /**
  * Default value comparer function.
@@ -17,3 +18,12 @@ export function defaultValueComparer(a: any, b: any): number {
     return a === b ? 0 : a < b ? -1 : 1;
 }
 
+export function ValueComparerAttribute(v: ValueComparerLike): ValueComparerFunction {
+    if (typeof v === 'function')
+        return v;
+    if (typeof v === 'string') {
+        return (a: any, b: any) => a?.[v] === b?.[v] ? 0 : a?.[v] < b?.[v] ? -1 : 1;
+    }
+
+    throw Error('invalid value comparer');
+}

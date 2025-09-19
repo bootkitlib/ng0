@@ -25,7 +25,6 @@ enum Sexuality {
 })
 export class ListExampleComponent {
     counter = signal(0);
-
     stringArray = ['One', 'Two', 'Three'];
     numberArray = Array.from({ length: 3 }, (_, i) => i + 1);
     objects1 = [
@@ -39,8 +38,8 @@ export class ListExampleComponent {
     stringValue1?: string;
     stringValue2?: string;
     stringValues1?: string[];
-    stringValues2?: string[];
-    numberValue1?: number;
+    stringValues2?: string[] = ['One'];
+
     numberValue2 = 1;
     booleanValue1?: boolean;
     booleanValue2?: boolean;

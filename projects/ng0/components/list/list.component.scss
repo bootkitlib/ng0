@@ -20,6 +20,7 @@
 .ng0-list-item {
     cursor: pointer;
     padding: 0.25rem 1rem;
+    display: flex;
 
     &:hover {
         background-color: var(--bs-tertiary-bg);

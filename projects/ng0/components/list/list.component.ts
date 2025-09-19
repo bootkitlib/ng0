@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { convertToDataSource, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -8,6 +8,7 @@ import { defaultFilterFunction, FilterFunction, IdGenerator, ValueExtractorAttri
 import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { defaultValueExtractor } from '@bootkit/ng0/common';
 import { ListItem } from './types';
+import { BooleanValueComparerAttribute, defaultBooleanValueComparer } from '@bootkit/ng0/common/boolean-value-comparer';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -64,16 +65,28 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     public readonly multiple = input(false, { transform: booleanAttribute });
 
     /**
+     * Selection indicator control
+     */
+    public readonly indicator = input(false, { transform: booleanAttribute });
+
+    /**
      * Custom compare function to determine equality between two items.
      * Default is a simple equality check.
      */
     // public readonly compareFunction = input<ValueComparerFunction>(defaultValueComparer);
 
     /**
-     * Custom value extractor function to extract the value of any object.
+     * Custom value extractor function to extract the value of any object while writing values.
      */
-    public readonly extractBy = input(defaultValueExtractor, {
+    public readonly writeValueBy = input(defaultValueExtractor, {
         transform: ValueExtractorAttribute
+    });
+
+     /**
+     * A custom comparer function for comparing two objects.
+     */
+    public readonly compareBy = input(defaultBooleanValueComparer, {
+        transform: BooleanValueComparerAttribute
     });
 
     /**
@@ -135,17 +148,30 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         elm!.scrollIntoView({ block: position, behavior: behavior });
     }
 
-    writeValue(obj: any): void {
+    writeValue(v: any): void {
         if (this.multiple()) {
-            if (Array.isArray(obj)) {
-                this._value.set(obj);
-            } else if (obj === null || obj === undefined) {
+            if (Array.isArray(v)) {
+                this._value.set(v);
+            } else if (v === null || v === undefined) {
                 this._value.set([]);
             } else {
-                throw Error();
+                throw Error('Provide an array or null as the value ng0-list component');
             }
         } else {
-            this._value.set(obj);
+            this._value.set(v);
+        }
+
+        this._updateSelectionStatus();
+    }
+
+    private _updateSelectionStatus() {
+        let value = this._value();
+        let compareBy = this.compareBy();
+
+        if(this.multiple()) {
+            this._items().forEach(x => x.selected = (value as any[]).some(x => compareBy(x.value, value)));
+        } else {
+            this._items().forEach(x => x.selected = compareBy(x.value, value));
         }
     }
 
@@ -235,16 +261,17 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         }
 
         let item = this._items()[index];
+        let writeValueBy = this.writeValueBy();
 
         if (this.multiple()) {
             item.selected = !item.selected;
-            let selectedValues = this._items().filter(x => x.selected);
+            let selectedValues = this._items().filter(x => x.selected).map(x => (x.value));
             this._value.set(selectedValues);
         } else {
             if (item.selected) {
                 return;
             }
-            let itemValue = this.extractBy()(item.value)
+            let itemValue = writeValueBy(item.value);
             this._items().forEach(x => x.selected = false);
             item.selected = true;
             this._value.set(itemValue);

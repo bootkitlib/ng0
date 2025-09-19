@@ -1,6 +1,4 @@
 <div class="row g-4">
-
-
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
@@ -8,7 +6,7 @@
 
                 <div class="input-group">
                     <select class="form-select" multiple>
-                        @for (item of numberArray; track $index) {
+                        @for (item of stringArray; track $index) {
                         <option>{{item}}</option>
                         }
                     </select>
@@ -17,56 +15,57 @@
         </div>
     </div>
 
-    <div class="col-xl-6">
+    <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Bind to Array (single selection)</h5>
-                <p>Single selection without controls</p>
-                <ng0-list name="stringArray" [source]="stringArray" [(ngModel)]="stringValue1">
-                </ng0-list>
-                Value: {{ stringValue1 }}
+                <h5 class="card-title">Single selection</h5>
+
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p>Without selection indicator</p>
+                        <ng0-list name="stringValue1" [source]="stringArray" [(ngModel)]="stringValue1">
+                        </ng0-list>
+                        Value: {{ stringValue1 }}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p>With selection indicator</p>
+                        <ng0-list name="stringValue2" [source]="stringArray" [(ngModel)]="stringValue2"
+                                  [indicator]="true">
+                        </ng0-list>
+
+                        Value: {{ stringValue2 }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div class="col-xl-6">
+    <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Bind to Array (single selection)</h5>
-                <p>Single selection with controls</p>
-                <ng0-list name="numberArray" [source]="numberArray" [(ngModel)]="numberValue1">
-                </ng0-list>
+                <h5 class="card-title">Multi selection</h5>
 
-                Value: {{ numberValue1 }}
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p>Without selection indicator</p>
+                        <ng0-list name="stringValues1" [source]="stringArray" [(ngModel)]="stringValues1"
+                                  multiple="true">
+                        </ng0-list>
+                        Value: [{{ stringValues1 }}]
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p>With selection indicator</p>
+                        <ng0-list name="stringValues2" [source]="stringArray" [(ngModel)]="stringValues2"
+                                  multiple="true" [indicator]="true">
+                        </ng0-list>
+
+                        Value: [{{ stringValues2 }}]
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
-
-    <div class="col-xl-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to Array (multi selection)</h5>
-                <p>multi selection without controls</p>
-                <ng0-list name="stringValues1" [source]="stringArray" [(ngModel)]="stringValues1" multiple="true">
-                </ng0-list>
-                Value: {{ stringValues1 }}
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-6">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to Array (multi selection)</h5>
-                <p>multi selection with controls</p>
-                <ng0-list name="stringValues2" [source]="stringArray" [(ngModel)]="stringValues2">
-                </ng0-list>
-
-                Value: {{ stringValues2 }}
-            </div>
-        </div>
-    </div>
-
 
     <div class="col-xl-12">
         <div class="card">
@@ -169,22 +168,22 @@
                     </div>
 
                     <div class="col-xl-3">
-                        With extractBy
+                        With valueBy
                         <ng0-list name="selectedObjectId3"
                                   [source]="objects1"
                                   [(ngModel)]="selectedObjectId3"
-                                  extractBy="id">
+                                  valueBy="id">
                         </ng0-list>
 
                         Value: {{ selectedObjectId3 }}
                     </div>
 
                     <div class="col-xl-3">
-                        With formatBy + extractBy
+                        With formatBy + valueBy
                         <ng0-list name="selectedObjectId4"
                                   [source]="objects1"
                                   [(ngModel)]="selectedObjectId4"
-                                  extractBy="id"
+                                  valueBy="id"
                                   formatBy="field:name">
                         </ng0-list>
 
@@ -207,8 +206,8 @@
                     <div class="col-xl-3">
                         Source: LocalDataSource
                         <ng0-list name="stringValue2"
-                                    [source]="localDatasource1"
-                                    [(ngModel)]="stringValue2">
+                                  [source]="localDatasource1"
+                                  [(ngModel)]="stringValue2">
                         </ng0-list>
                         Value: {{ stringValue2 }}
                     </div>
@@ -237,10 +236,10 @@
                     <div class="col-xl-3">
                         Select an object
                         <ng0-list name="selectedObjectId5"
-                                    [source]="objects1"
-                                    [(ngModel)]="selectedObjectId5"
-                                    extractBy="id"
-                                    formatBy="field:name">
+                                  [source]="objects1"
+                                  [(ngModel)]="selectedObjectId5"
+                                  valueBy="id"
+                                  formatBy="field:name">
                             <ng-template let-option>
                                 <div class="py-1">
                                     ❤️ This is <strong>option {{option.value.id}}</strong> <br>
@@ -267,11 +266,11 @@
                     <div class="col-xl-3">
                         Source: String[]
                         <ng0-list name="stringValue2"
-                                    [source]="stringArray"
-                                    [(ngModel)]="stringValue2"
-                                    extractBy="id"
-                                    formatBy="field:name"
-                                    filterable="true">
+                                  [source]="stringArray"
+                                  [(ngModel)]="stringValue2"
+                                  valueBy="id"
+                                  formatBy="field:name"
+                                  filterable="true">
                             <ng-template let-option>
                                 ❤️ {{option.value}}
                             </ng-template>
