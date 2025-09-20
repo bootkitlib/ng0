@@ -22,7 +22,12 @@ export function BooleanValueComparerAttribute(v: BooleanValueComparerLike): Bool
     if (typeof v === 'function')
         return v;
     if (typeof v === 'string') {
-        return (a: any, b: any) => a?.[v] === b?.[v];
+        return (a: any, b: any) => {
+            
+            let a2 = typeof a === 'object' && a != null ? a[v] : a;
+            let b2 = typeof b === 'object' && b != null ? b[v] : b;
+            return a2 === b2;
+        }
     }
 
     throw Error('invalid boolean value comparer');

@@ -83,7 +83,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     });
 
      /**
-     * A custom comparer function for comparing two objects.
+     * A custom comparer function or the name of a field for comparing two objects.
      */
     public readonly compareBy = input(defaultBooleanValueComparer, {
         transform: BooleanValueComparerAttribute
@@ -110,7 +110,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
 
     constructor(protected _el: ElementRef<HTMLDivElement>, private _renderer: Renderer2, private _destroyRef: DestroyRef) {
         // this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
-        // this._renderer.addClass(this._el.nativeElement, '');
+        this._renderer.addClass(this._el.nativeElement, 'list-group');
     }
 
     ngOnInit(): void {

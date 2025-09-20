@@ -1,5 +1,5 @@
-@use '@angular/cdk/overlay-prebuilt.css';
-@use  './../node_modules/bootstrap/scss/bootstrap.scss';
+@import '@angular/cdk/overlay-prebuilt.css';
+@import './../node_modules/bootstrap/scss/bootstrap.scss';
 // @import  '../public/css/bootstrap.css';
 // @import  '../public/css/bootstrap.rtl.css';
 
@@ -22,6 +22,13 @@ mark {
     font-style: italic;
 }
 
-.card-title {
-    margin-bottom: 1.5rem !important;
+.card {
+    .card-title {
+        margin-bottom: 1.5rem !important;
+        background-color: transparent !important;
+    }
+
+    .card-footer {
+        background-color: transparent !important;
+    }
 }

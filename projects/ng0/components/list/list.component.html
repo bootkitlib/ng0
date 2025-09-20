@@ -1,9 +1,9 @@
 @for (i of _items(); track $index) {
 @if(i.show) {
-<div class="ng0-list-item"
+<div class="list-group-item list-group-item-action"
      [attr.id]="i.id"
-     [class.ng0-list-item-active]="$index == _activeOptionIndex()"
-     [class.ng0-list-item-selected]="i.selected"
+     [class.active]="$index == _activeOptionIndex()"
+     [class.selected]="i.selected"
      (click)="_toggleSelection($index);">
 
     @if(indicator()) {

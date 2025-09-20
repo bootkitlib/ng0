@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { getEnumValues } from '@bootkit/ng0/common';
+import { getEnumValues, ValueExtractorFunction } from '@bootkit/ng0/common';
 import { ListModule } from '@bootkit/ng0/components/list';
 import { DataResult, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
@@ -12,6 +12,11 @@ enum Sexuality {
     other = 'Other'
 }
 
+interface ListItem {
+    id: number;
+    name: string;
+    description: string;
+}
 
 @Component({
     selector: 'app-examples-list',
@@ -24,38 +29,48 @@ enum Sexuality {
     ]
 })
 export class ListExampleComponent {
+    Sexuality = getEnumValues(Sexuality);
+    width = signal('200px');
     counter = signal(0);
+
     stringArray = ['One', 'Two', 'Three'];
     numberArray = Array.from({ length: 3 }, (_, i) => i + 1);
-    objects1 = [
-        { id: 1, name: 'Option 1' },
-        { id: 2, name: 'Option 2' },
-        { id: 3, name: 'Option 3' },
+    objectsSource1: ListItem[] = [
+        { id: 1, name: 'Option 1', description: 'Option 1 description' },
+        { id: 2, name: 'Option 2', description: 'Option 2 description' },
+        { id: 3, name: 'Option 3', description: 'Option 3 description' },
     ];
     localDatasource1 = new LocalDataSource(["Option 1", "Option 2", "Option 3"]);
     fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(100)))
 
-    stringValue1?: string;
-    stringValue2?: string;
-    stringValues1?: string[];
-    stringValues2?: string[] = ['One'];
+    value1?: string;
+    value2?: string;
+    value3?: string[];
+    value4?: string[] = ['One'];
+    value5?: boolean;
+    value6?: boolean;
+    value7?: boolean;
+    value8?: boolean;
+    value9?: number;
+    value10?: number;
+    value11?: number;
+    value12?: number;
+    value13?: number;
+    value14?: number;
+    value15?: number;
+    value16?: number;
+    value17?: number;
+    value18?: number;
+    value19?: number;
+    value20?: number;
 
-    numberValue2 = 1;
-    booleanValue1?: boolean;
-    booleanValue2?: boolean;
-    booleanValue3?: boolean;
-    booleanValue4?: boolean;
-    selectedObjectId1?: number;
-    selectedObjectId2?: number;
-    selectedObjectId3?: number;
-    selectedObjectId4?: number;
-    selectedObjectId5?: number;
 
-    Sexuality = getEnumValues(Sexuality);
 
-    enum1?: boolean;
+    compareFunction1 = (a: any, b: any) => {
+        return a?.id === b?.id
+    }
 
-    width = signal('200px');
+    customValueWriter1 = (obj: any) => obj?.id;
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);

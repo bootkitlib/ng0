@@ -3,8 +3,6 @@
     overflow-x: hidden;
     user-select: none;
     display: block;
-    border: var(--bs-border-width) solid var(--bs-border-color);
-    border-radius: var(--bs-border-radius);
 
     &.disabled {
         background-color: var(--bs-secondary-bg);
@@ -17,22 +15,19 @@
     }
 }
 
-.ng0-list-item {
+.list-group-item {
     cursor: pointer;
-    padding: 0.25rem 1rem;
     display: flex;
 
-    &:hover {
-        background-color: var(--bs-tertiary-bg);
-    }
-
-    &.ng0-list-item-selected {
+    &.selected {
         background-color: var(--bs-primary);
         color: var(--bs-light);
+        border: none;
     }
 
-    &.ng0-list-item-active:not(.ng0-list-item-selected) {
+    &.active:not(.selected) {
         background-color: var(--bs-gray-300);
+        border: none;
         color: var(--bs-body);
     }
 }
