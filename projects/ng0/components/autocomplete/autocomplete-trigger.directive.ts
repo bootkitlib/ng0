@@ -3,7 +3,7 @@ import { NgControl } from '@angular/forms';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { BehaviorSubject, startWith, switchMap } from 'rxjs';
 import { DataResult, DataRequest } from '@bootkit/ng0/data';
-import { DataSourceLike, LogicalOperator, convertToDataSource } from '@bootkit/ng0/data/types';
+import { DataSourceLike, LogicalOperator, dataSourceAttribute } from '@bootkit/ng0/data/types';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { AutocompleteContainerComponent } from './autocomplete-container.component';
 import { ComponentPortal } from '@angular/cdk/portal';
@@ -19,7 +19,7 @@ export class AutocompleteTriggerDirective implements OnInit, OnDestroy {
     /**
      * The data source for the autocomplete.
      */
-    public source = input.required({ transform: (v: DataSourceLike) => convertToDataSource(v) });
+    public source = input.required({ transform: (v: DataSourceLike) => dataSourceAttribute(v) });
 
     /**
      * The formatter function to format the selected value.

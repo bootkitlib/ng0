@@ -5,3 +5,6 @@ export * from './remote-data-source';
 export * from './local-data-source';
 export * from './data-result-operator';
 export * from './types';
+export * from './value-comparer';
+export * from './value-extractor';
+export * from './filter';

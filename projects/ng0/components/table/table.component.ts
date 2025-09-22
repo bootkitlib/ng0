@@ -7,7 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { formatString } from '@bootkit/ng0/common';
 import { LocalizationModule, LocalizationService, TableComponentPagingFormatter } from '@bootkit/ng0/localization';
-import { DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataResult, DataSource, convertToDataSource, DataSourceLike, LogicalOperator } from '@bootkit/ng0/data';
+import { DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataResult, DataSource, dataSourceAttribute, DataSourceLike, LogicalOperator } from '@bootkit/ng0/data';
 import { PaginationComponent } from '@bootkit/ng0/components/pagination';
 import { TablePagingOptions } from './types';
 import { OverlayModule } from '@angular/cdk/overlay';
@@ -168,7 +168,7 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   }
 
   ngAfterContentInit(): void {
-    this._dataSource = convertToDataSource(this.source());
+    this._dataSource = dataSourceAttribute(this.source());
     const locale = this._ls.get();
     this._pagingFormatter = locale?.definition.components?.table?.pagingInfo ??
       ((o) => `Showing ${o.firstRecord}-${o.lastRecord} of ${o.totalRecords} records`);

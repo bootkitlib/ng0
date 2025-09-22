@@ -1,7 +1,6 @@
 import { LocalDataSource } from "./local-data-source";
 import { RemoteDataSource, DataLoader } from "./remote-data-source";
 import { DataSource } from "./data-source";
-import { getEnumValues } from "@bootkit/ng0/common";
 
 /**
  * DataSourceLike is a type that can be used to represent any data source
@@ -18,11 +17,11 @@ export type DataSourceLike<T = any> =
   null;
 
 /**
- * Converts a data source like an array, function, or DataSource into a DataSource instance.
+ * Converts a DataSourceLike to a DataSource instance.
  * @param source The data source to convert.
  * @returns A DataSource instance.
  */
-export function convertToDataSource<T>(source: DataSourceLike): DataSource<T> {
+export function dataSourceAttribute<T>(source: DataSourceLike): DataSource<T> {
   if (Array.isArray(source)) {
     return new LocalDataSource(source);
   } else if (typeof source == 'function') {
@@ -32,9 +31,9 @@ export function convertToDataSource<T>(source: DataSourceLike): DataSource<T> {
   } else if (source === undefined || source === null) {
     return new LocalDataSource([]);
   } else if (typeof source === 'object') {
-    return new LocalDataSource(getEnumValues(source));
+    return DataSource.fromEnum(source);
   } else {
-    throw new Error('Invalid source parameter.');
+    throw new Error('Invalid data source.');
   }
 }
 

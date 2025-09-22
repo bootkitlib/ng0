@@ -2,7 +2,7 @@ import { of } from "rxjs";
 import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
-import { ValueExtractorFunction } from "@bootkit/ng0/common";
+import { ValueExtractor } from "@bootkit/ng0/data";
 import { signal } from "@angular/core";
 
 /**
@@ -11,7 +11,7 @@ import { signal } from "@angular/core";
  */
 export class LocalDataSource extends DataSource {
   readonly type = 'local';
-  public valueExtractor = signal<ValueExtractorFunction>
+  public valueExtractor = signal<ValueExtractor>
   // public valueComparer = signal<ValueComparerFunction>
 
   constructor(private items: any[]) {

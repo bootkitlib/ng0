@@ -15,6 +15,31 @@
         </div>
     </div>
 
+        <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Style</h5>
+
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p>Default, without any style</p>
+                        <ng0-list name="value21" [source]="stringArray" [(ngModel)]="value21" [showIndicator]="true" >
+                        </ng0-list>
+                        Value: {{ value21 }}
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <p>Using "list-group" class </p>
+                        <ng0-list name="value22" [source]="stringArray" [(ngModel)]="value22" 
+                                  [showIndicator]="true" class="list-group" itemClass="list-group-item">
+                        </ng0-list>
+
+                        Value: {{ value2 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
@@ -30,7 +55,7 @@
                     <div class="col-12 col-md-6">
                         <p>With selection indicator</p>
                         <ng0-list name="value2" [source]="stringArray" [(ngModel)]="value2"
-                                  [indicator]="true">
+                                  [showIndicator]="true">
                         </ng0-list>
 
                         Value: {{ value2 }}
@@ -56,7 +81,7 @@
                     <div class="col-12 col-md-6">
                         <p>With selection indicator</p>
                         <ng0-list name="value4" [source]="stringArray" [(ngModel)]="value4"
-                                  multiple="true" [indicator]="true">
+                                  multiple="true" [showIndicator]="true">
                         </ng0-list>
 
                         Value: [{{ value4 }}]

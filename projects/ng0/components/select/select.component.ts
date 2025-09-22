@@ -1,13 +1,12 @@
 import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { convertToDataSource, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueExtractorAttribute, defaultValueExtractor, stringFilter, FilterPredicate } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { defaultFilterFunction, FilterFunction, SelectOption, IdGenerator, ValueExtractorAttribute } from '@bootkit/ng0/common';
+import { SelectOption, _IdGenerator } from '@bootkit/ng0/common';
 import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { defaultValueExtractor } from '@bootkit/ng0/common';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -65,7 +64,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * or an instance of DataSource.
      */
     public readonly source = input.required<DataSource<any>, DataSourceLike<any>>({
-        transform: v => convertToDataSource(v)
+        transform: v => dataSourceAttribute(v)
     });
 
     /** 
@@ -108,7 +107,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * Custom filter function to filter items based on a filter value.
      * Default checks if the item contains the filter value (case-insensitive).
      */
-    public readonly filterBy = input<FilterFunction>(defaultFilterFunction);
+    public readonly filterBy = input<FilterPredicate>(stringFilter);
 
     constructor(protected _el: ElementRef<HTMLDivElement>, private _renderer: Renderer2, private _destroyRef: DestroyRef) {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
@@ -355,7 +354,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     }
 
     private _getNextOptionId() {
-        return `ng0-select-item-${IdGenerator.next().toString()}`;
+        return `ng0-select-item-${_IdGenerator.next().toString()}`;
     }
 
     private _listenToResizeEvents() {

@@ -3,5 +3,5 @@ export interface ListItem {
     value: any,
     selected?: boolean,
     disabled?: boolean,
-    show?: boolean,
+    filtered?: boolean,
 }

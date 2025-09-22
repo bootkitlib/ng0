@@ -3,7 +3,8 @@ import { DataRequest } from "./data-request";
 import { DataResult } from "./data-result";
 import { signal } from "@angular/core";
 import { DataSourceChangeEvent } from "./types";
-import { ValueComparerFunction, ValueExtractorFunction } from "@bootkit/ng0/common";
+import { LocalDataSource } from "./local-data-source";
+import { getEnumValues } from "../common";
 
 /**
  * Abstract base class for data sources.
@@ -31,4 +32,13 @@ export abstract class DataSource<T = any> {
    * @param request The data request object containing pagination, sorting, and filtering information.
    */
   abstract load(request: DataRequest): Observable<DataResult>;
+
+  /**
+   * Creates a LocalDataSource from enum values.
+   * @param enumClass The enum class to extract values from.
+   * @returns A LocalDataSource containing the enum values.
+   */
+  public static fromEnum(enumClass: Record<string, string | number>): LocalDataSource {
+    return new LocalDataSource(getEnumValues(enumClass));
+  }
 }

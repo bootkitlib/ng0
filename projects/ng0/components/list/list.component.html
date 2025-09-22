@@ -1,12 +1,17 @@
 @for (i of _items(); track $index) {
-@if(i.show) {
-<div class="list-group-item list-group-item-action"
+@if(!i.filtered) {
+<div class="ng0-list-item"
+     [ngClass]="itemClass()(i)"
      [attr.id]="i.id"
-     [class.active]="$index == _activeOptionIndex()"
-     [class.selected]="i.selected"
-     (click)="_toggleSelection($index);">
+     [class.ng0-list-item-active]="$index == _activeOptionIndex()"
+     [class.ng0-list-item-selected]="i.selected"
+     (click)="toggleSelection($index);">
 
-    @if(indicator()) {
+    @if(_itemTemplate) {
+    <ng-container *ngTemplateOutlet="_itemTemplate; context: { $implicit: i}" />
+    } @else {
+
+    @if(showIndicator()) {
     <div class="ng0-list-item-indicator form-check">
         <input class="form-check-input"
                [checked]="i.selected"
@@ -16,14 +21,9 @@
     </div>
     }
 
-    <div class="ng0-list-item-content">
-        @if(_optionTemplate) {
-        <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: i}" />
-        } @else {
-        {{formatBy()(i.value)}}
-        }
-    </div>
+    {{formatBy()(i.value)}}
 
+    }
 </div>
 }
 }

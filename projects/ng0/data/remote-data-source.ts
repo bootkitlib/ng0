@@ -11,7 +11,7 @@ export type DataLoader<T = any> = (request: DataRequest) => Observable<DataResul
 
 
 /**
- * AsyncDataSource is a DataSource that loads data asynchronously using a DataLoader function.
+ * RemoteDataSource is a DataSource that loads data asynchronously using a DataLoader function.
  * It is used to fetch data from a remote source, such as an API.
  */
 export class RemoteDataSource extends DataSource {

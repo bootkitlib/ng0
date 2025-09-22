@@ -1,9 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { afterNextRender, Component, OnInit, signal } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { getEnumValues, ValueExtractorFunction } from '@bootkit/ng0/common';
 import { ListModule } from '@bootkit/ng0/components/list';
-import { DataResult, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
+import { DataResult, DataSource, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
 
 enum Sexuality {
@@ -29,7 +28,7 @@ interface ListItem {
     ]
 })
 export class ListExampleComponent {
-    Sexuality = getEnumValues(Sexuality);
+    Sexuality = DataSource.fromEnum(Sexuality);
     width = signal('200px');
     counter = signal(0);
 
@@ -63,6 +62,8 @@ export class ListExampleComponent {
     value18?: number;
     value19?: number;
     value20?: number;
+    value21?: string;
+    value22?: string;
 
 
 
