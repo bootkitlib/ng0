@@ -1,4 +1,4 @@
-import { AfterContentInit, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, DestroyRef, HostBinding, input, OnDestroy, OnInit, QueryList, signal } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, DestroyRef, HostBinding, input, model, OnDestroy, OnInit, QueryList, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TableColumnDirective } from './table-column.directive';
 import { TableDetailRowDirective } from './table-detail-row.directive';
@@ -46,18 +46,18 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * If true, the table will automatically load data when initialized.
    * This is useful for tables that need to display data immediately without user interaction.
    */
-  public autoLoad = input(true);
+  public autoLoad = input(true, { transform: booleanAttribute });
 
   /**
    * If true, the table will show row numbers.
    * This will add a column to the left of the table with the row numbers.
    */
-  public showRowNumbers = input(false);
+  public showRowNumbers = input(false, { transform: booleanAttribute });
 
   /** 
    * If true, the table will show the header row.
    */
-  public showHeader = input(true);
+  public showHeader = input(true, { transform: booleanAttribute });
 
   /**
    * If true, the table will support pagination.
@@ -85,7 +85,7 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * If true, the table will support sorting.
    * This will add a sort icon to each column header.
    */
-  public sortable = input(true);
+  public sortable = input(true, { transform: booleanAttribute });
 
   /**
    * The CSS class to apply to the table element.
@@ -113,7 +113,7 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * If true, the table will support filtering.
    * This will add a filter input to each column header.
    */
-  public filterable = input(false);
+  public filterable = input(false, { transform: booleanAttribute });
 
   /**
    * The indicator to show while the table is loading data for the first time.
@@ -194,7 +194,7 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     if (this.filterable()) {
       this._columns.forEach(col => {
         if (col.filterable() && col.filterValue() != '' && col.filterValue() != undefined) {
-          filters.push({ field: col.filterField() ?? col.field(), value: col.filterValue(), operator: col.filterOperator() });
+          filters.push({ field: col.fieldName() ?? col.filterField() ?? col.field(), value: col.filterValue(), operator: col.filterOperator() });
         }
       });
     }
@@ -208,7 +208,13 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     }
 
     if (this.sortable()) {
-      // sort = ...
+      let col = this._columns.find(c => c.sortable() && c.sortDirection() != 'none' && (c.field() != '' || c.fieldName() != ''));
+      if (col) {
+        sort = { 
+          field: col.fieldName() ?? col.field()!, 
+          asc: col.sortDirection() === 'asc' 
+        }
+      }
     }
 
     this._loadingRequest = new DataRequest({ page, filters, sort, select: [], computeTotal: true });

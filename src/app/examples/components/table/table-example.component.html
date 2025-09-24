@@ -6,14 +6,15 @@
         </p>
 
         <ng0-table [source]="source2" [pageable]="{}" [loadingIndicator]="'spinner'" [showHeader]="true"
-                   [filterable]="true"
-
+                   [filterable]="true" sortable="true"
                    [loadingCover]="false" [autoLoad]="true" [height]="200" [showRowNumbers]="true">
             <!-- <ng0-table-col field="id" type="number" title="Product Id" [bold]="true" [filterable]="true"></ng0-table-col> -->
-            <ng0-table-col field="title" title="Title" [filterable]="true" cellClass="fw-bold text-primary"></ng0-table-col>
+            <ng0-table-col field="title" title="Title" [filterable]="true"
+                           cellClass="fw-bold text-primary"></ng0-table-col>
             <ng0-table-col field="sku" title="SKU"></ng0-table-col>
-            <ng0-table-col field="category" title="Category" ></ng0-table-col>
-            <ng0-table-col field="price" type="currency" title="Price" cellClass="fw-bold"></ng0-table-col>
+            <ng0-table-col field="category" title="Category"></ng0-table-col>
+            <ng0-table-col field="price" type="currency" title="Price" cellClass="fw-bold"
+                           sortable="true"></ng0-table-col>
             <ng0-table-col field="stock" type="number" title="Stock"></ng0-table-col>
             <ng0-table-col field="rating" type="number" title="Rating"></ng0-table-col>
 

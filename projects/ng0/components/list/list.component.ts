@@ -1,13 +1,14 @@
 import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueExtractorAttribute, defaultValueExtractor, stringFilter, FilterPredicate, FilterPredicateAttribute } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueExtractorAttribute, defaultValueExtractor, stringFilter, FilterPredicate, FilterPredicateAttribute, BooleanValueComparerAttribute } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { _IdGenerator, CssClassLike, CssClassAttribute, IdGenerator, sequentialIdGenerator, } from '@bootkit/ng0/common';
 import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListItem } from './types';
-import { BooleanValueComparerAttribute, defaultBooleanValueComparer } from '@bootkit/ng0/data/boolean-value-comparer';
+import { } from '@bootkit/ng0/data';
+import { defaultBooleanValueComparer } from '@bootkit/ng0/data';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.

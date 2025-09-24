@@ -4,7 +4,7 @@ import { DataResult } from "./data-result";
 import { signal } from "@angular/core";
 import { DataSourceChangeEvent } from "./types";
 import { LocalDataSource } from "./local-data-source";
-import { getEnumValues } from "../common";
+import { getEnumValues } from "@bootkit/ng0/common";
 
 /**
  * Abstract base class for data sources.

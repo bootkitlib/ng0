@@ -1,5 +1,4 @@
 import { Locale } from '@bootkit/ng0/localization';
-import { on } from 'events';
 
 const formatNumber = (n: number) => n.toLocaleString();
 

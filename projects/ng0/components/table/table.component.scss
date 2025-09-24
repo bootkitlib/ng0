@@ -14,6 +14,42 @@ table {
   margin-bottom: 0;
 }
 
+th {
+  &.sortable {
+
+    cursor: pointer;
+    user-select: none;
+
+    .ng0-table-sort-icon {
+      transition: transform .2s;
+      opacity: 0;
+    }
+
+    &.sort-none {
+      &:hover {
+        .ng0-table-sort-icon {
+          opacity: 0.4;
+        }
+      }
+    }
+
+    &.sort-asc {
+      .ng0-table-sort-icon {
+        transform: rotate(0);
+        opacity: 1;
+        color: var(--bs-danger);
+      }
+    }
+
+    &.sort-desc {
+      .ng0-table-sort-icon {
+        transform: rotate(180deg);
+        opacity: 1;
+        color: var(--bs-primary);
+      }
+    }
+  }
+}
 
 tbody {
   position: relative;
@@ -29,6 +65,7 @@ td {
     white-space: nowrap;
   }
 }
+
 
 .ng0-table-loading-cover {
   position: absolute;

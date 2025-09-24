@@ -152,7 +152,28 @@
       }
 
       @for (col of _columns; track $index) {
-      <th>{{ col.title() }}</th>
+      <th
+          (click)="col.toggleSortDirection(); load()"
+          [class.sortable]="sortable() && col.sortable()"
+          [ngClass]="{ 
+            'sort-asc': col.sortDirection() == 'asc', 
+            'sort-desc': col.sortDirection() == 'desc',
+            'sort-none': col.sortDirection() == 'none'
+          }">
+        {{ col.title() }}
+
+        @if(sortable() && col.sortable()) {
+        <svg class="ng0-table-sort-icon"
+             width="24"
+             height="24"
+             viewBox="0 0 24 24" fill="none"
+             xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 7L12 16" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
+          <path d="M8 13L12 17L16 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+        </svg>
+        }
+      </th>
       }
     </tr>
   </thead>

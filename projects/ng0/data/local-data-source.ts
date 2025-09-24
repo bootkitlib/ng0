@@ -2,8 +2,8 @@ import { of } from "rxjs";
 import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
-import { ValueExtractor } from "@bootkit/ng0/data";
 import { signal } from "@angular/core";
+import { ValueExtractor } from "./value-extractor";
 
 /**
  * An implementation of DataSource that uses an array as the data source.
