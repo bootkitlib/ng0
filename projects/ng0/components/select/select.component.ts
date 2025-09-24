@@ -239,7 +239,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             return;
         }
 
-        debugger
         switch (e.key) {
             case 'ArrowDown':
                 if (open) {

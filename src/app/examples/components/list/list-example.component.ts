@@ -65,13 +65,12 @@ export class ListExampleComponent {
     value21?: string;
     value22?: string;
 
-
-
     compareFunction1 = (a: any, b: any) => {
         return a?.id === b?.id
     }
 
     customValueWriter1 = (obj: any) => obj?.id;
+
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);

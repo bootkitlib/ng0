@@ -1,52 +1,19 @@
 :host {
-    // --ng0-list-item-selected-bg: var(--bs-primary);
-    // --ng0-list-item-selected-color: var(--bs-light);
-
-    // --ng0-list-item-active-bg: var(--bs-gray-300);
-    // --ng0-list-item-active-color: var(--bs-gray-300);
-
-    // --ng0-list-item-hover-bg: var(--bs-gray-200);
-    // --ng0-list-item-hover-color: var(--bs-body);
-
-    // --ng0-list-item-disabled: var(--bs-secondary-bg);
-    // --ng0-list-item-color: var(--bs-body);
-    // --ng0-list-item-bg: var(--bs-light);
-    // --ng0-list-item-border: var(--bs-border-color);
-    // --ng0-list-item-border-width: var(--bs-border-width);
-    // --ng0-list-item-border-radius: var(--bs-border-radius);
-    // --ng0-list-item-padding-y: 0.5rem;
-    // --ng0-list-item-padding-x: 1rem;
-
+    display: block;
     overflow-y: auto;
     overflow-x: hidden;
     user-select: none;
-    display: block;
 
     &.disabled {
         background-color: var(--bs-secondary-bg);
     }
-
-    // &:focus {
-    //     outline: 0;
-    //     // border: var(--bs-focus-ring-width) solid var( --bs-focus-ring-color);
-    //     box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) var(--bs-focus-ring-blur, 0) var(--bs-focus-ring-width) var(--bs-focus-ring-color);
-    // }
 }
 
 .ng0-list-item {
     display: flex;
-    // &:hover:not(.ng0-list-item-disabled):not(.ng0-list-item-selected):not(.ng0-list-item-active) {
-    //     background-color: var(--ng0-list-item-hover-bg);
-    //     color: var(--ng0-list-item-hover-color);
-    // }
+    padding-inline-start: 0.5rem;
+
+    .ng0-list-item-indicator {
+        margin-inline-end: 0.5rem;
+    }
 }
-
-// .ng0-list-item.selected {
-//     background-color: var(--ng0-list-item-selected-bg);
-//     color: var(--ng0-list-item-selected-color);
-// }
-
-// .ng0-list-item.active:not(.ng0-list-item.selected) {
-//     background-color: var(--ng0-list-item-active-bg);
-//     color: var(--ng0-list-item-active-color);
-// }

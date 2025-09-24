@@ -12,13 +12,11 @@
     } @else {
 
     @if(showIndicator()) {
-    <div class="ng0-list-item-indicator form-check">
-        <input class="form-check-input"
-               [checked]="i.selected"
-               [attr.type]="multiple() ? 'checkbox' : 'radio'"
-               [attr.name]="i.id"
-               [attr.id]="i.id">
-    </div>
+    <input class="form-check-input ng0-list-item-indicator"
+           [checked]="i.selected"
+           [attr.type]="multiple() ? 'checkbox' : 'radio'"
+           [attr.name]="i.id"
+           [attr.id]="i.id">
     }
 
     {{formatBy()(i.value)}}

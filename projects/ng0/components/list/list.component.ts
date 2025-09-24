@@ -32,7 +32,7 @@ import { BooleanValueComparerAttribute, defaultBooleanValueComparer } from '@boo
         '[class.ng0-list-loading]': 'source().isLoading()',
         '[attr.aria-activedescendant]': '_activeOptionIndex() > -1 ? (_items()[_activeOptionIndex()].id) : undefined',
         '[attr.disabled]': '_isDisabled()',
-        '[attr.tabindex]': '_isDisabled() ? "-1" : "0"',
+        '[attr.tabindex]': '_isDisabled() || focus() === "none" ? "-1" : "0"',
         '[attr.aria-disabled]': '_isDisabled()'
     }
 })
@@ -113,20 +113,16 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         transform: CssClassAttribute
     });
 
+    public readonly focus = input<'none' | 'roving' | 'activeDescendant'>('activeDescendant');
+
     public readonly idGenerator = input<IdGenerator | undefined>(sequentialIdGenerator('ng0-list-item-'));
 
     constructor(protected _el: ElementRef<HTMLDivElement>, private _renderer: Renderer2, private _destroyRef: DestroyRef) {
-        // this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
-        // this._renderer.addClass(this._el.nativeElement, 'list-group');
     }
 
     ngOnInit(): void {
-        var r = new DataRequest();
-        this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            this._insertItems(0, ...res.data)
-        })
-
-        this._handleDataSourceChange();
+        this._loadItems();
+        this._listenToDataSourceChanges();
     }
 
     /**
@@ -143,12 +139,13 @@ export class ListComponent implements OnInit, ControlValueAccessor {
 
     /**
      * Filters the list items based on the provided criteria.
-     * @param criteria The criteria to filter the items by. the criteria is passed to the filter predicate function.
+     * @param params The filter parameters to apply.
      * @returns void
      */
-    public filter(criteria?: any): void {
+    public filter(...params: any[]): void {
         let filterBy = this.filterBy();
-        this._items().forEach(x => x.filtered = !filterBy(x.value, criteria));
+        this._items().forEach(x => x.filtered = !filterBy(x.value, ...params));
+        this._changeDetector.markForCheck();
     }
 
     /**
@@ -222,7 +219,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         // Update selection state of items
         let compareBy = this.compareBy();
         if (this.multiple()) {
-            this._items().forEach(x => x.selected = (value as any[]).some(x => compareBy(x.value, value)));
+            this._items().forEach(x => x.selected = (value as any[]).some(y => compareBy(x.value, y)));
         } else {
             this._items().forEach(x => x.selected = compareBy(x.value, value));
         }
@@ -282,31 +279,14 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         }
     }
 
-    private _insertItems(index?: number, ...items: any[]) {
-        // let filter = this.filterBy()()
-        let idGenerator = this.idGenerator()
-        let compareBy = this.compareBy();
-        let isItemSelected = this.multiple() ?
-            (item: any) => (this._value() as any[]).some(x => compareBy(x.value, item)) :
-            (item: any) => compareBy(this._value(), item);
-
-        var options = items.map(x => ({
-            id: idGenerator ? idGenerator(x) : undefined,
-            value: x,
-            selected: isItemSelected(x),
-            filtered: false,
-        }) as ListItem)
-
-        if (Number.isInteger(index)) {
-            this._items().splice(index!, 0, ...options);
-        } else {
-            this._items().push(...options);
-        }
-
-        this._changeDetector.markForCheck();
+    private _loadItems() {
+        var r = new DataRequest();
+        this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
+            this._insertItems(0, ...res.data);
+        });
     }
 
-    private _handleDataSourceChange() {
+    private _listenToDataSourceChanges() {
         this.source().change.subscribe(e => {
             let options = this._items();
             e.changes.forEach(change => {
@@ -324,5 +304,30 @@ export class ListComponent implements OnInit, ControlValueAccessor {
 
             // this._changeDetector.markForCheck();
         });
+    }
+
+    private _insertItems(index?: number, ...items: any[]) {
+        // let filter = this.filterBy()()
+        let idGenerator = this.idGenerator()
+        let compareBy = this.compareBy();
+        let value = this._value();
+        let isItemSelected = this.multiple() && Array.isArray(value) ?
+            (item: any) => (value as any[]).some(x => compareBy(x.value, item)) :
+            (item: any) => compareBy(value, item);
+
+        var options = items.map(x => ({
+            id: idGenerator ? idGenerator(x) : undefined,
+            value: x,
+            selected: isItemSelected(x),
+            filtered: false,
+        }) as ListItem)
+
+        if (Number.isInteger(index)) {
+            this._items().splice(index!, 0, ...options);
+        } else {
+            this._items().push(...options);
+        }
+
+        this._changeDetector.markForCheck();
     }
 }
