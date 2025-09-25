@@ -31,4 +31,8 @@ mark {
     .card-footer {
         background-color: transparent !important;
     }
+
+    &.example-card {
+        height: 100%;
+    }
 }

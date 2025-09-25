@@ -1,4 +1,4 @@
-import { Directive, HostListener, forwardRef, ElementRef, Renderer2, input } from '@angular/core';
+import { Directive, HostListener, forwardRef, ElementRef, Renderer2, input, booleanAttribute, numberAttribute, inject } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { formatNumber } from '@angular/common';
 
@@ -16,6 +16,17 @@ const Keys = {
   end: 'End'
 }
 
+interface InputElementState {
+  selectionStart: number;
+  selectionEnd: number;
+  isCursorInsideIntegerPart: boolean;
+  decimalSeparatorPosition: number;
+}
+
+/**
+ * Directive to allow only number input in text fields.
+ * It supports integer and decimal numbers, negative numbers, min/max values, thousands separator.
+ */
 @Directive({
   selector: '[ng0Number]',
   providers: [
@@ -27,44 +38,60 @@ const Keys = {
   ]
 })
 export class NumberDirective implements ControlValueAccessor {
-  /**  */
-  minFractionDigits = input<number | undefined>(3);
-  maxFractionDigits = input<number| undefined>(10);
-  useGrouping = input<boolean>(false);
-  numberType = input<'decimal' | 'integer'>('integer');
-  private onChange = (_: any) => { };
-  private onTouched = () => { };
-  private decimalSeparator!: string;
-  private thousandsSeparator: string = ',';
-  private selectionStart: number = 0;
-  private selectionEnd: number = 0;
-  private isCursorInsideIntegerPart: boolean = false;
-  private decimalSeparatorPosition = -1;
-  private value?: number;
-  private setProperty = (prop: string, value: any) => this.renderer.setProperty(this.el.nativeElement, prop, value);
+  private _value?: number;
+  private _decimalSeparator!: string;
+  private _thousandsSeparator: string = ',';
+  private _onChangeCallback?: (v: any) => {};
+  private _onTouchedCallback?: () => {};
+  private _elmRef = inject(ElementRef<HTMLInputElement>);
+  private _renderer = inject(Renderer2);
 
-  constructor(
-    private el: ElementRef<HTMLInputElement>,
-    private renderer: Renderer2,
-    // private locale: Locale,
-  ) { }
+  /**
+   * The minimum number of digits to display after the decimal point.
+   * Applied only when 'numberType' is set to 'decimal'.
+   * @default 1
+   */
+  public minFractionDigits = input(1, { transform: numberAttribute });
+
+  /**
+   * The maximum number of digits to display after the decimal point.
+   * Applied only when 'numberType' is set to 'decimal'.
+   * @default 2
+   */
+  public maxFractionDigits = input(2, { transform: numberAttribute });
+
+  /**
+   * Whether to use grouping separators, such as thousands separators
+   * @default false
+   */
+  public useGrouping = input(false, { transform: booleanAttribute });
+
+  /**
+   * Type of numbers to allow
+   * 'decimal' - allow decimal numbers
+   * 'integer' - allow integer numbers only
+   * @default 'integer'
+   */
+  public numberType = input<'integer' | 'decimal'>('integer');
+
+  constructor() { }
 
   ngOnInit() {
     // Use Intl.NumberFormat to find decimal separator for locale
     const formatted = formatNumber(1.1, 'en', '1.1-1');
-    this.decimalSeparator = formatted.replace(/\d/g, '') || '.';
+    this._decimalSeparator = formatted.replace(/\d/g, '') || '.';
   }
 
   registerOnChange(fn: any): void {
-    this.onChange = fn;
+    this._onChangeCallback = fn;
   }
 
   registerOnTouched(fn: any): void {
-    this.onTouched = fn;
+    this._onTouchedCallback = fn;
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    this.setProperty('disabled', isDisabled);
+    // this._setProperty('disabled', isDisabled);
   }
 
   writeValue(value: any): void {
@@ -72,82 +99,80 @@ export class NumberDirective implements ControlValueAccessor {
 
     if (value === undefined || value === null) {
       inputValue = '';
-      this.value = undefined;
+      this._value = undefined;
     } else if (typeof value === 'number') {
-      inputValue = this.formatNumber(value);
-      this.value = value;
+      inputValue = this._formatNumber(value);
+      this._value = value;
     }
     else if (typeof value === 'string') {
-      const parsedValue = this.value = Number.parseFloat(value);
-      inputValue = this.formatNumber(parsedValue);
+      const parsedValue = this._value = Number.parseFloat(value);
+      inputValue = this._formatNumber(parsedValue);
     } else {
       console.error('NumberDirective: Unsupported value type', value);
       inputValue = 'Invalid';
     }
 
-    this.setProperty('value', inputValue);
+    this._setProperty('value', inputValue);
   }
 
   @HostListener('keydown', ['$event'])
-  private onKeyDown(event: KeyboardEvent) {
-    this.updateCursorInfo();
-
-    if (!this.isKeyAllowed(event.key)) {
-      event.preventDefault();
-      return;
-    }
-
+  private _onKeyDown(event: KeyboardEvent) {
     const key = event.key;
+    const state = this._getInputState();
 
-    if (key == Keys.backspace) {
-      if (this.selectionStart > 1 && (this.selectionStart === this.selectionEnd)) {
-        let value = this.el.nativeElement.value;
-        let beforeSelection = value.charAt(this.selectionStart - 1);
-        if (beforeSelection === ',') {
-          // If the character before the cursor is a comma, we need to skip it
-          this.setProperty('selectionStart', this.selectionStart - 2);
+    if (this._isAllowedKey(key)) {
+      if (key == Keys.backspace) {
+        if (state.selectionStart > 1 && (state.selectionStart === state.selectionEnd)) {
+          let value = this._elmRef.nativeElement.value;
+          let beforeSelection = value.charAt(state.selectionStart - 1);
+          if (beforeSelection === ',') {
+            // If the character before the cursor is a comma, we need to skip it
+            this._setProperty('selectionStart', state.selectionStart - 2);
+          }
         }
       }
+    } else {
+      event.preventDefault();
     }
   }
 
   @HostListener('input', ['$event.target.value'])
-  private onInput(s: string) {
-    if (s === '') {
-      this.value = undefined;
-      this.onChange(undefined);
+  private _onInput(value: string) {
+    if (value === '') {
+      this._value = undefined;
+      this._onChangeCallback?.(undefined);
       return;
     }
 
-    this.updateCursorInfo();
-
-    if (this.isCursorInsideIntegerPart) {
-      this.formatIntegerPart(s);
+    const state = this._getInputState();
+    if (state.isCursorInsideIntegerPart && this.useGrouping()) {
+      this._formatIntegerPart(value);
     }
 
-    var number = Number(removeChar(this.el.nativeElement.value, this.thousandsSeparator));
-    this.value = isNaN(number) ? undefined : number;
-    this.onChange(this.value);
+    var number = Number(removeChar(this._elmRef.nativeElement.value, this._thousandsSeparator));
+    this._value = isNaN(number) ? undefined : number;
+    this._onChangeCallback?.(this._value);
   }
 
-  private formatIntegerPart(value: string) {
+  private _formatIntegerPart(value: string) {
     // Format the input value
-    const integerPart = value.split(this.decimalSeparator)[0];
-    const decimalPart = value.split(this.decimalSeparator)[1];
+    const integerPart = value.split(this._decimalSeparator)[0];
+    const decimalPart = value.split(this._decimalSeparator)[1];
 
     if (integerPart.length <= 3) {
       return;
     }
 
-    let normalizedIntegerPart = removeChar(integerPart, this.thousandsSeparator); // Remove commas
+    let normalizedIntegerPart = removeChar(integerPart, this._thousandsSeparator); // Remove commas
 
     let formattedValue = addThousandsSeparator(normalizedIntegerPart);
     if (decimalPart !== undefined) {
-      formattedValue += this.decimalSeparator + decimalPart;
+      formattedValue += this._decimalSeparator + decimalPart;
     }
 
-    this.setProperty('value', formattedValue);
+    this._setProperty('value', formattedValue);
     let newSelectionStart: number;
+    let state = this._getInputState();
 
     // fix the cursor position after formatting
     if (value.length == 1) {
@@ -155,45 +180,46 @@ export class NumberDirective implements ControlValueAccessor {
     } else {
       const newValueLength = formattedValue.length;
       const cursorJump = newValueLength - value.length;
-      newSelectionStart = Math.max(0, this.selectionStart + cursorJump);
+      newSelectionStart = Math.max(0, state.selectionStart + cursorJump);
     }
 
-    this.setProperty('selectionStart', newSelectionStart);
-    this.setProperty('selectionEnd', newSelectionStart);
+    this._setProperty('selectionStart', newSelectionStart);
+    this._setProperty('selectionEnd', newSelectionStart);
 
     // return formattedValue;
   }
 
   @HostListener('blur')
-  private onBlur() {
-    if (this.value !== undefined) {
-      let formattedValue = this.formatNumber(this.value);
-      this.setProperty('value', formattedValue);
+  private _onBlur() {
+    if (this._value !== undefined) {
+      let formattedValue = this._formatNumber(this._value);
+      this._setProperty('value', formattedValue);
     }
 
-    this.onTouched();
+    this._onTouchedCallback?.();
   }
 
   @HostListener('paste', ['$event'])
-  private onPaste(event: ClipboardEvent) {
+  private _onPaste(event: ClipboardEvent) {
     // event.
     // value = value.trim();
   }
 
-  private updateCursorInfo() {
-    let value = this.el.nativeElement.value;
-    this.selectionStart = this.el.nativeElement.selectionStart || 0;
-    this.selectionEnd = this.el.nativeElement.selectionEnd || 0;
+  private _getInputState(): InputElementState {
+    let value = this._elmRef.nativeElement.value;
+    let decimalSeparatorPosition = value.indexOf(this._decimalSeparator);
+    let selectionStart = this._elmRef.nativeElement.selectionStart || 0;
+    let selectionEnd = this._elmRef.nativeElement.selectionEnd || 0;
 
-    this.decimalSeparatorPosition = value.indexOf(this.decimalSeparator);
-    if (this.decimalSeparatorPosition > -1) {
-      this.isCursorInsideIntegerPart = (this.selectionStart <= this.decimalSeparatorPosition);
-    } else {
-      this.isCursorInsideIntegerPart = true;
+    return {
+      selectionStart,
+      selectionEnd,
+      decimalSeparatorPosition,
+      isCursorInsideIntegerPart: decimalSeparatorPosition > -1 ? (selectionStart <= decimalSeparatorPosition) : true
     }
   }
 
-  private formatNumber(n: number): string {
+  private _formatNumber(n: number): string {
     var isInteger = this.numberType() == 'integer';
     return new Intl.NumberFormat('en-US', {
       useGrouping: this.useGrouping(),
@@ -203,10 +229,11 @@ export class NumberDirective implements ControlValueAccessor {
     }).format(n);
   }
 
-  private isKeyAllowed(key: string) {
+  private _isAllowedKey(key: string) {
     const allowedKeys = [Keys.backspace, Keys.tab, Keys.arrowLeft, Keys.arrowRight, Keys.delete, Keys.home, Keys.end];
-    const input = this.el.nativeElement;
+    const input = this._elmRef.nativeElement;
     const value = input.value;
+    const state = this._getInputState();
 
     if (allowedKeys.includes(key)) {
       return true; // allow control/navigation keys
@@ -218,27 +245,31 @@ export class NumberDirective implements ControlValueAccessor {
     }
 
     // Allow one dot for decimal
-    if (key === this.decimalSeparator) {
+    if (key === this._decimalSeparator) {
       return (this.numberType() == 'decimal') &&
-        (!value.includes(this.decimalSeparator)) &&
-        (this.selectionStart == input.value.length);
+        (!value.includes(this._decimalSeparator)) &&
+        (state.selectionStart == input.value.length);
     }
 
     // Allow numbers only
     if (/^\d$/.test(key)) {
-      if (this.isCursorInsideIntegerPart) {
+      if (state.isCursorInsideIntegerPart) {
         return true;
       } else {
-        var decimalPart = value.split(this.decimalSeparator)[1];
+        var decimalPart = value.split(this._decimalSeparator)[1];
         var maxFractionDigits = this.maxFractionDigits();
         if (maxFractionDigits != undefined && decimalPart.length < maxFractionDigits) {
           return true;
         } else {
-          return this.selectionStart !== this.selectionEnd; // allow a new digit if a substring is selected
+          return input.selectionStart !== input.selectionEnd; // allow a new digit if a substring is selected
         }
       }
     }
 
     return false;
   }
+
+  private _setProperty(prop: string, value: any) {
+    this._renderer.setProperty(this._elmRef.nativeElement, prop, value);
+  };
 }

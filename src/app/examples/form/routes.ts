@@ -1,9 +1,9 @@
 import { Route } from "@angular/router";
-import { FormExampleComponent } from "./form-example.component";
+import { NumberDirectiveExampleComponent } from "./number-directive/number-directive-example.component";
 
 export default [
     {
-        path: '',
-        component: FormExampleComponent,
+        path: 'number-directive',
+        component: NumberDirectiveExampleComponent,
     }
 ] satisfies Route[];
