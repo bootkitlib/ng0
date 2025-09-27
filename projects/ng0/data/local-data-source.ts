@@ -4,6 +4,7 @@ import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
 import { signal } from "@angular/core";
 import { ValueExtractor } from "./value-extractor";
+import { getEnumValues } from "@bootkit/ng0/common";
 
 /**
  * An implementation of DataSource that uses an array as the data source.
@@ -16,6 +17,15 @@ export class LocalDataSource extends DataSource {
 
   constructor(private items: any[]) {
     super();
+  }
+
+  /**
+ * Creates a LocalDataSource from enum values.
+ * @param enumClass The enum class to extract values from.
+ * @returns A LocalDataSource containing the enum values.
+ */
+  public static fromEnum(enumClass: Record<string, string | number>): LocalDataSource {
+    return new LocalDataSource(getEnumValues(enumClass));
   }
 
   load(request: DataRequest) {

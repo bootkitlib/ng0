@@ -28,7 +28,7 @@ interface ListItem {
     ]
 })
 export class ListExampleComponent {
-    Sexuality = DataSource.fromEnum(Sexuality);
+    Sexuality = LocalDataSource.fromEnum(Sexuality);
     width = signal('200px');
     counter = signal(0);
 

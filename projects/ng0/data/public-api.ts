@@ -2,6 +2,7 @@ export * from './boolean-value-comparer';
 export * from './data-request';
 export * from './data-result';
 export * from './data-source';
+export * from './data-source-attribute';
 export * from './remote-data-source';
 export * from './local-data-source';
 export * from './data-result-operator';

@@ -1,13 +1,6 @@
 import { catchError, Observable, tap } from "rxjs";
 import { DataRequest } from "./data-request";
-import { DataResult } from "./data-result";
-import { DataSource } from "./data-source";
-
-/**
- * DataLoader is a function that takes a DataRequest and returns an Observable of DataResult.
- * It is used by AsyncDataSource to load data asynchronously.
- */
-export type DataLoader<T = any> = (request: DataRequest) => Observable<DataResult<T>>;
+import { DataLoader, DataSource } from "./data-source";
 
 
 /**
