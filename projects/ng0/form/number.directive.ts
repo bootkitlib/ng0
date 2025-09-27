@@ -120,7 +120,7 @@ export class NumberDirective implements ControlValueAccessor {
     const key = event.key;
     const state = this._getInputState();
 
-    if (this._isAllowedKey(key)) {
+    if (this._isKeyAllowed(key)) {
       if (key == Keys.backspace) {
         if (state.selectionStart > 1 && (state.selectionStart === state.selectionEnd)) {
           let value = this._elmRef.nativeElement.value;
@@ -155,6 +155,8 @@ export class NumberDirective implements ControlValueAccessor {
   }
 
   private _formatIntegerPart(value: string) {
+    let state = this._getInputState();
+
     // Format the input value
     const integerPart = value.split(this._decimalSeparator)[0];
     const decimalPart = value.split(this._decimalSeparator)[1];
@@ -172,7 +174,7 @@ export class NumberDirective implements ControlValueAccessor {
 
     this._setProperty('value', formattedValue);
     let newSelectionStart: number;
-    let state = this._getInputState();
+
 
     // fix the cursor position after formatting
     if (value.length == 1) {
@@ -229,7 +231,7 @@ export class NumberDirective implements ControlValueAccessor {
     }).format(n);
   }
 
-  private _isAllowedKey(key: string) {
+  private _isKeyAllowed(key: string) {
     const allowedKeys = [Keys.backspace, Keys.tab, Keys.arrowLeft, Keys.arrowRight, Keys.delete, Keys.home, Keys.end];
     const input = this._elmRef.nativeElement;
     const value = input.value;

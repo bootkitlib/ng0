@@ -1,11 +1,42 @@
 <h5 class="mb-5">Number Directive</h5>
 
 <p>
-    put number directive (<code>ng0Number</code>) on an input to allow only number characters (0-9) to be entered.
-
+    put <code>ng0Number</code> directive on an input (type=text) to allow only number characters (0-9) to be entered.
+    The value bound to the model will be a number.
 </p>
 
 <div class="row g-4">
+
+    
+    <div class="col-lg-12">
+        <div class="card example-card">
+            <div class="card-body">
+                <h5 class="card-title">Grouping (integer number)</h5>
+                <p>
+                    Using thousands separator (grouping). <br>
+                    Note that the value bound to the model is still a number without grouping characters.
+                </p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <ng0-form-field label="integer number">
+                            <input type="text" class="form-control" name="n6" [(ngModel)]="n6"
+                                   ng0Number useGrouping="true">
+                        </ng0-form-field>
+                    </div>
+                    <div class="col-md-6">
+                        <ng0-form-field label="decimal number">
+                            <input type="text" class="form-control" name="n7" [(ngModel)]="n7"
+                                   ng0Number useGrouping="true" numberType="decimal">
+                        </ng0-form-field>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
     <div class="col-lg-6">
         <div class="card">
             <div class="card-body">
@@ -24,7 +55,7 @@
                 <h5 class="card-title">Decimal numbers</h5>
 
                 <ng0-form-field label="numberType='decimal'">
-                    <input type="text" class="form-control" name="n2" [(ngModel)]="n2"  ng0Number
+                    <input type="text" class="form-control" name="n2" [(ngModel)]="n2" ng0Number
                            numberType="decimal">
                 </ng0-form-field>
             </div>
@@ -37,7 +68,7 @@
                 <h5 class="card-title">Using min/max validators</h5>
 
                 <ng0-form-field label="min=10, max=100">
-                    <input type="text" class="form-control" name="n3" [(ngModel)]="n3" 
+                    <input type="text" class="form-control" name="n3" [(ngModel)]="n3"
                            ng0Number min="10" max="100">
                 </ng0-form-field>
             </div>
@@ -50,21 +81,8 @@
                 <h5 class="card-title">Using maxlength</h5>
 
                 <ng0-form-field label="maxlength=5">
-                    <input type="text" class="form-control" name="n4" [(ngModel)]="n4" 
+                    <input type="text" class="form-control" name="n4" [(ngModel)]="n4"
                            ng0Number maxlength="5">
-                </ng0-form-field>
-            </div>
-        </div>
-    </div>
-
-        <div class="col-lg-12">
-        <div class="card example-card">
-            <div class="card-body">
-                <h5 class="card-title">Using min/max and maxlength</h5>
-
-                <ng0-form-field label="min=10, max=100, maxlength=3">
-                    <input type="text" class="form-control" name="n5" [(ngModel)]="n5" 
-                           ng0Number min=10 max=100 maxlength=3>
                 </ng0-form-field>
             </div>
         </div>
@@ -73,15 +91,11 @@
     <div class="col-lg-12">
         <div class="card example-card">
             <div class="card-body">
-                <h5 class="card-title">Grouping </h5>
-                <p>
-                    Using thousands separator (grouping). <br>
-                    Note that the value bound to the model is still a number without grouping characters.
-                </p>
+                <h5 class="card-title">Using min/max and maxlength</h5>
 
-                <ng0-form-field label="useGrouping='true'">
-                    <input type="text" class="form-control" name="n6" [(ngModel)]="n6" 
-                           ng0Number useGrouping="true">
+                <ng0-form-field label="min=10, max=100, maxlength=3">
+                    <input type="text" class="form-control" name="n5" [(ngModel)]="n5"
+                           ng0Number min=10 max=100 maxlength=3>
                 </ng0-form-field>
             </div>
         </div>
@@ -96,7 +110,7 @@
                 </p>
 
                 <ng0-form-field label="numberType='decimal', minFractionDigits=3, maxFractionDigits=6">
-                    <input type="text" class="form-control" name="n7" [(ngModel)]="n7" 
+                    <input type="text" class="form-control" name="n8" [(ngModel)]="n8"
                            ng0Number numberType="decimal" minFractionDigits="3" maxFractionDigits="6">
                 </ng0-form-field>
             </div>
