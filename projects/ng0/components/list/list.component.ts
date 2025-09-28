@@ -92,7 +92,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     /**
      * Custom value extractor function to extract the value of any object while writing values.
      */
-    public readonly writeValueBy = input(defaultValueExtractor, {
+    public readonly writeBy = input(defaultValueExtractor, {
         transform: ValueExtractorAttribute
     });
 
@@ -181,7 +181,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         }
 
         let item = this._items()[index];
-        let writeValueBy = this.writeValueBy();
+        let writeValueBy = this.writeBy();
 
         if (this.multiple()) {
             item.selected = !item.selected;

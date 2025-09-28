@@ -1,12 +1,13 @@
 import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueExtractorAttribute, defaultValueExtractor, stringFilter, FilterPredicate } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueExtractorAttribute, defaultValueExtractor, stringFilter, FilterPredicate, BooleanValueComparerAttribute, defaultBooleanValueComparer } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { SelectOption, _IdGenerator } from '@bootkit/ng0/common';
+import { CssClassAttribute, SelectOption, _IdGenerator } from '@bootkit/ng0/common';
 import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { CdkListboxModule } from '@angular/cdk/listbox';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -22,6 +23,7 @@ import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } f
     imports: [
         CommonModule,
         OverlayModule,
+        CdkListboxModule
     ],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
@@ -37,19 +39,13 @@ import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } f
     }
 })
 export class SelectComponent implements OnInit, ControlValueAccessor {
-    private _viewportRuler = inject(ViewportRuler);
-    private _overlay = inject(Overlay);
-    private _document = inject(DOCUMENT);
-    private _ls = inject(LocalizationService);
-    private _changeDetector = inject(ChangeDetectorRef);
     private _resizeObserver?: ResizeObserver;
     private _resizeObserverInitialized = false;
     private _viewpoerRulerSubscription?: Subscription;
-    protected _value = signal<any>(undefined);
+    protected _cdkListboxValue = signal<any>(undefined);
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
     private _onChangeCallback!: (value: any) => void;
     private _onTouchedCallback!: (value: any) => void;
-
     protected readonly _options = signal<SelectOption[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _selectedOptionIndex = signal<number>(-1);
@@ -57,6 +53,15 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
     protected _positionStrategy!: FlexibleConnectedPositionStrategy;
     protected _scrollStrategy!: ScrollStrategy;
+
+    private _overlay = inject(Overlay);
+    private _document = inject(DOCUMENT);
+    private _ls = inject(LocalizationService);
+    private _destroyRef = inject(DestroyRef);
+    protected _el = inject(ElementRef<HTMLDivElement>);
+    private _renderer = inject(Renderer2);
+    private _viewportRuler = inject(ViewportRuler);
+    private _changeDetector = inject(ChangeDetectorRef);
 
     /**
      * The data source for the select component.
@@ -68,21 +73,22 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     });
 
     /** 
+     * Indicates whether multi selection is enabled or not.
+     */
+    public readonly multiple = input(false, {
+        transform: booleanAttribute
+    });
+
+    /** 
      * Indicates whether the dropdown is open or closed.
      */
     public readonly open = model(false);
 
     /**
-     * Custom compare function to determine equality between two items.
-     * Default is a simple equality check.
-     */
-    // public readonly compareFunction = input<ValueComparerFunction>(defaultValueComparer);
-
-    /**
-     * Custom value extractor function to extract the value of any object.
-     */
-    public readonly extractBy = input(defaultValueExtractor, {
-        transform: ValueExtractorAttribute
+    * A custom comparer function or the name of a field for comparing two objects.
+    */
+    public readonly compareBy = input(defaultBooleanValueComparer, {
+        transform: BooleanValueComparerAttribute
     });
 
     /**
@@ -91,6 +97,13 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      */
     public readonly formatBy = input(defaultValueFormatter, {
         transform: ValueFormatterAttribute(this._ls.get())
+    });
+
+    /**
+     * Custom value extractor function to extract the value of any object while writing values.
+     */
+    public readonly writeBy = input(defaultValueExtractor, {
+        transform: ValueExtractorAttribute
     });
 
     /**
@@ -109,19 +122,29 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      */
     public readonly filterBy = input<FilterPredicate>(stringFilter);
 
-    constructor(protected _el: ElementRef<HTMLDivElement>, private _renderer: Renderer2, private _destroyRef: DestroyRef) {
+    /**
+     * CSS class or classes to apply to the list container.
+     */
+    public readonly itemClass = input((item) => undefined, {
+        transform: CssClassAttribute
+    });
+
+    constructor() {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
         this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
         this._scrollStrategy = this._overlay.scrollStrategies.block();
     }
 
     ngOnInit(): void {
+        this._loadItems();
+        this._handleDataSourceChange();
+    }
+
+    private _loadItems() {
         var r = new DataRequest();
         this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            this._insertOptions(0, ...res.data)
-        })
-
-        this._handleDataSourceChange();
+            this._insertOptions(0, ...res.data);
+        });
     }
 
     private _handleDataSourceChange() {
@@ -156,42 +179,37 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         }
 
         let option = this._options()[index];
-        this._value.set(this.extractBy()(option.value));
-        this._onChangeCallback(this._value());
+        this._cdkListboxValue.set(this.writeBy()(option.value));
+        this._onChangeCallback(this._cdkListboxValue());
     }
 
-    public isSelected(value: any) {
-        let v = this.extractBy()(value);
-        return v === this._value();
-    }
+    // /**
+    //  * Sets an option as active
+    //  */
+    // public active(index: number) {
+    //     if (index < 0) {
+    //         throw Error();
+    //     }
 
-    /**
-     * Sets an option as active
-     */
-    public active(index: number) {
-        if (index < 0) {
-            throw Error();
-        }
+    //     this._activeOptionIndex.set(index);
+    //     if (this.open()) {
+    //         this.scrollItemIntoView(this._activeOptionIndex(), 'nearest');
+    //     }
+    // }
 
-        this._activeOptionIndex.set(index);
-        if (this.open()) {
-            this.scrollItemIntoView(this._activeOptionIndex(), 'nearest');
-        }
-    }
-
-    /**
-     * Scrolls the item at the specified index into view within the dropdown list.
-     * @param index The index of the item to scroll into view.
-     * @param position The vertical alignment of the item after scrolling.
-     *                 Can be 'start', 'center', 'end', or 'nearest'.
-     *                 Default is 'nearest'.
-     * @param behavior The scrolling behavior.
-     */
-    public scrollItemIntoView(index: number, position?: ScrollLogicalPosition, behavior?: ScrollBehavior) {
-        let item = this._options()[index];
-        let elm = this._document.getElementById(item.id) as HTMLUListElement;
-        elm!.scrollIntoView({ block: position, behavior: behavior });
-    }
+    // /**
+    //  * Scrolls the item at the specified index into view within the dropdown list.
+    //  * @param index The index of the item to scroll into view.
+    //  * @param position The vertical alignment of the item after scrolling.
+    //  *                 Can be 'start', 'center', 'end', or 'nearest'.
+    //  *                 Default is 'nearest'.
+    //  * @param behavior The scrolling behavior.
+    //  */
+    // public scrollItemIntoView(index: number, position?: ScrollLogicalPosition, behavior?: ScrollBehavior) {
+    //     let item = this._options()[index];
+    //     let elm = this._document.getElementById(item.id) as HTMLUListElement;
+    //     elm!.scrollIntoView({ block: position, behavior: behavior });
+    // }
 
     protected _insertOptions(index?: number, ...items: any[]) {
         // let filter = this.filterBy()()
@@ -211,8 +229,29 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     }
 
     writeValue(obj: any): void {
-        let value = this.extractBy()(obj)
-        this._value.set(value);
+        let value;
+
+        if (this.multiple()) {
+            if (Array.isArray(obj)) {
+                value = obj;
+            } else if (obj === null || obj === undefined) {
+                value = [];
+            } else {
+                throw Error('Provide an array or null as the value of ng0-select component.');
+            }
+        } else {
+            value = [obj];
+        }
+    
+        this._cdkListboxValue.set(value);
+
+        // Update selection state of items
+        // let compareBy = this.compareBy();
+        // if (this.multiple()) {
+        //     this._items().forEach(x => x.selected = (value as any[]).some(y => compareBy(x.value, y)));
+        // } else {
+        //     this._items().forEach(x => x.selected = compareBy(x.value, value));
+        // }
     }
 
     registerOnChange(fn: any): void {
@@ -243,7 +282,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             case 'ArrowDown':
                 if (open) {
                     if (this._activeOptionIndex() < optionsCount - 1) {
-                        this.active(this._activeOptionIndex() + 1);
+                        // this.active(this._activeOptionIndex() + 1);
                     }
                 } else {
                     if (this._selectedOptionIndex()! < optionsCount - 1) {
@@ -256,7 +295,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             case 'ArrowUp':
                 if (open) {
                     if (this._activeOptionIndex() > 0) {
-                        this.active(this._activeOptionIndex()! - 1);
+                        // this.active(this._activeOptionIndex()! - 1);
                     }
                 } else {
                     if (this._selectedOptionIndex() > 0) {
@@ -294,7 +333,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
             case 'Home':
                 if (open) {
-                    this.active(0);
+                    // this.active(0);
                 } else {
                     this._selectByIndex(0)
                 }
@@ -304,7 +343,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
             case 'End':
                 if (open) {
-                    this.active(optionsCount - 1);
+                    // this.active(optionsCount - 1);
                 } else {
                     this._selectByIndex(optionsCount - 1);
                 }
@@ -340,7 +379,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         }
 
         if (this._selectedOptionIndex() > -1) {
-            this.scrollItemIntoView(this._selectedOptionIndex(), 'start', 'instant');
+            // this.scrollItemIntoView(this._selectedOptionIndex(), 'start', 'instant');
         }
     }
 

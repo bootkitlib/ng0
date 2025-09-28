@@ -1,4 +1,4 @@
-@let formattedValue = formatBy()(_value());
+@let formattedValue = formatBy()(_cdkListboxValue());
 
 @if(formattedValue == null || formattedValue == '') {
 &nbsp;
@@ -37,17 +37,20 @@
     }
 
     <ul class="ng0-select-dropdown"
+        cdkListbox
+        [cdkListboxValue]="_cdkListboxValue()"
         [attr.tabindex]="_isDisabled() ? undefined : -1"
         [class.is-open]="open()">
 
         @for (option of _options(); track $index) {
-        <li
+        <li [cdkOption]="option.value"
+            #cdkOption="cdkOption"
             [attr.id]="option.id"
             class="ng0-select-option"
-            [class.ng0-select-option-active]="$index == _activeOptionIndex()"
-            [class.ng0-select-option-selected]="isSelected(option.value)"
+            [class.ng0-select-option-active]="cdkOption.isActive()"
+            [class.ng0-select-option-selected]="cdkOption.isSelected()"
             [class.ng0-select-option-filtered]="!option.show"
-            (click)="_selectByIndex($index); open.set(false)"
+            (click)="cdkOption.select(); open.set(false)"
             (keyup.enter)="open.set(false)">
             @if(_optionTemplate) {
             <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: option}" />
