@@ -39,6 +39,7 @@ interface InputElementState {
 })
 export class NumberDirective implements ControlValueAccessor {
   private _value?: number;
+  private _isDisabled?: boolean;
   private _decimalSeparator!: string;
   private _thousandsSeparator: string = ',';
   private _onChangeCallback?: (v: any) => {};
@@ -91,7 +92,8 @@ export class NumberDirective implements ControlValueAccessor {
   }
 
   setDisabledState?(isDisabled: boolean): void {
-    // this._setProperty('disabled', isDisabled);
+    this._isDisabled = isDisabled;
+    this._renderer.setProperty(this._elmRef.nativeElement, 'disabled', isDisabled);
   }
 
   writeValue(value: any): void {

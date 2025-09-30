@@ -1,7 +1,7 @@
-export  *  from './types';
-export * from './dropdown-item.directive';
-export * from './dropdown-menu.directive';
+export * from './types';
 export * from './dropdown.module';
-
-// export * from './dropdown-button.component';
-// export * from './dropdown-toggle.directive';
+export * from './dropdown.component';
+export * from './dropdown-item.component';
+export * from './dropdown-header.component';
+export * from './dropdown-menu.component';
+export * from './dropdown-divider.component';

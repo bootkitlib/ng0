@@ -1,69 +1,30 @@
-<h1>Default</h1>
-<div class="me-5 btn-group dropup">
-    <button class="btn btn-secondary dropdown-toggle" cdkOverlayOrigin #origin="cdkOverlayOrigin">
-        Dropdown Default
-    </button>
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h5 class="card-title">Default</h5>
 
-    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin" [cdkConnectedOverlayOpen]="open1">
-        <ul ng0DropdownMenu>
-            <li><button class="dropdown-item" ng0DropdownItem>Item 1</button></li>
-            <li><button class="dropdown-item" ng0DropdownItem>Item 2</button></li>
-            <li><button class="dropdown-item" ng0DropdownItem>Item 3</button></li>
-        </ul>
-    </ng-template>
+                <ng0-dropdown #d>
+                    Default dropdown
+
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        <ng0-dropdown-item>Something else here</ng0-dropdown-item>
+                        <ng0-dropdown-divider />
+                        <ng0-dropdown-item>Separated link</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h5 class="card-title">Default</h5>
+
+            </div>
+        </div>
+    </div>
 </div>
-
-
-<div class="me-5 btn-group" >
-    <button class="btn btn-secondary dropdown-toggle" cdkOverlayOrigin #origin2="cdkOverlayOrigin" (click)="open2 = !open2">
-        Dropdown Inside
-    </button>
-
-    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin2" [cdkConnectedOverlayOpen]="open2" (detach)="open2 = false">
-        <ul ng0DropdownMenu autoClose="inside">
-            <li><button class="dropdown-item" ng0DropdownItem>Item 1</button></li>
-            <li><button class="dropdown-item" ng0DropdownItem>Item 2</button></li>
-            <li><button class="dropdown-item" ng0DropdownItem>Item 3</button></li>
-        </ul>
-    </ng-template>
-</div>
-
-
-<div class="me-5 btn-group" >
-    <button class="btn btn-secondary dropdown-toggle" cdkOverlayOrigin #origin3="cdkOverlayOrigin" (click)="open3 = !open3">
-        Dropdown outside
-    </button>
-
-    <ng-template cdkConnectedOverlay [cdkConnectedOverlayOrigin]="origin3" [cdkConnectedOverlayOpen]="open3" (detach)="open3 = false">
-        <ul ng0DropdownMenu autoClose="outside">
-            <li><button class="dropdown-item" ng0DropdownItem>Item 1</button></li>
-            <li><button class="dropdown-item" ng0DropdownItem>Item 2</button></li>
-            <li><button class="dropdown-item" ng0DropdownItem>Item 3</button></li>
-        </ul>
-    </ng-template>
-</div>
-
-
-<!-- 
-<h1>Split</h1>
- 
-
-<h1>Placements</h1>
-
-<h5>Placement: Bottom</h5>
-
-
-<h5>Placement: Start</h5>
-
-<h5>Placement: End</h5>
-
-<h5>Dropdown Directive</h5>
-<button class="btn btn-secondary" (click)="overlayn.toggle()" #togglen>Toggle</button>
-
-<ng-template ng0Overlay #overlayn="ng0Overlay" [anchor]="togglen">
-    <ul ng0DropdownMenu [toggle]="togglen">
-        <li><button class="dropdown-item" ng0DropdownItem>Item 1</button></li>
-        <li><button class="dropdown-item" ng0DropdownItem>Item 2</button></li>
-        <li><button class="dropdown-item" ng0DropdownItem>Item 3</button></li>
-    </ul>
-</ng-template> -->

@@ -1,25 +1,21 @@
 import { NgModule } from '@angular/core';
-import { DropdownItemDirective } from './dropdown-item.directive';
-import { DropdownMenuDirective } from './dropdown-menu.directive';
-import { OverlayModule } from '@angular/cdk/overlay';
-// import { DropdownToggleDirective } from './dropdown-toggle.directive';
-// import { DropdownComponent } from './dropdown-button.component';
-// import { OverlayModule } from '../overlay';
+import { DropdownItemComponent } from './dropdown-item.component';
+import { DropdownComponent } from './dropdown.component';
+import { DropdownHeaderComponent } from './dropdown-header.component';
+import { DropdownDividerComponent } from './dropdown-divider.component';
+import { DropdownMenuComponent } from './dropdown-menu.component';
 
 
 const Items = [
-    DropdownItemDirective,
-    DropdownMenuDirective,
-
-    // DropdownComponent,
-    // DropdownToggleDirective,
+    DropdownComponent,
+    DropdownMenuComponent,
+    DropdownItemComponent,
+    DropdownHeaderComponent,
+    DropdownDividerComponent
 ]
 
 @NgModule({
     imports: Items,
-    exports: [
-        ...Items,
-        OverlayModule
-    ]
+    exports: Items
 })
 export class DropdownModule { }

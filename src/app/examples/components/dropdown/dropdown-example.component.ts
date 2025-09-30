@@ -1,7 +1,5 @@
-import { transition, trigger, useAnimation } from '@angular/animations';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-// import { fadeInUpAnimation, fadeOutDownAnimation } from '@bootkit/ng0/animations';
 import { DropdownModule } from '@bootkit/ng0/components/dropdown';
 
 @Component({
@@ -11,13 +9,7 @@ import { DropdownModule } from '@bootkit/ng0/components/dropdown';
     imports: [
         CommonModule,
         DropdownModule,
-    ],
-    // animations: [
-    //     trigger('dropdownMenu', [
-    //       transition(':enter', [useAnimation(fadeInUpAnimation, { params: {} })]),
-    //       transition(':leave', [useAnimation(fadeOutDownAnimation, { params: {} })]),
-    //     ])
-    //   ]
+    ]
 })
 export class DropdownExampleComponent {
     open1 = false;

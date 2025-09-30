@@ -1,0 +1,20 @@
+<button class="btn btn-secondary dropdown-toggle" type="button" (click)="open.set(true)">
+    <ng-content></ng-content>
+</button>
+
+<ng-template cdkConnectedOverlay
+             [cdkConnectedOverlayOrigin]="_el.nativeElement"
+             [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
+             [cdkConnectedOverlayOpen]="open()"
+             [cdkConnectedOverlayPush]="false"
+             [cdkConnectedOverlayFlexibleDimensions]="true"
+             (overlayOutsideClick)="open.set(false)"
+             (attach)="_onOverlayAttach()"
+             (detach)="_onOverlayDetach()">
+
+    <div class="dropdown-menu show">
+
+    </div>
+
+    <ng-content select="ng0-dropdown-menu"></ng-content>
+</ng-template>
