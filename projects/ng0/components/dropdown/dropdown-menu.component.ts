@@ -11,7 +11,7 @@ import { DropdownComponent } from './dropdown.component';
         CommonModule,
     ],
     template: `<ng-content></ng-content>`,
-    styles: `:host { display: block; }`,
+    styles: `:host { display: block; position: relative; }`,
 })
 export class DropdownMenuComponent {
     private _el = inject(ElementRef);
@@ -24,9 +24,10 @@ export class DropdownMenuComponent {
 
     @HostListener('click')
     private _onClick() {
-        // if (this.autoClose() == 'default' || this.autoClose() == 'inside') {
-        //     this._cdkOverlay.detachOverlay();
-        // }
+        if (this._dropdown.autoClose() == 'default' || this._dropdown.autoClose() == 'inside') {
+            this._dropdown.open.set(false);
+        }
     }
+
 
 }

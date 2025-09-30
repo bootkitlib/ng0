@@ -1,9 +1,10 @@
-import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, HostBinding, ContentChild, effect, AfterViewInit, inject, input, ContentChildren, QueryList, model } from '@angular/core';
+import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, inject, input, ContentChildren, QueryList, model, ViewEncapsulation, HostListener, ContentChild, booleanAttribute } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Placement } from '@bootkit/ng0/common';
+import { CssClass, Placement } from '@bootkit/ng0/common';
 import { DropdownItemComponent } from './dropdown-item.component';
 import { Overlay, OverlayModule, ScrollStrategy } from '@angular/cdk/overlay';
-import { DropdownAutoCloseBehavior } from './types';
+import { DropdownAutoCloseBehavior, DropdownSize } from './types';
+import { DropdownMenuComponent } from './dropdown-menu.component';
 
 @Component({
     selector: 'ng0-dropdown',
@@ -17,7 +18,12 @@ import { DropdownAutoCloseBehavior } from './types';
     ]
 })
 export class DropdownComponent {
+    _onOverlayOutsideClick() {
+        this.open.set(false);
+    }
+
     @ContentChildren(DropdownItemComponent) protected _items!: QueryList<DropdownItemComponent>;
+    @ContentChild(DropdownMenuComponent) protected _dropdownMenu!: DropdownMenuComponent;
 
 
     // @HostBinding('class.dropstart')
@@ -42,22 +48,48 @@ export class DropdownComponent {
      */
     public placement = input<Placement>('bottom');
 
+    /**
+     * The CSS classes to apply to the dropdown toggle button.
+     * @default 'btn btn-secondary'
+     */
+    public cssClass = input<CssClass>('btn btn-primary');
+
+    /**
+     * The CSS classes to apply to the dropdown split button.
+     */
+    public splitCssClass = input<CssClass>('btn btn-primary');
+
     /** 
      * Indicates whether the dropdown is open or closed.
+     * @default false
      */
     public readonly open = model(false);
 
     /**
-     * 
+     * Indicates whether the dropdown is a split button. 
+     * A split button dropdown has a separate toggle button.
+     * @default false
+     */
+    public readonly split = input(false, { transform: booleanAttribute });
+
+    /**
+     * Indicates whether the dropdown has an automatic close behavior.
+     * @default 'default'
      */
     public readonly autoClose = input<DropdownAutoCloseBehavior>('default');
+    public readonly size = input<DropdownSize>('default');
 
     constructor() {
-        this._renderer.addClass(this._el.nativeElement, 'dropdown');
+        this._renderer.addClass(this._el.nativeElement, 'btn-group');
         this._scrollStrategy = this._overlay.scrollStrategies.block();
-
     }
 
+    /**
+     * Toggle the dropdown open or closed.
+     */
+    public toggle() {
+        this.open.set(!this.open());
+    }
 
     protected _onOverlayAttach() {
         // this._activeOptionIndex.set(this._selectedOptionIndex())
@@ -83,4 +115,14 @@ export class DropdownComponent {
         // }
     }
 
+    @HostListener('document:click', ['$event'])
+    private _onDocumentClick(e: MouseEvent) {
+        if (this.open()) {
+            // if (this.autoClose() == 'default' || this.autoClose() == 'outside') {
+            //     // if (!this._el.nativeElement.contains(e.target)) {
+            //     this.open.set(false);
+            //     // }
+            // }
+        }
+    }
 }

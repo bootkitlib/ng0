@@ -6,13 +6,10 @@
 
                 <ng0-dropdown #d>
                     Default dropdown
-
                     <ng0-dropdown-menu>
                         <ng0-dropdown-item>Action</ng0-dropdown-item>
-                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
-                        <ng0-dropdown-item>Something else here</ng0-dropdown-item>
                         <ng0-dropdown-divider />
-                        <ng0-dropdown-item>Separated link</ng0-dropdown-item>
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
                     </ng0-dropdown-menu>
                 </ng0-dropdown>
             </div>
@@ -22,8 +19,110 @@
     <div class="col-lg-6">
         <div class="card example-card">
             <div class="card-body">
-                <h5 class="card-title">Default</h5>
+                <h5 class="card-title">Split button</h5>
 
+                <ng0-dropdown class="me-2" split="true">
+                    Split button
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+
+                <ng0-dropdown class="me-2" split="true" [cssClass]="'btn btn-danger'" splitCssClass="btn btn-danger">
+                    Split button
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+
+                <ng0-dropdown class="me-2" split="true" [cssClass]="'btn btn-danger'" splitCssClass="btn btn-primary">
+                    Split button
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h5 class="card-title">Size</h5>
+
+                <ng0-dropdown size="large" class="me-3">
+                    Large
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-divider />
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+
+                <ng0-dropdown class="me-3">
+                    Default
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-divider />
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+
+                <ng0-dropdown size="small" class="me-3">
+                    Small
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-divider />
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card example-card">
+            <div class="card-body">
+                <h5 class="card-title">Autoclose behavior</h5>
+
+                <ng0-dropdown class="me-2">
+                    Default
+
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+
+                <ng0-dropdown autoClose="inside" class="me-2">
+                    Inside
+
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+
+                <ng0-dropdown autoClose="outside" class="me-2">
+                    Outside
+
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+
+                <ng0-dropdown autoClose="manual" class="me-2">
+                    Manual
+
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
             </div>
         </div>
     </div>
