@@ -1,8 +1,7 @@
-import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, inject, input, ContentChildren, QueryList, model, ViewEncapsulation, HostListener, ContentChild, booleanAttribute } from '@angular/core';
+import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, inject, input, model, HostListener, ContentChild, booleanAttribute, ViewChild, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CssClass, Placement } from '@bootkit/ng0/common';
-import { DropdownItemComponent } from './dropdown-item.component';
-import { Overlay, OverlayModule, ScrollStrategy } from '@angular/cdk/overlay';
+import { OverlayModule } from '@angular/cdk/overlay';
 import { DropdownAutoCloseBehavior, DropdownSize } from './types';
 import { DropdownMenuComponent } from './dropdown-menu.component';
 
@@ -15,33 +14,20 @@ import { DropdownMenuComponent } from './dropdown-menu.component';
     imports: [
         CommonModule,
         OverlayModule,
-    ]
+    ],
+    host: {
+        '[class]': '_directionCssClass()',
+    }
 })
 export class DropdownComponent {
-    _onOverlayOutsideClick() {
-        this.open.set(false);
-    }
-
-    @ContentChildren(DropdownItemComponent) protected _items!: QueryList<DropdownItemComponent>;
-    @ContentChild(DropdownMenuComponent) protected _dropdownMenu!: DropdownMenuComponent;
-
-
-    // @HostBinding('class.dropstart')
-    // private get _placementStart() { return this.placement() == 'start' };
-
-    // @HostBinding('class.dropend')
-    // private get _placementEnd() { return this.placement() == 'end' };
-
-    // @HostBinding('class.dropup')
-    // private get _placementTop() { return this.placement() == 'top' };
-
-    // @HostBinding('class.dropdown')
-    // private get _placementBottom() { return this.placement() == 'bottom' };
-    protected _scrollStrategy!: ScrollStrategy;
-
+    // @ContentChildren(DropdownItemComponent) private _items!: QueryList<DropdownItemComponent>;
+    @ContentChild(DropdownMenuComponent) private _dropdownMenu!: DropdownMenuComponent;
+    @ViewChild('mainButton') private _mainButton!: ElementRef<HTMLButtonElement>;
+    @ViewChild('splitButton') private _splitButton?: ElementRef<HTMLButtonElement>;
+    // protected _scrollStrategy!: ScrollStrategy;
     protected _el = inject(ElementRef);
     private _renderer = inject(Renderer2);
-    private _overlay = inject(Overlay);
+
 
     /**
      * The placement of the dropdown menu in relation to the dropdown toggle.
@@ -50,12 +36,13 @@ export class DropdownComponent {
 
     /**
      * The CSS classes to apply to the dropdown toggle button.
-     * @default 'btn btn-secondary'
+     * @default 'btn btn-primary'
      */
     public cssClass = input<CssClass>('btn btn-primary');
 
     /**
      * The CSS classes to apply to the dropdown split button.
+     * @default 'btn btn-primary'
      */
     public splitCssClass = input<CssClass>('btn btn-primary');
 
@@ -77,11 +64,30 @@ export class DropdownComponent {
      * @default 'default'
      */
     public readonly autoClose = input<DropdownAutoCloseBehavior>('default');
+
+    /**
+     * Dropdown size
+     * @default 'default'
+     */
     public readonly size = input<DropdownSize>('default');
+
+    protected _directionCssClass = computed(() => {
+        switch (this.placement()) {
+            case 'top':
+                return 'dropup';
+            case 'start':
+                return 'dropstart';
+            case 'end':
+                return 'dropend';
+            case 'bottom':
+            default:
+                return undefined;
+        }
+    })
 
     constructor() {
         this._renderer.addClass(this._el.nativeElement, 'btn-group');
-        this._scrollStrategy = this._overlay.scrollStrategies.block();
+        // this._scrollStrategy = this._overlay.scrollStrategies.block();
     }
 
     /**
@@ -91,38 +97,42 @@ export class DropdownComponent {
         this.open.set(!this.open());
     }
 
-    protected _onOverlayAttach() {
-        // this._activeOptionIndex.set(this._selectedOptionIndex())
-
-        // this._listenToResizeEvents();
-
-        // if (this.filterable()) {
-        //     setTimeout(() => {
-        //         this._filterElementRef?.nativeElement.focus();
-        //     }, 0);
-        // }
-
-        // if (this._selectedOptionIndex() > -1) {
-        //     // this.scrollItemIntoView(this._selectedOptionIndex(), 'start', 'instant');
-        // }
-    }
-
-    protected _onOverlayDetach() {
-        // this._unlistenFromResizeEvents();
-        // if (this.filterable()) {
-        //     this._el?.nativeElement.focus();
-        //     this._options().forEach(x => x.show = false);
-        // }
-    }
-
     @HostListener('document:click', ['$event'])
     private _onDocumentClick(e: MouseEvent) {
+        const splitButtonClicked = e.target === this._splitButton?.nativeElement;
+        const mainButtonClicked = e.target === this._mainButton?.nativeElement;
+        const toggleClicked = this.split() ? splitButtonClicked : mainButtonClicked;
+        const dropdownClicked = splitButtonClicked || mainButtonClicked;
+        const menuClicked = this._dropdownMenu.elementRef.nativeElement.contains(e.target);
+        const outsideClicked = !dropdownClicked && !menuClicked;
+
         if (this.open()) {
-            // if (this.autoClose() == 'default' || this.autoClose() == 'outside') {
-            //     // if (!this._el.nativeElement.contains(e.target)) {
-            //     this.open.set(false);
-            //     // }
-            // }
+            if (toggleClicked) {
+                this.open.set(false);
+                return;
+            }
+
+            switch (this.autoClose()) {
+                case 'default':
+                    this.open.set(false);
+                    break;
+                case 'outside':
+                    if (outsideClicked || mainButtonClicked) {
+                        this.open.set(false);
+                    }
+                    break;
+                case 'inside':
+                    if (menuClicked) {
+                        this.open.set(false);
+                    }
+                    break;
+                case 'manual':
+                    break;
+            }
+        } else {
+            if (toggleClicked) {
+                this.open.set(true);
+            }
         }
     }
 }

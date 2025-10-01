@@ -12,9 +12,7 @@ import { DropdownModule } from '@bootkit/ng0/components/dropdown';
     ]
 })
 export class DropdownExampleComponent {
-    open1 = false;
-    open2 = false;
-    open3 = false;
-    open4 = false;
-    open5 = false;
+    thankYou() {
+        alert('Thank you for clicking me! :)');
+    }
 }

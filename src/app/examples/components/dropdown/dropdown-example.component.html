@@ -4,12 +4,36 @@
             <div class="card-body">
                 <h5 class="card-title">Default</h5>
 
-                <ng0-dropdown #d>
-                    Default dropdown
+                <ng0-dropdown>
+                    Primary 
                     <ng0-dropdown-menu>
-                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item (click)="thankYou()">Click Me</ng0-dropdown-item>
                         <ng0-dropdown-divider />
-                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        <ng0-dropdown-item cssClass="text-danger">Another action</ng0-dropdown-item>
+                        <ng0-dropdown-link link="/">
+                            Home Page (link)
+                        </ng0-dropdown-link>
+                        <ng0-dropdown-link link="/" target="_blank">
+                            Home Page (link, target: _blank)
+                        </ng0-dropdown-link>
+                        <ng0-dropdown-divider />
+                        <ng0-dropdown-link link="/" [active]="['fw-bold', 'text-info']">
+                            Active route with custom css class (link)
+                        </ng0-dropdown-link>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+
+                <ng0-dropdown cssClass="btn btn-secondary">
+                    Secondary
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item (click)="thankYou()">Click Me</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+
+                <ng0-dropdown cssClass="btn btn-danger">
+                    danger
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-item (click)="thankYou()">Click Me</ng0-dropdown-item>
                     </ng0-dropdown-menu>
                 </ng0-dropdown>
             </div>
@@ -21,7 +45,7 @@
             <div class="card-body">
                 <h5 class="card-title">Split button</h5>
 
-                <ng0-dropdown class="me-2" split="true">
+                <ng0-dropdown split="true">
                     Split button
                     <ng0-dropdown-menu>
                         <ng0-dropdown-item>Action</ng0-dropdown-item>
@@ -29,7 +53,7 @@
                     </ng0-dropdown-menu>
                 </ng0-dropdown>
 
-                <ng0-dropdown class="me-2" split="true" [cssClass]="'btn btn-danger'" splitCssClass="btn btn-danger">
+                <ng0-dropdown split="true" [cssClass]="'btn btn-danger'" splitCssClass="btn btn-danger">
                     Split button
                     <ng0-dropdown-menu>
                         <ng0-dropdown-item>Action</ng0-dropdown-item>
@@ -37,7 +61,7 @@
                     </ng0-dropdown-menu>
                 </ng0-dropdown>
 
-                <ng0-dropdown class="me-2" split="true" [cssClass]="'btn btn-danger'" splitCssClass="btn btn-primary">
+                <ng0-dropdown split="true" [cssClass]="'btn btn-danger'" splitCssClass="btn btn-primary">
                     Split button
                     <ng0-dropdown-menu>
                         <ng0-dropdown-item>Action</ng0-dropdown-item>
@@ -83,47 +107,242 @@
         </div>
     </div>
 
-    <div class="col-lg-12">
+    <div class="col-lg-6">
         <div class="card example-card">
             <div class="card-body">
-                <h5 class="card-title">Autoclose behavior</h5>
+                <h5 class="card-title">Disabled items</h5>
 
-                <ng0-dropdown class="me-2">
-                    Default
-
+                <ng0-dropdown>
+                    Default dropdown
                     <ng0-dropdown-menu>
                         <ng0-dropdown-item>Action</ng0-dropdown-item>
-                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        <ng0-dropdown-item disabled (click)="thankYou()">Disabled Action - Buggy :( </ng0-dropdown-item>
+                        <ng0-dropdown-link link="/">
+                            Link
+                        </ng0-dropdown-link>
+                        <ng0-dropdown-link link="/" disabled>
+                            Disabled Link
+                        </ng0-dropdown-link>
                     </ng0-dropdown-menu>
                 </ng0-dropdown>
+            </div>
+        </div>
+    </div>
 
-                <ng0-dropdown autoClose="inside" class="me-2">
-                    Inside
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h5 class="card-title">Active item</h5>
 
+                <ng0-dropdown>
+                    Dropdown
                     <ng0-dropdown-menu>
                         <ng0-dropdown-item>Action</ng0-dropdown-item>
-                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
-                    </ng0-dropdown-menu>
-                </ng0-dropdown>
-
-                <ng0-dropdown autoClose="outside" class="me-2">
-                    Outside
-
-                    <ng0-dropdown-menu>
-                        <ng0-dropdown-item>Action</ng0-dropdown-item>
-                        <ng0-dropdown-item>Another action</ng0-dropdown-item>
-                    </ng0-dropdown-menu>
-                </ng0-dropdown>
-
-                <ng0-dropdown autoClose="manual" class="me-2">
-                    Manual
-
-                    <ng0-dropdown-menu>
-                        <ng0-dropdown-item>Action</ng0-dropdown-item>
+                        <ng0-dropdown-item cssClass="active">Active item</ng0-dropdown-item>
                         <ng0-dropdown-item>Another action</ng0-dropdown-item>
                     </ng0-dropdown-menu>
                 </ng0-dropdown>
             </div>
         </div>
     </div>
+
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h5 class="card-title">Headers</h5>
+
+                <ng0-dropdown>
+                    Dropdown
+                    <ng0-dropdown-menu>
+                        <ng0-dropdown-header>Header 1</ng0-dropdown-header>
+                        <ng0-dropdown-item>Action A</ng0-dropdown-item>
+                        <ng0-dropdown-header>Header 2</ng0-dropdown-header>
+                        <ng0-dropdown-item>Action B</ng0-dropdown-item>
+                        <ng0-dropdown-item>Action C</ng0-dropdown-item>
+                    </ng0-dropdown-menu>
+                </ng0-dropdown>
+            </div>
+        </div>
+    </div>
+
+    
+    <div class="col-lg-12">
+        <div class="card example-card">
+            <div class="card-body">
+                <h5 class="card-title">Autoclose behavior</h5>
+
+                <div>
+                    <ng0-dropdown>
+                        Default
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown autoClose="inside">
+                        Inside
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown autoClose="outside">
+                        Outside
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown autoClose="manual">
+                        Manual
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+                </div>
+
+                <p class="mt-5">Split dropdowns:</p>
+                <div class="mt-3">
+                    <ng0-dropdown split="true">
+                        Default
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown autoClose="inside" split="true">
+                        Inside
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown autoClose="outside" split="true">
+                        Outside
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown autoClose="manual" split="true">
+                        Manual
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card example-card">
+            <div class="card-body">
+                <h5 class="card-title">Directions</h5>
+
+                <p class="alert alert-warning">Not implemented yet. </p>
+
+                <div>
+                    <ng0-dropdown>
+                        Dropdown
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown placement="start">
+                        Dropstart
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown placement="end">
+                        Dropend
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown placement="top">
+                        dropup
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+                </div>
+
+                <p class="mt-5">Split dropdowns:</p>
+                <div class="mt-3">
+                    <ng0-dropdown split="true">
+                        Dropdown
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown split="true" placement="start">
+                        Dropstart
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown split="true" placement="end">
+                        Dropend
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+
+                    <ng0-dropdown split="true" placement="top">
+                        dropup
+
+                        <ng0-dropdown-menu>
+                            <ng0-dropdown-item>Action</ng0-dropdown-item>
+                            <ng0-dropdown-item>Another action</ng0-dropdown-item>
+                        </ng0-dropdown-menu>
+                    </ng0-dropdown>
+                </div>
+
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+    ng0-dropdown {
+        margin-inline-end: 1rem;
+    }
+</style>

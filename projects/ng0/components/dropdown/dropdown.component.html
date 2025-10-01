@@ -3,8 +3,7 @@
         [class.dropdown-toggle]="!split()"
         [class.btn-sm]="size() == 'small'"
         [class.btn-lg]="size() == 'large'"
-        type="button"
-        (click)="split() ? undefined: toggle()">
+        type="button">
     <ng-content></ng-content>
 </button>
 
@@ -14,20 +13,16 @@
         [class]="splitCssClass()"
         [class.btn-sm]="size() == 'small'"
         [class.btn-lg]="size() == 'large'"
-        class="dropdown-toggle dropdown-toggle-split"
-        (click)="toggle()">
+        class="dropdown-toggle dropdown-toggle-split">
     <span class="visually-hidden">Toggle Dropdown</span>
 </button>
 }
 
 <ng-template cdkConnectedOverlay
              [cdkConnectedOverlayOrigin]="_el.nativeElement"
-             [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
              [cdkConnectedOverlayOpen]="open()"
              [cdkConnectedOverlayPush]="false"
-             [cdkConnectedOverlayFlexibleDimensions]="true"
-             (attach)="_onOverlayAttach()"
-             (detach)="_onOverlayDetach()">
+             [cdkConnectedOverlayFlexibleDimensions]="true">
     <ng-content select="ng0-dropdown-menu"></ng-content>
 </ng-template>
 

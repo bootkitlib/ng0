@@ -2,6 +2,7 @@ import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, inject, inpu
 import { CommonModule } from '@angular/common';
 import { DropdownComponent } from './dropdown.component';
 
+
 @Component({
     selector: 'ng0-dropdown-menu',
     exportAs: 'ng0Dropdownmenu',
@@ -14,20 +15,19 @@ import { DropdownComponent } from './dropdown.component';
     styles: `:host { display: block; position: relative; }`,
 })
 export class DropdownMenuComponent {
-    private _el = inject(ElementRef);
     private _renderer = inject(Renderer2);
     private _dropdown = inject(DropdownComponent);
 
+    public elementRef = inject(ElementRef);
+
     constructor() {
-        this._renderer.addClass(this._el.nativeElement, 'dropdown-menu');
+        this._renderer.addClass(this.elementRef.nativeElement, 'dropdown-menu');
     }
 
-    @HostListener('click')
-    private _onClick() {
-        if (this._dropdown.autoClose() == 'default' || this._dropdown.autoClose() == 'inside') {
-            this._dropdown.open.set(false);
-        }
-    }
-
-
+    // @HostListener('click')
+    // private _onClick() {
+    //     if (this._dropdown.autoClose() == 'default' || this._dropdown.autoClose() == 'inside') {
+    //         this._dropdown.open.set(false);
+    //     }
+    // }
 }

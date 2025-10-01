@@ -4,12 +4,14 @@ import { DropdownComponent } from './dropdown.component';
 import { DropdownHeaderComponent } from './dropdown-header.component';
 import { DropdownDividerComponent } from './dropdown-divider.component';
 import { DropdownMenuComponent } from './dropdown-menu.component';
+import { DropdownLinkComponent } from './dropdown-link.component';
 
 
 const Items = [
     DropdownComponent,
     DropdownMenuComponent,
     DropdownItemComponent,
+    DropdownLinkComponent,
     DropdownHeaderComponent,
     DropdownDividerComponent
 ]
