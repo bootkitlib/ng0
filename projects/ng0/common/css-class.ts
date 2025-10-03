@@ -9,7 +9,7 @@ export type CssClass = string | string[] | Set<string> | { [klass: string]: any 
  * @param item The item to get the CSS class for.
  * @returns The CSS class for the item.
  */
-export type CssClassGetter = (item: any) => CssClass;
+export type CssClassGetter = (obj: any) => CssClass;
 
 /**
  * A type that represents a CSS class or a function that returns a CSS class.

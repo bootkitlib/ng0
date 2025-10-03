@@ -3,7 +3,7 @@ import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
 import { signal } from "@angular/core";
-import { ValueExtractor } from "./value-extractor";
+import { ValueWriter } from "./value-writer";
 import { getEnumValues } from "@bootkit/ng0/common";
 
 /**
@@ -12,7 +12,7 @@ import { getEnumValues } from "@bootkit/ng0/common";
  */
 export class LocalDataSource extends DataSource {
   readonly type = 'local';
-  public valueExtractor = signal<ValueExtractor>
+  public valueExtractor = signal<ValueWriter>
   // public valueComparer = signal<ValueComparerFunction>
 
   constructor(private items: any[]) {

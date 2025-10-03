@@ -1,13 +1,13 @@
 import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueExtractorAttribute, defaultValueExtractor, stringFilter, FilterPredicate, BooleanValueComparerAttribute, defaultBooleanValueComparer } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueWriterAttribute, defaultValueWriter, stringFilter, FilterPredicate, BooleanValueComparerAttribute, defaultBooleanValueComparer } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
 import { CssClassAttribute, SelectOption, _IdGenerator } from '@bootkit/ng0/common';
 import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { CdkListboxModule } from '@angular/cdk/listbox';
+import { ListModule } from '@bootkit/ng0/components/list';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -23,7 +23,7 @@ import { CdkListboxModule } from '@angular/cdk/listbox';
     imports: [
         CommonModule,
         OverlayModule,
-        CdkListboxModule
+        ListModule,
     ],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
@@ -43,6 +43,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     private _resizeObserverInitialized = false;
     private _viewpoerRulerSubscription?: Subscription;
     protected _cdkListboxValue = signal<any>(undefined);
+    protected _value = signal<any>(undefined);
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
     private _onChangeCallback!: (value: any) => void;
     private _onTouchedCallback!: (value: any) => void;
@@ -102,8 +103,8 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     /**
      * Custom value extractor function to extract the value of any object while writing values.
      */
-    public readonly writeBy = input(defaultValueExtractor, {
-        transform: ValueExtractorAttribute
+    public readonly writeBy = input(defaultValueWriter, {
+        transform: ValueWriterAttribute
     });
 
     /**
@@ -243,6 +244,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             value = [obj];
         }
     
+
         this._cdkListboxValue.set(value);
 
         // Update selection state of items

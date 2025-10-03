@@ -44,7 +44,7 @@ export class ListExampleComponent {
 
     value1?: string;
     value2?: string;
-    value3?: string[];
+    value3?: string[] = [];
     value4?: string[] = ['One'];
     value5?: boolean;
     value6?: boolean;
@@ -52,8 +52,8 @@ export class ListExampleComponent {
     value8?: boolean;
     value9?: number;
     value10?: number;
-    value11?: number;
-    value12?: number;
+    value11 = { id: 2 };
+    value12= { id: 3 };
     value13?: number;
     value14?: number;
     value15?: number;
@@ -65,12 +65,8 @@ export class ListExampleComponent {
     value21?: string;
     value22?: string;
 
-    compareFunction1 = (a: any, b: any) => {
-        return a?.id === b?.id
-    }
-
+    compareFunction1 = (a: any, b: any) => a?.id === b?.id;
     customValueWriter1 = (obj: any) => obj?.id;
-
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);

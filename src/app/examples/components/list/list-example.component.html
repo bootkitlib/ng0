@@ -18,31 +18,6 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Style</h5>
-
-                <div class="row">
-                    <div class="col-12 col-md-6">
-                        <p>Default, without any style</p>
-                        <ng0-list name="value21" [source]="stringArray" [(ngModel)]="value21" [showIndicator]="true">
-                        </ng0-list>
-                        Value: {{ value21 }}
-                    </div>
-                    <div class="col-12 col-md-6">
-                        <p>Using "list-group" class </p>
-                        <ng0-list name="value22" [source]="stringArray" [(ngModel)]="value22"
-                                  [showIndicator]="true" class="list-group" itemClass="list-group-item">
-                        </ng0-list>
-
-                        Value: {{ value22 }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
                 <h5 class="card-title">Single selection</h5>
 
                 <div class="row">
@@ -55,7 +30,7 @@
                     <div class="col-12 col-md-6">
                         <p>With selection indicator</p>
                         <ng0-list name="value2" [source]="stringArray" [(ngModel)]="value2"
-                                  [showIndicator]="true">
+                                  [showSelectionIndicator]="true">
                         </ng0-list>
 
                         Value: {{ value2 }}
@@ -81,7 +56,7 @@
                     <div class="col-12 col-md-6">
                         <p>With selection indicator</p>
                         <ng0-list name="value4" [source]="stringArray" [(ngModel)]="value4"
-                                  multiple="true" [showIndicator]="true">
+                                  multiple="true" [showSelectionIndicator]="true">
                         </ng0-list>
 
                         Value: [{{ value4 }}]
@@ -199,12 +174,14 @@
             <div class="card-footer">
                 <h5 class="card-title">Compare items:</h5>
                 <p>
-                    Compare source items with value `[(ngModel)]` item(s).
+                    Compare source items with the selected value(s) by a specific field or by a custom function. <br>
+                    This is useful when the source items are objects and the selected value(s) are not the same object
+                    instances.
                 </p>
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        compareBy (field)
-                        <ng0-list name="selectedObject2"
+                        compareBy a field of an object:
+                        <ng0-list name="value11"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value11"
                                   formatBy="field:name"
@@ -215,7 +192,7 @@
                     </div>
 
                     <div class="col-xl-6">
-                        compareBy (custom function)
+                        compareBy a custom function:
                         <ng0-list name="value12"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value12"
@@ -230,6 +207,13 @@
 
             <div class="card-footer">
                 <h5 class="card-title">Custom value writer:</h5>
+                <p>
+                    Write back the selected value(s) by a specific field or by a custom function. <br>
+                    This is useful when you want to bind the component to a specific property of an object instead of
+                    the
+                    whole object.
+
+                </p>
                 <div class="row g-4">
                     <div class="col-xl-6">
                         writeValueBy (field)
@@ -266,6 +250,9 @@
             <div class="card-body">
                 <h5 class="card-title">Bind to LocalDataSource</h5>
                 <p>
+                    Use a LocalDataSource to manage the data. You can add, remove or update items in the data source and
+                    the list will be updated automatically.
+
                 </p>
 
                 <div class="row">
@@ -281,10 +268,14 @@
             </div>
 
             <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">Add new Item</button>
-                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">Remove First
-                    Item</button>
-                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">Replace First Item
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
+                    Add new Item
+                </button>
+                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
+                    Remove First Item
+                </button>
+                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
+                    Replace First Item
                 </button>
             </div>
         </div>
@@ -336,8 +327,7 @@
                                   [source]="stringArray"
                                   [(ngModel)]="value17"
                                   writeValueBy="id"
-                                  formatBy="field:name"
-                                  filterable="true">
+                                  formatBy="field:name">
                             <ng-template let-option>
                                 ❤️ {{option.value}}
                             </ng-template>
@@ -349,4 +339,28 @@
             </div>
         </div>
     </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Style</h5>
+
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p>Using Bootstrap "list-group" classes</p>
+                        <ng0-list name="value22" [source]="stringArray" [(ngModel)]="value22"
+                                  class="list-group" itemClass="list-group-item">
+                        </ng0-list>
+
+                        Value: {{ value22 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
+
+<style>
+
+</style>

@@ -1,27 +1,35 @@
+@let formatFunc = formatBy();
+
 @for (i of _items(); track $index) {
 @if(!i.filtered) {
 <div class="ng0-list-item"
      [ngClass]="itemClass()(i)"
      [attr.id]="i.id"
-     [class.ng0-list-item-active]="$index == _activeOptionIndex()"
-     [class.ng0-list-item-selected]="i.selected"
-     (click)="toggleSelection($index);">
+     [class.active]="$index == _activeOptionIndex()"
+     [class.selected]="i.selected"
+     (click)="multiple() ? toggleSelection($index) : select($index);">
 
-    @if(_itemTemplate) {
-    <ng-container *ngTemplateOutlet="_itemTemplate; context: { $implicit: i}" />
-    } @else {
+       @if(_itemTemplate) {
+       <ng-container *ngTemplateOutlet="_itemTemplate; context: { $implicit: {
+              index: $index,
+              value: i.value,
+              selected: i.selected,       
+              id: i.id,
+              active: $index == _activeOptionIndex()
+       }}" />
+       } @else {
 
-    @if(showIndicator()) {
-    <input class="form-check-input ng0-list-item-indicator"
-           [checked]="i.selected"
-           [attr.type]="multiple() ? 'checkbox' : 'radio'"
-           [attr.name]="i.id"
-           [attr.id]="i.id">
-    }
+       @if(showSelectionIndicator()) {
+       <input class="form-check-input ng0-list-selection-indicator"
+              [checked]="i.selected"
+              [attr.type]="multiple() ? 'checkbox' : 'radio'"
+              [attr.name]="i.id"
+              [attr.id]="i.id">
+       }
 
-    {{formatBy()(i.value)}}
+       {{formatFunc(i.value)}}
 
-    }
+       }
 </div>
 }
 }

@@ -1,13 +1,11 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueExtractorAttribute, defaultValueExtractor, stringFilter, FilterPredicate, FilterPredicateAttribute, BooleanValueComparerAttribute } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueWriterAttribute, defaultValueWriter, stringFilter, FilterPredicate, FilterPredicateAttribute, BooleanValueComparerAttribute } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { OverlayModule } from '@angular/cdk/overlay';
-import { _IdGenerator, CssClassLike, CssClassAttribute, IdGenerator, sequentialIdGenerator, } from '@bootkit/ng0/common';
+import { _IdGenerator, CssClassAttribute, IdGenerator, sequentialIdGenerator, } from '@bootkit/ng0/common';
 import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListItem } from './types';
-import { } from '@bootkit/ng0/data';
 import { defaultBooleanValueComparer } from '@bootkit/ng0/data';
 
 /**
@@ -20,9 +18,9 @@ import { defaultBooleanValueComparer } from '@bootkit/ng0/data';
     styleUrl: './list.component.scss',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         CommonModule,
-        OverlayModule,
     ],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
@@ -40,15 +38,23 @@ import { defaultBooleanValueComparer } from '@bootkit/ng0/data';
 export class ListComponent implements OnInit, ControlValueAccessor {
     private _document = inject(DOCUMENT);
     private _ls = inject(LocalizationService);
+    private _renderer = inject(Renderer2);
+    private _destroyRef = inject(DestroyRef);
+    private _el = inject(ElementRef<HTMLDivElement>);
     private _changeDetector = inject(ChangeDetectorRef);
-    protected _value = signal<any>(undefined);
     private _onChangeCallback!: (value: any) => void;
     private _onTouchedCallback!: (value: any) => void;
+    protected _value = signal<any>(undefined);
 
     protected readonly _items = signal<ListItem[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _activeOptionIndex = signal<number>(-1);
     @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
+
+    /**
+     * Event emitted when the selected value has been changed by the user.
+     */
+    @Output() public readonly selectionChange = new EventEmitter<any>();
 
     /**
      * The data source for the select component.
@@ -58,6 +64,11 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     public readonly source = input.required<DataSource<any>, DataSourceLike<any>>({
         transform: v => dataSourceAttribute(v)
     });
+
+    /** 
+     * Value of the list control.
+     */
+    public value = input<any>(undefined);
 
     /** 
      * Indicates whether multi selection is enabled or not.
@@ -70,7 +81,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * Indicates whether to show selection indicator (checkbox/radio) next to each item.
      * Default is false.
      */
-    public readonly showIndicator = input(false, {
+    public readonly showSelectionIndicator = input(false, {
         transform: booleanAttribute
     });
 
@@ -92,8 +103,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     /**
      * Custom value extractor function to extract the value of any object while writing values.
      */
-    public readonly writeBy = input(defaultValueExtractor, {
-        transform: ValueExtractorAttribute
+    public readonly writeBy = input(defaultValueWriter, {
+        transform: ValueWriterAttribute
     });
 
     /**
@@ -104,7 +115,6 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     public readonly filterBy = input(stringFilter, {
         transform: FilterPredicateAttribute
     });
-
 
     /**
      * CSS class or classes to apply to the list container.
@@ -118,7 +128,11 @@ export class ListComponent implements OnInit, ControlValueAccessor {
 
     public readonly idGenerator = input<IdGenerator | undefined>(sequentialIdGenerator('ng0-list-item-'));
 
-    constructor(protected _el: ElementRef<HTMLDivElement>, private _renderer: Renderer2, private _destroyRef: DestroyRef) {
+    constructor() {
+        effect(() => {
+            var value = this.value(); // track value
+            this._updateSelectionState();
+        })
     }
 
     ngOnInit(): void {
@@ -172,57 +186,67 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     }
 
     /**
-     * Toggles the selection of an option by index
+     * Toggles the selection state of an option by index
+     * @param index The index of the option to toggle.
+     * @returns void
      */
     public toggleSelection(index: number) {
-        let optionsCount = this._items().length;
-        if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
-            throw new Error('Index out of range');
-        }
-
-        let item = this._items()[index];
-        let writeValueBy = this.writeBy();
-
-        if (this.multiple()) {
-            item.selected = !item.selected;
-            let selectedValues = this._items().filter(x => x.selected).map(x => (x.value));
-            this._value.set(selectedValues);
-        } else {
-            if (item.selected) {
-                return;
-            }
-            let itemValue = writeValueBy(item.value);
-            this._items().forEach(x => x.selected = false);
-            item.selected = true;
-            this._value.set(itemValue);
-        }
-
-        this._onChangeCallback(this._value());
+        this._setSelectionState(index, !this.isSelected(index));
     }
 
-    writeValue(v: any): void {
-        let value;
+    /**
+     * Selects an option by index
+     * @param index The index of the option to select.
+     * @returns void
+     */
+    public select(index: number) {
+        this._setSelectionState(index, true);
+    }
 
-        if (this.multiple()) {
-            if (Array.isArray(v)) {
-                value = v;
-            } else if (v === null || v === undefined) {
-                value = [];
-            } else {
-                throw Error('Provide an array or null as the value ng0-list component');
-            }
-        } else {
-            value = v;
+    /**
+     * Deselects an option by index
+     * @param index The index of the option to deselect.
+     * @returns void
+     */
+    public deselect(index: number) {
+        this._setSelectionState(index, false);
+    }
+
+    /**
+     * Checks if an option is selected.
+     * @param index The index of the option to check.
+     * @returns True if the option is selected, false otherwise.
+     */
+    public isSelected(index: number) {
+        return this._items()[index]?.selected || false;
+    }
+
+    /**
+     *  Checks if an option is active.
+     * @param index The index of the option to check.
+     * @returns True if the option is active, false otherwise.
+     */
+    public isActive(index: number) {
+        return this._activeOptionIndex() === index;
+    }
+
+    writeValue(value: any): void {
+        if (this.multiple() && value !== null && value !== undefined && !Array.isArray(value)) {
+            throw Error('Provide array or null as the value for multi-select list/select/autocomplete component.');
         }
 
         this._value.set(value);
+        this._updateSelectionState();
+    }
 
-        // Update selection state of items
+    private _updateSelectionState() {
         let compareBy = this.compareBy();
-        if (this.multiple()) {
-            this._items().forEach(x => x.selected = (value as any[]).some(y => compareBy(x.value, y)));
+        if (this.multiple() && Array.isArray(this._value())) {
+            let values = this._value() as any[];
+            this._items().forEach(i => i.selected = values.some(v => compareBy(i.value, v)));
         } else {
-            this._items().forEach(x => x.selected = compareBy(x.value, value));
+            let value = this._value();
+            this._items().forEach(i => i.selected = compareBy(i.value, value));
         }
     }
 
@@ -279,7 +303,6 @@ export class ListComponent implements OnInit, ControlValueAccessor {
                 break;
         }
     }
-
     private _loadItems() {
         var r = new DataRequest();
         this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
@@ -303,10 +326,9 @@ export class ListComponent implements OnInit, ControlValueAccessor {
                 }
             });
 
-            // this._changeDetector.markForCheck();
+            this._changeDetector.markForCheck();
         });
     }
-
     private _insertItems(index?: number, ...items: any[]) {
         // let filter = this.filterBy()()
         let idGenerator = this.idGenerator()
@@ -330,5 +352,33 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         }
 
         this._changeDetector.markForCheck();
+    }
+
+    private _setSelectionState(index: number, selected: boolean) {
+        let optionsCount = this._items().length;
+        if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
+            throw new Error('Index out of range');
+        }
+
+        let item = this._items()[index];
+        if (item.selected === selected) {
+            return;
+        }
+
+        if (this.multiple()) {
+            item.selected = selected;
+            let selectedItems = this._items().filter(x => x.selected).map(x => (x.value));
+            let writeBy = this.writeBy();
+            let selectedValues = selectedItems.map(x => writeBy(x));
+            this._value.set(selectedValues);
+        } else {
+            this._items().forEach(x => x.selected = false);
+            item.selected = selected;
+            let itemValue = this.writeBy()(item.value);
+            this._value.set(itemValue);
+        }
+
+        this.selectionChange.emit(this._value());
+        this._onChangeCallback(this._value());
     }
 }
