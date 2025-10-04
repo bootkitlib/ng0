@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ListModule } from '@bootkit/ng0/components/list';
 import { DataResult, DataSource, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
@@ -20,6 +20,7 @@ interface ListItem {
 @Component({
     selector: 'app-examples-list',
     templateUrl: './list-example.component.html',
+    encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [
         CommonModule,

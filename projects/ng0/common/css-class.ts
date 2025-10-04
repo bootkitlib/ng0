@@ -23,12 +23,12 @@ export type CssClassLike = CssClass | CssClassGetter | null | undefined;
  * @returns A function that returns the desired CSS class.
  */
 export function CssClassAttribute(v: CssClassLike): CssClassGetter {
-    if (typeof v === 'function')
-        return v as CssClassGetter;
-    if (typeof v === 'string') {
-        return (item: any) => v;
-    } else if (v === undefined || v === null) {
+    if (v === undefined || v === null) {
         return (item: any) => undefined;
+    } else if (typeof v === 'function')
+        return v as CssClassGetter;
+    else if (typeof v === 'string' || Array.isArray(v) || typeof v === 'object') {
+        return (item: any) => v;
     }
 
     throw Error('invalid css class getter');

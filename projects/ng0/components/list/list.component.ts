@@ -18,7 +18,7 @@ import { defaultBooleanValueComparer } from '@bootkit/ng0/data';
     styleUrl: './list.component.scss',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None,
+    // encapsulation: ViewEncapsulation.None,
     imports: [
         CommonModule,
     ],
@@ -40,10 +40,10 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     private _ls = inject(LocalizationService);
     private _renderer = inject(Renderer2);
     private _destroyRef = inject(DestroyRef);
-    private _el = inject(ElementRef<HTMLDivElement>);
+    private _el = inject<ElementRef<HTMLDivElement>>(ElementRef<HTMLDivElement>);
     private _changeDetector = inject(ChangeDetectorRef);
-    private _onChangeCallback!: (value: any) => void;
-    private _onTouchedCallback!: (value: any) => void;
+    private _onChangeCallback?: (value: any) => void;
+    private _onTouchedCallback?: (value: any) => void;
     protected _value = signal<any>(undefined);
 
     protected readonly _items = signal<ListItem[]>([]);
@@ -120,11 +120,11 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * CSS class or classes to apply to the list container.
      * Default is undefined.
      */
-    public readonly itemClass = input((item) => undefined, {
+    public readonly itemClass = input((item) => ['ng0-list-item'], {
         transform: CssClassAttribute
     });
 
-    public readonly focus = input<'none' | 'roving' | 'activeDescendant'>('activeDescendant');
+    public readonly focus = input<'none' | 'roving' | 'activeDescendant'>('roving');
 
     public readonly idGenerator = input<IdGenerator | undefined>(sequentialIdGenerator('ng0-list-item-'));
 
@@ -191,7 +191,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * @returns void
      */
     public toggleSelection(index: number) {
-        this._setSelectionState(index, !this.isSelected(index));
+        this._select(index, !this.isSelected(index));
     }
 
     /**
@@ -200,7 +200,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * @returns void
      */
     public select(index: number) {
-        this._setSelectionState(index, true);
+        this._select(index, true);
     }
 
     /**
@@ -209,7 +209,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * @returns void
      */
     public deselect(index: number) {
-        this._setSelectionState(index, false);
+        this._select(index, false);
     }
 
     /**
@@ -286,7 +286,12 @@ export class ListComponent implements OnInit, ControlValueAccessor {
                 }
                 e.preventDefault();
                 break;
-
+            case 'Tab': // Go to next item if roving focus is enabled
+                if (this.focus() === 'roving' && this._activeOptionIndex() < optionsCount - 1) {
+                    this.active(this._activeOptionIndex() + 1);
+                    e.preventDefault();
+                }
+                break;
             case 'Enter':
                 this.toggleSelection(this._activeOptionIndex());
                 e.preventDefault();
@@ -303,6 +308,24 @@ export class ListComponent implements OnInit, ControlValueAccessor {
                 break;
         }
     }
+
+    protected _getItemTabIndex(index: number) {
+        let focus = this.focus();
+        if (this._isDisabled() || focus == 'none') {
+            return -1;
+        }
+
+        return focus === 'roving' ? (this._activeOptionIndex() === index ? 0 : -1) : -1;
+    }
+
+    @HostListener('click', ['$event'])
+    private _onHostClick(e: MouseEvent) {
+        const target = e.target as HTMLElement;
+        if (this.focus() != 'none') {
+            this._el.nativeElement.focus();
+        }
+    }
+
     private _loadItems() {
         var r = new DataRequest();
         this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
@@ -329,6 +352,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             this._changeDetector.markForCheck();
         });
     }
+
     private _insertItems(index?: number, ...items: any[]) {
         // let filter = this.filterBy()()
         let idGenerator = this.idGenerator()
@@ -354,7 +378,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         this._changeDetector.markForCheck();
     }
 
-    private _setSelectionState(index: number, selected: boolean) {
+    private _select(index: number, selected: boolean) {
         let optionsCount = this._items().length;
         if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
             throw new Error('Index out of range');
@@ -379,6 +403,6 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         }
 
         this.selectionChange.emit(this._value());
-        this._onChangeCallback(this._value());
+        this._onChangeCallback?.(this._value());
     }
 }

@@ -2,12 +2,13 @@
 
 @for (i of _items(); track $index) {
 @if(!i.filtered) {
-<div class="ng0-list-item"
+<div
      [ngClass]="itemClass()(i)"
      [attr.id]="i.id"
      [class.active]="$index == _activeOptionIndex()"
      [class.selected]="i.selected"
-     (click)="multiple() ? toggleSelection($index) : select($index);">
+     [attr.tabIndex]="_getItemTabIndex($index)"
+     (click)="multiple() ? toggleSelection($index) : select($index); active($index)">
 
        @if(_itemTemplate) {
        <ng-container *ngTemplateOutlet="_itemTemplate; context: { $implicit: {
@@ -21,6 +22,7 @@
 
        @if(showSelectionIndicator()) {
        <input class="form-check-input ng0-list-selection-indicator"
+              tabindex="-1"
               [checked]="i.selected"
               [attr.type]="multiple() ? 'checkbox' : 'radio'"
               [attr.name]="i.id"

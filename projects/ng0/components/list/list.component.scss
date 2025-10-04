@@ -1,8 +1,14 @@
-ng0-list {
+:host {
     display: block;
     overflow-y: auto;
     overflow-x: hidden;
     user-select: none;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+
+    &:focus, &:focus-visible {
+        border: 1px solid var(--bs-primary);
+    }
 
     &.disabled {
         background-color: var(--bs-secondary-bg);
@@ -10,6 +16,7 @@ ng0-list {
 
     .ng0-list-item {
         display: flex;
+        padding: 0.5rem;
 
         .ng0-list-selection-indicator {
             margin-inline-end: 0.5rem;
@@ -17,7 +24,17 @@ ng0-list {
 
         &.selected {
             background-color: var(--bs-primary);
-            // color: var(--bs-light);
+            color: var(--bs-light);
+        }
+
+        &.active:not(.selected) {
+            background-color: var(--bs-gray-300);
+        }
+
+        &:hover:not(.selected):not(.disabled):not(.active) {
+            background-color: var(--bs-gray-100);
         }
     }
+
+
 }

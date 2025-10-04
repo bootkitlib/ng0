@@ -38,15 +38,14 @@ import { ListModule } from '@bootkit/ng0/components/list';
         '[attr.aria-disabled]': '_isDisabled()'
     }
 })
-export class SelectComponent implements OnInit, ControlValueAccessor {
+export class SelectComponent implements ControlValueAccessor {
     private _resizeObserver?: ResizeObserver;
     private _resizeObserverInitialized = false;
     private _viewpoerRulerSubscription?: Subscription;
-    protected _cdkListboxValue = signal<any>(undefined);
     protected _value = signal<any>(undefined);
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
-    private _onChangeCallback!: (value: any) => void;
-    private _onTouchedCallback!: (value: any) => void;
+    private _changeCallback!: (value: any) => void;
+    private _touchCallback!: (value: any) => void;
     protected readonly _options = signal<SelectOption[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _selectedOptionIndex = signal<number>(-1);
@@ -136,36 +135,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         this._scrollStrategy = this._overlay.scrollStrategies.block();
     }
 
-    ngOnInit(): void {
-        this._loadItems();
-        this._handleDataSourceChange();
-    }
-
-    private _loadItems() {
-        var r = new DataRequest();
-        this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            this._insertOptions(0, ...res.data);
-        });
-    }
-
-    private _handleDataSourceChange() {
-        let options = this._options();
-        this.source().change.subscribe(e => {
-            e.changes.forEach(change => {
-                switch (change.type) {
-                    case 'insert':
-                        this._insertOptions(change.index!, ...change.items);
-                        break;
-                    case 'replace':
-                        options[change.index].value = change.value;
-                        break;
-                    case 'remove':
-                        options.splice(change.index, change.count);
-                }
-            });
-        });
-    }
-
     /**
      * Selects an option by index
      */
@@ -180,88 +149,28 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         }
 
         let option = this._options()[index];
-        this._cdkListboxValue.set(this.writeBy()(option.value));
-        this._onChangeCallback(this._cdkListboxValue());
+        // this._onChangeCallback();
     }
 
-    // /**
-    //  * Sets an option as active
-    //  */
-    // public active(index: number) {
-    //     if (index < 0) {
-    //         throw Error();
-    //     }
-
-    //     this._activeOptionIndex.set(index);
-    //     if (this.open()) {
-    //         this.scrollItemIntoView(this._activeOptionIndex(), 'nearest');
-    //     }
-    // }
-
-    // /**
-    //  * Scrolls the item at the specified index into view within the dropdown list.
-    //  * @param index The index of the item to scroll into view.
-    //  * @param position The vertical alignment of the item after scrolling.
-    //  *                 Can be 'start', 'center', 'end', or 'nearest'.
-    //  *                 Default is 'nearest'.
-    //  * @param behavior The scrolling behavior.
-    //  */
-    // public scrollItemIntoView(index: number, position?: ScrollLogicalPosition, behavior?: ScrollBehavior) {
-    //     let item = this._options()[index];
-    //     let elm = this._document.getElementById(item.id) as HTMLUListElement;
-    //     elm!.scrollIntoView({ block: position, behavior: behavior });
-    // }
-
-    protected _insertOptions(index?: number, ...items: any[]) {
-        // let filter = this.filterBy()()
-        var options = items.map(x => ({
-            id: this._getNextOptionId(),
-            value: x,
-            show: true
-        }) as SelectOption)
-
-        if (Number.isInteger(index)) {
-            this._options().splice(index!, 0, ...options);
-        } else {
-            this._options().push(...options);
+    protected _onSelectionChange(value: any) {
+        if (!this.multiple()) {
+            this.open.set(false);
         }
 
-        this._changeDetector.markForCheck();
+        this._value.set(value);
+        this._changeCallback(value);
     }
 
     writeValue(obj: any): void {
-        let value;
-
-        if (this.multiple()) {
-            if (Array.isArray(obj)) {
-                value = obj;
-            } else if (obj === null || obj === undefined) {
-                value = [];
-            } else {
-                throw Error('Provide an array or null as the value of ng0-select component.');
-            }
-        } else {
-            value = [obj];
-        }
-    
-
-        this._cdkListboxValue.set(value);
-
-        // Update selection state of items
-        // let compareBy = this.compareBy();
-        // if (this.multiple()) {
-        //     this._items().forEach(x => x.selected = (value as any[]).some(y => compareBy(x.value, y)));
-        // } else {
-        //     this._items().forEach(x => x.selected = compareBy(x.value, value));
-        // }
+        this._value.set(obj);
     }
 
     registerOnChange(fn: any): void {
-        this._onChangeCallback = fn;
+        this._changeCallback = fn;
     }
 
     registerOnTouched(fn: any): void {
-        this._onTouchedCallback = fn;
+        this._touchCallback = fn;
     }
 
     setDisabledState?(isDisabled: boolean): void {
@@ -278,80 +187,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         let optionsCount = this._options().length;
         if (optionsCount == 0) {
             return;
-        }
-
-        switch (e.key) {
-            case 'ArrowDown':
-                if (open) {
-                    if (this._activeOptionIndex() < optionsCount - 1) {
-                        // this.active(this._activeOptionIndex() + 1);
-                    }
-                } else {
-                    if (this._selectedOptionIndex()! < optionsCount - 1) {
-                        this._selectByIndex(this._selectedOptionIndex() + 1)
-                    }
-                }
-                e.preventDefault();
-                break;
-
-            case 'ArrowUp':
-                if (open) {
-                    if (this._activeOptionIndex() > 0) {
-                        // this.active(this._activeOptionIndex()! - 1);
-                    }
-                } else {
-                    if (this._selectedOptionIndex() > 0) {
-                        this._selectByIndex(this._selectedOptionIndex()! - 1)
-                    }
-                }
-                e.preventDefault();
-                break;
-
-            case 'Enter':
-                if (open) {
-                    if (this._activeOptionIndex() == this._selectedOptionIndex()) {
-                        this.open.set(false);
-                    } else {
-                        this._selectByIndex(this._activeOptionIndex());
-                        this.open.set(false);
-                    }
-                } else {
-                    this.open.set(true);
-                }
-                e.preventDefault();
-                break;
-
-            case ' ':
-                if (!open) {
-                    this.open.set(true);
-                }
-                e.preventDefault();
-                break;
-
-            case 'Escape':
-                this.open.set(false);
-                e.preventDefault();
-                break;
-
-            case 'Home':
-                if (open) {
-                    // this.active(0);
-                } else {
-                    this._selectByIndex(0)
-                }
-
-                e.preventDefault();
-                break;
-
-            case 'End':
-                if (open) {
-                    // this.active(optionsCount - 1);
-                } else {
-                    this._selectByIndex(optionsCount - 1);
-                }
-
-                e.preventDefault();
-                break;
         }
     }
 
