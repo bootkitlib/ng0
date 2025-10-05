@@ -1,10 +1,10 @@
 import { Component, ElementRef, Renderer2, input, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataSource, DataSourceLike, valueWriterAttribute, defaultValueWriter, stringFilter, FilterPredicate, booleanValueComparerAttribute, defaultBooleanValueComparer } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataSource, DataSourceLike, stringFilter, FilterPredicate } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { CssClassAttribute, IdGenerator, SelectOption, _IdGenerator, sequentialIdGenerator } from '@bootkit/ng0/common';
+import { CssClassAttribute, IdGenerator, SelectOption, sequentialIdGenerator, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter } from '@bootkit/ng0/common';
 import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListModule } from '@bootkit/ng0/components/list';
 
@@ -86,8 +86,8 @@ export class SelectComponent implements ControlValueAccessor {
     /**
     * A custom comparer function or the name of a field for comparing two objects.
     */
-    public readonly compareBy = input(defaultBooleanValueComparer, {
-        transform: booleanValueComparerAttribute
+    public readonly compareBy = input(defaultEqualityComparer, {
+        transform: equalityComparerAttribute
     });
 
     /**
@@ -197,7 +197,7 @@ export class SelectComponent implements ControlValueAccessor {
 
     protected _onOverlayDetach() {
         this._unlistenFromResizeEvents();
-        this._el?.nativeElement.focus(); 
+        this._el?.nativeElement.focus();
     }
 
     protected _onSelectionChange(value: any) {

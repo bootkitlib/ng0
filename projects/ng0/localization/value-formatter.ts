@@ -1,12 +1,16 @@
 import { Locale } from "./locale";
 
 /**
- * Format function type.
+ * Value formatter function type.
  * @param item The item to format.
- * @returns The formatted string.
+ * @param options Additional options for formatting.
+ * @returns The formatted value.
  */
 export type ValueFormatterFunction = (value: any, ...options: any[]) => string;
 
+/**
+ * ValueFormatterLike
+ */
 export type ValueFormatterLike = ValueFormatterFunction | string;
 
 /**

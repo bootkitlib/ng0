@@ -137,7 +137,7 @@
                 <ul>
                     <li>Using object fields: formatBy="field:<i class="text-info">fieldName</i> "</li>
                     <li>Using a formatBy function: [formatBy]="<i class="text-info">functionName</i>"</li>
-                    <li>Using a locale formatter: formatBy="<i class="text-info">formatterName:param1:param2: ...</i> "
+                    <li>Using a locale formatter: formatBy="<i class="text-info">formatter:param1:param2: ...</i> "
                     </li>
                 </ul>
 
@@ -152,18 +152,62 @@
 
                     <div class="col-xl-3">
                         format items using a function
-                        <ng0-select name="value17" [source]="objects1" [(ngModel)]="value17" [formatBy]="objectFormatter1">
+                        <ng0-select name="value17" [source]="objects1" [(ngModel)]="value17"
+                                    [formatBy]="objectFormatter1">
                         </ng0-select>
 
                         Value: {{ value17 }}
                     </div>
 
+                    <div class="col-xl-3">
+                        format items using a locale formatter
+                        <ng0-select name="value18" [source]="objects1" [(ngModel)]="value18">
+                        </ng0-select>
+
+                        Value: {{ value18 }}
+                    </div>
                 </div>
             </div>
 
             <div class="card-footer">
+                <h5 class="card-title">Compare items:</h5>
+
                 <p>
-                    Use in forms:
+                    Compare source items with the selected value(s) by a specific field or by a custom function. <br>
+                    This is useful when the source items are objects and the selected value(s) are not the same object
+                    instances.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        compare by a field of an object:
+                        <ng0-select name="value19" [source]="objects1" [(ngModel)]="value19" compareBy="id" formatBy="field:name">
+                        </ng0-select>
+
+                        Value: {{ value19 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        compare by a custom function:
+                        <ng0-select name="value20"
+                                    [source]="objects1"
+                                    [(ngModel)]="value20"
+                                    extractBy="id"
+                                    formatBy="field:name">
+                        </ng0-select>
+
+                        Value: {{ value20 }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <h5 class="card-title">Custom value writer:</h5>
+
+                <p>
+                    Write back the selected value(s) by a specific field or by a custom function. <br>
+                    This is useful when you want to bind the component to a specific property of an object instead of
+                    the whole object.
                 </p>
 
                 <div class="row">

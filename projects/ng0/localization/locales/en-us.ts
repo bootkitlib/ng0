@@ -30,7 +30,9 @@ export const EN_US_LOCALE = new Locale({
             }
         }
     },
-        formatters: {
+    formatters: {
+        enum: {
+        },
         boolean: {
             Default: ['Yes', 'No'],
             ActiveInactive: ['Active', 'Inactive'],
@@ -38,6 +40,9 @@ export const EN_US_LOCALE = new Locale({
             TrueFalse: ['True', 'False'],
             EnableDisable: ['Enabled', 'Disabled'],
             OnOff: ['On', 'Off'],
+        },
+        custom: {
+            abc: (value: any) => `custom-a(${value})`,
         }
     },
     components: {

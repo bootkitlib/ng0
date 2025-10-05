@@ -61,6 +61,9 @@ export class SelectExampleComponent {
     value15?: number;
     value16?: number;
     value17?: number;
+    value18?: number;
+    value19 = { id: 2 };
+    value20?: number;
 
     // An object formatter function
     // Note: You should handle null|undefined objects too.

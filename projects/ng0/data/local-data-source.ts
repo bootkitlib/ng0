@@ -3,8 +3,7 @@ import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
 import { signal } from "@angular/core";
-import { ValueWriter } from "./value-writer";
-import { getEnumValues } from "@bootkit/ng0/common";
+import { getEnumValues, ValueWriter } from "@bootkit/ng0/common";
 
 /**
  * An implementation of DataSource that uses an array as the data source.

@@ -1,12 +1,14 @@
 import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, valueWriterAttribute, defaultValueWriter, stringFilter, FilterPredicate, filterPredicateAttribute, booleanValueComparerAttribute } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, stringFilter, FilterPredicate, filterPredicateAttribute } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { _IdGenerator, CssClassAttribute, IdGenerator, sequentialIdGenerator, } from '@bootkit/ng0/common';
+import {
+    CssClassAttribute, IdGenerator, sequentialIdGenerator, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
+    defaultValueWriter,
+} from '@bootkit/ng0/common';
 import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListItem } from './types';
-import { defaultBooleanValueComparer } from '@bootkit/ng0/data';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -88,8 +90,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     /**
     * A custom comparer function or the name of a field for comparing two objects.
     */
-    public readonly compareBy = input(defaultBooleanValueComparer, {
-        transform: booleanValueComparerAttribute
+    public readonly compareBy = input(defaultEqualityComparer, {
+        transform: equalityComparerAttribute
     });
 
     /**

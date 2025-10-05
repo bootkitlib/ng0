@@ -38,6 +38,8 @@ export const FA_IR_LOCALE = new Locale({
             TrueFalse: ['درست', 'غلط', ''],
             EnableDisable: ['فعال', 'غیرفعال', ''],
             OnOff: ['روشن', 'خاموش', ''],
+        },
+        custom: {
         }
     },
     components: {

@@ -126,14 +126,14 @@ export class Locale {
   /**
    * Returns a formatter function by its name and parameters.
    * @param format The format string in the form of "formatterName:param1:param2:..."
-   * @returns A FormatFunction
+   * @returns A ValueFormatterFunction
    */
   getFormatter(format: string): ValueFormatterFunction {
     let parts = format.split(':');
-    let name: string = parts[0];
+    let formatterName: string = parts[0];
     let params = parts.length > 1 ? parts.slice(1) : [];
 
-    switch (name) {
+    switch (formatterName) {
       case 'boolean':
         let booleanKind = params.length > 0 ? params[0] : 'Default';
         let f = this.definition.formatters?.boolean?.[booleanKind];
@@ -156,7 +156,7 @@ export class Locale {
           return this.translateEnum(enumName, enumValue, enumValue?.toString())!;
         }
       default:
-        let customFormatter = this.definition.formatters?.custom?.[name];
+        let customFormatter = this.definition.formatters?.custom?.[formatterName];
         if (customFormatter) {
           return customFormatter;
         }

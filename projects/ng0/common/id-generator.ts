@@ -1,13 +1,5 @@
 let _idCounter = 0;
 
-export abstract class _IdGenerator {
-    private static _idCounter = 0;
-
-    public static next(): number {
-        return _IdGenerator._idCounter++;
-    }
-}
-
 /**
  * Type definition for an ID generator function.
  */
