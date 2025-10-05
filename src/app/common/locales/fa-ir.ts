@@ -1,10 +1,8 @@
-import { Locale } from '@bootkit/ng0/localization';
+import { FA_IR_LOCALE } from '@bootkit/ng0/localization/locales';
 
 const formatNumber = (n: number) => n.toLocaleString();
 
-export const FA_IR_LOCALE = new Locale({
-    name: 'fa-IR',
-    rtl: true,
+export const APP_FA_IR_LOCALE = FA_IR_LOCALE.extend({
     dictionary: {
         ok: 'تایید',
         cancel: 'لغو',
@@ -20,18 +18,16 @@ export const FA_IR_LOCALE = new Locale({
     form: {
         validation: {
             errors: {
-                '*': (e) => 'نامعتبر',
-                required: (e) => `الزامی`,
-                min: (e) => `حداقل: ${formatNumber(e.min)}`,
-                max: (e) => `حداکثر: ${formatNumber(e.max)}`,
-                minlength: (e) => `حداقل ${e.requiredLength} کاراکتر`,
-                maxlength: (e) => `حداکثر ${e.requiredLength} کاراکتر`,
-                email: (e) => `ایمیل نامعتبر است`,
             }
         }
     },
     formatters: {
-        'boolean': ['خیر', 'بله'],
+        'boolean:Default': ['خیر', 'بله'],
+        'boolean:ActiveInactive': ['غیرفعال', 'فعال'],
+        'boolean:YesNo': ['خیر', 'بله'],
+        'boolean:TrueFalse': ['غلط', 'درست'],
+        'boolean:EnableDisable': ['غیرفعال', 'فعال'],
+        'boolean:OnOff': ['خاموش', 'روشن'],
     },
     components: {
         table: {

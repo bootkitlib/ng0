@@ -38,7 +38,7 @@ export function valueFormatterAttribute(locale?: Locale): ((v: ValueFormatterLik
         else if (typeof v === 'string') {
             if (v.startsWith('field:')) {
                 let fieldName = v.substring(6);
-                return (item: any, ...options: any[]) => (item?.[fieldName]?.toString() as string) ?? '';
+                return (item: any) => (item?.[fieldName]?.toString() as string) ?? '';
             } else {
                 if (locale == null) {
                     throw Error('For using locale value formatters, provide a locale object.')

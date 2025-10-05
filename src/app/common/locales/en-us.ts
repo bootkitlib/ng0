@@ -1,10 +1,8 @@
-import { Locale } from '@bootkit/ng0/localization';
+import { EN_US_LOCALE } from '@bootkit/ng0/localization/locales';
 
 const formatNumber = (n: number) => n.toLocaleString();
 
-export const EN_US_LOCALE = new Locale({
-    name: 'en-US',
-    rtl: false,
+export const APP_EN_US_LOCALE = EN_US_LOCALE.extend({
     dictionary: {
         ok: 'Ok',
         cancel: 'Cancel',
@@ -31,7 +29,12 @@ export const EN_US_LOCALE = new Locale({
         }
     },
     formatters: {
-        'boolean': ['No', 'Yes'],
+        'boolean:Default': ['No', 'Yes'],
+        'boolean:ActiveInactive': ['Inactive', 'Active'],
+        'boolean:YesNo': ['No', 'Yes'],
+        'boolean:TrueFalse': ['False', 'True'],
+        'boolean:EnableDisable': ['Disabled', 'Enabled'],
+        'boolean:OnOff': ['Off', 'On'],
     },
     components: {
         table: {

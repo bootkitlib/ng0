@@ -86,15 +86,17 @@ export interface LocaleDefinition {
   },
 
   formatters?: {
-    boolean?: {
-      [booleanKind: string]: string[] // [false, true]
-    },
-    enum?: {
-      [enumName: string]: { [enumValue: string]: string }
+    // boolean?: {
+    //   [booleanKind: string]: string[] // [false, true]
+    // },
+    // enum?: {
+    //   [enumName: string]: { [enumValue: string]: string }
+    // }
+    // custom?: {
+    [formatterName: string]: ValueFormatterFunction | string[] | {
+      [value: string]: string
     }
-    custom?: {
-      [formatterName: string]: ValueFormatterFunction,
-    },
+    // },
     // date?: {
     //   calendars?: {
     //     [calendar: string]: {

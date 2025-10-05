@@ -110,7 +110,7 @@ export class Locale {
   /**
    * Clones and extends this object and returns a new Locale (without modifying this object).
    */
-  extend(definition?: Omit<LocaleDefinition, 'name'>): Locale {
+  extend(definition?: Omit<LocaleDefinition, 'name' | 'rtl'>): Locale {
     return new Locale({ ...this.definition, ...definition });
   }
 
@@ -125,43 +125,25 @@ export class Locale {
 
   /**
    * Returns a formatter function by its name and parameters.
-   * @param format The format string in the form of "formatterName:param1:param2:..."
+   * @param formatterName The format string in the form of "formatterName:param1:param2:..."
    * @returns A ValueFormatterFunction
    */
-  getFormatter(format: string): ValueFormatterFunction {
-    let parts = format.split(':');
-    let formatterName: string = parts[0];
-    let params = parts.length > 1 ? parts.slice(1) : [];
+  getFormatter(formatterName: string): ValueFormatterFunction {
+    let formatter = this.definition.formatters?.[formatterName];
+    let formatterType = typeof formatter;
 
-    switch (formatterName) {
-      case 'boolean':
-        let booleanKind = params.length > 0 ? params[0] : 'Default';
-        let f = this.definition.formatters?.boolean?.[booleanKind];
-        if (!Array.isArray(f)) {
-          throw new Error(`Boolean formatter is not defined in locale ${this.definition.name}`);
-        }
+    if (!formatter) {
+      console.warn(`The formatter "${formatterName}" is not defined in locale ${this.definition.name}`);
+    }
 
-        return (value?: boolean) => {
-          return value === true ? f[0] : (value === false ? f[1] : f[2]);
-        }
-
-      case 'enum':
-        let enumName = params[0];
-        if (!enumName) {
-          // throw new Error('Enum name is required for enum formatter');
-          return (enumValue: string | number) => enumValue?.toString() ?? '';
-        }
-
-        return (enumValue?: string | number | null) => {
-          return this.translateEnum(enumName, enumValue, enumValue?.toString())!;
-        }
-      default:
-        let customFormatter = this.definition.formatters?.custom?.[formatterName];
-        if (customFormatter) {
-          return customFormatter;
-        }
-
-        throw new Error(`formatter is not defined in locale ${this.definition.name}`);
+    if (formatterType === 'function') {
+      return formatter as ValueFormatterFunction;
+    } else if (Array.isArray(formatter)) {
+      return (value: number | boolean) => formatter[+value]; // use + to cast boolean values to numbers
+    } else if (formatterType == 'object' && formatter != null) {
+      return (value: string) => (formatter as any)[value] || ''
+    } else {
+      return (value) => `${value}`;
     }
   }
 }
