@@ -22,8 +22,12 @@ export function defaultValueFormatter(value: any): string {
     return value.toString();
 }
 
-export function ValueFormatterAttribute
-    (locale?: Locale): ((v: ValueFormatterLike) => ValueFormatterFunction) {
+/**
+ * Creates a value formatter attribute function.
+ * @param locale  
+ * @returns 
+ */
+export function valueFormatterAttribute(locale?: Locale): ((v: ValueFormatterLike) => ValueFormatterFunction) {
     return (v) => {
         if (typeof v === 'function')
             return v;

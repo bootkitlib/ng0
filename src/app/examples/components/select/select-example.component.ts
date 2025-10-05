@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { getEnumValues } from '@bootkit/ng0/common';
 import { SelectModule } from '@bootkit/ng0/components/select';
 import { DataResult, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
@@ -12,6 +11,10 @@ enum Sexuality {
     other = 'Other'
 }
 
+interface Person {
+    id: number;
+    name: string;
+}
 
 @Component({
     selector: 'app-examples-select',
@@ -24,40 +27,44 @@ enum Sexuality {
     ]
 })
 export class SelectExampleComponent {
-
     counter = signal(0);
+    width = signal('200px');
 
     stringArray = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
     numberArray = Array.from({ length: 30 }, (_, i) => i + 1);
-    objects1 = [
-        { id: 1, name: 'Option 1' },
-        { id: 2, name: 'Option 2' },
-        { id: 3, name: 'Option 3' },
-        { id: 4, name: 'Option 4' },
-        { id: 5, name: 'Option 5' },
+    objects1: Person[] = [
+        { id: 1, name: 'Jane' },
+        { id: 2, name: 'Doe' },
+        { id: 3, name: 'Smith' },
+        { id: 4, name: 'Johnson' },
+        { id: 5, name: 'Brown' },
     ];
+
     localDatasource1 = new LocalDataSource(["Option 1", "Option 2", "Option 3"]);
     fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(100)))
+    Sexuality = Sexuality;
 
-    stringValue1?: string;
-    stringValue2?: string;
-    numberValue1?: number;
-    numberValue2 = 1;
-    booleanValue1?: boolean;
-    booleanValue2?: boolean;
-    booleanValue3?: boolean;
-    booleanValue4?: boolean;
-    selectedObjectId1?: number;
-    selectedObjectId2?: number;
-    selectedObjectId3?: number;
-    selectedObjectId4?: number;
-    selectedObjectId5?: number;
+    value1?: string;
+    value2?: string;
+    value3?: number;
+    value4 = 1;
+    value5?: boolean;
+    value6?: boolean;
+    value7?: boolean;
+    value8?: boolean;
+    value9?: boolean;
+    value10?: number;
+    value11?: number;
+    value12?: number;
+    value13?: number;
+    value14?: number;
+    value15?: number;
+    value16?: number;
+    value17?: number;
 
-    Sexuality = getEnumValues(Sexuality);
-
-    enum1?: boolean;
-
-    width = signal('200px');
+    // An object formatter function
+    // Note: You should handle null|undefined objects too.
+    objectFormatter1 = (item?: Person) => item?.name || '';
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);

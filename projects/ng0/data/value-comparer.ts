@@ -29,7 +29,7 @@ export function defaultValueComparer(a: any, b: any): number {
  * @param v The value comparer to convert.
  * @returns A function that compares two values.
  */
-export function ValueComparerAttribute(v: ValueComparerLike): ValueComparer {
+export function valueComparerAttribute(v: ValueComparerLike): ValueComparer {
     if (typeof v === 'function')
         return v;
     if (typeof v === 'string') {

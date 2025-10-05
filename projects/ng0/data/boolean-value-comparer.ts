@@ -21,7 +21,12 @@ export function defaultBooleanValueComparer(a: any, b: any): boolean {
     return a === b;
 }
 
-export function BooleanValueComparerAttribute(v: BooleanValueComparerLike): BooleanValueComparer {
+/**
+ * Converts a BooleanValueComparerLike to a BooleanValueComparer.
+ * @param v The value comparer to convert.
+ * @returns A function that compares two values.
+ */
+export function booleanValueComparerAttribute(v: BooleanValueComparerLike): BooleanValueComparer {
     if (typeof v === 'function')
         return v;
     if (typeof v === 'string') {

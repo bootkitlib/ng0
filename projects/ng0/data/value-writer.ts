@@ -25,7 +25,7 @@ export function defaultValueWriter(a: any): any {
  * @param v The value writer to convert.
  * @returns A ValueWriter function.
  */
-export function ValueWriterAttribute(v: ValueWriterLike): ValueWriter {
+export function valueWriterAttribute(v: ValueWriterLike): ValueWriter {
     if (typeof v === 'function')
         return v;
     if (typeof v === 'string') {

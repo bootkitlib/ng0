@@ -1,4 +1,4 @@
-@let formatFunc = formatBy();
+@let formatter = formatBy();
 
 @for (i of _items(); track $index) {
 @if(!i.filtered) {
@@ -29,7 +29,7 @@
               [attr.id]="i.id">
        }
 
-       {{formatFunc(i.value)}}
+       {{formatter(i.value)}}
 
        }
 </div>

@@ -1,12 +1,11 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueWriterAttribute, defaultValueWriter, stringFilter, FilterPredicate, BooleanValueComparerAttribute, defaultBooleanValueComparer } from '@bootkit/ng0/data';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { dataSourceAttribute, DataSource, DataSourceLike, valueWriterAttribute, defaultValueWriter, stringFilter, FilterPredicate, booleanValueComparerAttribute, defaultBooleanValueComparer } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { CssClassAttribute, SelectOption, _IdGenerator } from '@bootkit/ng0/common';
-import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { CssClassAttribute, IdGenerator, SelectOption, _IdGenerator, sequentialIdGenerator } from '@bootkit/ng0/common';
+import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListModule } from '@bootkit/ng0/components/list';
 
 /**
@@ -88,7 +87,7 @@ export class SelectComponent implements ControlValueAccessor {
     * A custom comparer function or the name of a field for comparing two objects.
     */
     public readonly compareBy = input(defaultBooleanValueComparer, {
-        transform: BooleanValueComparerAttribute
+        transform: booleanValueComparerAttribute
     });
 
     /**
@@ -96,14 +95,14 @@ export class SelectComponent implements ControlValueAccessor {
      * Default converts the item to a string using its toString method.
      */
     public readonly formatBy = input(defaultValueFormatter, {
-        transform: ValueFormatterAttribute(this._ls.get())
+        transform: valueFormatterAttribute(this._ls.get())
     });
 
     /**
-     * Custom value extractor function to extract the value of any object while writing values.
+     * Custom value writer function to extract the value of any object while writing values.
      */
     public readonly writeBy = input(defaultValueWriter, {
-        transform: ValueWriterAttribute
+        transform: valueWriterAttribute
     });
 
     /**
@@ -123,42 +122,23 @@ export class SelectComponent implements ControlValueAccessor {
     public readonly filterBy = input<FilterPredicate>(stringFilter);
 
     /**
-     * CSS class or classes to apply to the list container.
+     * CSS class or classes to apply to the items.
      */
     public readonly itemClass = input((item) => undefined, {
         transform: CssClassAttribute
     });
 
+    /**
+     * Custom id generator function to generate unique ids for each item.
+     * Default generates sequential ids with the prefix 'ng0-select-item-'.
+     * If set to undefined, no ids will be generated.
+     */
+    public readonly idGenerator = input<IdGenerator | undefined>(sequentialIdGenerator('ng0-select-item-'));
+
     constructor() {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
         this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
         this._scrollStrategy = this._overlay.scrollStrategies.block();
-    }
-
-    /**
-     * Selects an option by index
-     */
-    protected _selectByIndex(index: number) {
-        let optionsCount = this._options().length;
-        if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
-            throw new Error('Index out of range');
-        }
-
-        if (index == this._selectedOptionIndex()) {
-            return;
-        }
-
-        let option = this._options()[index];
-        // this._onChangeCallback();
-    }
-
-    protected _onSelectionChange(value: any) {
-        if (!this.multiple()) {
-            this.open.set(false);
-        }
-
-        this._value.set(value);
-        this._changeCallback(value);
     }
 
     writeValue(obj: any): void {
@@ -199,11 +179,6 @@ export class SelectComponent implements ControlValueAccessor {
         }, 0);
     }
 
-    protected _filterItems(filter: string) {
-        let filterFunc = this.filterBy();
-        this._options().forEach(x => x.show = filterFunc(x.value, filter));
-    }
-
     protected _onOverlayAttach() {
         this._activeOptionIndex.set(this._selectedOptionIndex())
 
@@ -222,14 +197,16 @@ export class SelectComponent implements ControlValueAccessor {
 
     protected _onOverlayDetach() {
         this._unlistenFromResizeEvents();
-        if (this.filterable()) {
-            this._el?.nativeElement.focus();
-            this._options().forEach(x => x.show = false);
-        }
+        this._el?.nativeElement.focus(); 
     }
 
-    private _getNextOptionId() {
-        return `ng0-select-item-${_IdGenerator.next().toString()}`;
+    protected _onSelectionChange(value: any) {
+        if (!this.multiple()) {
+            this.open.set(false);
+        }
+
+        this._value.set(value);
+        this._changeCallback(value);
     }
 
     private _listenToResizeEvents() {
@@ -266,10 +243,9 @@ export class SelectComponent implements ControlValueAccessor {
 
     @HostListener('click', ['$event'])
     private _onHostClick(e: MouseEvent) {
-        if (this._isDisabled())
-            return;
-
-        this.open.update(x => !x);
-        // this._onTouchedCallback?.(this._selectedValue());
+        if (!this._isDisabled()) {
+            this.open.update(x => !x);
+            // this._onTouchedCallback?.(this._selectedValue());
+        }
     }
 }

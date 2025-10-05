@@ -32,46 +32,24 @@
                [attr.placeholder]="filterPlaceholder()"
                (keydown)="_onKeydown($event, true)"
                (blur)="_onFilterBlur()"
-               (input)="_filterItems($event.target.value)">
+               (input)="list.filter($event.target.value)">
     </div>
     }
 
-    <ng0-list [source]="source()"
+    <ng0-list #list
+              [source]="source()"
               [multiple]="multiple()"
               [formatBy]="formatBy()"
               [filterBy]="filterBy()"
               [compareBy]="compareBy()"
-              [value]="_value()" 
+              [value]="_value()"
+              [idGenerator]="idGenerator()"
+              focus="activeDescendant"
               (selectionChange)="_onSelectionChange($event)">
-    </ng0-list>
-
-    <!-- <ul class="ng0-select-dropdown"
-        cdkListbox
-        [cdkListboxValue]="_cdkListboxValue()"
-        [attr.tabindex]="_isDisabled() ? undefined : -1"
-        [class.is-open]="open()">
-
-        @for (option of _options(); track $index) {
-        <li [cdkOption]="option.value"
-            #cdkOption="cdkOption"
-            [attr.id]="option.id"
-            class="ng0-select-option"
-            [class.ng0-select-option-active]="cdkOption.isActive()"
-            [class.ng0-select-option-selected]="cdkOption.isSelected()"
-            [class.ng0-select-option-filtered]="!option.show"
-            (click)="cdkOption.select(); open.set(false)"
-            (keyup.enter)="open.set(false)">
-            @if(_optionTemplate) {
+        <!-- @if(_optionTemplate) {
+        <ng-template let-option>
             <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: option}" />
-            } @else {
-            @let v = formatBy()(option.value);
-            @if(v) {
-            {{v}}
-            }@else {
-            &nbsp;
-            }
-            }
-        </li>
-        }
-    </ul> -->
+        </ng-template>
+        } -->
+    </ng0-list>
 </ng-template>

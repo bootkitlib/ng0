@@ -1,10 +1,10 @@
 import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, ValueWriterAttribute, defaultValueWriter, stringFilter, FilterPredicate, FilterPredicateAttribute, BooleanValueComparerAttribute } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, valueWriterAttribute, defaultValueWriter, stringFilter, FilterPredicate, filterPredicateAttribute, booleanValueComparerAttribute } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { _IdGenerator, CssClassAttribute, IdGenerator, sequentialIdGenerator, } from '@bootkit/ng0/common';
-import { ValueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListItem } from './types';
 import { defaultBooleanValueComparer } from '@bootkit/ng0/data';
 
@@ -89,7 +89,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     * A custom comparer function or the name of a field for comparing two objects.
     */
     public readonly compareBy = input(defaultBooleanValueComparer, {
-        transform: BooleanValueComparerAttribute
+        transform: booleanValueComparerAttribute
     });
 
     /**
@@ -97,14 +97,14 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * Default converts the item to a string using its toString method.
      */
     public readonly formatBy = input(defaultValueFormatter, {
-        transform: ValueFormatterAttribute(this._ls.get())
+        transform: valueFormatterAttribute(this._ls.get())
     });
 
     /**
      * Custom value extractor function to extract the value of any object while writing values.
      */
     public readonly writeBy = input(defaultValueWriter, {
-        transform: ValueWriterAttribute
+        transform: valueWriterAttribute
     });
 
     /**
@@ -113,7 +113,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * The filter predicate can be a function or a string representing the property name to filter.
      */
     public readonly filterBy = input(stringFilter, {
-        transform: FilterPredicateAttribute
+        transform: filterPredicateAttribute
     });
 
     /**
@@ -126,6 +126,11 @@ export class ListComponent implements OnInit, ControlValueAccessor {
 
     public readonly focus = input<'none' | 'roving' | 'activeDescendant'>('roving');
 
+    /**
+     * Custom id generator function to generate unique ids for each item.
+     * Default generates sequential ids with the prefix 'ng0-list-item-'.
+     * If set to undefined, no ids will be generated.
+     */
     public readonly idGenerator = input<IdGenerator | undefined>(sequentialIdGenerator('ng0-list-item-'));
 
     constructor() {

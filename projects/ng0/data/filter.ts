@@ -31,7 +31,7 @@ export const stringFilter: FilterPredicate = (item: string, criteria?: string) =
  * @param v The FilterPredicateLike to convert.
  * @returns The corresponding FilterPredicate function.
  */
-export function FilterPredicateAttribute(v: FilterPredicateLike): FilterPredicate {
+export function filterPredicateAttribute(v: FilterPredicateLike): FilterPredicate {
     if (typeof v === 'function')
         return v;
     if (typeof v === 'string') {
