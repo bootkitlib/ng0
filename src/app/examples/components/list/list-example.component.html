@@ -43,6 +43,24 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
+                <h5 class="card-title">Bind without using ngModel directive</h5>
+
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p>Bind to string array</p>
+                        <ng0-list name="value23" [source]="stringArray" [(value)]="value23">
+                        </ng0-list>
+                        Value: {{ value23() }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
                 <h5 class="card-title">Multi selection</h5>
 
                 <div class="row">

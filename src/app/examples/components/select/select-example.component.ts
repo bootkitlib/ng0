@@ -32,7 +32,7 @@ export class SelectExampleComponent {
 
     stringArray = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
     numberArray = Array.from({ length: 30 }, (_, i) => i + 1);
-    objects1: Person[] = [
+    personList1: Person[] = [
         { id: 1, name: 'Jane' },
         { id: 2, name: 'Doe' },
         { id: 3, name: 'Smith' },
@@ -47,7 +47,7 @@ export class SelectExampleComponent {
     value1?: string;
     value2?: string;
     value3?: number;
-    value4 = 1;
+    value4 = true;
     value5?: boolean;
     value6?: boolean;
     value7?: boolean;

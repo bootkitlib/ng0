@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, ViewEncapsulation, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, stringFilter, FilterPredicate, filterPredicateAttribute } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -44,19 +44,13 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     private _destroyRef = inject(DestroyRef);
     private _el = inject<ElementRef<HTMLDivElement>>(ElementRef<HTMLDivElement>);
     private _changeDetector = inject(ChangeDetectorRef);
-    private _onChangeCallback?: (value: any) => void;
-    private _onTouchedCallback?: (value: any) => void;
-    protected _value = signal<any>(undefined);
+    private _changeCallback?: (value: any) => void;
+    private _touchCallback?: (value: any) => void;
 
     protected readonly _items = signal<ListItem[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _activeOptionIndex = signal<number>(-1);
     @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
-
-    /**
-     * Event emitted when the selected value has been changed by the user.
-     */
-    @Output() public readonly selectionChange = new EventEmitter<any>();
 
     /**
      * The data source for the select component.
@@ -70,7 +64,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     /** 
      * Value of the list control.
      */
-    public value = input<any>(undefined);
+    public value = model<any>(undefined);
 
     /** 
      * Indicates whether multi selection is enabled or not.
@@ -139,6 +133,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         effect(() => {
             var value = this.value(); // track value
             this._updateSelectionState();
+            this._changeCallback?.(value);
         })
     }
 
@@ -242,27 +237,27 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             throw Error('Provide array or null as the value for multi-select list/select/autocomplete component.');
         }
 
-        this._value.set(value);
+        this.value.set(value);
         this._updateSelectionState();
     }
 
     private _updateSelectionState() {
         let compareBy = this.compareBy();
-        if (this.multiple() && Array.isArray(this._value())) {
-            let values = this._value() as any[];
+        if (this.multiple() && Array.isArray(this.value())) {
+            let values = this.value() as any[];
             this._items().forEach(i => i.selected = values.some(v => compareBy(i.value, v)));
         } else {
-            let value = this._value();
+            let value = this.value();
             this._items().forEach(i => i.selected = compareBy(i.value, value));
         }
     }
 
     registerOnChange(fn: any): void {
-        this._onChangeCallback = fn;
+        this._changeCallback = fn;
     }
 
     registerOnTouched(fn: any): void {
-        this._onTouchedCallback = fn;
+        this._touchCallback = fn;
     }
 
     setDisabledState?(isDisabled: boolean): void {
@@ -364,7 +359,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         // let filter = this.filterBy()()
         let idGenerator = this.idGenerator()
         let compareBy = this.compareBy();
-        let value = this._value();
+        let value = this.value();
         let isItemSelected = this.multiple() && Array.isArray(value) ?
             (item: any) => (value as any[]).some(x => compareBy(x.value, item)) :
             (item: any) => compareBy(value, item);
@@ -401,15 +396,12 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             let selectedItems = this._items().filter(x => x.selected).map(x => (x.value));
             let writeBy = this.writeBy();
             let selectedValues = selectedItems.map(x => writeBy(x));
-            this._value.set(selectedValues);
+            this.value.set(selectedValues);
         } else {
             this._items().forEach(x => x.selected = false);
             item.selected = selected;
             let itemValue = this.writeBy()(item.value);
-            this._value.set(itemValue);
+            this.value.set(itemValue);
         }
-
-        this.selectionChange.emit(this._value());
-        this._onChangeCallback?.(this._value());
     }
 }

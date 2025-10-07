@@ -49,9 +49,8 @@
             <div class="card-body">
                 <h5 class="card-title">Bind to boolean values</h5>
                 <p>
-                    Using localization formatBys for boolean values you can display different text for true/false
+                    Using a formatter for boolean values you can display different text for true/false
                     values.
-                    The formatBys are defined in the locale files.
                 </p>
 
                 <div class="row">
@@ -123,7 +122,7 @@
                 <div class="row">
                     <div class="col-xl-3">
                         Bind to an object array
-                        <ng0-select name="value8" [source]="objects1" [(ngModel)]="value8">
+                        <ng0-select name="value8" [source]="personList1" [(ngModel)]="value8">
                         </ng0-select>
 
                         Value: {{ value8 }}
@@ -137,14 +136,14 @@
                 <ul>
                     <li>Using object fields: formatBy="field:<i class="text-info">fieldName</i> "</li>
                     <li>Using a formatBy function: [formatBy]="<i class="text-info">functionName</i>"</li>
-                    <li>Using a locale formatter: formatBy="<i class="text-info">formatter:param1:param2: ...</i> "
+                    <li>Using a locale formatter: formatBy="<i class="text-info">formatterName</i> "
                     </li>
                 </ul>
 
                 <div class="row">
                     <div class="col-xl-3">
                         format items using object fields
-                        <ng0-select name="value9" [source]="objects1" [(ngModel)]="value9" formatBy="field:name">
+                        <ng0-select name="value9" [source]="personList1" [(ngModel)]="value9" formatBy="field:name">
                         </ng0-select>
 
                         Value: {{ value9 }}
@@ -152,7 +151,7 @@
 
                     <div class="col-xl-3">
                         format items using a function
-                        <ng0-select name="value17" [source]="objects1" [(ngModel)]="value17"
+                        <ng0-select name="value17" [source]="personList1" [(ngModel)]="value17"
                                     [formatBy]="objectFormatter1">
                         </ng0-select>
 
@@ -161,7 +160,7 @@
 
                     <div class="col-xl-3">
                         format items using a locale formatter
-                        <ng0-select name="value18" [source]="objects1" [(ngModel)]="value18">
+                        <ng0-select name="value18" [source]="personList1" [(ngModel)]="value18" formatBy="personFormatter1">
                         </ng0-select>
 
                         Value: {{ value18 }}
@@ -181,7 +180,7 @@
                 <div class="row">
                     <div class="col-xl-3">
                         compare by a field of an object:
-                        <ng0-select name="value19" [source]="objects1" [(ngModel)]="value19" compareBy="id" formatBy="field:name">
+                        <ng0-select name="value19" [source]="personList1" [(ngModel)]="value19" compareBy="id" formatBy="field:name">
                         </ng0-select>
 
                         Value: {{ value19 }}
@@ -190,7 +189,7 @@
                     <div class="col-xl-3">
                         compare by a custom function:
                         <ng0-select name="value20"
-                                    [source]="objects1"
+                                    [source]="personList1"
                                     [(ngModel)]="value20"
                                     extractBy="id"
                                     formatBy="field:name">
@@ -213,7 +212,7 @@
                 <div class="row">
                     <div class="col-xl-3">
                         With writeBy
-                        <ng0-select name="value10" [source]="objects1" [(ngModel)]="value10" writeBy="id">
+                        <ng0-select name="value10" [source]="personList1" [(ngModel)]="value10" writeBy="id">
                         </ng0-select>
 
                         Value: {{ value10 }}
@@ -222,7 +221,7 @@
                     <div class="col-xl-3">
                         With formatBy + extractBy
                         <ng0-select name="value11"
-                                    [source]="objects1"
+                                    [source]="personList1"
                                     [(ngModel)]="value11"
                                     extractBy="id"
                                     formatBy="field:name">
@@ -307,7 +306,7 @@
                 <div class="row">
                     <div class="col-xl-3">
                         Select an object
-                        <ng0-select name="value14" [source]="objects1" [(ngModel)]="value14" extractBy="id"
+                        <ng0-select name="value14" [source]="personList1" [(ngModel)]="value14" extractBy="id"
                                     formatBy="field:name">
                             <ng-template let-option>
                                 <div class="py-1">

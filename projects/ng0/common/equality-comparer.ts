@@ -23,7 +23,7 @@ export function defaultEqualityComparer(a: any, b: any): boolean {
 }
 
 /**
- * Converts a EqualityComparerLike to a EqualityComparer.
+ * Converts an EqualityComparerLike to an EqualityComparer function.
  * @param e The EqualityComparerLike to convert.
  * @returns The converted EqualityComparer.
  */
@@ -32,7 +32,6 @@ export function equalityComparerAttribute(e: EqualityComparerLike): EqualityComp
         return e;
     if (typeof e === 'string') {
         return (a: any, b: any) => {
-
             let a2 = typeof a === 'object' && a != null ? a[e] : a;
             let b2 = typeof b === 'object' && b != null ? b[e] : b;
             return a2 === b2;

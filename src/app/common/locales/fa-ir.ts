@@ -14,6 +14,24 @@ export const APP_FA_IR_LOCALE = FA_IR_LOCALE.extend({
         next: 'بعدی',
         previous: 'قبلی',
         pageXofY: 'صفحه {0} از {1}',
+        hello: 'سلام',
+        welcome: 'خوش آمدید',
+    },
+    enums: {
+        Enum1: {
+            1: 'One',
+            'Done': 'انجام شده',
+            'Failed': 'ناموفق',
+            // '[?]': '⚠️ نامعلوم',
+            '[empty]': 'مقدار null یا  "" یا undefined', // '' or null or undefined
+            '[null]': '❌ NULL', // exactly null value
+            '[undefined]': '❌ UNDEFINED' // exactly undefined value
+        },
+        Sexuality: {
+            'Male': 'مرد',
+            'Female': 'زن',
+            'Other': 'سایر',
+        }
     },
     form: {
         validation: {
@@ -28,6 +46,12 @@ export const APP_FA_IR_LOCALE = FA_IR_LOCALE.extend({
         'boolean:TrueFalse': ['غلط', 'درست'],
         'boolean:EnableDisable': ['غیرفعال', 'فعال'],
         'boolean:OnOff': ['خاموش', 'روشن'],
+        'enum:Sexuality': {
+            'Male': 'مرد',
+            'Female': 'زن',
+            'Other': 'سایر'
+        },
+        'personFormatter1': (person?: { id: number, name: string }) => person ? `${person.name} (ID: ${person.id})` : ''
     },
     components: {
         table: {

@@ -1,14 +1,14 @@
-import { ApplicationConfig, inject, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter, withDebugTracing, withRouterConfig } from '@angular/router';
+import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-import { provideClientHydration } from '@angular/platform-browser';
 // import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { HttpDataRequestResolver, provideHttpService } from '@bootkit/ng0/http';
-import { httpDataRequestResolver1 } from '@bootkit/ng0/http';
 import { map } from 'rxjs';
 import { DataResult } from '@bootkit/ng0/data';
+import { LocalizationService } from '@bootkit/ng0/localization';
+import { APP_FA_IR_LOCALE } from './common/locales/fa-ir';
 
 const appHttpDataRequestResolver: HttpDataRequestResolver = (url, request, options) => {
   let http = inject(HttpClient);
@@ -35,9 +35,13 @@ export const appConfig: ApplicationConfig = {
     provideHttpService({
       baseUrl: 'https://dummyjson.com/',
       dataRequestResolver: appHttpDataRequestResolver,
-    })
+    }),
     // { provide: NZ_I18N, useValue: en_US },
     // { provide: LOCALE, useClass: LocaleProvider },
     // { provide: APP_CONFIGURATION, useValue: APP_CONFIGS },
+    provideAppInitializer(() => {
+      var localizationService = inject(LocalizationService);
+      localizationService.add(APP_FA_IR_LOCALE);
+    }),
   ]
 };

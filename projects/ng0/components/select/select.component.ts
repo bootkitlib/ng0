@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, input, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataSource, DataSourceLike, stringFilter, FilterPredicate } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -41,7 +41,6 @@ export class SelectComponent implements ControlValueAccessor {
     private _resizeObserver?: ResizeObserver;
     private _resizeObserverInitialized = false;
     private _viewpoerRulerSubscription?: Subscription;
-    protected _value = signal<any>(undefined);
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
     private _changeCallback!: (value: any) => void;
     private _touchCallback!: (value: any) => void;
@@ -70,6 +69,11 @@ export class SelectComponent implements ControlValueAccessor {
     public readonly source = input.required<DataSource<any>, DataSourceLike<any>>({
         transform: v => dataSourceAttribute(v)
     });
+
+    /** 
+     * Value of the select component.
+     */
+    public value = model<any>(undefined);
 
     /** 
      * Indicates whether multi selection is enabled or not.
@@ -139,10 +143,15 @@ export class SelectComponent implements ControlValueAccessor {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
         this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
         this._scrollStrategy = this._overlay.scrollStrategies.block();
+
+        effect(() => {
+            // var value = this.value(); // track value
+            // this._changeCallback?.(value);
+        })
     }
 
     writeValue(obj: any): void {
-        this._value.set(obj);
+        this.value.set(obj);
     }
 
     registerOnChange(fn: any): void {
@@ -200,13 +209,10 @@ export class SelectComponent implements ControlValueAccessor {
         this._el?.nativeElement.focus();
     }
 
-    protected _onSelectionChange(value: any) {
+    protected _onListValueChange() {
         if (!this.multiple()) {
             this.open.set(false);
         }
-
-        this._value.set(value);
-        this._changeCallback(value);
     }
 
     private _listenToResizeEvents() {

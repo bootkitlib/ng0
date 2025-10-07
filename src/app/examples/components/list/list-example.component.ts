@@ -65,6 +65,7 @@ export class ListExampleComponent {
     value20?: number;
     value21?: string;
     value22?: string;
+    value23 = signal('Two');
 
     compareFunction1 = (a: any, b: any) => a?.id === b?.id;
     customValueWriter1 = (obj: any) => obj?.id;
