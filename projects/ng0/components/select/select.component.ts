@@ -1,12 +1,13 @@
-import { Component, ElementRef, Renderer2, input, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, OnInit, computed, EffectRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataSource, DataSourceLike, stringFilter, FilterPredicate } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataSource, DataSourceLike, stringFilter, FilterPredicate, DataRequest } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { CssClassAttribute, IdGenerator, SelectOption, sequentialIdGenerator, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter } from '@bootkit/ng0/common';
+import { CssClassAttribute, IdGenerator, SelectOption, sequentialIdGenerator, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter, findValuesByComparer, findValueByComparer } from '@bootkit/ng0/common';
 import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListModule } from '@bootkit/ng0/components/list';
+import { ListComponent, ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -37,21 +38,21 @@ import { ListModule } from '@bootkit/ng0/components/list';
         '[attr.aria-disabled]': '_isDisabled()'
     }
 })
-export class SelectComponent implements ControlValueAccessor {
+export class SelectComponent implements OnInit, ControlValueAccessor {
     private _resizeObserver?: ResizeObserver;
     private _resizeObserverInitialized = false;
     private _viewpoerRulerSubscription?: Subscription;
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
+    @ViewChild(ListComponent) private _listComponent?: ListComponent;
     private _changeCallback!: (value: any) => void;
     private _touchCallback!: (value: any) => void;
     protected readonly _options = signal<SelectOption[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
-    protected readonly _selectedOptionIndex = signal<number>(-1);
+    // protected readonly _selectedOptionIndex = signal<number>(-1);
     protected readonly _activeOptionIndex = signal<number>(-1);
     @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
     protected _positionStrategy!: FlexibleConnectedPositionStrategy;
     protected _scrollStrategy!: ScrollStrategy;
-
     private _overlay = inject(Overlay);
     private _document = inject(DOCUMENT);
     private _ls = inject(LocalizationService);
@@ -60,6 +61,7 @@ export class SelectComponent implements ControlValueAccessor {
     private _renderer = inject(Renderer2);
     private _viewportRuler = inject(ViewportRuler);
     private _changeDetector = inject(ChangeDetectorRef);
+    private _activateSlectedItemEffectRef!: EffectRef;
 
     /**
      * The data source for the select component.
@@ -110,7 +112,7 @@ export class SelectComponent implements ControlValueAccessor {
     });
 
     /**
-     * Indicates whether the dropdown is filterable.
+     * Indicates whether the select component is filterable.
      */
     public readonly filterable = input(false, { transform: booleanAttribute });
 
@@ -145,9 +147,35 @@ export class SelectComponent implements ControlValueAccessor {
         this._scrollStrategy = this._overlay.scrollStrategies.block();
 
         effect(() => {
-            // var value = this.value(); // track value
-            // this._changeCallback?.(value);
+            var value = this.value(); // track value
+            this._changeCallback?.(value);
         })
+
+
+        effect(() => {
+            var value = this.open(); // track value
+            console.log(`open :`, value);
+        })
+
+        this._activateSlectedItemEffectRef = effect(() => {
+            var value = this.value(); // track value
+            var options = this._options(); // track options
+
+            if (!this.multiple() && this._activeOptionIndex() == -1 && options.length > 0) {
+                let index = options.findIndex(x => this.compareBy()(x, this.value()));
+                if (index > -1) {
+                    this._activeOptionIndex.set(index);
+                    this._activateSlectedItemEffectRef.destroy();
+                }
+            }
+        })
+    }
+
+    ngOnInit(): void {
+        this.source().load(new DataRequest()).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
+            this._options.set(res.data);
+            this._changeDetector.markForCheck();
+        });
     }
 
     writeValue(obj: any): void {
@@ -166,54 +194,50 @@ export class SelectComponent implements ControlValueAccessor {
         this._isDisabled.set(isDisabled);
     }
 
-    @HostListener('keydown', ['$event'])
-    protected _onKeydown(e: KeyboardEvent, firedByFilter: boolean = false) {
-        let open = this.open();
-
-        if (this._isDisabled())
-            return;
-
-        let optionsCount = this._options().length;
-        if (optionsCount == 0) {
-            return;
-        }
-    }
-
     protected _onFilterBlur() {
         // use setTimeout to allow next element receives the focus.
+        // setTimeout(() => {
+        //     if (!this._el.nativeElement.matches(':focus')) {
+        //         this.open.set(false);
+        //     }
+        // }, 0);
+    }
+
+    protected _onOverlayAttach() {
+        this._listenToResizeEvents();
+
         setTimeout(() => {
-            if (!this._el.nativeElement.matches(':focus')) {
-                this.open.set(false);
+            if (this.filterable()) {
+                this._filterElementRef?.nativeElement.focus();
+            }
+
+            if (this._activeOptionIndex() > -1) {
+                this._listComponent?.active(this._activeOptionIndex());
             }
         }, 0);
     }
 
-    protected _onOverlayAttach() {
-        this._activeOptionIndex.set(this._selectedOptionIndex())
-
-        this._listenToResizeEvents();
-
-        if (this.filterable()) {
-            setTimeout(() => {
-                this._filterElementRef?.nativeElement.focus();
-            }, 0);
-        }
-
-        if (this._selectedOptionIndex() > -1) {
-            // this.scrollItemIntoView(this._selectedOptionIndex(), 'start', 'instant');
-        }
-    }
-
     protected _onOverlayDetach() {
         this._unlistenFromResizeEvents();
-        this._el?.nativeElement.focus();
+        this._el!.nativeElement.focus();
+        this.open.set(false);
     }
 
-    protected _onListValueChange() {
+    protected _onListSelectionChange(e: ListSelectionChangeEvent) {
         if (!this.multiple()) {
+            this._activeOptionIndex.set(e.index);
             this.open.set(false);
+
         }
     }
+
+    // Find the value in options using the comparer function
+    protected _mappedValue = computed(() => {
+        let options = this._options(); // track options
+        return this.multiple() ?
+            findValuesByComparer(this._options(), this.value(), this.compareBy()) :
+            findValueByComparer(this._options(), this.value(), this.compareBy());
+    });
 
     private _listenToResizeEvents() {
         this._viewportRuler.change().subscribe(x => {
@@ -245,6 +269,88 @@ export class SelectComponent implements ControlValueAccessor {
         this._resizeObserver?.disconnect();
         this._resizeObserver = undefined;
         this._resizeObserverInitialized = false;
+    }
+
+    private _selectFirst() {
+        let optionsCount = this._options().length;
+        if (optionsCount > 0) {
+            this._activeOptionIndex.set(0);
+            let value = this.writeBy()(this._options()[this._activeOptionIndex()]);
+            this.value.set(value);
+        }
+    }
+    private _selectLast() {
+        let optionsCount = this._options().length;
+
+        if (optionsCount > 0) {
+            this._activeOptionIndex.set(optionsCount - 1);
+            let value = this.writeBy()(this._options()[this._activeOptionIndex()]);
+            this.value.set(value);
+        }
+    }
+
+    private _selectNext() {
+        let optionsCount = this._options().length;
+
+        if (this._activeOptionIndex() < optionsCount - 1) {
+            this._activeOptionIndex.update(x => x + 1);
+            let value = this.writeBy()(this._options()[this._activeOptionIndex()]);
+            this.value.set(value);
+        }
+    }
+
+    private _selectPrevious() {
+        // let optionsCount = this._options().length;
+
+        if (this._activeOptionIndex() > 0) {
+            this._activeOptionIndex.update(x => x - 1);
+            let value = this.writeBy()(this._options()[this._activeOptionIndex()]);
+            this.value.set(value);
+        }
+    }
+
+    @HostListener('keydown', ['$event'])
+    private _onHostKeydown(e: KeyboardEvent) {
+        if (this._isDisabled())
+            return;
+
+        let optionsCount = this._options().length;
+        if (optionsCount == 0) {
+            return;
+        }
+        console.log(this.open())
+
+        if (this.open()) {
+            const newEvent = new KeyboardEvent(e.type, e);
+            this._listComponent?.elementRef.nativeElement.dispatchEvent(newEvent);
+        } else {
+            switch (e.key) {
+                case 'ArrowDown':
+                    if (this.multiple()) return;
+                    this._selectNext();
+                    e.preventDefault();
+                    break;
+                case 'ArrowUp':
+                    if (this.multiple()) return;
+                    this._selectPrevious();
+                    e.preventDefault();
+                    break;
+                case 'Enter':
+                    this.open.set(!this.open());
+                    // e.preventDefault();
+                    break;
+                case 'Home':
+                    if (this.multiple()) return;
+                    this._selectFirst();
+                    e.preventDefault();
+                    break;
+                case 'End':
+                    if (this.multiple()) return;
+                    this._selectLast();
+                    e.preventDefault();
+                    break;
+            }
+        }
     }
 
     @HostListener('click', ['$event'])

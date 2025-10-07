@@ -134,6 +134,7 @@ export class Locale {
 
     if (!formatter) {
       console.warn(`The formatter "${formatterName}" is not defined in locale ${this.definition.name}`);
+      return (value) => value?.toString() || '' // return a default formatter
     }
 
     if (formatterType === 'function') {
@@ -143,7 +144,7 @@ export class Locale {
     } else if (formatterType == 'object' && formatter != null) {
       return (value: string) => (formatter as any)[value] || ''
     } else {
-      return (value) => `${value}`;
+      throw Error(`Invalid locale formatter: ${formatterName}`);
     }
   }
 }

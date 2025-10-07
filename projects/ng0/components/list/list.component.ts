@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, ViewEncapsulation, model } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, ViewEncapsulation, model, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike, stringFilter, FilterPredicate, filterPredicateAttribute } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -8,7 +8,7 @@ import {
     defaultValueWriter,
 } from '@bootkit/ng0/common';
 import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListItem } from './types';
+import { ListItem, ListSelectionChangeEvent } from './types';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -38,11 +38,11 @@ import { ListItem } from './types';
     }
 })
 export class ListComponent implements OnInit, ControlValueAccessor {
+
     private _document = inject(DOCUMENT);
     private _ls = inject(LocalizationService);
     private _renderer = inject(Renderer2);
     private _destroyRef = inject(DestroyRef);
-    private _el = inject<ElementRef<HTMLDivElement>>(ElementRef<HTMLDivElement>);
     private _changeDetector = inject(ChangeDetectorRef);
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: (value: any) => void;
@@ -51,6 +51,11 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _activeOptionIndex = signal<number>(-1);
     @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
+
+    /**
+     * Reference to the host element
+     */
+    public elementRef = inject<ElementRef<HTMLElement>>(ElementRef<HTMLElement>);
 
     /**
      * The data source for the select component.
@@ -129,6 +134,12 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      */
     public readonly idGenerator = input<IdGenerator | undefined>(sequentialIdGenerator('ng0-list-item-'));
 
+    /**
+     * Event emitted when the selection changes by user.
+     * Emits an object containing the selected value and its index.
+     */
+    @Output() public readonly selectionChange = new EventEmitter<ListSelectionChangeEvent>();
+
     constructor() {
         effect(() => {
             var value = this.value(); // track value
@@ -137,21 +148,34 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         })
     }
 
+    writeValue(value: any): void {
+        if (this.multiple() && value !== null && value !== undefined && !Array.isArray(value)) {
+            throw Error('Provide array or null as the value for multi-select list/select/autocomplete component.');
+        }
+
+        this.value.set(value);
+        this._updateSelectionState();
+    }
+
     ngOnInit(): void {
         this._loadItems();
-        this._listenToDataSourceChanges();
     }
 
     /**
      * Sets an option as active
+     * @param index The index of the option to set as active.
+     * @param scrollIntoView Whether to scroll the active option into view. Default is true.
+     * @returns void
      */
-    public active(index: number): void {
-        if (index < 0) {
-            throw Error();
+    public active(index: number, scrollIntoView = true): void {
+        if (index < 0 || index >= this._items().length) {
+            throw Error('Index out of range');
         }
 
         this._activeOptionIndex.set(index);
-        // this.scrollItemIntoView(this._activeOptionIndex(), 'nearest');
+        if (scrollIntoView) {
+            this.scrollIntoView(this._activeOptionIndex(), 'nearest');
+        }
     }
 
     /**
@@ -181,9 +205,9 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      *                 Default is 'nearest'.
      * @param behavior The scrolling behavior.
      */
-    public scrollItemIntoView(index: number, position?: ScrollLogicalPosition, behavior?: ScrollBehavior) {
+    public scrollIntoView(index: number, position?: ScrollLogicalPosition, behavior?: ScrollBehavior) {
         let item = this._items()[index];
-        let elm = this._document.getElementById(item.id) as HTMLUListElement;
+        let elm = this._document.getElementById(item.id) as HTMLElement;
         elm!.scrollIntoView({ block: position, behavior: behavior });
     }
 
@@ -232,15 +256,6 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         return this._activeOptionIndex() === index;
     }
 
-    writeValue(value: any): void {
-        if (this.multiple() && value !== null && value !== undefined && !Array.isArray(value)) {
-            throw Error('Provide array or null as the value for multi-select list/select/autocomplete component.');
-        }
-
-        this.value.set(value);
-        this._updateSelectionState();
-    }
-
     private _updateSelectionState() {
         let compareBy = this.compareBy();
         if (this.multiple() && Array.isArray(this.value())) {
@@ -274,29 +289,34 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             return;
         }
 
+        let index = this._activeOptionIndex();
+
         switch (e.key) {
             case 'ArrowDown':
-                if (this._activeOptionIndex() < optionsCount - 1) {
-                    this.active(this._activeOptionIndex() + 1);
+                if (index < optionsCount - 1) {
+                    this.active(index + 1);
                 }
                 e.preventDefault();
                 break;
 
             case 'ArrowUp':
-                if (this._activeOptionIndex() > 0) {
-                    this.active(this._activeOptionIndex()! - 1);
+                if (index > 0) {
+                    this.active(index - 1);
                 }
                 e.preventDefault();
                 break;
             case 'Tab': // Go to next item if roving focus is enabled
-                if (this.focus() === 'roving' && this._activeOptionIndex() < optionsCount - 1) {
-                    this.active(this._activeOptionIndex() + 1);
+                if (this.focus() === 'roving' && index < optionsCount - 1) {
+                    this.active(index + 1);
                     e.preventDefault();
                 }
                 break;
             case 'Enter':
-                this.toggleSelection(this._activeOptionIndex());
-                e.preventDefault();
+                if (index > -1) {
+                    this._select(index, !this.isSelected(index), true);
+                }
+
+                // e.preventDefault();
                 break;
 
             case 'Home':
@@ -324,8 +344,18 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     private _onHostClick(e: MouseEvent) {
         const target = e.target as HTMLElement;
         if (this.focus() != 'none') {
-            this._el.nativeElement.focus();
+            this.elementRef.nativeElement.focus();
         }
+    }
+
+    protected _onItemClick(item: ListItem, index: number) {
+        if (this.multiple()) {
+            this._select(index, !this.isSelected(index), true);
+        } else {
+            this._select(index, true, true);
+        }
+
+        this.active(index)
     }
 
     private _loadItems() {
@@ -333,9 +363,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
             this._insertItems(0, ...res.data);
         });
-    }
 
-    private _listenToDataSourceChanges() {
+        // listen to changes
         this.source().change.subscribe(e => {
             let options = this._items();
             e.changes.forEach(change => {
@@ -380,7 +409,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         this._changeDetector.markForCheck();
     }
 
-    private _select(index: number, selected: boolean) {
+    private _select(index: number, selected: boolean, changedByUser = false) {
         let optionsCount = this._items().length;
         if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
             throw new Error('Index out of range');
@@ -402,6 +431,10 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             item.selected = selected;
             let itemValue = this.writeBy()(item.value);
             this.value.set(itemValue);
+        }
+
+        if (changedByUser) {
+            this.selectionChange.emit({ value: this.value(), index: index });
         }
     }
 }

@@ -38,3 +38,4 @@ export function valueComparerAttribute(v: ValueComparerLike): ValueComparer {
 
     throw Error('invalid value comparer');
 }
+

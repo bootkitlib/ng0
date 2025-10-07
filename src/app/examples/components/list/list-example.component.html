@@ -181,7 +181,7 @@
                         <ng0-list name="value10"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value10"
-                                  formatBy="field:name">
+                                  formatBy="@name">
                         </ng0-list>
 
                         Value: {{ value10 }}
@@ -202,7 +202,7 @@
                         <ng0-list name="value11"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value11"
-                                  formatBy="field:name"
+                                  formatBy="@name"
                                   compareBy="id">
                         </ng0-list>
 
@@ -214,7 +214,7 @@
                         <ng0-list name="value12"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value12"
-                                  formatBy="field:name"
+                                  formatBy="@name"
                                   [compareBy]="compareFunction1">
                         </ng0-list>
 
@@ -238,7 +238,7 @@
                         <ng0-list name="value13"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value13"
-                                  formatBy="field:name"
+                                  formatBy="@name"
                                   compareBy="id"
                                   writeBy="id">
                         </ng0-list>
@@ -252,7 +252,7 @@
                                   [source]="objectsSource1"
                                   [(ngModel)]="value14"
                                   [writeBy]="customValueWriter1"
-                                  formatBy="field:name">
+                                  formatBy="@name">
                         </ng0-list>
 
                         Value: {{ value14 }}
@@ -313,7 +313,7 @@
                                   [source]="objectsSource1"
                                   [(ngModel)]="value16"
                                   writeValueBy="id"
-                                  formatBy="field:name">
+                                  formatBy="@name">
                             <ng-template let-option>
                                 <div class="py-1">
                                     ❤️ This is <strong>option {{option.value.id}}</strong> <br>
@@ -345,7 +345,7 @@
                                   [source]="stringArray"
                                   [(ngModel)]="value17"
                                   writeValueBy="id"
-                                  formatBy="field:name">
+                                  formatBy="@name">
                             <ng-template let-option>
                                 ❤️ {{option.value}}
                             </ng-template>

@@ -44,7 +44,7 @@ export class SelectExampleComponent {
     fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(100)))
     Sexuality = Sexuality;
 
-    value1?: string;
+    value1 = 'Ten';
     value2?: string;
     value3?: number;
     value4 = true;
@@ -63,11 +63,13 @@ export class SelectExampleComponent {
     value17?: number;
     value18?: number;
     value19 = { id: 2 };
-    value20?: number;
+    value20 = { id: 3 };
 
     // An object formatter function
     // Note: You should handle null|undefined objects too.
     objectFormatter1 = (item?: Person) => item?.name || '';
+
+    personComparer1 = (item?: Person, other?: Person) => item?.id === other?.id;
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);

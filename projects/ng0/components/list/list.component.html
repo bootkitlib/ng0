@@ -8,7 +8,7 @@
      [class.active]="$index == _activeOptionIndex()"
      [class.selected]="i.selected"
      [attr.tabIndex]="_getItemTabIndex($index)"
-     (click)="multiple() ? toggleSelection($index) : select($index); active($index)">
+     (click)="_onItemClick(i, $index)">
 
        @if(_itemTemplate) {
        <ng-container *ngTemplateOutlet="_itemTemplate; context: { $implicit: {

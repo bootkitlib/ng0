@@ -5,3 +5,8 @@ export interface ListItem {
     disabled?: boolean,
     filtered?: boolean,
 }
+
+export interface ListSelectionChangeEvent {
+    value: any,
+    index: number;
+}
