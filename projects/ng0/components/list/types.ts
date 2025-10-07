@@ -6,7 +6,8 @@ export interface ListItem {
     filtered?: boolean,
 }
 
-export interface ListSelectionChangeEvent {
-    value: any,
+export interface ListItemSelectionChangeEvent {
     index: number;
+    item: any,
+    selected: boolean,
 }

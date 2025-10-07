@@ -4,13 +4,13 @@
             <div class="card-body">
                 <h5 class="card-title">Native list</h5>
 
-                <div class="input-group">
-                    <select class="form-select" multiple>
-                        @for (item of stringArray; track $index) {
-                        <option>{{item}}</option>
-                        }
-                    </select>
-                </div>
+                <select class="form-select" multiple [(ngModel)]="value0">
+                    @for (item of stringArray; track $index) {
+                    <option>{{item}}</option>
+                    }
+                </select>
+
+                Value: {{ value0 | json }}
             </div>
         </div>
     </div>
@@ -234,7 +234,7 @@
                 </p>
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        writeValueBy (field)
+                        writeBy (field)
                         <ng0-list name="value13"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value13"
@@ -247,7 +247,7 @@
                     </div>
 
                     <div class="col-xl-6">
-                        writeValueBy (custom function)
+                        writeBy (custom function)
                         <ng0-list name="value14"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value14"
@@ -312,7 +312,7 @@
                         <ng0-list name="value16"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value16"
-                                  writeValueBy="id"
+                                  writeBy="id"
                                   formatBy="@name">
                             <ng-template let-option>
                                 <div class="py-1">
@@ -344,7 +344,7 @@
                         <ng0-list #list17 name="value17"
                                   [source]="stringArray"
                                   [(ngModel)]="value17"
-                                  writeValueBy="id"
+                                  writeBy="id"
                                   formatBy="@name">
                             <ng-template let-option>
                                 ❤️ {{option.value}}

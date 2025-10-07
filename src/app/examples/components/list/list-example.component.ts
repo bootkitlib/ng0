@@ -43,6 +43,7 @@ export class ListExampleComponent {
     localDatasource1 = new LocalDataSource(["Option 1", "Option 2", "Option 3"]);
     fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(100)))
 
+    value0?: string;
     value1?: string;
     value2?: string;
     value3?: string[] = [];

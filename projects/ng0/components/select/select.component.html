@@ -1,6 +1,6 @@
 @let formattedValue = formatBy()(_mappedValue());
 
-@if(formattedValue == null  || formattedValue == '') {
+@if(formattedValue == null || formattedValue == '') {
 &nbsp;
 }@else {
 {{formattedValue}}
@@ -40,17 +40,21 @@
               [(value)]="value"
               [multiple]="multiple()"
               [idGenerator]="idGenerator()"
-              [formatBy]="formatBy()"
               [filterBy]="filterBy()"
               [compareBy]="compareBy()"
               focus="none"
               style="border: none;"
-              (click)="$event.preventDefault(); $event.stopImmediatePropagation(); open.set(false)"
-              (selectionChange)="_onListSelectionChange($event)">
-        <!-- @if(_optionTemplate) {
+              (mousedown)="$event.preventDefault(); $event.stopImmediatePropagation()"
+              (click)="open.set(false)"
+              (itemSelectionChange)="_onListSelectionChange($event)">
+
         <ng-template let-option>
+            @if(_optionTemplate) {
             <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: option}" />
+            }@else {
+            {{formatBy()(option.value)}}
+            }
         </ng-template>
-        } -->
+
     </ng0-list>
 </ng-template>

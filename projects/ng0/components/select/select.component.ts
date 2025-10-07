@@ -6,7 +6,7 @@ import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrate
 import { Subscription } from 'rxjs';
 import { CssClassAttribute, IdGenerator, SelectOption, sequentialIdGenerator, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter, findValuesByComparer, findValueByComparer } from '@bootkit/ng0/common';
 import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListComponent, ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
+import { ListComponent, ListModule, ListItemSelectionChangeEvent } from '@bootkit/ng0/components/list';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
@@ -154,7 +154,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
         effect(() => {
             var value = this.open(); // track value
-            console.log(`open :`, value);
         })
 
         this._activateSlectedItemEffectRef = effect(() => {
@@ -223,17 +222,15 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         this.open.set(false);
     }
 
-    protected _onListSelectionChange(e: ListSelectionChangeEvent) {
+    protected _onListSelectionChange(e: ListItemSelectionChangeEvent) {
         if (!this.multiple()) {
             this._activeOptionIndex.set(e.index);
             this.open.set(false);
-
         }
     }
 
     // Find the value in options using the comparer function
     protected _mappedValue = computed(() => {
-        let options = this._options(); // track options
         return this.multiple() ?
             findValuesByComparer(this._options(), this.value(), this.compareBy()) :
             findValueByComparer(this._options(), this.value(), this.compareBy());
@@ -318,7 +315,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         if (optionsCount == 0) {
             return;
         }
-        console.log(this.open())
 
         if (this.open()) {
             const newEvent = new KeyboardEvent(e.type, e);

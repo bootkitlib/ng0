@@ -8,7 +8,7 @@ import {
     defaultValueWriter,
 } from '@bootkit/ng0/common';
 import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListItem, ListSelectionChangeEvent } from './types';
+import { ListItem, ListItemSelectionChangeEvent } from './types';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -135,10 +135,10 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     public readonly idGenerator = input<IdGenerator | undefined>(sequentialIdGenerator('ng0-list-item-'));
 
     /**
-     * Event emitted when the selection changes by user.
-     * Emits an object containing the selected value and its index.
+     * Event emitted when the selection state of an item changes.
+     * Emits an object containing the item, its selected state, and its index.
      */
-    @Output() public readonly selectionChange = new EventEmitter<ListSelectionChangeEvent>();
+    @Output() public readonly itemSelectionChange = new EventEmitter<ListItemSelectionChangeEvent>();
 
     constructor() {
         effect(() => {
@@ -313,7 +313,14 @@ export class ListComponent implements OnInit, ControlValueAccessor {
                 break;
             case 'Enter':
                 if (index > -1) {
-                    this._select(index, !this.isSelected(index), true);
+                    if(this.multiple()) {
+                        this.toggleSelection(index);
+                    } else {
+                        this.select(index);
+                    }
+
+                    let item = this._items()[index];
+                    this.itemSelectionChange.emit({ item: item.value, selected: item.selected || false, index: index });
                 }
 
                 // e.preventDefault();
@@ -350,12 +357,13 @@ export class ListComponent implements OnInit, ControlValueAccessor {
 
     protected _onItemClick(item: ListItem, index: number) {
         if (this.multiple()) {
-            this._select(index, !this.isSelected(index), true);
+            this._select(index, !this.isSelected(index));
         } else {
-            this._select(index, true, true);
+            this._select(index, true);
         }
 
         this.active(index)
+        this.itemSelectionChange.emit({ item: item.value, index: index, selected: item.selected || false });
     }
 
     private _loadItems() {
@@ -409,7 +417,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         this._changeDetector.markForCheck();
     }
 
-    private _select(index: number, selected: boolean, changedByUser = false) {
+    private _select(index: number, selected: boolean) {
         let optionsCount = this._items().length;
         if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
             throw new Error('Index out of range');
@@ -431,10 +439,6 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             item.selected = selected;
             let itemValue = this.writeBy()(item.value);
             this.value.set(itemValue);
-        }
-
-        if (changedByUser) {
-            this.selectionChange.emit({ value: this.value(), index: index });
         }
     }
 }
