@@ -15,7 +15,33 @@
             </div>
         </div>
     </div>
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Custom Item templates</h5>
+                <p>
+                </p>
 
+                <div class="row">
+                    <div class="col-xl-3">
+                        Select an object
+                        <ng0-select name="value14" [source]="personList1" [(ngModel)]="value14"
+                                    formatBy="@name">
+                            <ng-template let-option>
+                                <div class="py-1">
+                                    ❤️
+                                    <strong>{{option.value.name}}</strong> <br>
+                                    <small >Extra info about {{option.value.name}}</small>
+                                </div>
+                            </ng-template>
+                        </ng0-select>
+
+                        Value: {{ value14 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="col-xl-6">
         <div class="card">
             <div class="card-body">
@@ -211,10 +237,10 @@
                 <div class="row">
                     <div class="col-xl-3">
                         With writeBy
-                        <ng0-select name="value10" [source]="personList1" [(ngModel)]="value10" writeBy="id">
+                        <ng0-select name="value10" [source]="personList1" [(ngModel)]="value10" writeBy="id" formatBy="@name">
                         </ng0-select>
 
-                        Value: {{ value10 }}
+                        Value: {{ value10 | json }}
                     </div>
 
                     <div class="col-xl-3">
@@ -222,11 +248,11 @@
                         <ng0-select name="value11"
                                     [source]="personList1"
                                     [(ngModel)]="value11"
-                                    writeBy="id"
+                                    
                                     formatBy="@name">
                         </ng0-select>
 
-                        Value: {{ value11 }}
+                        Value: {{ value11  | json }}
                     </div>
                 </div>
             </div>
@@ -295,32 +321,7 @@
         </div>
     </div>
 
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Custom item template</h5>
-                <p>
-                </p>
 
-                <div class="row">
-                    <div class="col-xl-3">
-                        Select an object
-                        <ng0-select name="value14" [source]="personList1" [(ngModel)]="value14" writeBy="id"
-                                    formatBy="@name">
-                            <ng-template let-option>
-                                <div class="py-1">
-                                    ❤️ This is <strong>option {{option.value.id}}</strong> <br>
-                                    <small class="text-muted">This is extra info about item {{option.value.id}}</small>
-                                </div>
-                            </ng-template>
-                        </ng0-select>
-
-                        Value: {{ value14 }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <div class="col-xl-12">
         <div class="card">

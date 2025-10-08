@@ -74,15 +74,17 @@ export class LocalDataSource extends DataSource {
   }
 
   public remove(index: any) {
-    if (index < 0) {
-      throw Error('Invalid index');
-    }
-
+    this._ensureListHasItems();
+    this._validateIndex(index);
     this.items.splice(index, 1);
     this.changeSubject.next({ changes: [{ type: 'remove', index, count: 1 }] });
   }
 
+
   public insert(index: number, ...items: any[]) {
+    if (index < 0 || index >= this.items.length) {
+      throw Error('Invalid index');
+    }
     this.items.splice(index, 0, ...items);
     this.changeSubject.next({ changes: [{ type: 'insert', items, index }] });
   }
@@ -94,8 +96,22 @@ export class LocalDataSource extends DataSource {
   }
 
   public replace(index: number, newValue: any) {
+    this._ensureListHasItems();
+    this._validateIndex(index);
     this.items[index] = newValue;
     this.changeSubject.next({ changes: [{ type: 'replace', value: newValue, index }] });
+  }
+
+  private _validateIndex(index: number) {
+    if (index < 0 || index > this.items.length) {
+      throw Error('Invalid index');
+    }
+  }
+
+  private _ensureListHasItems() {
+    if (this.items.length == 0) {
+      throw Error('The data source is empty.');
+    }
   }
 }
 

@@ -31,7 +31,7 @@ import { ListItem, ListItemSelectionChangeEvent } from './types';
     }],
     host: {
         '[class.ng0-list-loading]': 'source().isLoading()',
-        '[attr.aria-activedescendant]': '_activeOptionIndex() > -1 ? (_items()[_activeOptionIndex()].id) : undefined',
+        '[attr.aria-activedescendant]': '_activeOptionIndex() > -1 && _items().length ? (_items()[_activeOptionIndex()].id) : undefined',
         '[attr.disabled]': '_isDisabled()',
         '[attr.tabindex]': '_isDisabled() || focus() === "none" ? "-1" : "0"',
         '[attr.aria-disabled]': '_isDisabled()'
@@ -148,15 +148,6 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         })
     }
 
-    writeValue(value: any): void {
-        if (this.multiple() && value !== null && value !== undefined && !Array.isArray(value)) {
-            throw Error('Provide array or null as the value for multi-select list/select/autocomplete component.');
-        }
-
-        this.value.set(value);
-        this._updateSelectionState();
-    }
-
     ngOnInit(): void {
         this._loadItems();
     }
@@ -248,7 +239,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     }
 
     /**
-     *  Checks if an option is active.
+     * Checks if an option is active.
      * @param index The index of the option to check.
      * @returns True if the option is active, false otherwise.
      */
@@ -267,6 +258,15 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         }
     }
 
+    writeValue(value: any): void {
+        if (this.multiple() && value !== null && value !== undefined && !Array.isArray(value)) {
+            throw Error('Provide array or null as the value for multi-select list/select/autocomplete component.');
+        }
+
+        this.value.set(value);
+        this._updateSelectionState();
+    }
+
     registerOnChange(fn: any): void {
         this._changeCallback = fn;
     }
@@ -280,7 +280,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     }
 
     @HostListener('keydown', ['$event'])
-    protected _onKeydown(e: KeyboardEvent, firedByFilter: boolean = false) {
+    private _onKeydown(e: KeyboardEvent, firedByFilter: boolean = false) {
         if (this._isDisabled())
             return;
 
@@ -313,7 +313,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
                 break;
             case 'Enter':
                 if (index > -1) {
-                    if(this.multiple()) {
+                    if (this.multiple()) {
                         this.toggleSelection(index);
                     } else {
                         this.select(index);
@@ -347,14 +347,6 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         return focus === 'roving' ? (this._activeOptionIndex() === index ? 0 : -1) : -1;
     }
 
-    @HostListener('click', ['$event'])
-    private _onHostClick(e: MouseEvent) {
-        const target = e.target as HTMLElement;
-        if (this.focus() != 'none') {
-            this.elementRef.nativeElement.focus();
-        }
-    }
-
     protected _onItemClick(item: ListItem, index: number) {
         if (this.multiple()) {
             this._select(index, !this.isSelected(index));
@@ -374,17 +366,17 @@ export class ListComponent implements OnInit, ControlValueAccessor {
 
         // listen to changes
         this.source().change.subscribe(e => {
-            let options = this._items();
+            let items = this._items();
             e.changes.forEach(change => {
                 switch (change.type) {
                     case 'insert':
                         this._insertItems(change.index!, ...change.items);
                         break;
                     case 'replace':
-                        options[change.index].value = change.value;
+                        items[change.index].value = change.value;
                         break;
                     case 'remove':
-                        options.splice(change.index, change.count);
+                        items.splice(change.index, change.count);
                 }
             });
 
@@ -441,4 +433,13 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             this.value.set(itemValue);
         }
     }
+
+    @HostListener('click', ['$event'])
+    private _onHostClick(e: MouseEvent) {
+        const target = e.target as HTMLElement;
+        if (this.focus() != 'none') {
+            this.elementRef.nativeElement.focus();
+        }
+    }
+
 }

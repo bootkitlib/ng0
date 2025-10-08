@@ -38,7 +38,7 @@ export function valueFormatterAttribute(locale?: Locale): ((v: ValueFormatterLik
             return v;
         else if (typeof v === 'string') {
             if (v.startsWith('@')) {
-                let fieldName = v.substring(6);
+                let fieldName = v.substring(1);
                 return (item: any) => (item?.[fieldName]?.toString() as string) ?? '';
             } else {
                 if (locale == null) {

@@ -3,7 +3,9 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Native list</h5>
-
+                <p>
+                    a select element with "multiple" attribute
+                </p>
                 <select class="form-select" multiple [(ngModel)]="value0">
                     @for (item of stringArray; track $index) {
                     <option>{{item}}</option>
@@ -11,6 +13,314 @@
                 </select>
 
                 Value: {{ value0 | json }}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to simple arrays</h5>
+
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        number[]
+                        <ng0-list name="value25" [source]="numberArray" [(ngModel)]="value25"></ng0-list>
+                        Value: {{ value25 }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        string[]
+                        <ng0-list name="value26" [source]="stringArray" [(ngModel)]="value26">
+                        </ng0-list>
+                        Value: {{ value26 | json }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        boolean[]
+                        <ng0-list name="value27" [source]="[true, false]" [(ngModel)]="value27">
+                        </ng0-list>
+                        Value: {{ value27 | json }}
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-5">
+                    Note: The Array passed as "source" is converted to a LocalDataSource internally.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to boolean values</h5>
+                <p>
+                    Set [source]="[true, false]" to display boolean values. <br>
+                    Using formatters you can display different text for true/false values.
+                    The formatters are defined in the locale files.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Default
+                        <ng0-list name="value5" [source]="[true, false]" [(ngModel)]="value5">
+                        </ng0-list>
+
+                        Value: {{ value5 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        formatBy="boolean:OnOff"
+                        <ng0-list name="value6" [source]="[true, false]" [(ngModel)]="value6"
+                                  formatBy="boolean:OnOff">
+                        </ng0-list>
+                        Value: {{ value6 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        formatBy="boolean:CorrectIncorrect"
+                        <ng0-list name="value7" [source]="[true, false]" [(ngModel)]="value7"
+                                  formatBy="boolean:CorrectIncorrect">
+                        </ng0-list>
+                        Value: {{ value7 }}
+                    </div>
+
+                    <div class="col-xl-3">
+                        formatBy="boolean:EnableDisable"
+                        <ng0-list name="value8" [source]="[true, false]" [(ngModel)]="value8"
+                                  formatBy="boolean:EnableDisable">
+                        </ng0-list>
+                        Value: {{ value8 }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to Enums</h5>
+                <p>
+                    Pass an Enum as source and use a formatter to display the enum titles.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-6">
+                        Sexuality: Default
+                        <ng0-list name="value18" [source]="Sexuality" [(ngModel)]="value18">
+                        </ng0-list>
+
+                        Value: {{ value18 }}
+                    </div>
+                    <div class="col-xl-6">
+                        Sexuality: using formatBy="enum:Sexuality"
+                        <ng0-list name="value24" [source]="Sexuality" [(ngModel)]="value24"
+                                  formatBy="enum:Sexuality">
+                        </ng0-list>
+
+                        Value: {{ value24 }}
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-5">
+                    Note: The enum object passed as "source" is converted to a LocalDataSource internally.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to objects</h5>
+                <p>
+                    Pass an array of objects as source. <br>
+                    By default the toString() method of the object is used to display the item.
+                    In most cases you want to use a formatter to display a specific field of the object.
+                </p>
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        source: object[] (without formatter)
+                        <ng0-list name="value9" [source]="objectsSource1" [(ngModel)]="value9">
+                        </ng0-list>
+                        Value: {{ value9 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Format Items:</h5>
+                <p>
+                    Format source items by a specific field, a locale formatter or by a custom function. <br>
+                </p>
+                You have 3 ways to format items:
+                <ul>
+                    <li>Using object fields: formatBy="@<i class="text-info">fieldName</i> "</li>
+                    <li>Using a formatBy function: [formatBy]="<i class="text-info">functionName</i>"</li>
+                    <li>Using a locale formatter: formatBy="<i class="text-info">formatterName</i> "
+                    </li>
+                </ul>
+
+                <div class="row g-4">
+                    <div class="col-xl-4">
+                        formatBy="@name"
+                        <ng0-list name="value10" [source]="objectsSource1" [(ngModel)]="value10" formatBy="@name">
+                        </ng0-list>
+
+                        Value: {{ value10 | json }}
+                    </div>
+
+                    <div class="col-xl-4">
+                        formatBy="personFormatter1"
+                        <ng0-list name="value29" [source]="objectsSource1" [(ngModel)]="value29"
+                                  formatBy="personFormatter1">
+                        </ng0-list>
+
+                        Value: {{ value29 | json}}
+                    </div>
+
+                    <div class="col-xl-4">
+                        [formatBy]="formatterFunction"
+                        <ng0-list name="value28" [source]="objectsSource1" [(ngModel)]="value28"
+                                  [formatBy]="personFormatter1">
+                        </ng0-list>
+
+                        Value: {{ value28 | json}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Compare items:</h5>
+                <p>
+                    Compare source items with the selected value(s) by a specific field or by a custom function.
+                    <br>
+                    This is useful when the source items are objects and the selected value(s) are not the same
+                    object
+                    instances.
+                </p>
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        compareBy="id"; formatBy="@name"
+                        <ng0-list name="value11" [source]="objectsSource1" [(ngModel)]="value11"
+                                  formatBy="@name" compareBy="id">
+                        </ng0-list>
+
+                        Value: {{ value11 | json}}
+                    </div>
+
+                    <div class="col-xl-6">
+                        [compareBy]="compareFunction"; formatBy="@name"
+                        <ng0-list name="value12"
+                                  [source]="objectsSource1"
+                                  [(ngModel)]="value12"
+                                  formatBy="@name"
+                                  [compareBy]="compareFunction1">
+                        </ng0-list>
+
+                        Value: {{ value12 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Custom value writer:</h5>
+                <p>
+                    Write back the selected value(s) by a specific field or by a custom function. <br>
+                    This is useful when you want to bind the component to a specific property of an object instead
+                    of
+                    the
+                    whole object.
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        writeBy="id"; compareBy="id"; formatBy="@name"
+                        <ng0-list name="value13"
+                                  [source]="objectsSource1"
+                                  [(ngModel)]="value13"
+                                  formatBy="@name"
+                                  compareBy="id"
+                                  writeBy="id">
+                        </ng0-list>
+
+                        Value: {{ value13 }}
+                    </div>
+
+                    <div class="col-xl-6">
+                        [writeBy]="customValueWriter1"; formatBy="@name"
+                        <ng0-list name="value14" [source]="objectsSource1" [(ngModel)]="value14"
+                                  [writeBy]="customValueWriter1" formatBy="@name">
+                        </ng0-list>
+
+                        Value: {{ value14 }}
+                    </div>
+
+                    <div class="col-xl-12">
+                        <span class="text-primary">
+                            Bind to a DB ForeignKey: [writeBy]="id"; formatBy="@name"
+                        </span>
+
+                        <ng0-list name="value30" [source]="objectsSource1" [(ngModel)]="value30"
+                                  writeBy="id" [compareBy]="compareFunction2" formatBy="@name">
+                        </ng0-list>
+
+                        Value: {{ value30 }}
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-4">
+                    Using a value writer is useful when binding to database foreign keys.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to LocalDataSource</h5>
+                <p>
+                    A LocalDataSource is a data source that can be used to manage the data of the list. <br>
+                    It is a simple wrapper around an array that provides methods to manipulate the data.
+                    You can add, remove or update items in the data source and
+                    the list will be updated automatically.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: LocalDataSource
+                        <ng0-list name="value15"
+                                  [source]="localDatasource1"
+                                  [(ngModel)]="value15">
+                        </ng0-list>
+                        Value: {{ value15 }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
+                    Add new Item
+                </button>
+                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
+                    Remove First Item
+                </button>
+                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
+                    Replace First Item
+                </button>
             </div>
         </div>
     </div>
@@ -88,220 +398,6 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Bind to boolean values</h5>
-                <p>
-                    Using localization formatBys for boolean values you can display different text for true/false
-                    values.
-                    The formatBys are defined in the locale files.
-                </p>
-
-                <div class="row">
-                    <div class="col-xl-3">
-                        Default
-                        <ng0-list name="value5" [source]="[true, false]" [(ngModel)]="value5"
-                                  formatBy="boolean">
-                        </ng0-list>
-
-                        Value: {{ value5 }}
-                    </div>
-
-                    <div class="col-xl-3">
-                        On/Off
-                        <ng0-list name="value6" [source]="[true, false]" [(ngModel)]="value6"
-                                  formatBy="boolean:OnOff">
-                        </ng0-list>
-                        Value: {{ value6 }}
-                    </div>
-
-                    <div class="col-xl-3">
-                        Enable/Disable
-                        <ng0-list name="value7" [source]="[true, false]" [(ngModel)]="value7"
-                                  formatBy="boolean:EnableDisable">
-                        </ng0-list>
-                        Value: {{ value7 }}
-                    </div>
-
-                    <div class="col-xl-3">
-                        Active/Inactive
-                        <ng0-list name="value8" [source]="[true, false]" [(ngModel)]="value8"
-                                  formatBy="boolean:ActiveInactive">
-                        </ng0-list>
-                        Value: {{ value8 }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to Enums</h5>
-                pass an Enum as source and use formatBy() to display the enum titles.
-                <p>
-                </p>
-
-                <div class="row">
-                    <div class="col-xl-3">
-                        Sexuality
-                        <ng0-list name="value18" [source]="Sexuality" [(ngModel)]="value18"
-                                  formatBy="enum:Sexuality">
-                        </ng0-list>
-
-                        Value: {{ value18 }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to objects</h5>
-                <p>
-                </p>
-                <div class="row g-4">
-                    <div class="col-xl-6">
-                        Default
-                        <ng0-list name="value9"
-                                  [source]="objectsSource1"
-                                  [(ngModel)]="value9">
-                        </ng0-list>
-                        Value: {{ value9 }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <h5 class="card-title">Format Items:</h5>
-                <div class="row g-4">
-                    <div class="col-xl-6">
-                        formatBy (field name)
-                        <ng0-list name="value10"
-                                  [source]="objectsSource1"
-                                  [(ngModel)]="value10"
-                                  formatBy="@name">
-                        </ng0-list>
-
-                        Value: {{ value10 }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <h5 class="card-title">Compare items:</h5>
-                <p>
-                    Compare source items with the selected value(s) by a specific field or by a custom function. <br>
-                    This is useful when the source items are objects and the selected value(s) are not the same object
-                    instances.
-                </p>
-                <div class="row g-4">
-                    <div class="col-xl-6">
-                        compareBy a field of an object:
-                        <ng0-list name="value11"
-                                  [source]="objectsSource1"
-                                  [(ngModel)]="value11"
-                                  formatBy="@name"
-                                  compareBy="id">
-                        </ng0-list>
-
-                        Value: {{ value11 | json}}
-                    </div>
-
-                    <div class="col-xl-6">
-                        compareBy a custom function:
-                        <ng0-list name="value12"
-                                  [source]="objectsSource1"
-                                  [(ngModel)]="value12"
-                                  formatBy="@name"
-                                  [compareBy]="compareFunction1">
-                        </ng0-list>
-
-                        Value: {{ value12 | json }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <h5 class="card-title">Custom value writer:</h5>
-                <p>
-                    Write back the selected value(s) by a specific field or by a custom function. <br>
-                    This is useful when you want to bind the component to a specific property of an object instead of
-                    the
-                    whole object.
-
-                </p>
-                <div class="row g-4">
-                    <div class="col-xl-6">
-                        writeBy (field)
-                        <ng0-list name="value13"
-                                  [source]="objectsSource1"
-                                  [(ngModel)]="value13"
-                                  formatBy="@name"
-                                  compareBy="id"
-                                  writeBy="id">
-                        </ng0-list>
-
-                        Value: {{ value13 }}
-                    </div>
-
-                    <div class="col-xl-6">
-                        writeBy (custom function)
-                        <ng0-list name="value14"
-                                  [source]="objectsSource1"
-                                  [(ngModel)]="value14"
-                                  [writeBy]="customValueWriter1"
-                                  formatBy="@name">
-                        </ng0-list>
-
-                        Value: {{ value14 }}
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to LocalDataSource</h5>
-                <p>
-                    Use a LocalDataSource to manage the data. You can add, remove or update items in the data source and
-                    the list will be updated automatically.
-
-                </p>
-
-                <div class="row">
-                    <div class="col-xl-3">
-                        Source: LocalDataSource
-                        <ng0-list name="value15"
-                                  [source]="localDatasource1"
-                                  [(ngModel)]="value15">
-                        </ng0-list>
-                        Value: {{ value15 }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
-                    Add new Item
-                </button>
-                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
-                    Remove First Item
-                </button>
-                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
-                    Replace First Item
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
                 <h5 class="card-title">Custom item template</h5>
                 <p>
                 </p>
@@ -317,7 +413,8 @@
                             <ng-template let-option>
                                 <div class="py-1">
                                     ❤️ This is <strong>option {{option.value.id}}</strong> <br>
-                                    <small class="text-muted">This is extra info about item {{option.value.id}}</small>
+                                    <small class="text-muted">This is extra info about item
+                                        {{option.value.id}}</small>
                                 </div>
                             </ng-template>
                         </ng0-list>
@@ -357,10 +454,4 @@
             </div>
         </div>
     </div>
-
 </div>
-
-
-<style>
-
-</style>

@@ -41,7 +41,7 @@ export const APP_FA_IR_LOCALE = FA_IR_LOCALE.extend({
     },
     formatters: {
         'boolean:Default': ['خیر', 'بله'],
-        'boolean:ActiveInactive': ['غیرفعال', 'فعال'],
+        'boolean:CorrectIncorrect': ['غلط', 'صحیح'],
         'boolean:YesNo': ['خیر', 'بله'],
         'boolean:TrueFalse': ['غلط', 'درست'],
         'boolean:EnableDisable': ['غیرفعال', 'فعال'],
