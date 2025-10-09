@@ -1,30 +1,30 @@
 import { Locale } from "./locale";
 
 /**
- * Value formatter function type.
- * @param item The item to format.
+ * Object formatter function type.
+ * @param obj The object to format.
  * @param options Additional options for formatting.
  * @returns The formatted value.
  */
-export type ValueFormatterFunction = (value: any, ...options: any[]) => string;
+export type ObjectFormatter = (obj: any, ...options: any[]) => string;
 
 /**
- * ValueFormatterLike
+ * ObjectFormatterLike  
  */
-export type ValueFormatterLike = ValueFormatterFunction | string;
+export type ObjectFormatterLike = ObjectFormatter | string;
 
 /**
  * Default format function.
  * @param value The item to format.
  * @returns The formatted string.
  */
-export function defaultValueFormatter(value: any): string {
-    return value?.toString() || '';
+export function defaultObjectFormatter(obj: any): string {
+    return obj?.toString() || '';
 }
 
 /**
- * Creates a value formatter attribute function.
- * The returned function takes a ValueFormatterLike and returns a ValueFormatterFunction.
+ * Creates an object formatter attribute function.
+ * The returned function takes a ObjectFormatterLike and returns a ObjectFormatterFunction.
  * If the input is a function, it is returned as is.
  * If the input is a string starting with '@', it returns a function that retrieves the corresponding property from the item.
  * If the input is a string representing a locale format, it uses the provided locale to get the appropriate formatter.
@@ -32,20 +32,21 @@ export function defaultValueFormatter(value: any): string {
  * @param locale Optional locale object for locale-based formatting.
  * @returns A function that takes a ValueFormatterLike and returns a ValueFormatterFunction.
  */
-export function valueFormatterAttribute(locale?: Locale): ((v: ValueFormatterLike) => ValueFormatterFunction) {
+export function objectFormatterAttribute(locale?: Locale): ((v: ObjectFormatterLike) => ObjectFormatter) {
     return (v) => {
         if (typeof v === 'function')
             return v;
         else if (typeof v === 'string') {
             if (v.startsWith('@')) {
-                let fieldName = v.substring(1);
-                return (item: any) => (item?.[fieldName]?.toString() as string) ?? '';
-            } else {
+                // Locale-based formatting
                 if (locale == null) {
                     throw Error('For using locale value formatters, provide a locale object.')
                 }
-
-                return locale.getFormatter(v);
+                let formatterName = v.substring(1);
+                return locale.getFormatter(formatterName);
+            } else {
+                // Field-based formatting
+                return (item: any) => (item?.[v]?.toString() as string) ?? '';
             }
         }
 

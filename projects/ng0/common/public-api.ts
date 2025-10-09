@@ -10,4 +10,4 @@ export * from './id-generator';
 export * from './css-class';
 export * from './equality-comparer';
 export * from './value-writer';
-export * from './value-comparer';
+export * from './comparer';

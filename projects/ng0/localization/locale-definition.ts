@@ -1,4 +1,4 @@
-import { ValueFormatterFunction } from "./value-formatter";
+import { ObjectFormatter } from "./value-formatter";
 
 /** Locale dictionary */
 export type LocaleDictionary = { [key: string]: string; };
@@ -93,7 +93,7 @@ export interface LocaleDefinition {
     //   [enumName: string]: { [enumValue: string]: string }
     // }
     // custom?: {
-    [formatterName: string]: ValueFormatterFunction | string[] | {
+    [formatterName: string]: ObjectFormatter | string[] | {
       [value: string]: string
     }
     // },

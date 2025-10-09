@@ -159,25 +159,24 @@
                 </p>
                 You have 3 ways to format items:
                 <ul>
-                    <li>Using object fields: formatBy="@<i class="text-info">fieldName</i> "</li>
+                    <li>Using object fields: formatBy="<i class="text-info">fieldName</i> "</li>
+                    <li>Using a locale formatter: formatBy="@<i class="text-info">formatterName</i> "</li>
                     <li>Using a formatBy function: [formatBy]="<i class="text-info">functionName</i>"</li>
-                    <li>Using a locale formatter: formatBy="<i class="text-info">formatterName</i> "
-                    </li>
                 </ul>
 
                 <div class="row g-4">
                     <div class="col-xl-4">
-                        formatBy="@name"
-                        <ng0-list name="value10" [source]="objectsSource1" [(ngModel)]="value10" formatBy="@name">
+                        formatBy="name"
+                        <ng0-list name="value10" [source]="objectsSource1" [(ngModel)]="value10" formatBy="name">
                         </ng0-list>
 
                         Value: {{ value10 | json }}
                     </div>
 
                     <div class="col-xl-4">
-                        formatBy="personFormatter1"
+                        formatBy="@personFormatter1"
                         <ng0-list name="value29" [source]="objectsSource1" [(ngModel)]="value29"
-                                  formatBy="personFormatter1">
+                                  formatBy="@personFormatter1">
                         </ng0-list>
 
                         Value: {{ value29 | json}}
@@ -209,20 +208,20 @@
                 </p>
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        compareBy="id"; formatBy="@name"
+                        compareBy="id"; formatBy="name"
                         <ng0-list name="value11" [source]="objectsSource1" [(ngModel)]="value11"
-                                  formatBy="@name" compareBy="id">
+                                  formatBy="name" compareBy="id">
                         </ng0-list>
 
                         Value: {{ value11 | json}}
                     </div>
 
                     <div class="col-xl-6">
-                        [compareBy]="compareFunction"; formatBy="@name"
+                        [compareBy]="compareFunction"; formatBy="name"
                         <ng0-list name="value12"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value12"
-                                  formatBy="@name"
+                                  formatBy="name"
                                   [compareBy]="compareFunction1">
                         </ng0-list>
 
@@ -247,22 +246,18 @@
 
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        writeBy="id"; compareBy="id"; formatBy="@name"
-                        <ng0-list name="value13"
-                                  [source]="objectsSource1"
-                                  [(ngModel)]="value13"
-                                  formatBy="@name"
-                                  compareBy="id"
-                                  writeBy="id">
+                        writeBy="id"; compareBy="id"; formatBy="name"
+                        <ng0-list name="value13" [source]="objectsSource1" [(ngModel)]="value13"
+                                  formatBy="name" compareBy="id" writeBy="id">
                         </ng0-list>
 
                         Value: {{ value13 }}
                     </div>
 
                     <div class="col-xl-6">
-                        [writeBy]="customValueWriter1"; formatBy="@name"
+                        [writeBy]="customValueWriter1"; formatBy="name"
                         <ng0-list name="value14" [source]="objectsSource1" [(ngModel)]="value14"
-                                  [writeBy]="customValueWriter1" formatBy="@name">
+                                  formatBy="name" compareBy="id" [writeBy]="customValueWriter1">
                         </ng0-list>
 
                         Value: {{ value14 }}
@@ -270,11 +265,11 @@
 
                     <div class="col-xl-12">
                         <span class="text-primary">
-                            Bind to a DB ForeignKey: [writeBy]="id"; formatBy="@name"
+                            Bind to a DB ForeignKey: [writeBy]="id"; formatBy="name"
                         </span>
 
                         <ng0-list name="value30" [source]="objectsSource1" [(ngModel)]="value30"
-                                  writeBy="id" [compareBy]="compareFunction2" formatBy="@name">
+                                  formatBy="name" compareBy="id" writeBy="id">
                         </ng0-list>
 
                         Value: {{ value30 }}
@@ -302,18 +297,16 @@
                 <div class="row">
                     <div class="col-xl-3">
                         Source: LocalDataSource
-                        <ng0-list name="value15"
-                                  [source]="localDatasource1"
-                                  [(ngModel)]="value15">
+                        <ng0-list name="value15" [source]="localDatasource1" [(ngModel)]="value15">
                         </ng0-list>
-                        Value: {{ value15 }}
+                        Value: {{ value15 | json }}
                     </div>
                 </div>
             </div>
 
             <div class="card-footer">
                 <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
-                    Add new Item
+                    Push new Item
                 </button>
                 <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
                     Remove First Item
@@ -321,6 +314,26 @@
                 <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
                     Replace First Item
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to value property</h5>
+                <p>
+                    You can bind to the value property of the list directly without using ngModel.
+                </p>
+
+                <div class="row">
+                    <div class="col-12 col-md-6">
+                        <p>Bind to string array</p>
+                        <ng0-list name="value23" [source]="stringArray" [(value)]="value23">
+                        </ng0-list>
+                        Value: {{ value23() }}
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -349,24 +362,6 @@
             </div>
         </div>
     </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind without using ngModel directive</h5>
-
-                <div class="row">
-                    <div class="col-12 col-md-6">
-                        <p>Bind to string array</p>
-                        <ng0-list name="value23" [source]="stringArray" [(value)]="value23">
-                        </ng0-list>
-                        Value: {{ value23() }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 
     <div class="col-xl-12">
         <div class="card">
@@ -409,7 +404,7 @@
                                   [source]="objectsSource1"
                                   [(ngModel)]="value16"
                                   writeBy="id"
-                                  formatBy="@name">
+                                  formatBy="name">
                             <ng-template let-option>
                                 <div class="py-1">
                                     ❤️ This is <strong>option {{option.value.id}}</strong> <br>
@@ -442,7 +437,7 @@
                                   [source]="stringArray"
                                   [(ngModel)]="value17"
                                   writeBy="id"
-                                  formatBy="@name">
+                                  formatBy="name">
                             <ng-template let-option>
                                 ❤️ {{option.value}}
                             </ng-template>

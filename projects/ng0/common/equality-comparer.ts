@@ -32,8 +32,8 @@ export function equalityComparerAttribute(e: EqualityComparerLike): EqualityComp
         return e;
     if (typeof e === 'string') {
         return (a: any, b: any) => {
-            let a2 = typeof a === 'object' && a != null ? a[e] : a;
-            let b2 = typeof b === 'object' && b != null ? b[e] : b;
+            let a2 = a != null && Object.hasOwn(a, e) ? a[e] : a;
+            let b2 = b != null && Object.hasOwn(b, e) ? b[e] : b;
             return a2 === b2;
         }
     }

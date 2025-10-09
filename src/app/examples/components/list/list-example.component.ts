@@ -33,7 +33,7 @@ export class ListExampleComponent {
     width = signal('200px');
     counter = signal(0);
 
-    stringArray = ['One', 'Two', 'Three'];
+    stringArray = ['One', 'Two', 'Three', 'Three'];
     numberArray = Array.from({ length: 3 }, (_, i) => i + 1);
     objectsSource1: ListItem[] = [
         { id: 1, name: 'Option 1', description: 'Option 1 description' },
@@ -45,7 +45,7 @@ export class ListExampleComponent {
 
     value0?: string; value1?: string; value2?: string; value3?: string[] = []; value4?: string[] = ['One'];
     value5?: boolean; value6?: boolean; value7?: boolean; value8?: boolean; value9?: number;
-    value10?: number; value11 = { id: 2 }; value12 = { id: 3 }; value13?: number; value14?: number;
+    value10?: number; value11 = { id: 2 }; value12 = { id: 3 }; value13? = { id: 2 }; value14? = { id: 3 };
     value15?: number; value16?: number; value17?: number; value18?: number; value19?: number;
     value20?: number; value21?: string; value22?: string; value23 = signal('Two'); value24?: string;
     value25?: string; value26?: string; value27?: string; value28?: string; value29?: string;
@@ -54,7 +54,7 @@ export class ListExampleComponent {
     compareFunction1 = (sourceItem: any, value: any) => sourceItem?.id === value?.id;
     compareFunction2 = (sourceItem: any, value: any) => sourceItem?.id === value;
     customValueWriter1 = (obj: any) => obj?.id;
-    personFormatter1 = (item?: any) => item?  `${item.id}) - ${item.name}` : '';
+    personFormatter1 = (item?: any) => item ? `${item.id}) - ${item.name}` : '';
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);

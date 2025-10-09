@@ -1,6 +1,6 @@
 import { LocaleDefinition } from "./locale-definition";
 import { TranslatedValidationError } from "./types";
-import { ValueFormatterFunction } from "./value-formatter";
+import { ObjectFormatter } from "./value-formatter";
 
 /** Locale */
 export class Locale {
@@ -128,7 +128,7 @@ export class Locale {
    * @param formatterName The format string in the form of "formatterName:param1:param2:..."
    * @returns A ValueFormatterFunction
    */
-  getFormatter(formatterName: string): ValueFormatterFunction {
+  getFormatter(formatterName: string): ObjectFormatter {
     let formatter = this.definition.formatters?.[formatterName];
     let formatterType = typeof formatter;
 
@@ -138,7 +138,7 @@ export class Locale {
     }
 
     if (formatterType === 'function') {
-      return formatter as ValueFormatterFunction;
+      return formatter as ObjectFormatter;
     } else if (Array.isArray(formatter)) {
       return (value: number | boolean) => formatter[+value]; // use + to cast boolean values to numbers
     } else if (formatterType == 'object' && formatter != null) {

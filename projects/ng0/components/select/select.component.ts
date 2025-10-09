@@ -5,7 +5,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
 import { CssClassAttribute, IdGenerator, SelectOption, sequentialIdGenerator, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter, findValuesByComparer, findValueByComparer } from '@bootkit/ng0/common';
-import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListComponent, ListModule, ListItemSelectionChangeEvent } from '@bootkit/ng0/components/list';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -100,8 +100,8 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * Custom format function to convert an item to a string for display.
      * Default converts the item to a string using its toString method.
      */
-    public readonly formatBy = input(defaultValueFormatter, {
-        transform: valueFormatterAttribute(this._ls.get())
+    public readonly formatBy = input(defaultObjectFormatter, {
+        transform: objectFormatterAttribute(this._ls.get())
     });
 
     /**

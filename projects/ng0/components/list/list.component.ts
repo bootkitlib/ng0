@@ -7,7 +7,7 @@ import {
     CssClassAttribute, IdGenerator, sequentialIdGenerator, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
     defaultValueWriter,
 } from '@bootkit/ng0/common';
-import { valueFormatterAttribute, defaultValueFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListItem, ListItemSelectionChangeEvent } from './types';
 
 /**
@@ -38,7 +38,6 @@ import { ListItem, ListItemSelectionChangeEvent } from './types';
     }
 })
 export class ListComponent implements OnInit, ControlValueAccessor {
-
     private _document = inject(DOCUMENT);
     private _ls = inject(LocalizationService);
     private _renderer = inject(Renderer2);
@@ -46,7 +45,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     private _changeDetector = inject(ChangeDetectorRef);
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: (value: any) => void;
-
+    private _selectedItems = new Map<number, ListItem>(); // key: item index
+    
     protected readonly _items = signal<ListItem[]>([]);
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _activeOptionIndex = signal<number>(-1);
@@ -97,8 +97,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * Custom format function to convert an item to a string for display.
      * Default converts the item to a string using its toString method.
      */
-    public readonly formatBy = input(defaultValueFormatter, {
-        transform: valueFormatterAttribute(this._ls.get())
+    public readonly formatBy = input(defaultObjectFormatter, {
+        transform: objectFormatterAttribute(this._ls.get())
     });
 
     /**
