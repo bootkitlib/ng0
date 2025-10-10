@@ -1,12 +1,17 @@
 import { Component, ElementRef, Renderer2, input, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, OnInit, computed, EffectRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { dataSourceAttribute, DataSource, DataSourceLike, stringFilter, FilterPredicate, DataRequest } from '@bootkit/ng0/data';
+import { dataSourceAttribute, DataSource, DataSourceLike, DataRequest } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { CssClassAttribute, IdGenerator, SelectOption, sequentialIdGenerator, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter, findValuesByComparer, findValueByComparer } from '@bootkit/ng0/common';
+import {
+    CssClassAttribute, IdGenerator, SelectOption, sequentialIdGenerator, equalityComparerAttribute,
+    defaultEqualityComparer, valueWriterAttribute, defaultValueWriter, findValuesByComparer, findValueByComparer,
+    FilterPredicate,
+    noopFilter
+} from '@bootkit/ng0/common';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListComponent, ListModule, ListItemSelectionChangeEvent } from '@bootkit/ng0/components/list';
+import { ListComponent, ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 /**
@@ -125,7 +130,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * Custom filter function to filter items based on a filter value.
      * Default checks if the item contains the filter value (case-insensitive).
      */
-    public readonly filterBy = input<FilterPredicate>(stringFilter);
+    public readonly filterBy = input<FilterPredicate>(noopFilter);
 
     /**
      * CSS class or classes to apply to the items.
@@ -139,7 +144,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * Default generates sequential ids with the prefix 'ng0-select-item-'.
      * If set to undefined, no ids will be generated.
      */
-    public readonly idGenerator = input<IdGenerator | undefined>(sequentialIdGenerator('ng0-select-item-'));
+    public readonly idGenerator = input<IdGenerator>(sequentialIdGenerator('ng0-select-item-'));
 
     constructor() {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
@@ -222,7 +227,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         this.open.set(false);
     }
 
-    protected _onListSelectionChange(e: ListItemSelectionChangeEvent) {
+    protected _onListSelectionChange(e: ListSelectionChangeEvent) {
         if (!this.multiple()) {
             this._activeOptionIndex.set(e.index);
             this.open.set(false);

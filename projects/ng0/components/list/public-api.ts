@@ -1,3 +1,3 @@
-export  *  from './types';
+// export  *  from './types';
 export * from './list.component';
 export * from './list.module';

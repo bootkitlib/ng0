@@ -6,5 +6,5 @@ export * from './data-source-attribute';
 export * from './remote-data-source';
 export * from './local-data-source';
 export * from './data-result-operator';
-export * from './filter';
+
 export * from './types';

@@ -1,7 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal, ViewEncapsulation } from '@angular/core';
+import { Component, model, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ListModule } from '@bootkit/ng0/components/list';
+import { FilterPredicate } from '@bootkit/ng0/common';
+import { ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
 import { DataResult, DataSource, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
 
@@ -29,6 +30,7 @@ interface ListItem {
     ]
 })
 export class ListExampleComponent {
+
     Sexuality = Sexuality;
     width = signal('200px');
     counter = signal(0);
@@ -48,21 +50,39 @@ export class ListExampleComponent {
     value10?: number; value11 = { id: 2 }; value12 = { id: 3 }; value13? = { id: 2 }; value14? = { id: 3 };
     value15?: number; value16?: number; value17?: number; value18?: number; value19?: number;
     value20?: number; value21?: string; value22?: string; value23 = signal('Two'); value24?: string;
-    value25?: string; value26?: string; value27?: string; value28?: string; value29?: string;
+    value25 = 1; value26 = 'Three'; value27?: string; value28?: string; value29?: string;
     value30 = 2;
+    list17FilterValue = model('');
+
 
     compareFunction1 = (sourceItem: any, value: any) => sourceItem?.id === value?.id;
     compareFunction2 = (sourceItem: any, value: any) => sourceItem?.id === value;
     customValueWriter1 = (obj: any) => obj?.id;
     personFormatter1 = (item?: any) => item ? `${item.id}) - ${item.name}` : '';
+    list17FilterFunction: FilterPredicate = (item) => {
+        if (!this.list17FilterValue()) return true;
+        return item.value.toLowerCase().indexOf(this.list17FilterValue().toLowerCase()) >= 0;
+    }
+
+    onList1SelectionChange(e: ListSelectionChangeEvent) {
+        console.log(e);
+    }
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);
-        this.localDatasource1.push(`An Option was pushed (${this.counter()}).`)
+
+        this.localDatasource1.update(items => {
+            items.push(`An Option was added (${this.counter()}).`)
+        });
+        // this.localDatasource1.push(`An Option was pushed (${this.counter()}).`)
     }
 
-    onRemoveFromLocalDataSource1() {
+    onRemoveFirstItemOfLocalDataSource1() {
         this.localDatasource1.remove(0);
+    }
+
+    onRemoveSelectedItemsOfLocalDataSource1() {
+        // this.localDatasource1.remove(e.selectedIndices);
     }
 
     onReplaceLocalDataSource1() {

@@ -11,7 +11,7 @@ import { getEnumValues, ValueWriter } from "@bootkit/ng0/common";
  */
 export class LocalDataSource extends DataSource {
   readonly type = 'local';
-  public valueExtractor = signal<ValueWriter>
+  // public valueWriter = signal<ValueWriter>
   // public valueComparer = signal<ValueComparerFunction>
 
   constructor(private items: any[]) {
@@ -27,6 +27,11 @@ export class LocalDataSource extends DataSource {
     return new LocalDataSource(getEnumValues(enumClass));
   }
 
+  /**
+   * Loads data from the local array based on the provided DataRequest.
+   * @param request The DataRequest containing filtering, sorting, and pagination information.
+   * @returns An observable of DataResult containing the requested data. 
+   */
   load(request: DataRequest) {
     let filteredValues = [...this.items];
     let result: any[];
@@ -73,44 +78,71 @@ export class LocalDataSource extends DataSource {
     return of(dataResult);
   }
 
-  public remove(index: any) {
-    this._ensureListHasItems();
-    this._validateIndex(index);
-    this.items.splice(index, 1);
-    this.changeSubject.next({ changes: [{ type: 'remove', index, count: 1 }] });
+  /**
+   * Adds items to the end of the local array.
+   * @param items The items to add.
+   */
+  public push(...items: any[]): void {
+    let insertIndex = this.items.length;
+    this.items.push(items);
+    this.changeSubject.next({ changes: [{ type: 'push', items }] });
   }
 
-
-  public insert(index: number, ...items: any[]) {
-    if (index < 0 || index >= this.items.length) {
-      throw Error('Invalid index');
-    }
+  /**
+   * Inserts items at the specified index.
+   * @param index The index at which to insert the items.
+   * @param items The items to insert.
+   */
+  public insert(index: number, ...items: any[]): void {
+    this._validateIndex(index);
     this.items.splice(index, 0, ...items);
     this.changeSubject.next({ changes: [{ type: 'insert', items, index }] });
   }
 
-  public push(...items: any[]) {
-    let insertIndex = this.items.length;
-    this.items.push(items);
-    this.changeSubject.next({ changes: [{ type: 'insert', items, index: insertIndex }] });
+  /**
+   * Replaces an item at the specified index.
+   * @param index The index of the item to replace.
+   * @param value The new value for the item.
+   */
+  public replace(index: number, value: any): void {
+    this._validateIndex(index);
+    this.changeSubject.next({ changes: [{ type: 'replace', replacements: [{ index, value }] }] });
   }
 
-  public replace(index: number, newValue: any) {
-    this._ensureListHasItems();
-    this._validateIndex(index);
-    this.items[index] = newValue;
-    this.changeSubject.next({ changes: [{ type: 'replace', value: newValue, index }] });
+  /**
+   * Replaces multiple items at the specified indices.
+   * @param replacements An array of objects containing the index and new value for each replacement.
+   */
+  public replaceMany(...replacements: { index: number, value: any }[]): void {
+    replacements.forEach(({ index, value }) => {
+      this._validateIndex(index);
+      this.items[index] = value;
+    });
+
+    this.changeSubject.next({ changes: [{ type: 'replace', replacements: replacements }] });
+  }
+
+  /**
+   * Removes items at the specified indices.
+   * @param indices The indices of the items to remove.
+   */
+  public remove(...indices: any[]): void {
+    indices.forEach(index => {
+      this._validateIndex(index);
+      this.items.splice(index, 1);
+    });
+
+    this.changeSubject.next({ changes: [{ type: 'remove', indices: indices }] });
+  }
+
+  public update(updater: (items: any[]) => void): void {
+    updater(this.items);
+    this.changeSubject.next({ changes: [{ type: 'mutate', items: this.items }] });
   }
 
   private _validateIndex(index: number) {
-    if (index < 0 || index > this.items.length) {
-      throw Error('Invalid index');
-    }
-  }
-
-  private _ensureListHasItems() {
-    if (this.items.length == 0) {
-      throw Error('The data source is empty.');
+    if (index < 0 || index >= this.items.length) {
+      throw Error('Index is out of range.');
     }
   }
 }

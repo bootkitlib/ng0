@@ -31,13 +31,13 @@
                class="ng0-select-filter-input form-control form-control-sm"
                [attr.placeholder]="filterPlaceholder()"
                (blur)="_onFilterBlur()"
-               (input)="list.filter($event.target.value)">
+               >
     </div>
     }
 
     <ng0-list #list
               [source]="source()"
-              [(value)]="value"
+              
               [multiple]="multiple()"
               [idGenerator]="idGenerator()"
               [filterBy]="filterBy()"
@@ -46,7 +46,7 @@
               style="border: none; border-radius: 0;"
               (mousedown)="$event.preventDefault(); $event.stopImmediatePropagation()"
               (click)="open.set(false)"
-              (itemSelectionChange)="_onListSelectionChange($event)">
+              (selectionChange)="_onListSelectionChange($event)">
 
         <ng-template let-option>
             @if(_optionTemplate) {

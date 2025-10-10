@@ -11,32 +11,53 @@ export type DataLoader<T = any> = (request: DataRequest) => Observable<DataResul
 
 
 export interface DataSourceChange {
-  type: 'insert' | 'replace' | 'remove';
+  type: 'insert' | 'push' | 'replace' | 'remove' | 'mutate';
 }
 
 export interface DataSourceItemInsert extends DataSourceChange {
   type: 'insert'
 
-  /** Insert index */
-  index?: number;
+  /**
+   * The index at which the items should be inserted.
+   */
+  index: number;
+
+  /**
+   * The items to insert.
+   */
+  items: any[];
+}
+
+export interface DataSourceItemPush extends DataSourceChange {
+  type: 'push';
+
+  /**
+   * The items to insert.
+   */
   items: any[];
 }
 
 export interface DataSourceItemReplace extends DataSourceChange {
   type: 'replace'
-  index: number;
-  value: any;
+  replacements: {
+    index: number;
+    value: any;
+  }[]
 }
 
 export interface DataSourceItemRemove extends DataSourceChange {
   type: 'remove'
-  index: number;
-  count?: number
+  indices: number[];
+}
+
+export interface DataSourceMutate extends DataSourceChange {
+  type: 'mutate';
+  items: any[];
 }
 
 
 export interface DataSourceChangeEvent {
-  changes: Array<DataSourceItemInsert | DataSourceItemReplace | DataSourceItemRemove>
+  changes: Array<DataSourceItemInsert | DataSourceItemPush | DataSourceItemReplace | DataSourceItemRemove | DataSourceMutate>
 }
 
 
@@ -45,8 +66,8 @@ export interface DataSourceChangeEvent {
  * This class provides a common interface for loading data from various sources.
  */
 export abstract class DataSource<T = any> {
-  abstract readonly type: 'local' | 'remote'; 
-  
+  abstract readonly type: 'local' | 'remote';
+
   protected changeSubject = new Subject<DataSourceChangeEvent>();
   protected loading = signal(false);
 
