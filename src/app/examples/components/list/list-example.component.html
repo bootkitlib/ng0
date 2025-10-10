@@ -298,7 +298,7 @@
                     <div class="col-xl-3">
                         Source: LocalDataSource
                         <ng0-list name="value15" [source]="localDatasource1" [(ngModel)]="value15"
-                                  (selectionChange)="onList1SelectionChange($event)" multiple="true">
+                                  (selectionChange)="onList15SelectionChange($event)" multiple="true">
                         </ng0-list>
                         Value: {{ value15 | json }}
                     </div>
@@ -306,18 +306,18 @@
             </div>
 
             <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
+                <button class="btn btn-outline-secondary me-2" (click)="onPushToDataSource1()">
                     Push new Item
                 </button>
-                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFirstItemOfLocalDataSource1()">
+                <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFirstItemOfLocalDataSource1()">
                     Remove First Item
                 </button>
                 <button class="btn btn-outline-secondary me-2" (click)="onRemoveSelectedItemsOfLocalDataSource1()">
                     Remove Selected Item(s)
-                </button>
-                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
+                </button> -->
+                <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
                     Replace First Item
-                </button>
+                </button> -->
             </div>
         </div>
     </div>

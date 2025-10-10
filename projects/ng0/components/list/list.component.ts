@@ -9,7 +9,6 @@ import {
     noopFilter
 } from '@bootkit/ng0/common';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { get } from 'http';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -38,7 +37,7 @@ import { get } from 'http';
         '[attr.aria-disabled]': '_isDisabled()'
     }
 })
-export class ListComponent implements OnInit, ControlValueAccessor {
+export class ListComponent implements ControlValueAccessor {
     private _document = inject(DOCUMENT);
     private _ls = inject(LocalizationService);
     private _renderer = inject(Renderer2);
@@ -138,10 +137,12 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     @Output() public readonly selectionChange = new EventEmitter<ListSelectionChangeEvent>();
 
     constructor() {
-    }
-
-    ngOnInit(): void {
-        this._loadItems();
+        effect(() => {
+            let source = this.source(); // track source
+            this._activeOptionIndex.set(-1);
+            this._selectedIndices.clear();
+            this._loadItems();
+        });
     }
 
     /**
@@ -226,6 +227,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         this._changeCallback?.(this._value);
         this._changeDetector.markForCheck();
     }
+
+
 
     /**
      * Toggles the selection state of an option by index
@@ -384,20 +387,18 @@ export class ListComponent implements OnInit, ControlValueAccessor {
                     case 'push':
                         this._items().push(...this._createItems(change.items));
                         break;
-                    case 'insert':
-                        this._items().splice(change.index!, 0, ...this._createItems(change.items));
-                        break;
-                    case 'replace':
-                        change.replacements.forEach(({ index, value }) => {
-                            items[index] = { id: this.idGenerator()(value), value };
-                        });
-                        break;
-                    case 'remove':
-                        change.indices.forEach(index => items.splice(index, 1));
-                        break;
-                    case 'mutate':
-                        this._items.set(change.items);
-                        break;
+                    // case 'replace':
+                    //     change.replacements.forEach(({ index, value }) => {
+                    //         items[index] = { id: this.idGenerator()(value), value };
+                    //     });
+                    //     break;
+                    // case 'remove':
+                    //     this._activeOptionIndex.set(-1);
+                    //     change.indices.forEach(i => {
+                    //         this.deselect(i);
+                    //         items.splice(i, 1)
+                    //     });
+                    //     break;
                 }
 
                 this._changeDetector.markForCheck();

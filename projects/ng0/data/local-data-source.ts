@@ -2,8 +2,7 @@ import { of } from "rxjs";
 import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
-import { signal } from "@angular/core";
-import { getEnumValues, ValueWriter } from "@bootkit/ng0/common";
+import { deleteEntries, getEnumValues, ValueWriter } from "@bootkit/ng0/common";
 
 /**
  * An implementation of DataSource that uses an array as the data source.
@@ -83,62 +82,45 @@ export class LocalDataSource extends DataSource {
    * @param items The items to add.
    */
   public push(...items: any[]): void {
-    let insertIndex = this.items.length;
-    this.items.push(items);
+    this.items.push(...items);
     this.changeSubject.next({ changes: [{ type: 'push', items }] });
   }
 
-  /**
-   * Inserts items at the specified index.
-   * @param index The index at which to insert the items.
-   * @param items The items to insert.
-   */
-  public insert(index: number, ...items: any[]): void {
-    this._validateIndex(index);
-    this.items.splice(index, 0, ...items);
-    this.changeSubject.next({ changes: [{ type: 'insert', items, index }] });
-  }
+  // /**
+  //  * Replaces an item at the specified index.
+  //  * @param index The index of the item to replace.
+  //  * @param value The new value for the item.
+  //  */
+  // public replace(index: number, value: any): void {
+  //   this._validateIndex(index);
+  //   this.changeSubject.next({ changes: [{ type: 'replace', replacements: [{ index, value }] }] });
+  // }
 
-  /**
-   * Replaces an item at the specified index.
-   * @param index The index of the item to replace.
-   * @param value The new value for the item.
-   */
-  public replace(index: number, value: any): void {
-    this._validateIndex(index);
-    this.changeSubject.next({ changes: [{ type: 'replace', replacements: [{ index, value }] }] });
-  }
+  // /**
+  //  * Replaces multiple items at the specified indices.
+  //  * @param replacements An array of objects containing the index and new value for each replacement.
+  //  */
+  // public replaceMany(...replacements: { index: number, value: any }[]): void {
+  //   replacements.forEach(({ index, value }) => {
+  //     this._validateIndex(index);
+  //     this.items[index] = value;
+  //   });
 
-  /**
-   * Replaces multiple items at the specified indices.
-   * @param replacements An array of objects containing the index and new value for each replacement.
-   */
-  public replaceMany(...replacements: { index: number, value: any }[]): void {
-    replacements.forEach(({ index, value }) => {
-      this._validateIndex(index);
-      this.items[index] = value;
-    });
+  //   this.changeSubject.next({ changes: [{ type: 'replace', replacements: replacements }] });
+  // }
 
-    this.changeSubject.next({ changes: [{ type: 'replace', replacements: replacements }] });
-  }
-
-  /**
-   * Removes items at the specified indices.
-   * @param indices The indices of the items to remove.
-   */
-  public remove(...indices: any[]): void {
-    indices.forEach(index => {
-      this._validateIndex(index);
-      this.items.splice(index, 1);
-    });
-
-    this.changeSubject.next({ changes: [{ type: 'remove', indices: indices }] });
-  }
-
-  public update(updater: (items: any[]) => void): void {
-    updater(this.items);
-    this.changeSubject.next({ changes: [{ type: 'mutate', items: this.items }] });
-  }
+  // /**
+  //  * Removes items at the specified indices.
+  //  * @param indices The indices of the items to remove.
+  //  */
+  // public remove(...indices: number[]): void {
+  //   indices.sort((a, b) => b - a); // Sort indices in descending order to avoid index shifting issues
+  //   indices.forEach(index => {
+  //     this._validateIndex(index);
+  //     this.items.splice(index, 1);
+  //   });
+  //   this.changeSubject.next({ changes: [{ type: 'remove', indices }] });
+  // }
 
   private _validateIndex(index: number) {
     if (index < 0 || index >= this.items.length) {

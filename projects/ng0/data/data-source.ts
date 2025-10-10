@@ -11,25 +11,11 @@ export type DataLoader<T = any> = (request: DataRequest) => Observable<DataResul
 
 
 export interface DataSourceChange {
-  type: 'insert' | 'push' | 'replace' | 'remove' | 'mutate';
-}
-
-export interface DataSourceItemInsert extends DataSourceChange {
-  type: 'insert'
-
-  /**
-   * The index at which the items should be inserted.
-   */
-  index: number;
-
-  /**
-   * The items to insert.
-   */
-  items: any[];
-}
-
-export interface DataSourceItemPush extends DataSourceChange {
   type: 'push';
+}
+
+export interface DataSourcePushChange extends DataSourceChange {
+  type: 'push'
 
   /**
    * The items to insert.
@@ -37,27 +23,26 @@ export interface DataSourceItemPush extends DataSourceChange {
   items: any[];
 }
 
-export interface DataSourceItemReplace extends DataSourceChange {
-  type: 'replace'
-  replacements: {
-    index: number;
-    value: any;
-  }[]
-}
 
-export interface DataSourceItemRemove extends DataSourceChange {
-  type: 'remove'
-  indices: number[];
-}
+// export interface DataSourceReplaceChange extends DataSourceChange {
+//   type: 'replace'
+//   replacements: {
+//     index: number;
+//     value: any;
+//   }[]
+// }
 
-export interface DataSourceMutate extends DataSourceChange {
-  type: 'mutate';
-  items: any[];
-}
+// export interface DataSourceRemoveChange extends DataSourceChange {
+//   type: 'remove';
 
+//   /**
+//    * The indices of the items to remove. Indices are sorted in descending order.
+//    */
+//   indices: number[];
+// }
 
 export interface DataSourceChangeEvent {
-  changes: Array<DataSourceItemInsert | DataSourceItemPush | DataSourceItemReplace | DataSourceItemRemove | DataSourceMutate>
+  changes: Array<DataSourcePushChange>
 }
 
 

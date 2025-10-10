@@ -76,11 +76,11 @@ export class SelectExampleComponent {
         this.localDatasource1.push(`Option ${this.counter()} was pushed.`)
     }
 
-    onRemoveFromLocalDataSource1() {
-        this.localDatasource1.remove(0);
-    }
+    // onRemoveFromLocalDataSource1() {
+    //     this.localDatasource1.remove(0);
+    // }
 
-    onReplaceLocalDataSource1() {
-        this.localDatasource1.replace(0, 'This item is replaced!')
-    }
+    // onReplaceLocalDataSource1() {
+    //     this.localDatasource1.replace(0, 'This item is replaced!')
+    // }
 }

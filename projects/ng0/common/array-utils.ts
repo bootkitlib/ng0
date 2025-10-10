@@ -7,3 +7,22 @@
 export function numberArray(start: number, end: number) {
   return Array.from({ length: end - start + 1 }, (_, i) => i + start)
 }
+
+/**
+ * Deletes multiple entries from an array based on the provided indices.
+ * @param array 
+ * @param indices 
+ * @private
+ */
+export function deleteEntries(array: any[], indices: number[]) {
+  // Sort indices in descending order
+  // This prevents index shifting issues when removing multiple items
+  indices.sort((a, b) => b - a); 
+  indices.forEach(index => {
+    if (index >= 0 && index < array.length) {
+      array.splice(index, 1);
+    } else {
+      throw new Error(`Index out of bounds: ${index}`);
+    }
+  });
+}
