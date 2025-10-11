@@ -4,7 +4,7 @@
 
 @for (item of _items(); track item.id) {
 @let selected= isSelected($index);
-@let active= isSelected($index);
+@let active= isActive($index);
 
 @if(filter(item)) {
 <div

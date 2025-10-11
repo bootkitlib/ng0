@@ -35,7 +35,7 @@ export class ListExampleComponent {
     width = signal('200px');
     counter = signal(0);
 
-    stringArray = ['One', 'Two', 'Three', 'Three'];
+    stringArray = ['One', 'Two', 'Three'];
     numberArray = Array.from({ length: 3 }, (_, i) => i + 1);
     objectsSource1: ListItem[] = [
         { id: 1, name: 'Option 1', description: 'Option 1 description' },
@@ -51,12 +51,10 @@ export class ListExampleComponent {
     value15?: number[] = []; value16?: number; value17?: number; value18?: number; value19?: number;
     value20?: number; value21?: string; value22?: string; value23 = signal('Two'); value24?: string;
     value25 = 1; value26 = 'Three'; value27?: string; value28?: string; value29?: string;
-    value30 = 2;
+    value30 = 2; value31: any; value32: any; value33: any;
 
     list17FilterValue = model('');
     list15SelectedIndices: ReadonlyArray<number> = [];
-
-
 
     compareFunction1 = (sourceItem: any, value: any) => sourceItem?.id === value?.id;
     compareFunction2 = (sourceItem: any, value: any) => sourceItem?.id === value;
@@ -68,7 +66,7 @@ export class ListExampleComponent {
     }
 
     onList15SelectionChange(e: ListSelectionChangeEvent) {
-       this.list15SelectedIndices = e.selectedIndices;
+        this.list15SelectedIndices = e.selectedIndices;
     }
 
     onPushToDataSource1() {

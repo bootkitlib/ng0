@@ -31,9 +31,9 @@ import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService }
     }],
     host: {
         '[class.ng0-list-loading]': 'source().isLoading()',
-        '[attr.aria-activedescendant]': '_activeOptionIndex() > -1 && _items().length ? (_items()[_activeOptionIndex()].id) : undefined',
+        '[attr.aria-activedescendant]': '_ariaActiveDescendant()',
         '[attr.disabled]': '_isDisabled()',
-        '[attr.tabindex]': '_isDisabled() || focus() === "none" ? "-1" : "0"',
+        '[attr.tabindex]': '_isDisabled() || focus() === "none" ? undefined : "0"',
         '[attr.aria-disabled]': '_isDisabled()'
     }
 })
@@ -53,6 +53,13 @@ export class ListComponent implements ControlValueAccessor {
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _activeOptionIndex = signal<number>(-1);
     @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
+
+    private _ariaActiveDescendant = computed(() => {
+        if (this.focus() == 'activeDescendant' && this._activeOptionIndex() > -1 && this._items().length) {
+            return this._items()[this._activeOptionIndex()].id;
+        }
+        return undefined;
+    });
 
     /**
      * Reference to the host element
@@ -122,12 +129,20 @@ export class ListComponent implements ControlValueAccessor {
         transform: CssClassAttribute
     });
 
-    public readonly focus = input<'none' | 'roving' | 'activeDescendant'>('roving');
+    /**
+     * Defines the focus behavior of the list component.
+     * - 'none': No keyboard interaction is possible. The list cannot be focused.
+     * - 'roving': Roving tabindex is enabled. The list can be focused and the active item is tabbable.
+     * - 'activeDescendant': The list can be focused, but no item is tabbable. The active item is indicated using aria-activedescendant.
+     * @default 'activeDescendant'.
+     */
+    public readonly focus = input<'none' | 'roving' | 'activeDescendant'>('activeDescendant');
 
     /**
      * Custom id generator function to generate unique ids for each item.
      * Default generates sequential ids with the prefix 'ng0-list-item-'.
      * If set to undefined, no ids will be generated.
+     * @default sequentialIdGenerator('ng0-list-item-')
      */
     public readonly idGenerator = input<IdGenerator>(sequentialIdGenerator('ng0-list-item-'));
 
@@ -343,11 +358,12 @@ export class ListComponent implements ControlValueAccessor {
 
     protected _getItemTabIndex(index: number) {
         let focus = this.focus();
-        if (this._isDisabled() || focus == 'none') {
-            return -1;
+        if (this._isDisabled() || focus == 'none' || focus == 'activeDescendant') {
+            return undefined;
+        } else {
+            // roving
+            return this._activeOptionIndex() === index ? 0 : -1
         }
-
-        return focus === 'roving' ? (this._activeOptionIndex() === index ? 0 : -1) : -1;
     }
 
     protected _handleUserSelection(index: number, item: ListItem) {
@@ -415,9 +431,8 @@ export class ListComponent implements ControlValueAccessor {
         }));
     }
 
-    @HostListener('click', ['$event'])
-    private _onHostClick(e: MouseEvent) {
-        const target = e.target as HTMLElement;
+    @HostListener('click')
+    private _onHostClick() {
         if (this.focus() != 'none') {
             this.elementRef.nativeElement.focus();
         }
@@ -449,10 +464,10 @@ export class ListComponent implements ControlValueAccessor {
                 e.preventDefault();
                 break;
             case 'Tab': // Go to next item if roving focus is enabled
-                if (this.focus() === 'roving' && index < optionsCount - 1) {
-                    this.active(index + 1);
-                    e.preventDefault();
-                }
+                // if (this.focus() === 'roving' && index < optionsCount - 1) {
+                //     this.active(index + 1);
+                //     e.preventDefault();
+                // }
                 break;
             case 'Enter':
                 if (index > -1) {

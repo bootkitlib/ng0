@@ -2,9 +2,9 @@
 export * from './data-request';
 export * from './data-result';
 export * from './data-source';
+export * from './data-source-change';
 export * from './data-source-attribute';
 export * from './remote-data-source';
 export * from './local-data-source';
 export * from './data-result-operator';
-
 export * from './types';

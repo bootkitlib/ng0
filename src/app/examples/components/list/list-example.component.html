@@ -20,22 +20,75 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Bind to simple arrays</h5>
+                <h5 class="card-title">Accessibility</h5>
+                <p>
+                    Ensure that the list is accessible to all users, including those using assistive technologies. <br>
+                </p>
+
+                <div>
+                    <h6>Focus:</h6>
+                    By setting the focus property, you can control how the list is navigated using the keyboard.
+                    focus property can be set to "none", "roving" or "activeDescendant".
+                    <ul>
+                        <li>
+                            focus="none": The list will not manage focus for its items.
+                        </li>
+                        <li>
+                            focus="activeDescendant": The list will manage focus for its items using the
+                            aria-activedescendant attribute. This is default.
+                        </li>
+                        <li>
+                            focus="roving": The list will manage focus for its items using a roving tabindex.
+                        </li>
+                    </ul>
+                </div>
 
                 <div class="row">
                     <div class="col-12 col-md-4">
-                        number[]
+                        focus="none"
+                        <ng0-list name="value31" [source]="numberArray" [(ngModel)]="value31" focus="none"></ng0-list>
+                        Value: {{ value31 }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        focus="activeDescendant"
+                        <ng0-list name="value33" [source]="numberArray" [(ngModel)]="value33" focus="activeDescendant">
+                        </ng0-list>
+                        Value: {{ value33 | json }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        focus="roving"
+                        <ng0-list name="value32" [source]="numberArray" [(ngModel)]="value32" focus="roving">
+                        </ng0-list>
+                        Value: {{ value32 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to simple arrays</h5>
+                <p>
+                    Pass a simple array (number[], string[] or boolean[]) as source.
+                    By default the toString() method of the item is used to display the item. <br>
+                    In most cases you want to use a formatter to display a specific text for the item.
+                </p>
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        [source]="numberArray"
                         <ng0-list name="value25" [source]="numberArray" [(ngModel)]="value25"></ng0-list>
                         Value: {{ value25 }}
                     </div>
                     <div class="col-12 col-md-4">
-                        string[]
+                        [source]="stringArray"
                         <ng0-list name="value26" [source]="stringArray" [(ngModel)]="value26">
                         </ng0-list>
                         Value: {{ value26 | json }}
                     </div>
                     <div class="col-12 col-md-4">
-                        boolean[]
+                        [source]="[true, false]"
                         <ng0-list name="value27" [source]="[true, false]" [(ngModel)]="value27">
                         </ng0-list>
                         Value: {{ value27 | json }}
@@ -57,35 +110,36 @@
                     Set [source]="[true, false]" to display boolean values. <br>
                     Using formatters you can display different text for true/false values.
                     The formatters are defined in the locale files.
+                    Locale formatter names starts with "@".
                 </p>
 
-                <div class="row">
-                    <div class="col-xl-3">
-                        Default
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="[true, false]"
                         <ng0-list name="value5" [source]="[true, false]" [(ngModel)]="value5">
                         </ng0-list>
 
                         Value: {{ value5 }}
                     </div>
 
-                    <div class="col-xl-3">
-                        formatBy="@boolean:OnOff"
+                    <div class="col-xl-6">
+                        [source]="[true, false]"; formatBy="@boolean:OnOff"
                         <ng0-list name="value6" [source]="[true, false]" [(ngModel)]="value6"
                                   formatBy="@boolean:OnOff">
                         </ng0-list>
                         Value: {{ value6 }}
                     </div>
 
-                    <div class="col-xl-3">
-                        formatBy="@boolean:CorrectIncorrect"
+                    <div class="col-xl-6">
+                        [source]="[true, false]"; formatBy="@boolean:CorrectIncorrect"
                         <ng0-list name="value7" [source]="[true, false]" [(ngModel)]="value7"
                                   formatBy="@boolean:CorrectIncorrect">
                         </ng0-list>
                         Value: {{ value7 }}
                     </div>
 
-                    <div class="col-xl-3">
-                        formatBy="@boolean:EnableDisable"
+                    <div class="col-xl-6">
+                        [source]="[true, false]"; formatBy="@boolean:EnableDisable"
                         <ng0-list name="value8" [source]="[true, false]" [(ngModel)]="value8"
                                   formatBy="@boolean:EnableDisable">
                         </ng0-list>
@@ -106,14 +160,14 @@
 
                 <div class="row">
                     <div class="col-xl-6">
-                        Sexuality: Default
+                        [source]="Sexuality"
                         <ng0-list name="value18" [source]="Sexuality" [(ngModel)]="value18">
                         </ng0-list>
 
                         Value: {{ value18 }}
                     </div>
                     <div class="col-xl-6">
-                        Sexuality: using formatBy="@enum:Sexuality"
+                        [source]="Sexuality"; formatBy="@enum:Sexuality"
                         <ng0-list name="value24" [source]="Sexuality" [(ngModel)]="value24"
                                   formatBy="@enum:Sexuality">
                         </ng0-list>
@@ -140,7 +194,7 @@
                 </p>
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        source: object[] (without formatter)
+                        [source]="objectsSource1" (without formatter)
                         <ng0-list name="value9" [source]="objectsSource1" [(ngModel)]="value9">
                         </ng0-list>
                         Value: {{ value9 | json }}
@@ -165,16 +219,16 @@
                 </ul>
 
                 <div class="row g-4">
-                    <div class="col-xl-4">
-                        formatBy="name"
+                    <div class="col-xl-6">
+                        [source]="objectsSource1"; formatBy="name"
                         <ng0-list name="value10" [source]="objectsSource1" [(ngModel)]="value10" formatBy="name">
                         </ng0-list>
 
                         Value: {{ value10 | json }}
                     </div>
 
-                    <div class="col-xl-4">
-                        formatBy="@personFormatter1"
+                    <div class="col-xl-6">
+                        [source]="objectsSource1"; formatBy="@personFormatter1"
                         <ng0-list name="value29" [source]="objectsSource1" [(ngModel)]="value29"
                                   formatBy="@personFormatter1">
                         </ng0-list>
@@ -182,8 +236,8 @@
                         Value: {{ value29 | json}}
                     </div>
 
-                    <div class="col-xl-4">
-                        [formatBy]="formatterFunction"
+                    <div class="col-xl-6">
+                        [source]="objectsSource1"; [formatBy]="formatterFunction"
                         <ng0-list name="value28" [source]="objectsSource1" [(ngModel)]="value28"
                                   [formatBy]="personFormatter1">
                         </ng0-list>
@@ -208,7 +262,7 @@
                 </p>
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        compareBy="id"; formatBy="name"
+                        [source]="objectsSource1"; compareBy="id"; formatBy="name"
                         <ng0-list name="value11" [source]="objectsSource1" [(ngModel)]="value11"
                                   formatBy="name" compareBy="id">
                         </ng0-list>
@@ -217,7 +271,7 @@
                     </div>
 
                     <div class="col-xl-6">
-                        [compareBy]="compareFunction"; formatBy="name"
+                        [source]="objectsSource1"; [compareBy]="compareFunction"; formatBy="name"
                         <ng0-list name="value12"
                                   [source]="objectsSource1"
                                   [(ngModel)]="value12"
@@ -246,21 +300,27 @@
 
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        writeBy="id"; compareBy="id"; formatBy="name"
+                        <p style="min-height: 3rem;">
+                            [source]="objectsSource1"; writeBy="id"; compareBy="id"; formatBy="name"
+                        </p>
+
                         <ng0-list name="value13" [source]="objectsSource1" [(ngModel)]="value13"
                                   formatBy="name" compareBy="id" writeBy="id">
                         </ng0-list>
 
-                        Value: {{ value13 }}
+                        Value: {{ value13 | json }}
                     </div>
 
                     <div class="col-xl-6">
-                        [writeBy]="customValueWriter1"; formatBy="name"
+                        <p style="min-height: 3rem;">
+                            [source]="objectsSource1"; [writeBy]="customValueWriter1"; compareBy="id"; formatBy="name"
+                        </p>
+
                         <ng0-list name="value14" [source]="objectsSource1" [(ngModel)]="value14"
                                   formatBy="name" compareBy="id" [writeBy]="customValueWriter1">
                         </ng0-list>
 
-                        Value: {{ value14 }}
+                        Value: {{ value14 | json }}
                     </div>
 
                     <div class="col-xl-12">
@@ -272,7 +332,7 @@
                                   formatBy="name" compareBy="id" writeBy="id">
                         </ng0-list>
 
-                        Value: {{ value30 }}
+                        Value: {{ value30 | json }}
                     </div>
                 </div>
 
@@ -303,22 +363,29 @@
                         Value: {{ value15 | json }}
                     </div>
                 </div>
-            </div>
 
-            <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onPushToDataSource1()">
-                    Push new Item
-                </button>
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFirstItemOfLocalDataSource1()">
+                <div class="mt-4">
+                    <button class="btn btn-outline-secondary me-2" (click)="onPushToDataSource1()">
+                        Push new Item
+                    </button>
+                    <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFirstItemOfLocalDataSource1()">
                     Remove First Item
                 </button>
                 <button class="btn btn-outline-secondary me-2" (click)="onRemoveSelectedItemsOfLocalDataSource1()">
                     Remove Selected Item(s)
                 </button> -->
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
+                    <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
                     Replace First Item
                 </button> -->
+
+
+                    <div class="alert alert-warning mt-4">
+                        Additional data manipulation features will be added in future updates.
+                    </div>
+                </div>
             </div>
+
+
         </div>
     </div>
 
@@ -326,6 +393,9 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Single selection</h5>
+                <p>
+
+                </p>
 
                 <div class="row">
                     <div class="col-12 col-md-6">
@@ -351,17 +421,20 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Multi selection</h5>
-
+                <p>
+                    By setting multiple="true" you can select multiple items. <br>
+                    Setting [showSelectionIndicator]="true" will display a checkbox in front of each item.
+                </p>
                 <div class="row">
                     <div class="col-12 col-md-6">
-                        <p>Without selection indicator</p>
+                        multiple="true"
                         <ng0-list name="value3" [source]="stringArray" [(ngModel)]="value3"
                                   multiple="true">
                         </ng0-list>
                         Value: [{{ value3 }}]
                     </div>
                     <div class="col-12 col-md-6">
-                        <p>With selection indicator</p>
+                        multiple="true"; [showSelectionIndicator]="true"
                         <ng0-list name="value4" [source]="stringArray" [(ngModel)]="value4"
                                   multiple="true" [showSelectionIndicator]="true">
                         </ng0-list>
@@ -379,16 +452,21 @@
             <div class="card-body">
                 <h5 class="card-title">Custom item template</h5>
                 <p>
+                    Use an ng-template to define a custom item template.
+                    The let-option variable is an object with the following properties:
                 </p>
+                <ul>
+                    <li>index: the item index</li>
+                    <li>value: the item value</li>
+                    <li>selected: true if the item is selected</li>
+                    <li>active: true if the item is active</li>
+                    <li> (soon) disabled: true if the item is disabled </li>
+                </ul>
 
                 <div class="row">
-                    <div class="col-xl-3">
-                        Select an object
-                        <ng0-list name="value16"
-                                  [source]="objectsSource1"
-                                  [(ngModel)]="value16"
-                                  writeBy="id"
-                                  formatBy="name">
+                    <div class="col-xl-6">
+                        [source]="objectsSource1"; writeBy="id"
+                        <ng0-list name="value16" [source]="objectsSource1" [(ngModel)]="value16" writeBy="id">
                             <ng-template let-option>
                                 <div class="py-1">
                                     ❤️ This is <strong>option {{option.value.id}}</strong> <br>
@@ -410,19 +488,23 @@
             <div class="card-body">
                 <h5 class="card-title">Filter</h5>
                 <p>
+                    Filter the items by a custom filter function. <br>
+                    The filter function receives the item and must return true if the item should be displayed.
                 </p>
 
                 <div class="row">
-                    <div class="col-xl-3">
-                        <input class="form-control mb-3" [(ngModel)]="list17FilterValue" />
+                    <div class="col-xl-6">
+                        <input class="form-control mb-3" [(ngModel)]="list17FilterValue" placeholder="filter items" />
 
-                        <ng0-list #list17 name="value17" [source]="stringArray" [(ngModel)]="value17" [filterBy]="list17FilterFunction">
+                        [source]="stringArray"; [filterBy]="list17FilterFunction"
+                        <ng0-list #list17 name="value17" [source]="stringArray" [(ngModel)]="value17"
+                                  [filterBy]="list17FilterFunction">
                             <ng-template let-option>
                                 ❤️ {{option.value}}
                             </ng-template>
                         </ng0-list>
 
-                        Value: {{ value17 }}
+                        Value: {{ value17 | json }}
                     </div>
                 </div>
             </div>
