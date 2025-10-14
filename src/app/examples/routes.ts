@@ -26,7 +26,7 @@ export default [
         title: 'Components', 
         path: 'components',
         data: {
-            routerLink: '/components'
+            // routerLink: '/components'
         },
         loadChildren: () => import('./components/routes')
     }

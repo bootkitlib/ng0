@@ -1,4 +1,5 @@
-import { Route } from '@angular/router';
+import { Route } from '@bootkit/ng0/routing';
+import { delay, of } from 'rxjs';
 
 export default [
     {
@@ -67,10 +68,28 @@ export default [
         loadChildren: () => import('./progress/routes'),
     },
     {
-        // title: () => 'Select 1',
+        // title: 'Select',
+        // title: (r, s) => {
+        //     console.log(r,s );
+        //     console.log(r.data);
+        //     return r.data['r1'];
+        // },
         path: 'select',
         data: {
-            title: () => 'Select 2',
+            x: 123,
+            title: (r: any, s: any) => {
+                console.log(r, s);
+                console.log(r.data);
+                return r.data['r1'];
+            },
+            // link: (r: any, s: any) => {
+            //     console.log(r, s);
+            //     console.log(r.data);
+            //     return r.data['r1'];
+            // },
+        },
+        resolve: {
+            r1: (r: any, s: any) => { return of('R1 resolved').pipe(delay(10)); }
         },
         loadChildren: () => import('./select/routes'),
     },

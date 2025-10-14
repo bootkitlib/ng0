@@ -15,7 +15,7 @@ import { RouterService } from '@bootkit/ng0/routing';
 export class AppComponent {
   private routerService = inject(RouterService);
 
-  protected _routes = toSignal(this.routerService.activetedRoutes());
+  protected _routes = toSignal(this.routerService.getActivatedRoutes());
 
   constructor() {
   }

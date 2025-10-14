@@ -1,9 +1,12 @@
-import { Routes } from '@angular/router';
+import { Routes } from '@bootkit/ng0/routing';
 
 export const routes: Routes = [
   {
     path: 'examples',
     title: 'Examples',
+    data: {
+      routerLink: ['/examples']
+    },
     loadChildren: () => import('./examples/routes')
   },
   {
