@@ -1,4 +1,4 @@
-import { Component, ComponentRef, effect, ElementRef, EventEmitter, input, OnDestroy, OnInit, Output, Renderer2, ViewContainerRef } from '@angular/core';
+import { booleanAttribute, Component, ComponentRef, effect, ElementRef, EventEmitter, input, OnDestroy, OnInit, Output, Renderer2, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SidenavMode, SidenavPosition } from './types';
 import { BackdropComponent } from '@bootkit/ng0/components/backdrop';
@@ -28,13 +28,13 @@ import { BackdropComponent } from '@bootkit/ng0/components/backdrop';
   }
 })
 export class SidenavComponent implements OnInit, OnDestroy {
-  public open = input(true);
+  public open = input(true, { transform: booleanAttribute });
   public mode = input<SidenavMode>('push');
   public hasBackdrop = input(true);
   public zIndex = input<number>();
   public position = input<SidenavPosition>('start');
   public sidenavWidth = input.required<number>();
-  public fixedInViewport = input(false);
+  public fixedInViewport = input(false, { transform: booleanAttribute });
   @Output() public backdropClick = new EventEmitter<MouseEvent>();
   private _backdropRef?: ComponentRef<BackdropComponent>;
   private _backdropClickHandlerUnlisten?: () => void;
@@ -61,7 +61,7 @@ export class SidenavComponent implements OnInit, OnDestroy {
     this._backdropRef = this._vcr.createComponent(BackdropComponent);
     const backdropElm = this._backdropRef.location.nativeElement;
     this._backdropRef.instance.fixed.set(this.fixedInViewport());
-    if(this.zIndex() != undefined) {
+    if (this.zIndex() != undefined) {
       this._renderer.setStyle(backdropElm, 'z-index', this.zIndex());
     }
     this._backdropClickHandlerUnlisten = this._renderer.listen(backdropElm, 'click', (e) => {

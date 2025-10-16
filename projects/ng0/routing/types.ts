@@ -44,7 +44,7 @@ export interface RouteData {
     /**
      * A Router link defined for the route.
      */
-    routerLink?: RouterLinkValue | RouterLinkValueResolver;
+    link?: RouterLinkValue | RouterLinkValueResolver;
 
     /**
      * linkTarget
@@ -77,7 +77,7 @@ export interface RouterActivatedRouteSnapshot {
     /**
      * The original ActivatedRouteSnapshot
      */
-    route: ActivatedRouteSnapshot;
+    activatedRoute: ActivatedRouteSnapshot;
 
     /**
      * Resolved title, if any
@@ -87,7 +87,7 @@ export interface RouterActivatedRouteSnapshot {
     /**
      * Resolved link, if any
      */
-    routerLink: RouterLinkValue;
+    link: RouterLinkValue;
 
     /**
      * Children routes

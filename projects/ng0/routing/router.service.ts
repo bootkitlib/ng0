@@ -64,15 +64,15 @@ export class RouterService {
        configData.title;
     }
 
-    let link = configData?.routerLink;
+    let link = configData?.link;
     if (typeof link === 'function') {
       link = (link as RouterLinkValueResolver)(route, this._router.routerState.snapshot);
     }
 
     return {
-      route: route,
+      activatedRoute: route,
       title,
-      routerLink: link,
+      link: link,
       children: route.children
         .filter(x => outlets.includes(x.outlet))
         .map(x => this._mapRoute(x, outlets))

@@ -5,7 +5,7 @@ export const routes: Routes = [
     path: 'examples',
     title: 'Examples',
     data: {
-      routerLink: ['/examples']
+      link: ['/examples']
     },
     loadChildren: () => import('./examples/routes')
   },
