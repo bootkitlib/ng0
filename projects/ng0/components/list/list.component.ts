@@ -50,7 +50,7 @@ export class ListComponent implements ControlValueAccessor {
     private _touchCallback?: (value: any) => void;
     private _selectedIndices = new Set<number>();
 
-    protected readonly _items = signal<ListItem[]>([]);
+    protected readonly _items = signal<any[]>([]);
 
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _activeOptionIndex = signal<number>(-1);
@@ -161,8 +161,8 @@ export class ListComponent implements ControlValueAccessor {
      * Gets the items of the list component.
      * @returns A readonly array of the items in the list.
      */
-    public items(): ReadonlyArray<ListItem> {
-        return [...this._items()];
+    public items(): ReadonlyArray<any> {
+        return this._items();
     }
 
     /**
@@ -203,10 +203,10 @@ export class ListComponent implements ControlValueAccessor {
         if (this.multiple()) {
             this._value = [];
             for (const idx of this._selectedIndices) {
-                this._value.push(this.writeBy()(this._items()[idx].value));
+                this._value.push(this.writeBy()(this._items()[idx]));
             }
         } else {
-            this._value = this.writeBy()(this._items()[index].value);
+            this._value = this.writeBy()(this._items()[index]);
         }
 
         this._changeCallback?.(this._value);
@@ -230,7 +230,7 @@ export class ListComponent implements ControlValueAccessor {
         if (this.multiple()) {
             this._value = [];
             for (const idx of this._selectedIndices) {
-                this._value.push(this.writeBy()(this._items()[idx].value));
+                this._value.push(this.writeBy()(this._items()[idx]));
             }
         } else {
             this._value = undefined;
@@ -319,7 +319,7 @@ export class ListComponent implements ControlValueAccessor {
 
         let compareBy = this.compareBy();
         let findAndSelect = (v: any) => {
-            let index = this._items().findIndex(i => compareBy(i.value, v));
+            let index = this._items().findIndex(i => compareBy(i, v));
             if (index > -1) {
                 this._selectedIndices.add(index);
             }
@@ -367,7 +367,7 @@ export class ListComponent implements ControlValueAccessor {
         }
     }
 
-    protected _handleUserSelection(index: number, item: ListItem) {
+    protected _handleUserSelection(index: number, item: any) {
         let selected: boolean;
 
         this.active(index)
@@ -381,7 +381,7 @@ export class ListComponent implements ControlValueAccessor {
         }
 
         this.selectionChange.emit({
-            value: item.value,
+            value: item,
             index: index,
             selected: selected,
             selectedIndices: this.selectedIndices(),
@@ -392,8 +392,7 @@ export class ListComponent implements ControlValueAccessor {
     private _loadItems() {
         var r = new DataRequest();
         this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            let items = this._createItems(res.data);
-            this._items().push(...items);
+            this._items.set(res.data)
         });
 
         // listen to changes
@@ -402,7 +401,7 @@ export class ListComponent implements ControlValueAccessor {
             e.changes.forEach(change => {
                 switch (change.type) {
                     case 'push':
-                        this._items().push(...this._createItems(change.items));
+                        // this._items().push(...this._createItems(change.items));
                         break;
                     // case 'replace':
                     //     change.replacements.forEach(({ index, value }) => {
@@ -421,15 +420,6 @@ export class ListComponent implements ControlValueAccessor {
                 this._changeDetector.markForCheck();
             });
         });
-    }
-
-    private _createItems(items: any[]) {
-        let idGenerator = this.idBy()
-
-        return items.map(x => ({
-            id: idGenerator?.(0, x),
-            value: x,
-        }));
     }
 
     @HostListener('click')
@@ -527,20 +517,6 @@ export class ListComponent implements ControlValueAccessor {
     });
 }
 
-/**
- * Represents an item in the list.
- */
-export interface ListItem {
-    /**
-     * Id of the item (if idGenerator is provided, otherwise undefined).
-     */
-    id?: string | number,
-
-    /**
-     * Value of the item.
-     */
-    value: any,
-}
 
 /**
  * Event emitted when the selection state of the list changes by user interaction.

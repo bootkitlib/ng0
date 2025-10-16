@@ -17,8 +17,7 @@
 
        @if(_itemTemplate) {
        <ng-container *ngTemplateOutlet="_itemTemplate; context: { $implicit: {
-              id: item.id,
-              value: item.value,
+              item: item,
               selected: selected,       
               active: active,
        }}" />
@@ -28,12 +27,10 @@
        <input class="form-check-input ng0-list-selection-indicator"
               tabindex="-1"
               [checked]="selected"
-              [attr.type]="multiple() ? 'checkbox' : 'radio'"
-              [attr.name]="item.id"
-              [attr.id]="item.id">
+              [attr.type]="multiple() ? 'checkbox' : 'radio'">
        }
 
-       {{formatter(item.value)}}
+       {{formatter(item)}}
 
        }
 </div>
