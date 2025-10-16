@@ -24,7 +24,7 @@
       @for (route of _routes(); track $index) {
       @if(route.title) {
       <li class="breadcrumb-item">
-        <a [routerLink]="route.routerLink">{{ route?.title }}</a>
+        <a [routerLink]="route.link">{{ route?.title }}</a>
       </li>
       }
       }

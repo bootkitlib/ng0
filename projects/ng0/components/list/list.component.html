@@ -2,14 +2,14 @@
 @let filter = filterBy();
 
 
-@for (item of _items(); track item.id) {
+@for (item of _items(); track _itemTrackBy($index, item)) {
 @let selected= isSelected($index);
 @let active= isActive($index);
 
 @if(filter(item)) {
 <div
      [ngClass]="itemClass()(item)"
-     [attr.id]="item.id"
+     [attr.id]="idBy()?.($index, item)"
      [class.active]="active"
      [class.selected]="selected"
      [attr.tabIndex]="_getItemTabIndex($index)"

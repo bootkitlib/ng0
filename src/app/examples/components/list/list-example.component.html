@@ -20,55 +20,6 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Accessibility</h5>
-                <p>
-                    Ensure that the list is accessible to all users, including those using assistive technologies. <br>
-                </p>
-
-                <div>
-                    <h6>Focus:</h6>
-                    By setting the focus property, you can control how the list is navigated using the keyboard.
-                    focus property can be set to "none", "roving" or "activeDescendant".
-                    <ul>
-                        <li>
-                            focus="none": The list will not manage focus for its items.
-                        </li>
-                        <li>
-                            focus="activeDescendant": The list will manage focus for its items using the
-                            aria-activedescendant attribute. This is default.
-                        </li>
-                        <li>
-                            focus="roving": The list will manage focus for its items using a roving tabindex.
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="row">
-                    <div class="col-12 col-md-4">
-                        focus="none"
-                        <ng0-list name="value31" [source]="numberArray" [(ngModel)]="value31" focus="none"></ng0-list>
-                        Value: {{ value31 }}
-                    </div>
-                    <div class="col-12 col-md-4">
-                        focus="activeDescendant"
-                        <ng0-list name="value33" [source]="numberArray" [(ngModel)]="value33" focus="activeDescendant">
-                        </ng0-list>
-                        Value: {{ value33 | json }}
-                    </div>
-                    <div class="col-12 col-md-4">
-                        focus="roving"
-                        <ng0-list name="value32" [source]="numberArray" [(ngModel)]="value32" focus="roving">
-                        </ng0-list>
-                        Value: {{ value32 | json }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
                 <h5 class="card-title">Bind to simple arrays</h5>
                 <p>
                     Pass a simple array (number[], string[] or boolean[]) as source.
@@ -78,7 +29,7 @@
                 <div class="row">
                     <div class="col-12 col-md-4">
                         [source]="numberArray"
-                        <ng0-list name="value25" [source]="numberArray" [(ngModel)]="value25"></ng0-list>
+                        <ng0-list name="value25" [source]="numberArray" [(ngModel)]="value25" [idBy]="idGenerator1"></ng0-list>
                         Value: {{ value25 }}
                     </div>
                     <div class="col-12 col-md-4">
@@ -505,6 +456,55 @@
                         </ng0-list>
 
                         Value: {{ value17 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Accessibility</h5>
+                <p>
+                    Ensure that the list is accessible to all users, including those using assistive technologies. <br>
+                </p>
+
+                <div>
+                    <h6>Focus:</h6>
+                    By setting the focus property, you can control how the list is navigated using the keyboard.
+                    focus property can be set to "none", "roving" or "activeDescendant".
+                    <ul>
+                        <li>
+                            focus="none": The list will not manage focus for its items.
+                        </li>
+                        <li>
+                            focus="activeDescendant": The list will manage focus for its items using the
+                            aria-activedescendant attribute. This is default.
+                        </li>
+                        <li>
+                            focus="roving": The list will manage focus for its items using a roving tabindex.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        focus="none"
+                        <ng0-list name="value31" [source]="numberArray" [(ngModel)]="value31" focus="none"></ng0-list>
+                        Value: {{ value31 }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        focus="activeDescendant"
+                        <ng0-list name="value33" [source]="numberArray" [(ngModel)]="value33" focus="activeDescendant">
+                        </ng0-list>
+                        Value: {{ value33 | json }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        focus="roving"
+                        <ng0-list name="value32" [source]="numberArray" [(ngModel)]="value32" focus="roving">
+                        </ng0-list>
+                        Value: {{ value32 | json }}
                     </div>
                 </div>
             </div>

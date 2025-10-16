@@ -12,3 +12,8 @@ export type LogicalOperator =
   | 'gte'
   | 'lt'
   | 'lte';
+
+/**
+ * 
+ */
+export type DataSourceItemTracker = (item: any) => string | number;

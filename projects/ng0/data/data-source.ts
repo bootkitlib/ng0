@@ -16,7 +16,8 @@ export type DataLoader<T = any> = (request: DataRequest) => Observable<DataResul
  * This class provides a common interface for loading data from various sources.
  */
 export abstract class DataSource<T = any> {
-  abstract readonly type: 'local' | 'remote';
+  public abstract readonly type: 'local' | 'remote';
+  public readonly itemTracker?: (item: any) => string | number;
 
   protected changeSubject = new Subject<DataSourceChangeEvent>();
   protected loading = signal(false);
@@ -31,6 +32,9 @@ export abstract class DataSource<T = any> {
    */
   public isLoading = this.loading.asReadonly();
 
+
+  constructor() {
+  }
 
   /**
    * Loads data from the data source.

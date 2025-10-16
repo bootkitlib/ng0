@@ -3,6 +3,7 @@ import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
 import { deleteEntries, getEnumValues, ValueWriter } from "@bootkit/ng0/common";
+import { DataSourceItemTracker } from "./types";
 
 /**
  * An implementation of DataSource that uses an array as the data source.
@@ -13,8 +14,9 @@ export class LocalDataSource extends DataSource {
   // public valueWriter = signal<ValueWriter>
   // public valueComparer = signal<ValueComparerFunction>
 
-  constructor(private items: any[]) {
+  constructor(private items: any[], itemTracker?: DataSourceItemTracker) {
     super();
+    // this.itemTracker = itemTracker;
   }
 
   /**

@@ -1,12 +1,14 @@
-import { Component, ElementRef, Renderer2, input, OnInit, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, ViewEncapsulation, model, output, computed } from '@angular/core';
+import { Component, ElementRef, input, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
-    CssClassAttribute, IdGenerator, sequentialIdGenerator, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
-    defaultValueWriter, FilterPredicate, filterPredicateAttribute,
-    noopFilter
+    CssClassAttribute, IdGenerator, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
+    defaultValueWriter, filterPredicateAttribute,
+    noopFilter,
+    sequentialIdGenerator,
+    IdGeneratorAttribute
 } from '@bootkit/ng0/common';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
 
@@ -31,16 +33,16 @@ import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService }
     }],
     host: {
         '[class.ng0-list-loading]': 'source().isLoading()',
-        '[attr.aria-activedescendant]': '_ariaActiveDescendant()',
+        '[attr.aria-activedescendant]': '_hostAriaActiveDescendant()',
         '[attr.disabled]': '_isDisabled()',
-        '[attr.tabindex]': '_isDisabled() || focus() === "none" ? undefined : "0"',
+        '[attr.tabindex]': '_hostTabIndex()',
         '[attr.aria-disabled]': '_isDisabled()'
     }
 })
 export class ListComponent implements ControlValueAccessor {
     private _document = inject(DOCUMENT);
     private _ls = inject(LocalizationService);
-    private _renderer = inject(Renderer2);
+    private _elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
     private _destroyRef = inject(DestroyRef);
     private _changeDetector = inject(ChangeDetectorRef);
     private _value: any = undefined;
@@ -53,13 +55,6 @@ export class ListComponent implements ControlValueAccessor {
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _activeOptionIndex = signal<number>(-1);
     @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
-
-    private _ariaActiveDescendant = computed(() => {
-        if (this.focus() == 'activeDescendant' && this._activeOptionIndex() > -1 && this._items().length) {
-            return this._items()[this._activeOptionIndex()].id;
-        }
-        return undefined;
-    });
 
     /**
      * Reference to the host element
@@ -139,12 +134,14 @@ export class ListComponent implements ControlValueAccessor {
     public readonly focus = input<'none' | 'roving' | 'activeDescendant'>('activeDescendant');
 
     /**
-     * Custom id generator function to generate unique ids for each item.
-     * Default generates sequential ids with the prefix 'ng0-list-item-'.
-     * If set to undefined, no ids will be generated.
-     * @default sequentialIdGenerator('ng0-list-item-')
+     * A function that generates unique ids for each item in the list.
+     * If set to a function, it will be called with the item as an argument to generate the id.
+     * If set to undefined, no ids will be generated for the items.
+     * @default undefined
      */
-    public readonly idGenerator = input<IdGenerator>(sequentialIdGenerator('ng0-list-item-'));
+    public readonly idBy = input(undefined, {
+        transform: IdGeneratorAttribute
+    });
 
     /**
      * Event emitted when the selection state of an item changes by user interaction.
@@ -307,8 +304,8 @@ export class ListComponent implements ControlValueAccessor {
      */
     public scrollIntoView(index: number, position?: ScrollLogicalPosition, behavior?: ScrollBehavior) {
         let item = this._items()[index];
-        let elm = this._document.getElementById(item.id) as HTMLElement;
-        elm!.scrollIntoView({ block: position, behavior: behavior });
+        // let elm = this._document.getElementById(item.id) as HTMLElement;
+        // elm!.scrollIntoView({ block: position, behavior: behavior });
     }
 
     writeValue(value: any): void {
@@ -358,10 +355,14 @@ export class ListComponent implements ControlValueAccessor {
 
     protected _getItemTabIndex(index: number) {
         let focus = this.focus();
-        if (this._isDisabled() || focus == 'none' || focus == 'activeDescendant') {
+        if (this._isDisabled()) {
+            return undefined;
+        }
+
+        if (focus == 'none' || focus == 'activeDescendant') {
             return undefined;
         } else {
-            // roving
+            // focus: roving
             return this._activeOptionIndex() === index ? 0 : -1
         }
     }
@@ -423,10 +424,10 @@ export class ListComponent implements ControlValueAccessor {
     }
 
     private _createItems(items: any[]) {
-        let idGenerator = this.idGenerator()
+        let idGenerator = this.idBy()
 
         return items.map(x => ({
-            id: idGenerator(x),
+            id: idGenerator?.(0, x),
             value: x,
         }));
     }
@@ -463,17 +464,12 @@ export class ListComponent implements ControlValueAccessor {
                 }
                 e.preventDefault();
                 break;
-            case 'Tab': // Go to next item if roving focus is enabled
-                // if (this.focus() === 'roving' && index < optionsCount - 1) {
-                //     this.active(index + 1);
-                //     e.preventDefault();
-                // }
+            case 'Tab':
                 break;
             case 'Enter':
                 if (index > -1) {
                     this._handleUserSelection(index, this._items()[index]);
                 }
-                // e.preventDefault();
                 break;
             case 'Home':
                 this.active(0);
@@ -484,7 +480,31 @@ export class ListComponent implements ControlValueAccessor {
                 e.preventDefault();
                 break;
         }
+
+        if (this.focus() === 'roving') {
+            const activeItem = this._elementRef.nativeElement.children[this._activeOptionIndex()] as HTMLDivElement;
+            activeItem?.focus();
+        }
     }
+
+    private _hostAriaActiveDescendant = computed(() => {
+        if (!this._isDisabled() && this.focus() == 'activeDescendant' && this._activeOptionIndex() > -1) {
+            return this._items()[this._activeOptionIndex()].id;
+        }
+        return undefined;
+    });
+
+    private _hostTabIndex = computed(() => {
+        if (this._isDisabled() || this.focus() === 'none') {
+            return -1;
+        }
+
+        if (this.focus() === "roving") {
+            return this._activeOptionIndex() === -1 ? 0 : -1;
+        } else {
+            return 0; // activeDescendant
+        }
+    });
 
     private _verifyIndexRange(index: number) {
         let optionsCount = this._items().length;
@@ -492,6 +512,19 @@ export class ListComponent implements ControlValueAccessor {
             throw new Error('Index out of range');
         }
     }
+
+
+    protected _itemTrackBy(index: number, item: any) {
+        return this._itemTracker()(index, item);
+    }
+
+    private _itemTracker = computed(() => {
+        if (typeof this.idBy() === 'function') {
+            return (index: number, item: any) => this.idBy()!(index, item);
+        } else {
+            return (index: number, item: any) => index;
+        }
+    });
 }
 
 /**
@@ -501,7 +534,7 @@ export interface ListItem {
     /**
      * Id of the item (if idGenerator is provided, otherwise undefined).
      */
-    id: string,
+    id?: string | number,
 
     /**
      * Value of the item.

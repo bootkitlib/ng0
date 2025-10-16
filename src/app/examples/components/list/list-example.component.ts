@@ -65,6 +65,8 @@ export class ListExampleComponent {
         return item.value.toLowerCase().indexOf(this.list17FilterValue().toLowerCase()) >= 0;
     }
 
+    idGenerator1 = (item: any, index?: number) => item;
+
     onList15SelectionChange(e: ListSelectionChangeEvent) {
         this.list15SelectedIndices = e.selectedIndices;
     }
