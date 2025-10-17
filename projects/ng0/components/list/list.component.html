@@ -1,38 +1,48 @@
 @let formatter = formatBy();
 @let filter = filterBy();
 
-
-@for (item of _items(); track _itemTrackBy($index, item)) {
-@let selected= isSelected($index);
-@let active= isActive($index);
-
-@if(filter(item)) {
-<div
-     [ngClass]="itemClass()(item)"
-     [attr.id]="idBy()?.($index, item)"
-     [class.active]="active"
-     [class.selected]="selected"
-     [attr.tabIndex]="_getItemTabIndex($index)"
-     (click)="_handleUserSelection($index, item)">
+@for (item of _sourceItems(); track trackBy()($index, item)) {
+<ng0-list-item #listItem="ng0ListItem"
+               *ng0ListItemFilter="filter(item)"
+               [value]="item"
+               [ngClass]="itemClass()(item)"
+               (click)="_handleUserSelection(listItem)">
 
        @if(_itemTemplate) {
        <ng-container *ngTemplateOutlet="_itemTemplate; context: { $implicit: {
-              item: item,
-              selected: selected,       
-              active: active,
-       }}" />
+              item: listItem,
+              value: item,
+              selected: listItem.isSelected(),
+              active: listItem.isActive(),
+              }}" />
        } @else {
-
        @if(showSelectionIndicator()) {
        <input class="form-check-input ng0-list-selection-indicator"
               tabindex="-1"
-              [checked]="selected"
+              [checked]="listItem.isSelected()"
               [attr.type]="multiple() ? 'checkbox' : 'radio'">
        }
 
        {{formatter(item)}}
-
        }
-</div>
+</ng0-list-item>
 }
-}
+
+<style>
+       ng0-list {
+              display: block;
+              overflow-y: auto;
+              overflow-x: hidden;
+              user-select: none;
+              border: 1px solid var(--bs-border-color);
+              border-radius: var(--bs-border-radius);
+
+              /* // &:focus, &:focus-visible {
+    //     border: 1px solid var(--bs-primary);
+    // } */
+
+              &.disabled {
+                     background-color: var(--bs-secondary-bg);
+              }
+       }
+</style>

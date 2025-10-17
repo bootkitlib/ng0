@@ -1,0 +1,21 @@
+ng0-list-item {
+    display: flex;
+    padding: 0.5rem;
+
+    .ng0-list-selection-indicator {
+        margin-inline-end: 0.5rem;
+    }
+
+    &.selected {
+        background-color: var(--bs-primary);
+        color: var(--bs-light);
+    }
+
+    &.active:not(.selected) {
+        background-color: var(--bs-gray-300);
+    }
+
+    &:hover:not(.selected):not(.disabled):not(.active) {
+        background-color: var(--bs-gray-100);
+    }
+}

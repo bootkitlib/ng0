@@ -16,7 +16,50 @@
             </div>
         </div>
     </div>
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to LocalDataSource</h5>
+                <p>
+                    A LocalDataSource is a data source that can be used to manage the data of the list. <br>
+                    It is a simple wrapper around an array that provides methods to manipulate the data.
+                    You can add, remove or update items in the data source and
+                    the list will be updated automatically.
+                </p>
 
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: LocalDataSource
+                        <ng0-list name="value15" [source]="localDatasource1" [(ngModel)]="value15"
+                                  (selectionChange)="onList15SelectionChange($event)" multiple="true" trackBy="@item">
+                        </ng0-list>
+                        Value: {{ value15 | json }}
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button class="btn btn-outline-secondary me-2" (click)="onPushToDataSource1()">
+                        Push new Item
+                    </button>
+                    <button class="btn btn-outline-secondary me-2" (click)="onRemoveFirstItemOfLocalDataSource1()">
+                        Remove First Item
+                    </button>
+                    <!--<button class="btn btn-outline-secondary me-2" (click)="onRemoveSelectedItemsOfLocalDataSource1()">
+                    Remove Selected Item(s)
+                </button> -->
+                    <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
+                    Replace First Item
+                </button> -->
+                    <button class="btn btn-outline-secondary me-2" (click)="onInsertAtFirstPosition()">
+                        Insert at First Position
+                    </button>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
@@ -29,7 +72,7 @@
                 <div class="row">
                     <div class="col-12 col-md-4">
                         [source]="numberArray"
-                        <ng0-list name="value25" [source]="numberArray" [(ngModel)]="value25" [idBy]="idGenerator1"></ng0-list>
+                        <ng0-list name="value25" [source]="numberArray" [(ngModel)]="value25"></ng0-list>
                         Value: {{ value25 }}
                     </div>
                     <div class="col-12 col-md-4">
@@ -146,7 +189,8 @@
                 <div class="row g-4">
                     <div class="col-xl-6">
                         [source]="objectsSource1" (without formatter)
-                        <ng0-list name="value9" [source]="objectsSource1" [(ngModel)]="value9">
+                        <ng0-list name="value9" [source]="objectsSource1" [(ngModel)]="value9" idGenerator="id"
+                                  trackBy="id">
                         </ng0-list>
                         Value: {{ value9 | json }}
                     </div>
@@ -294,51 +338,7 @@
         </div>
     </div>
 
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to LocalDataSource</h5>
-                <p>
-                    A LocalDataSource is a data source that can be used to manage the data of the list. <br>
-                    It is a simple wrapper around an array that provides methods to manipulate the data.
-                    You can add, remove or update items in the data source and
-                    the list will be updated automatically.
-                </p>
 
-                <div class="row">
-                    <div class="col-xl-3">
-                        Source: LocalDataSource
-                        <ng0-list name="value15" [source]="localDatasource1" [(ngModel)]="value15"
-                                  (selectionChange)="onList15SelectionChange($event)" multiple="true">
-                        </ng0-list>
-                        Value: {{ value15 | json }}
-                    </div>
-                </div>
-
-                <div class="mt-4">
-                    <button class="btn btn-outline-secondary me-2" (click)="onPushToDataSource1()">
-                        Push new Item
-                    </button>
-                    <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFirstItemOfLocalDataSource1()">
-                    Remove First Item
-                </button>
-                <button class="btn btn-outline-secondary me-2" (click)="onRemoveSelectedItemsOfLocalDataSource1()">
-                    Remove Selected Item(s)
-                </button> -->
-                    <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
-                    Replace First Item
-                </button> -->
-
-
-                    <div class="alert alert-warning mt-4">
-                        Additional data manipulation features will be added in future updates.
-                    </div>
-                </div>
-            </div>
-
-
-        </div>
-    </div>
 
     <div class="col-xl-12">
         <div class="card">
@@ -418,11 +418,11 @@
                     <div class="col-xl-6">
                         [source]="objectsSource1"; writeBy="id"
                         <ng0-list name="value16" [source]="objectsSource1" [(ngModel)]="value16" writeBy="id">
-                            <ng-template let-option>
+                            <ng-template let-item>
                                 <div class="py-1">
-                                    ❤️ This is <strong>option {{option.value.id}}</strong> <br>
+                                    ❤️ This is <strong>option {{item.value}}</strong> <br>
                                     <small class="text-muted">This is extra info about item
-                                        {{option.value.id}}</small>
+                                        {{item.value}}</small>
                                 </div>
                             </ng-template>
                         </ng0-list>
@@ -450,8 +450,8 @@
                         [source]="stringArray"; [filterBy]="list17FilterFunction"
                         <ng0-list #list17 name="value17" [source]="stringArray" [(ngModel)]="value17"
                                   [filterBy]="list17FilterFunction">
-                            <ng-template let-option>
-                                ❤️ {{option.value}}
+                            <ng-template let-item>
+                                ❤️ {{item.value}}
                             </ng-template>
                         </ng0-list>
 
@@ -462,7 +462,7 @@
         </div>
     </div>
 
-        <div class="col-xl-12">
+    <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Accessibility</h5>

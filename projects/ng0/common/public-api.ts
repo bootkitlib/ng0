@@ -12,3 +12,4 @@ export * from './equality-comparer';
 export * from './value-writer';
 export * from './comparer';
 export * from './filter';
+export * from './track-by';

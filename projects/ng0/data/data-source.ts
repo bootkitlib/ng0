@@ -1,8 +1,7 @@
-import { Observable, Subject } from "rxjs";
+import { Observable } from "rxjs";
 import { DataRequest } from "./data-request";
 import { DataResult } from "./data-result";
 import { signal } from "@angular/core";
-import { DataSourceChangeEvent } from "./data-source-change";
 
 /**
  * DataLoader is a function that takes a DataRequest and returns an Observable of DataResult.
@@ -17,21 +16,12 @@ export type DataLoader<T = any> = (request: DataRequest) => Observable<DataResul
  */
 export abstract class DataSource<T = any> {
   public abstract readonly type: 'local' | 'remote';
-  public readonly itemTracker?: (item: any) => string | number;
-
-  protected changeSubject = new Subject<DataSourceChangeEvent>();
-  protected loading = signal(false);
-
-  /**
-   * 
-   */
-  public readonly change = this.changeSubject.asObservable();
+  protected _isLoading = signal(false);
 
   /**
    * Indicates whether the data source is currently loading data.
    */
-  public isLoading = this.loading.asReadonly();
-
+  public isLoading = this._isLoading.asReadonly();
 
   constructor() {
   }

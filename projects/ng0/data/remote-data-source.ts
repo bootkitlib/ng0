@@ -19,15 +19,15 @@ export class RemoteDataSource extends DataSource {
   }
 
   load(request: DataRequest) {
-    this.loading.set(true);
+    this._isLoading.set(true);
 
     return this.loader(request).pipe(
       catchError(err => {
-        this.loading.set(false);
+        this._isLoading.set(false);
         throw err;
       }),
       tap(res => {
-        this.loading.set(false);
+        this._isLoading.set(false);
       })
     )
   }

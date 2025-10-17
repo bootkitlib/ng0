@@ -2,8 +2,7 @@ import { of } from "rxjs";
 import { DataRequest, DataRequestFilter } from "./data-request";
 import { DataResult } from "./data-result";
 import { DataSource } from "./data-source";
-import { deleteEntries, getEnumValues, ValueWriter } from "@bootkit/ng0/common";
-import { DataSourceItemTracker } from "./types";
+import { getEnumValues } from "@bootkit/ng0/common";
 
 /**
  * An implementation of DataSource that uses an array as the data source.
@@ -11,12 +10,13 @@ import { DataSourceItemTracker } from "./types";
  */
 export class LocalDataSource extends DataSource {
   readonly type = 'local';
-  // public valueWriter = signal<ValueWriter>
-  // public valueComparer = signal<ValueComparerFunction>
 
-  constructor(private items: any[], itemTracker?: DataSourceItemTracker) {
+  /**
+   * Creates a new LocalDataSource.
+   * @param items The array of items to be used as the data source. 
+   */
+  constructor(private items: any[]) {
     super();
-    // this.itemTracker = itemTracker;
   }
 
   /**
@@ -77,57 +77,6 @@ export class LocalDataSource extends DataSource {
     //   tap(x => this._loading = false)
     // );
     return of(dataResult);
-  }
-
-  /**
-   * Adds items to the end of the local array.
-   * @param items The items to add.
-   */
-  public push(...items: any[]): void {
-    this.items.push(...items);
-    this.changeSubject.next({ changes: [{ type: 'push', items }] });
-  }
-
-  // /**
-  //  * Replaces an item at the specified index.
-  //  * @param index The index of the item to replace.
-  //  * @param value The new value for the item.
-  //  */
-  // public replace(index: number, value: any): void {
-  //   this._validateIndex(index);
-  //   this.changeSubject.next({ changes: [{ type: 'replace', replacements: [{ index, value }] }] });
-  // }
-
-  // /**
-  //  * Replaces multiple items at the specified indices.
-  //  * @param replacements An array of objects containing the index and new value for each replacement.
-  //  */
-  // public replaceMany(...replacements: { index: number, value: any }[]): void {
-  //   replacements.forEach(({ index, value }) => {
-  //     this._validateIndex(index);
-  //     this.items[index] = value;
-  //   });
-
-  //   this.changeSubject.next({ changes: [{ type: 'replace', replacements: replacements }] });
-  // }
-
-  // /**
-  //  * Removes items at the specified indices.
-  //  * @param indices The indices of the items to remove.
-  //  */
-  // public remove(...indices: number[]): void {
-  //   indices.sort((a, b) => b - a); // Sort indices in descending order to avoid index shifting issues
-  //   indices.forEach(index => {
-  //     this._validateIndex(index);
-  //     this.items.splice(index, 1);
-  //   });
-  //   this.changeSubject.next({ changes: [{ type: 'remove', indices }] });
-  // }
-
-  private _validateIndex(index: number) {
-    if (index < 0 || index >= this.items.length) {
-      throw Error('Index is out of range.');
-    }
   }
 }
 

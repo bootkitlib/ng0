@@ -215,9 +215,9 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
                 this._filterElementRef?.nativeElement.focus();
             }
 
-            if (this._activeOptionIndex() > -1) {
-                this._listComponent?.active(this._activeOptionIndex());
-            }
+            // if (this._activeOptionIndex() > -1) {
+            //     this._listComponent?.active(this._activeOptionIndex());
+            // }
         }, 0);
     }
 
@@ -229,7 +229,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
     protected _onListSelectionChange(e: ListSelectionChangeEvent) {
         if (!this.multiple()) {
-            this._activeOptionIndex.set(e.index);
+            // this._activeOptionIndex.set(e.index);
             this.open.set(false);
         }
     }

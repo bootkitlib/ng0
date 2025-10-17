@@ -42,7 +42,7 @@ export class ListExampleComponent {
         { id: 2, name: 'Option 2', description: 'Option 2 description' },
         { id: 3, name: 'Option 3', description: 'Option 3 description' },
     ];
-    localDatasource1 = new LocalDataSource(Array.from({ length: 3 }, (_, i) => i + 1));
+    localDatasource1 = new LocalDataSource([1, 2, 3, 4, 5]);
     fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(100)))
 
     value0?: string; value1?: string; value2?: string; value3?: string[] = []; value4?: string[] = ['One'];
@@ -62,23 +62,35 @@ export class ListExampleComponent {
     personFormatter1 = (item?: any) => item ? `${item.id}) - ${item.name}` : '';
     list17FilterFunction: FilterPredicate = (item) => {
         if (!this.list17FilterValue()) return true;
-        return item.value.toLowerCase().indexOf(this.list17FilterValue().toLowerCase()) >= 0;
+        return item.toLowerCase().indexOf(this.list17FilterValue().toLowerCase()) >= 0;
     }
 
     idGenerator1 = (item: any, index?: number) => item;
 
     onList15SelectionChange(e: ListSelectionChangeEvent) {
-        this.list15SelectedIndices = e.selectedIndices;
+        // this.list15SelectedIndices = e.selectedIndices;
     }
 
     onPushToDataSource1() {
         this.counter.update(x => ++x);
-        this.localDatasource1.push(`Pushed: (${this.counter()}).`)
+        
+        // this.localDatasource1.update(items => {
+        //     items.push(`Pushed: (${this.counter()}).`);
+        // });
     }
 
-    // onRemoveFirstItemOfLocalDataSource1() {
-    //     this.localDatasource1.remove(0);
-    // }
+    onRemoveFirstItemOfLocalDataSource1() {
+        // this.localDatasource1.update(items => {
+        //     items.splice(0, 1);
+        // });
+    }
+
+    onInsertAtFirstPosition() {
+        this.counter.update(x => ++x);
+        // this.localDatasource1.update(items => {
+        //     items.splice(0, 0, `Inserted: (${this.counter()}).`);
+        // });
+    }
 
     // onRemoveSelectedItemsOfLocalDataSource1() {
     //     if(this.list15SelectedIndices.length) {
@@ -89,4 +101,6 @@ export class ListExampleComponent {
     // onReplaceLocalDataSource1() {
     //     this.localDatasource1.replace(0, 'This item is replaced!')
     // }
+
+
 }

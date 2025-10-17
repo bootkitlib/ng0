@@ -1,16 +1,18 @@
-import { Component, ElementRef, input, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed } from '@angular/core';
+import { Component, ElementRef, input, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import {
-    CssClassAttribute, IdGenerator, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
+    CssClassAttribute, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
     defaultValueWriter, filterPredicateAttribute,
     noopFilter,
-    sequentialIdGenerator,
-    IdGeneratorAttribute
+    IdGeneratorAttribute,
+    TrackByAttribute,
+    trackByIndex
 } from '@bootkit/ng0/common';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { ListItemFilterDirective } from './list-item-filter.directive';
+import { ListItemComponent } from "./list-item.component";
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -19,12 +21,13 @@ import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService }
     selector: 'ng0-list',
     exportAs: 'ng0List',
     templateUrl: './list.component.html',
-    styleUrl: './list.component.scss',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    // encapsulation: ViewEncapsulation.None,
+    encapsulation: ViewEncapsulation.None,
     imports: [
         CommonModule,
+        ListItemFilterDirective,
+        ListItemComponent
     ],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
@@ -40,20 +43,16 @@ import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService }
     }
 })
 export class ListComponent implements ControlValueAccessor {
-    private _document = inject(DOCUMENT);
     private _ls = inject(LocalizationService);
-    private _elementRef = inject<ElementRef<HTMLDivElement>>(ElementRef);
-    private _destroyRef = inject(DestroyRef);
     private _changeDetector = inject(ChangeDetectorRef);
-    private _value: any = undefined;
+    private _value = signal<any>(undefined);
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: (value: any) => void;
-    private _selectedIndices = new Set<number>();
-
-    protected readonly _items = signal<any[]>([]);
-
+    protected readonly _sourceItems = signal<any[]>([]);
+    private readonly _selectedItems = new Set<ListItemComponent>();
+    private readonly _activeItem = signal<ListItemComponent | undefined>(undefined);
+    @ViewChildren(ListItemComponent) private readonly _listItems!: QueryList<ListItemComponent>;
     protected readonly _isDisabled = signal<boolean>(false);
-    protected readonly _activeOptionIndex = signal<number>(-1);
     @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
 
     /**
@@ -117,6 +116,15 @@ export class ListComponent implements ControlValueAccessor {
     });
 
     /**
+     * A function that uniquely identifies each item in the list.
+     * If set to a function, it will be called with the index and item as arguments to generate the unique id.
+     * If set to a string, it will be used as the property name to extract the unique id from each item.
+     */
+    public readonly trackBy = input(trackByIndex, {
+        transform: TrackByAttribute
+    });
+
+    /**
      * CSS class or classes to apply to the list container.
      * Default is undefined.
      */
@@ -139,7 +147,7 @@ export class ListComponent implements ControlValueAccessor {
      * If set to undefined, no ids will be generated for the items.
      * @default undefined
      */
-    public readonly idBy = input(undefined, {
+    public readonly idGenerator = input(undefined, {
         transform: IdGeneratorAttribute
     });
 
@@ -150,195 +158,59 @@ export class ListComponent implements ControlValueAccessor {
 
     constructor() {
         effect(() => {
-            let source = this.source(); // track source
-            this._activeOptionIndex.set(-1);
-            this._selectedIndices.clear();
-            this._loadItems();
-        });
+            this.source().load(new DataRequest()).subscribe(res => {
+                this._sourceItems.set(res.data);
+            });
+        })
     }
 
-    /**
-     * Gets the items of the list component.
-     * @returns A readonly array of the items in the list.
-     */
-    public items(): ReadonlyArray<any> {
-        return this._items();
+    public isActive(item: ListItemComponent): boolean {
+        return this._activeItem() == item;
     }
 
-    /**
-     * Sets an option as active
-     * @param index The index of the option to set as active.
-     * @param scrollIntoView Whether to scroll the active option into view. Default is true.
-     * @returns void
-     */
-    public active(index: number, scrollIntoView = true): void {
-        if (index < 0 || index >= this._items().length) {
-            throw Error('Index out of range');
-        }
-
-        this._activeOptionIndex.set(index);
-        if (scrollIntoView) {
-            this.scrollIntoView(this._activeOptionIndex(), 'nearest');
-        }
+    public isSelected(item: ListItemComponent): boolean {
+        return this._selectedItems.has(item);
     }
 
-    /**
-     * Selects an option by index
-     * @param index The index of the option to select.
-     * @returns void
-     */
-    public select(index: number) {
-        this._verifyIndexRange(index);
+    public select(item: ListItemComponent) {
+        return this._selectedItems.add(item);
+    }
 
-        if (this._selectedIndices.has(index)) {
-            return;
+    public deselect(item: ListItemComponent) {
+        this._selectedItems.delete(item);
+    }
+
+    public toggle(item: ListItemComponent) {
+        if (this._selectedItems.has(item)) {
+            this.deselect(item);
         } else {
-            if (!this.multiple()) {
-                this._selectedIndices.clear();
-            }
-
-            this._selectedIndices.add(index);
+            this.select(item);
         }
-
-        if (this.multiple()) {
-            this._value = [];
-            for (const idx of this._selectedIndices) {
-                this._value.push(this.writeBy()(this._items()[idx]));
-            }
-        } else {
-            this._value = this.writeBy()(this._items()[index]);
-        }
-
-        this._changeCallback?.(this._value);
-        this._changeDetector.markForCheck();
-    }
-
-    /**
-     * Deselects an option by index
-     * @param index The index of the option to deselect.
-     * @returns void
-     */
-    public deselect(index: number) {
-        this._verifyIndexRange(index);
-
-        if (this._selectedIndices.has(index)) {
-            this._selectedIndices.delete(index);
-        } else {
-            return;
-        }
-
-        if (this.multiple()) {
-            this._value = [];
-            for (const idx of this._selectedIndices) {
-                this._value.push(this.writeBy()(this._items()[idx]));
-            }
-        } else {
-            this._value = undefined;
-        }
-
-        this._changeCallback?.(this._value);
-        this._changeDetector.markForCheck();
-    }
-
-
-
-    /**
-     * Toggles the selection state of an option by index
-     * @param index The index of the option to toggle.
-     * @returns void
-     */
-    public toggle(index: number) {
-        if (this.isSelected(index)) {
-            this.deselect(index);
-        } else {
-            this.select(index);
-        }
-    }
-
-    /**
-     * Checks if an option is selected.
-     * @param index The index of the option to check.
-     * @returns True if the option is selected, false otherwise.
-     */
-    public isSelected(index: number) {
-        return this._selectedIndices.has(index);
-    }
-
-    /**
-     * Checks if an option is active.
-     * @param index The index of the option to check.
-     * @returns True if the option is active, false otherwise.
-     */
-    public isActive(index: number) {
-        return this._activeOptionIndex() === index;
-    }
-
-    /**
-     * Sets the value of the list component.
-     * @param value The value to set. Can be a single value or an array of values in multiple selection mode.
-     */
-    public set(value: any): void {
-        this._setValue(value, true);
-    }
-
-    /**
-     * Gets the currently selected indices.
-     * @returns An array of the currently selected indices.
-     * @description   
-     * - In single selection mode, the array will contain at most one item.
-     * - In multiple selection mode, the array can contain multiple items.
-     * - Changing the selection should be done using select(), deselect(), or toggle() methods to ensure proper event emission and state management.
-     * - Direct manipulation of the returned array will not affect the component's state.
-     */
-    public selectedIndices(): ReadonlyArray<number> {
-        return Array.from(this._selectedIndices);
-    }
-
-    /**
-     * Scrolls the item at the specified index into view within the dropdown list.
-     * @param index The index of the item to scroll into view.
-     * @param position The vertical alignment of the item after scrolling.
-     *                 Can be 'start', 'center', 'end', or 'nearest'.
-     *                 Default is 'nearest'.
-     * @param behavior The scrolling behavior.
-     */
-    public scrollIntoView(index: number, position?: ScrollLogicalPosition, behavior?: ScrollBehavior) {
-        let item = this._items()[index];
-        // let elm = this._document.getElementById(item.id) as HTMLElement;
-        // elm!.scrollIntoView({ block: position, behavior: behavior });
     }
 
     writeValue(value: any): void {
-        this._setValue(value, false);
-    }
-
-    private _setValue(value: any, fireCallback: boolean) {
         if (this.multiple() && value !== null && value !== undefined && !Array.isArray(value)) {
             throw Error('invalid value. Expected an array in multiple selection mode.');
         }
 
-        let compareBy = this.compareBy();
-        let findAndSelect = (v: any) => {
-            let index = this._items().findIndex(i => compareBy(i, v));
-            if (index > -1) {
-                this._selectedIndices.add(index);
-            }
-        };
+        // let compareBy = this.compareBy();
+        // let findAndSelect = (v: any) => {
+        //     let index = this._sourceItems().findIndex(i => compareBy(i, v));
+        //     if (index > -1) {
+        //         this._items?.get(index)!.selected.set(true);
+        //     }
+        // };
 
-        this._selectedIndices.clear();
-        if (this.multiple()) {
-            if (Array.isArray(value)) {
-                (value as any[]).forEach(i => findAndSelect(i));
-            }
-        } else {
-            findAndSelect(value);
-        }
+        // if (this.multiple()) {
+        //     if (Array.isArray(value)) {
+        //         (value as any[]).forEach(i => findAndSelect(i));
+        //     }
+        // } else {
+        //     findAndSelect(value);
+        // }
 
-        this._value = value;
-        this._changeDetector.markForCheck();
-        if (fireCallback) {
-            this._changeCallback?.(value);
-        }
+        // this._value = value;
+        // this._changeDetector.markForCheck();
     }
 
     registerOnChange(fn: any): void {
@@ -353,73 +225,32 @@ export class ListComponent implements ControlValueAccessor {
         this._isDisabled.set(isDisabled);
     }
 
-    protected _getItemTabIndex(index: number) {
-        let focus = this.focus();
-        if (this._isDisabled()) {
-            return undefined;
-        }
+    protected _handleUserSelection(item: ListItemComponent) {
+        // this._listItems?.find(i => i.active())?.active.set(false);
 
-        if (focus == 'none' || focus == 'activeDescendant') {
-            return undefined;
+        if (this.multiple()) {
+            this.toggle(item);
+            let values: any[] = [];
+            this._selectedItems.forEach(i => {
+                if (i.isSelected()) {
+                    values.push(this.writeBy()(i.value()));
+                }
+            });
+            this._value.set(values);
         } else {
-            // focus: roving
-            return this._activeOptionIndex() === index ? 0 : -1
-        }
-    }
-
-    protected _handleUserSelection(index: number, item: any) {
-        let selected: boolean;
-
-        this.active(index)
-
-        if (this.multiple() && this.isSelected(index)) {
-            this.deselect(index);
-            selected = false;
-        } else {
-            this.select(index);
-            selected = true;
+            this._selectedItems.clear()
+            this._selectedItems.add(item);
+            this._value.set(this.writeBy()(item.value()));
         }
 
+        this._changeCallback?.(this._value);
         this.selectionChange.emit({
-            value: item,
-            index: index,
-            selected: selected,
-            selectedIndices: this.selectedIndices(),
+            item: item,
             list: this,
         });
-    }
 
-    private _loadItems() {
-        var r = new DataRequest();
-        this.source().load(r).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            this._items.set(res.data)
-        });
-
-        // listen to changes
-        this.source().change.subscribe(e => {
-            let items = this._items();
-            e.changes.forEach(change => {
-                switch (change.type) {
-                    case 'push':
-                        // this._items().push(...this._createItems(change.items));
-                        break;
-                    // case 'replace':
-                    //     change.replacements.forEach(({ index, value }) => {
-                    //         items[index] = { id: this.idGenerator()(value), value };
-                    //     });
-                    //     break;
-                    // case 'remove':
-                    //     this._activeOptionIndex.set(-1);
-                    //     change.indices.forEach(i => {
-                    //         this.deselect(i);
-                    //         items.splice(i, 1)
-                    //     });
-                    //     break;
-                }
-
-                this._changeDetector.markForCheck();
-            });
-        });
+        // item.active.set(true);
+        this._changeDetector.markForCheck();
     }
 
     @HostListener('click')
@@ -430,57 +261,61 @@ export class ListComponent implements ControlValueAccessor {
     }
 
     @HostListener('keydown', ['$event'])
-    private _onKeydown(e: KeyboardEvent, firedByFilter: boolean = false) {
+    private _onKeydown(e: KeyboardEvent) {
         if (this._isDisabled())
             return;
 
-        let optionsCount = this._items().length;
+        let optionsCount = this._sourceItems().length;
         if (optionsCount == 0) {
             return;
         }
 
-        let index = this._activeOptionIndex();
+        let activeItemindex = this._listItems.toArray().findIndex(i => i == this._activeItem());
 
         switch (e.key) {
             case 'ArrowDown':
-                if (index < optionsCount - 1) {
-                    this.active(index + 1);
+                if (activeItemindex == -1) {
+                    this._activeItem.set(this._listItems.get(0));
+                } else if (activeItemindex < optionsCount - 1) {
+                    this._activeItem.set(this._listItems.get(activeItemindex + 1));
                 }
                 e.preventDefault();
                 break;
             case 'ArrowUp':
-                if (index > 0) {
-                    this.active(index - 1);
+                if (activeItemindex == -1) {
+                    this._activeItem.set(this._listItems.get(optionsCount - 1));
+                } else if (activeItemindex > 0) {
+                    this._activeItem.set(this._listItems.get(activeItemindex - 1));
                 }
                 e.preventDefault();
                 break;
             case 'Tab':
                 break;
             case 'Enter':
-                if (index > -1) {
-                    this._handleUserSelection(index, this._items()[index]);
+                if (activeItemindex > -1) {
+                    this._handleUserSelection(this._sourceItems()[activeItemindex]);
                 }
                 break;
             case 'Home':
-                this.active(0);
+                this._activeItem.set(this._listItems.get(0));
                 e.preventDefault();
                 break;
             case 'End':
-                this.active(optionsCount - 1);
+                this._activeItem.set(this._listItems.get(optionsCount - 1));
                 e.preventDefault();
                 break;
         }
 
         if (this.focus() === 'roving') {
-            const activeItem = this._elementRef.nativeElement.children[this._activeOptionIndex()] as HTMLDivElement;
-            activeItem?.focus();
+            this._activeItem()?.focus();
         }
     }
 
     private _hostAriaActiveDescendant = computed(() => {
-        if (!this._isDisabled() && this.focus() == 'activeDescendant' && this._activeOptionIndex() > -1) {
-            return this._items()[this._activeOptionIndex()].id;
+        if (this._activeItem() && !this._isDisabled() && this.focus() == 'activeDescendant') {
+            return this._activeItem()?.id;
         }
+
         return undefined;
     });
 
@@ -490,29 +325,9 @@ export class ListComponent implements ControlValueAccessor {
         }
 
         if (this.focus() === "roving") {
-            return this._activeOptionIndex() === -1 ? 0 : -1;
+            return this._activeItem() ? -1 : 0;
         } else {
             return 0; // activeDescendant
-        }
-    });
-
-    private _verifyIndexRange(index: number) {
-        let optionsCount = this._items().length;
-        if (optionsCount == 0 || index < 0 || index > optionsCount - 1) {
-            throw new Error('Index out of range');
-        }
-    }
-
-
-    protected _itemTrackBy(index: number, item: any) {
-        return this._itemTracker()(index, item);
-    }
-
-    private _itemTracker = computed(() => {
-        if (typeof this.idBy() === 'function') {
-            return (index: number, item: any) => this.idBy()!(index, item);
-        } else {
-            return (index: number, item: any) => index;
         }
     });
 }
@@ -523,24 +338,9 @@ export class ListComponent implements ControlValueAccessor {
  */
 export interface ListSelectionChangeEvent {
     /**
-     * Index of the item that was selected or deselected.
+     * The item that was selected or deselected.
      */
-    readonly index: number;
-
-    /**
-     * The value of the item that was selected or deselected.
-     */
-    readonly value: any;
-
-    /**
-     * Indicates whether the item was selected (true) or deselected (false).
-     */
-    readonly selected: boolean;
-
-    /**
-     * The indices of all currently selected items.
-     */
-    readonly selectedIndices: ReadonlyArray<number>;
+    readonly item: ListItemComponent;
 
     /**
      * The list component that emitted the event.

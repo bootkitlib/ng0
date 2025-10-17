@@ -73,7 +73,7 @@ export class SelectExampleComponent {
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);
-        this.localDatasource1.push(`Option ${this.counter()} was pushed.`)
+        // this.localDatasource1.push(`Option ${this.counter()} was pushed.`)
     }
 
     // onRemoveFromLocalDataSource1() {
