@@ -50,9 +50,8 @@ export class ListComponent implements ControlValueAccessor {
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: (value: any) => void;
     protected readonly _sourceItems = signal<any[]>([]);
-    private readonly _selectedItems = new Set<ListItemStateDirective>();
-    private readonly _activeItem = signal<ListItemStateDirective | undefined>(undefined);
-    @ViewChildren(ListItemStateDirective) private readonly _items!: QueryList<ListItemStateDirective>;
+    private readonly _selectedValues = new Set<any>();
+    private readonly _activeItem = signal<ListItemComponent | undefined>(undefined);
     @ViewChildren(ListItemComponent) private readonly _visibleItems!: QueryList<ListItemComponent>;
     protected readonly _isDisabled = signal<boolean>(false);
     @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
@@ -175,14 +174,9 @@ export class ListComponent implements ControlValueAccessor {
     constructor() {
         effect(() => {
             this.source().load(new DataRequest()).subscribe(res => {
-                this._selectedItems.clear();
                 this._activeItem.set(undefined);
                 this._sourceItems.set(res.data);
-
-                // Allow state objects to be initialized and then find selected items.
-                setTimeout(() => {
-                    this._findAndSelectItems();
-                });
+                this._findAndSelectItems();
             });
         })
     }
@@ -193,47 +187,47 @@ export class ListComponent implements ControlValueAccessor {
      * @returns 
      */
     public isActive(item: ListItemComponent): boolean {
-        return item.state == this._activeItem();
+        return item === this._activeItem();
     }
 
     /**
-     * Indicates whether an item is selected.
+     * Indicates whether the given value is selected.
      * @param item 
      * @returns 
      */
-    public isSelected(item: ListItemComponent): boolean {
-        return this._selectedItems.has(item.state);
+    public isSelected(value: any): boolean {
+        return this._selectedValues.has(value);
     }
 
     /**
-     * Selects an item in the list.
+     * Selects the given value.
      * @param item 
      */
-    public select(item: ListItemComponent): void {
-        this._selectedItems.add(item.state);
-        this._updateValue();
+    public select(value: any): void {
+        if (!this._selectedValues.has(value())) {
+            this._selectedValues.add(value());
+            this._changeCallback?.(this._value());
+        }
+    }
+
+    /**
+     * Deselects the given value.
+     * @param item 
+     */
+    public deselect(value: any): void {
+        this._selectedValues.delete(value);
         this._changeCallback?.(this._value());
     }
 
     /**
-     * Deselects an item in the list.
-     * @param item 
-     */
-    public deselect(item: ListItemComponent): void {
-        this._selectedItems.delete(item.state);
-        this._updateValue();
-        this._changeCallback?.(this._value());
-    }
-
-    /**
-     * Toggles the selection state of an item in the list.
+     * Toggles the selection state of the given value.
      * @param item
      */
-    public toggle(item: ListItemComponent): void {
-        if (this.isSelected(item)) {
-            this.deselect(item);
+    public toggle(value: any): void {
+        if (this.isSelected(value)) {
+            this.deselect(value);
         } else {
-            this.select(item);
+            this.select(value);
         }
     }
 
@@ -241,8 +235,7 @@ export class ListComponent implements ControlValueAccessor {
      * Deselects all items in the list.
      */
     public deselectAll(): void {
-        this._selectedItems.clear();
-        this._updateValue();
+        this._selectedValues.clear();
         this._changeCallback?.(this._value());
     }
 
@@ -251,9 +244,8 @@ export class ListComponent implements ControlValueAccessor {
      */
     public selectAll(): void {
         if (this.multiple()) {
-            this._selectedItems.clear();
-            this._items.forEach(i => this._selectedItems.add(i));
-            this._updateValue();
+            this._selectedValues.clear();
+            this._sourceItems().forEach(i => this._selectedValues.add(i));
             this._changeCallback?.(this._value());
         }
 
@@ -261,8 +253,12 @@ export class ListComponent implements ControlValueAccessor {
     }
 
     writeValue(value: any): void {
-        if (this.multiple() && value !== null && value !== undefined && !Array.isArray(value)) {
-            throw Error('invalid value. Expected an array in multiple selection mode.');
+        if (this.multiple()) {
+            if (value === null || value === undefined) {
+                value = [];
+            } else if (!Array.isArray(value)) {
+                throw Error('invalid value. Expected an array in multiple selection mode.');
+            }
         }
 
         this._value.set(value);
@@ -283,15 +279,17 @@ export class ListComponent implements ControlValueAccessor {
     }
 
     protected _handleUserSelection(item: ListItemComponent) {
+        let value = item.value();
+
         if (this.multiple()) {
-            if (this.isSelected(item)) {
-                this._selectedItems.delete(item.state);
+            if (this.isSelected(value)) {
+                this._selectedValues.delete(value);
             } else {
-                this._selectedItems.add(item.state);
+                this._selectedValues.add(value);
             }
         } else {
-            this._selectedItems.clear();
-            this._selectedItems.add(item.state);
+            this._selectedValues.clear();
+            this._selectedValues.add(value);
         }
 
         this._updateValue();
@@ -307,17 +305,17 @@ export class ListComponent implements ControlValueAccessor {
     private _findAndSelectItems(): void {
         let value = this._value();
         let compareBy = this.compareBy();
-        let findAndSelect = (val: any) => {
-            let index = this._sourceItems().findIndex(i => compareBy(i, val));
+        let findAndSelect = (v: any) => {
+            let index = this._sourceItems().findIndex(i => compareBy(i, v));
             if (index > -1) {
-                let item = this._items.get(index)!;
-                this._selectedItems.add(item);
+                let item = this._sourceItems().at(index)!;
+                this._selectedValues.add(item);
             }
         };
 
         if (this.multiple()) {
             if (Array.isArray(value)) {
-                (value as any[]).forEach(i => findAndSelect(i));
+                (value as any[]).forEach(v => findAndSelect(v));
             }
         } else {
             findAndSelect(value);
@@ -329,13 +327,13 @@ export class ListComponent implements ControlValueAccessor {
     private _updateValue(): void {
         if (this.multiple()) {
             let values: any[] = [];
-            this._selectedItems.forEach(state => {
-                values.push(this.writeBy()(state.listItem.value()));
+            this._selectedValues.forEach(v => {
+                values.push(this.writeBy()(v));
             });
             this._value.set(values);
         } else {
-            if (this._selectedItems.size > 0) {
-                let first = this._selectedItems.values().next().value!.listItem.value();
+            if (this._selectedValues.size > 0) {
+                let first = this._selectedValues.values().next().value;
                 this._value.set(this.writeBy()(first));
             } else {
                 this._value.set(undefined);
@@ -345,7 +343,7 @@ export class ListComponent implements ControlValueAccessor {
 
     private _hostAriaActiveDescendant = computed(() => {
         if (this._activeItem() && !this._isDisabled() && this.focus() == 'activeDescendant') {
-            return this._activeItem()!.listItem.id();
+            return this._activeItem()!.id();
         }
 
         return undefined;
@@ -380,25 +378,25 @@ export class ListComponent implements ControlValueAccessor {
             return;
         }
 
-        let activeItemindex = this._visibleItems.toArray().findIndex(i => i.state == this._activeItem());
+        let activeItemindex = this._visibleItems.toArray().findIndex(i => i === this._activeItem());
 
         switch (e.key) {
             case 'ArrowDown':
                 if (activeItemindex == -1) {
-                    const first = this._visibleItems.get(0)!.state
+                    const first = this._visibleItems.get(0);
                     this._activeItem.set(first);
                 } else if (activeItemindex < visibleItemsCount - 1) {
-                    const next = this._visibleItems.get(activeItemindex + 1)!.state;
+                    const next = this._visibleItems.get(activeItemindex + 1);
                     this._activeItem.set(next);
                 }
                 e.preventDefault();
                 break;
             case 'ArrowUp':
                 if (activeItemindex == -1) {
-                    const last = this._visibleItems.get(visibleItemsCount - 1)!.state;
+                    const last = this._visibleItems.get(visibleItemsCount - 1);
                     this._activeItem.set(last);
                 } else if (activeItemindex > 0) {
-                    const previous = this._visibleItems.get(activeItemindex - 1)!.state;
+                    const previous = this._visibleItems.get(activeItemindex - 1);
                     this._activeItem.set(previous);
                 }
                 e.preventDefault();
@@ -409,19 +407,19 @@ export class ListComponent implements ControlValueAccessor {
                 }
                 break;
             case 'Home':
-                const first = this._visibleItems.get(0)!.state
+                const first = this._visibleItems.get(0);
                 this._activeItem.set(first);
                 e.preventDefault();
                 break;
             case 'End':
-                const last = this._visibleItems.get(visibleItemsCount - 1)!.state;
+                const last = this._visibleItems.get(visibleItemsCount - 1);
                 this._activeItem.set(last);
                 e.preventDefault();
                 break;
         }
 
         if (this.focus() === 'roving') {
-            this._activeItem()?.listItem.focus();
+            this._activeItem()?.focus();
         }
     }
 }

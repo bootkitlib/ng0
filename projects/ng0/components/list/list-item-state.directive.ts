@@ -1,5 +1,4 @@
-import { input, inject, Directive, TemplateRef, effect, ViewContainerRef, EmbeddedViewRef, signal } from '@angular/core';
-import { ListItemComponent } from './list-item.component';
+import { input, inject, Directive, TemplateRef, effect, ViewContainerRef, EmbeddedViewRef } from '@angular/core';
 
 /**
  * ListItemStateDirective
@@ -14,7 +13,6 @@ export class ListItemStateDirective {
     private _vcr = inject(ViewContainerRef);
     private _viewRef?: EmbeddedViewRef<any>;
     public readonly show = input(true);
-    public listItem!: ListItemComponent;
 
     constructor() {
         effect(() => {

@@ -22,7 +22,6 @@ import { ListItemStateDirective } from './list-item-state.directive';
 })
 export class ListItemComponent implements OnInit {
     private readonly _id = signal<any>(undefined);
-    public readonly state = inject(ListItemStateDirective);
 
     /**
      * Reference to the host element
@@ -41,7 +40,6 @@ export class ListItemComponent implements OnInit {
     public readonly value = input<any>();
 
     constructor() {
-        this.state.listItem = this;
     }
 
     ngOnInit(): void {
@@ -53,11 +51,11 @@ export class ListItemComponent implements OnInit {
     }
 
     public isSelected() {
-        return this.list.isSelected(this);
+        return this.list.isSelected(this.value());
     }
 
     public select() {
-        return this.list.select(this);
+        return this.list.select(this.value());
     }
 
     public deselect() {
@@ -69,7 +67,7 @@ export class ListItemComponent implements OnInit {
      * @returns void
      */
     public toggle() {
-        this.list.toggle(this);
+        this.list.toggle(this.value());
     }
 
     /**
