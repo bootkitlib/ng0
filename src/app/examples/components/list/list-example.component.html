@@ -16,21 +16,19 @@
             </div>
         </div>
     </div>
+
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Bind to LocalDataSource</h5>
+                <h5 class="card-title">Manipulating Data</h5>
                 <p>
-                    A LocalDataSource is a data source that can be used to manage the data of the list. <br>
-                    It is a simple wrapper around an array that provides methods to manipulate the data.
-                    You can add, remove or update items in the data source and
-                    the list will be updated automatically.
+                    Bind to a simple array and manipulate the data by adding/removing items.
                 </p>
 
                 <div class="row">
                     <div class="col-xl-3">
-                        Source: LocalDataSource
-                        <ng0-list name="value15" [source]="localDatasource1" [(ngModel)]="value15"
+                        Source: number[]
+                        <ng0-list name="value15" [source]="numberArray2" [(ngModel)]="value15"
                                   (selectionChange)="onList15SelectionChange($event)" multiple="true" trackBy="@item">
                         </ng0-list>
                         Value: {{ value15 | json }}
@@ -44,22 +42,37 @@
                     <button class="btn btn-outline-secondary me-2" (click)="onRemoveFirstItemOfLocalDataSource1()">
                         Remove First Item
                     </button>
-                    <!--<button class="btn btn-outline-secondary me-2" (click)="onRemoveSelectedItemsOfLocalDataSource1()">
-                    Remove Selected Item(s)
-                </button> -->
-                    <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
-                    Replace First Item
-                </button> -->
-                    <button class="btn btn-outline-secondary me-2" (click)="onInsertAtFirstPosition()">
-                        Insert at First Position
-                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to RemoteDataSource</h5>
+                <p>
+                    A RemoteDataSource is a data source that retrieves data from a remote server.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: RemoteDataSource
+                        <ng0-list name="value34" [source]="fakeRemoteDataSource1" [(ngModel)]="value34">
+                        </ng0-list>
+                        Value: {{ value34 | json }}
+                    </div>
+                </div>
+
+                <div class="mt-4">
 
                 </div>
             </div>
-
-
         </div>
     </div>
+
+
+
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">

@@ -1,0 +1,29 @@
+ng0-list {
+       display: block;
+       position: relative;
+       user-select: none;
+       border: 1px solid var(--bs-border-color);
+       border-radius: var(--bs-border-radius);
+       min-height: 1rem;
+
+       /* // &:focus, &:focus-visible {
+    //     border: 1px solid var(--bs-primary);
+    // } */
+
+       &.disabled {
+              background-color: var(--bs-secondary-bg);
+       }
+
+       .ng0-list-loading-cover {
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background-color: rgba(255, 255, 255, 0.7);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              // z-index: 10;
+       }
+}

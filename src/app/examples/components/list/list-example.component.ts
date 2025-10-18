@@ -42,8 +42,8 @@ export class ListExampleComponent {
         { id: 2, name: 'Option 2', description: 'Option 2 description' },
         { id: 3, name: 'Option 3', description: 'Option 3 description' },
     ];
-    localDatasource1 = new LocalDataSource([1, 2, 3, 4, 5]);
-    fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(100)))
+    numberArray2 = Array.from({ length: 3 }, (_, i) => i + 1);
+    fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(0)))
 
     value0?: string; value1?: string; value2?: string; value3?: string[] = []; value4?: string[] = ['One'];
     value5?: boolean; value6?: boolean; value7?: boolean; value8?: boolean; value9?: number;
@@ -51,7 +51,7 @@ export class ListExampleComponent {
     value15?: number[] = []; value16?: number; value17?: number; value18?: number; value19?: number;
     value20?: number; value21?: string; value22?: string; value23 = signal('Two'); value24?: string;
     value25 = 1; value26 = 'Three'; value27?: string; value28?: string; value29?: string;
-    value30 = 2; value31: any; value32: any; value33: any;
+    value30 = 2; value31: any; value32: any; value33: any; value34 = 2;
 
     list17FilterValue = model('');
     list15SelectedIndices: ReadonlyArray<number> = [];
@@ -72,25 +72,14 @@ export class ListExampleComponent {
     }
 
     onPushToDataSource1() {
-        this.counter.update(x => ++x);
-        
-        // this.localDatasource1.update(items => {
-        //     items.push(`Pushed: (${this.counter()}).`);
-        // });
+        this.numberArray2 = [...this.numberArray2, this.numberArray2.length + 1];
     }
 
     onRemoveFirstItemOfLocalDataSource1() {
-        // this.localDatasource1.update(items => {
-        //     items.splice(0, 1);
-        // });
+        this.numberArray2.splice(0, 1);
+        this.numberArray2 = [...this.numberArray2];
     }
 
-    onInsertAtFirstPosition() {
-        this.counter.update(x => ++x);
-        // this.localDatasource1.update(items => {
-        //     items.splice(0, 0, `Inserted: (${this.counter()}).`);
-        // });
-    }
 
     // onRemoveSelectedItemsOfLocalDataSource1() {
     //     if(this.list15SelectedIndices.length) {

@@ -31,21 +31,20 @@
 
 }
 
-<style>
-       ng0-list {
-              display: block;
-              overflow-y: auto;
-              overflow-x: hidden;
-              user-select: none;
-              border: 1px solid var(--bs-border-color);
-              border-radius: var(--bs-border-radius);
+@if(_showLoadingSppiner()) {
+@if(_sourceItems().length == 0) {
+       <div style="text-align: center; padding: 0.5rem 0;">
+              <ng-container *ngTemplateOutlet="spinner"></ng-container>
+       </div>
+}@else {
+<div class="ng0-list-loading-cover">
+       <ng-container *ngTemplateOutlet="spinner"></ng-container>
+</div>
+}
+}
 
-              /* // &:focus, &:focus-visible {
-    //     border: 1px solid var(--bs-primary);
-    // } */
-
-              &.disabled {
-                     background-color: var(--bs-secondary-bg);
-              }
-       }
-</style>
+<ng-template #spinner>
+       <div class="spinner-border spinner-sm text-primary ng0-list-loading-indicator" role="status">
+              <span class="visually-hidden">Loading...</span>
+       </div>
+</ng-template>

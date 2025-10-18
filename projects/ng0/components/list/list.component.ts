@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding } from '@angular/core';
+import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding, OnInit, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -21,6 +21,7 @@ import { ListItemComponent } from "./list-item.component";
     selector: 'ng0-list',
     exportAs: 'ng0List',
     templateUrl: './list.component.html',
+    styleUrl: './list.component.scss',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
@@ -55,6 +56,11 @@ export class ListComponent implements ControlValueAccessor {
     @ViewChildren(ListItemComponent) private readonly _visibleItems!: QueryList<ListItemComponent>;
     protected readonly _isDisabled = signal<boolean>(false);
     @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
+
+    protected _showLoadingSppiner = computed(() => {
+        let source = this.source();
+        return source.isLoading() && source.type == 'remote';
+    });
 
     /**
      * Reference to the host element
@@ -120,6 +126,15 @@ export class ListComponent implements ControlValueAccessor {
      * A function that uniquely identifies each item in the list.
      * If set to a function, it will be called with the index and item as arguments to generate the unique id.
      * If set to a string, it will be used as the property name to extract the unique id from each item.
+     * Two predifined trackBy options are available:
+     * - '@index': uses the index of the item as its unique id.
+     * - '@item': uses the item itself as its unique id.
+     * @example
+     * trackBy="@index"
+     * trackBy="@item"
+     * trackBy="objectFieldName"
+     * [trackBy]="customTrackByFunction"
+     * @default trackByIndex
      */
     public readonly trackBy = input(trackByIndex, {
         transform: TrackByAttribute
@@ -160,39 +175,60 @@ export class ListComponent implements ControlValueAccessor {
     constructor() {
         effect(() => {
             this.source().load(new DataRequest()).subscribe(res => {
-                this._sourceItems.set(res.data);
                 this._selectedItems.clear();
                 this._activeItem.set(undefined);
+                this._sourceItems.set(res.data);
+
+                // Allow state objects to be initialized and then find selected items.
+                setTimeout(() => {
+                    this._findAndSelectItems();
+                });
             });
         })
     }
 
+    /**
+     * Indicates whether an item is active.
+     * @param item  
+     * @returns 
+     */
     public isActive(item: ListItemComponent): boolean {
         return item.state == this._activeItem();
     }
 
+    /**
+     * Indicates whether an item is selected.
+     * @param item 
+     * @returns 
+     */
     public isSelected(item: ListItemComponent): boolean {
         return this._selectedItems.has(item.state);
     }
 
+    /**
+     * Selects an item in the list.
+     * @param item 
+     */
     public select(item: ListItemComponent): void {
         this._selectedItems.add(item.state);
         this._updateValue();
         this._changeCallback?.(this._value());
     }
 
+    /**
+     * Deselects an item in the list.
+     * @param item 
+     */
     public deselect(item: ListItemComponent): void {
         this._selectedItems.delete(item.state);
         this._updateValue();
         this._changeCallback?.(this._value());
     }
 
-    public deselectAll(): void {
-        this._selectedItems.clear();
-        this._updateValue();
-        this._changeCallback?.(this._value());
-    }
-
+    /**
+     * Toggles the selection state of an item in the list.
+     * @param item
+     */
     public toggle(item: ListItemComponent): void {
         if (this.isSelected(item)) {
             this.deselect(item);
@@ -201,13 +237,36 @@ export class ListComponent implements ControlValueAccessor {
         }
     }
 
+    /**
+     * Deselects all items in the list.
+     */
+    public deselectAll(): void {
+        this._selectedItems.clear();
+        this._updateValue();
+        this._changeCallback?.(this._value());
+    }
+
+    /**
+     * Selects all items in the list. Only applicable in multiple selection mode.
+     */
+    public selectAll(): void {
+        if (this.multiple()) {
+            this._selectedItems.clear();
+            this._items.forEach(i => this._selectedItems.add(i));
+            this._updateValue();
+            this._changeCallback?.(this._value());
+        }
+
+        throw new Error('selectAll is only available in multiple selection mode.');
+    }
+
     writeValue(value: any): void {
         if (this.multiple() && value !== null && value !== undefined && !Array.isArray(value)) {
             throw Error('invalid value. Expected an array in multiple selection mode.');
         }
 
         this._value.set(value);
-        this._findAndSelectItems(value);
+        this._findAndSelectItems();
         this._changeDetector.markForCheck();
     }
 
@@ -245,7 +304,8 @@ export class ListComponent implements ControlValueAccessor {
         this._changeDetector.markForCheck();
     }
 
-    private _findAndSelectItems(value: any) {
+    private _findAndSelectItems(): void {
+        let value = this._value();
         let compareBy = this.compareBy();
         let findAndSelect = (val: any) => {
             let index = this._sourceItems().findIndex(i => compareBy(i, val));
@@ -262,7 +322,46 @@ export class ListComponent implements ControlValueAccessor {
         } else {
             findAndSelect(value);
         }
+
+        this._changeDetector.markForCheck();
     }
+
+    private _updateValue(): void {
+        if (this.multiple()) {
+            let values: any[] = [];
+            this._selectedItems.forEach(state => {
+                values.push(this.writeBy()(state.listItem.value()));
+            });
+            this._value.set(values);
+        } else {
+            if (this._selectedItems.size > 0) {
+                let first = this._selectedItems.values().next().value!.listItem.value();
+                this._value.set(this.writeBy()(first));
+            } else {
+                this._value.set(undefined);
+            }
+        }
+    }
+
+    private _hostAriaActiveDescendant = computed(() => {
+        if (this._activeItem() && !this._isDisabled() && this.focus() == 'activeDescendant') {
+            return this._activeItem()!.listItem.id();
+        }
+
+        return undefined;
+    });
+
+    private _hostTabIndex = computed(() => {
+        if (this._isDisabled() || this.focus() === 'none') {
+            return -1;
+        }
+
+        if (this.focus() === "roving") {
+            return this._activeItem() ? -1 : 0;
+        } else {
+            return 0; // activeDescendant
+        }
+    });
 
     @HostListener('click')
     private _onHostClick() {
@@ -325,43 +424,6 @@ export class ListComponent implements ControlValueAccessor {
             this._activeItem()?.listItem.focus();
         }
     }
-
-    private _updateValue(): void {
-        if (this.multiple()) {
-            let values: any[] = [];
-            this._selectedItems.forEach(state => {
-                values.push(this.writeBy()(state.listItem.value()));
-            });
-            this._value.set(values);
-        } else {
-            if (this._selectedItems.size > 0) {
-                let first = this._selectedItems.values().next().value!.listItem.value();
-                this._value.set(this.writeBy()(first));
-            } else {
-                this._value.set(undefined);
-            }
-        }
-    }
-
-    private _hostAriaActiveDescendant = computed(() => {
-        if (this._activeItem() && !this._isDisabled() && this.focus() == 'activeDescendant') {
-            return this._activeItem()!.listItem.id();
-        }
-
-        return undefined;
-    });
-
-    private _hostTabIndex = computed(() => {
-        if (this._isDisabled() || this.focus() === 'none') {
-            return -1;
-        }
-
-        if (this.focus() === "roving") {
-            return this._activeItem() ? -1 : 0;
-        } else {
-            return 0; // activeDescendant
-        }
-    });
 }
 
 
