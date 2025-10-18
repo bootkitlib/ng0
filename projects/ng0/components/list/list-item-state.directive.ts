@@ -1,19 +1,20 @@
-import { input, inject, Directive, TemplateRef, effect, ViewContainerRef, EmbeddedViewRef } from '@angular/core';
+import { input, inject, Directive, TemplateRef, effect, ViewContainerRef, EmbeddedViewRef, signal } from '@angular/core';
+import { ListItemComponent } from './list-item.component';
 
 /**
- * Directive for managing list item state.
+ * ListItemStateDirective
  */
 @Directive({
-    selector: '[ng0ListItemFilter]',
-    exportAs: 'ng0ListItemFilter',
+    selector: '[ng0ListItemState]',
+    exportAs: 'ng0ListItemState',
     standalone: true,
 })
-export class ListItemFilterDirective {
+export class ListItemStateDirective {
     private readonly _templateRef = inject(TemplateRef<any>);
     private _vcr = inject(ViewContainerRef);
     private _viewRef?: EmbeddedViewRef<any>;
-
-    public readonly show = input(true, { alias: 'ng0ListItemFilter' });
+    public readonly show = input(true);
+    public listItem!: ListItemComponent;
 
     constructor() {
         effect(() => {

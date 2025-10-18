@@ -1,5 +1,6 @@
 import { Component, ChangeDetectionStrategy, ViewEncapsulation, inject, input, model, booleanAttribute, ElementRef, signal, OnInit } from '@angular/core';
 import { ListComponent } from './list.component';
+import { ListItemStateDirective } from './list-item-state.directive';
 
 /**
  * ListItemComponent represents an individual item within a ListComponent.
@@ -21,15 +22,13 @@ import { ListComponent } from './list.component';
 })
 export class ListItemComponent implements OnInit {
     private readonly _id = signal<any>(undefined);
-
-    ngOnInit(): void {
-        this._id.set(this.list.idGenerator()?.(this.value()))
-    }
+    public readonly state = inject(ListItemStateDirective);
 
     /**
      * Reference to the host element
      */
     public elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
+    public index = input.required<number>();
 
     /**
      * Reference to the parent list component
@@ -37,10 +36,17 @@ export class ListItemComponent implements OnInit {
     public readonly list = inject(ListComponent);
 
     /**
- * The value associated with the item. This can be of any type.
- */
+     * The value associated with the item. This can be of any type.
+     */
     public readonly value = input<any>();
 
+    constructor() {
+        this.state.listItem = this;
+    }
+
+    ngOnInit(): void {
+        this._id.set(this.list.idGenerator()?.(this.value()))
+    }
 
     public isActive() {
         return this.list.isActive(this);

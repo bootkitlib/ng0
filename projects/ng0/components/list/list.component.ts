@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, DestroyRef, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef } from '@angular/core';
+import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -11,7 +11,7 @@ import {
     trackByIndex
 } from '@bootkit/ng0/common';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListItemFilterDirective } from './list-item-filter.directive';
+import { ListItemStateDirective } from './list-item-state.directive';
 import { ListItemComponent } from "./list-item.component";
 
 /**
@@ -26,7 +26,7 @@ import { ListItemComponent } from "./list-item.component";
     encapsulation: ViewEncapsulation.None,
     imports: [
         CommonModule,
-        ListItemFilterDirective,
+        ListItemStateDirective,
         ListItemComponent
     ],
     providers: [{
@@ -43,15 +43,16 @@ import { ListItemComponent } from "./list-item.component";
     }
 })
 export class ListComponent implements ControlValueAccessor {
-    private _ls = inject(LocalizationService);
+    private _localizationService = inject(LocalizationService);
     private _changeDetector = inject(ChangeDetectorRef);
     private _value = signal<any>(undefined);
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: (value: any) => void;
     protected readonly _sourceItems = signal<any[]>([]);
-    private readonly _selectedItems = new Set<ListItemComponent>();
-    private readonly _activeItem = signal<ListItemComponent | undefined>(undefined);
-    @ViewChildren(ListItemComponent) private readonly _listItems!: QueryList<ListItemComponent>;
+    private readonly _selectedItems = new Set<ListItemStateDirective>();
+    private readonly _activeItem = signal<ListItemStateDirective | undefined>(undefined);
+    @ViewChildren(ListItemStateDirective) private readonly _items!: QueryList<ListItemStateDirective>;
+    @ViewChildren(ListItemComponent) private readonly _visibleItems!: QueryList<ListItemComponent>;
     protected readonly _isDisabled = signal<boolean>(false);
     @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
 
@@ -96,7 +97,7 @@ export class ListComponent implements ControlValueAccessor {
      * Default converts the item to a string using its toString method.
      */
     public readonly formatBy = input(defaultObjectFormatter, {
-        transform: objectFormatterAttribute(this._ls.get())
+        transform: objectFormatterAttribute(this._localizationService.get())
     });
 
     /**
@@ -160,28 +161,40 @@ export class ListComponent implements ControlValueAccessor {
         effect(() => {
             this.source().load(new DataRequest()).subscribe(res => {
                 this._sourceItems.set(res.data);
+                this._selectedItems.clear();
+                this._activeItem.set(undefined);
             });
         })
     }
 
     public isActive(item: ListItemComponent): boolean {
-        return this._activeItem() == item;
+        return item.state == this._activeItem();
     }
 
     public isSelected(item: ListItemComponent): boolean {
-        return this._selectedItems.has(item);
+        return this._selectedItems.has(item.state);
     }
 
-    public select(item: ListItemComponent) {
-        return this._selectedItems.add(item);
+    public select(item: ListItemComponent): void {
+        this._selectedItems.add(item.state);
+        this._updateValue();
+        this._changeCallback?.(this._value());
     }
 
-    public deselect(item: ListItemComponent) {
-        this._selectedItems.delete(item);
+    public deselect(item: ListItemComponent): void {
+        this._selectedItems.delete(item.state);
+        this._updateValue();
+        this._changeCallback?.(this._value());
     }
 
-    public toggle(item: ListItemComponent) {
-        if (this._selectedItems.has(item)) {
+    public deselectAll(): void {
+        this._selectedItems.clear();
+        this._updateValue();
+        this._changeCallback?.(this._value());
+    }
+
+    public toggle(item: ListItemComponent): void {
+        if (this.isSelected(item)) {
             this.deselect(item);
         } else {
             this.select(item);
@@ -193,24 +206,9 @@ export class ListComponent implements ControlValueAccessor {
             throw Error('invalid value. Expected an array in multiple selection mode.');
         }
 
-        // let compareBy = this.compareBy();
-        // let findAndSelect = (v: any) => {
-        //     let index = this._sourceItems().findIndex(i => compareBy(i, v));
-        //     if (index > -1) {
-        //         this._items?.get(index)!.selected.set(true);
-        //     }
-        // };
-
-        // if (this.multiple()) {
-        //     if (Array.isArray(value)) {
-        //         (value as any[]).forEach(i => findAndSelect(i));
-        //     }
-        // } else {
-        //     findAndSelect(value);
-        // }
-
-        // this._value = value;
-        // this._changeDetector.markForCheck();
+        this._value.set(value);
+        this._findAndSelectItems(value);
+        this._changeDetector.markForCheck();
     }
 
     registerOnChange(fn: any): void {
@@ -226,31 +224,44 @@ export class ListComponent implements ControlValueAccessor {
     }
 
     protected _handleUserSelection(item: ListItemComponent) {
-        // this._listItems?.find(i => i.active())?.active.set(false);
-
         if (this.multiple()) {
-            this.toggle(item);
-            let values: any[] = [];
-            this._selectedItems.forEach(i => {
-                if (i.isSelected()) {
-                    values.push(this.writeBy()(i.value()));
-                }
-            });
-            this._value.set(values);
+            if (this.isSelected(item)) {
+                this._selectedItems.delete(item.state);
+            } else {
+                this._selectedItems.add(item.state);
+            }
         } else {
-            this._selectedItems.clear()
-            this._selectedItems.add(item);
-            this._value.set(this.writeBy()(item.value()));
+            this._selectedItems.clear();
+            this._selectedItems.add(item.state);
         }
 
-        this._changeCallback?.(this._value);
+        this._updateValue();
+        this._changeCallback?.(this._value());
         this.selectionChange.emit({
             item: item,
             list: this,
         });
 
-        // item.active.set(true);
         this._changeDetector.markForCheck();
+    }
+
+    private _findAndSelectItems(value: any) {
+        let compareBy = this.compareBy();
+        let findAndSelect = (val: any) => {
+            let index = this._sourceItems().findIndex(i => compareBy(i, val));
+            if (index > -1) {
+                let item = this._items.get(index)!;
+                this._selectedItems.add(item);
+            }
+        };
+
+        if (this.multiple()) {
+            if (Array.isArray(value)) {
+                (value as any[]).forEach(i => findAndSelect(i));
+            }
+        } else {
+            findAndSelect(value);
+        }
     }
 
     @HostListener('click')
@@ -265,31 +276,33 @@ export class ListComponent implements ControlValueAccessor {
         if (this._isDisabled())
             return;
 
-        let optionsCount = this._sourceItems().length;
-        if (optionsCount == 0) {
+        let visibleItemsCount = this._visibleItems.length;
+        if (visibleItemsCount == 0) {
             return;
         }
 
-        let activeItemindex = this._listItems.toArray().findIndex(i => i == this._activeItem());
+        let activeItemindex = this._visibleItems.toArray().findIndex(i => i.state == this._activeItem());
 
         switch (e.key) {
             case 'ArrowDown':
                 if (activeItemindex == -1) {
-                    this._activeItem.set(this._listItems.get(0));
-                } else if (activeItemindex < optionsCount - 1) {
-                    this._activeItem.set(this._listItems.get(activeItemindex + 1));
+                    const first = this._visibleItems.get(0)!.state
+                    this._activeItem.set(first);
+                } else if (activeItemindex < visibleItemsCount - 1) {
+                    const next = this._visibleItems.get(activeItemindex + 1)!.state;
+                    this._activeItem.set(next);
                 }
                 e.preventDefault();
                 break;
             case 'ArrowUp':
                 if (activeItemindex == -1) {
-                    this._activeItem.set(this._listItems.get(optionsCount - 1));
+                    const last = this._visibleItems.get(visibleItemsCount - 1)!.state;
+                    this._activeItem.set(last);
                 } else if (activeItemindex > 0) {
-                    this._activeItem.set(this._listItems.get(activeItemindex - 1));
+                    const previous = this._visibleItems.get(activeItemindex - 1)!.state;
+                    this._activeItem.set(previous);
                 }
                 e.preventDefault();
-                break;
-            case 'Tab':
                 break;
             case 'Enter':
                 if (activeItemindex > -1) {
@@ -297,23 +310,42 @@ export class ListComponent implements ControlValueAccessor {
                 }
                 break;
             case 'Home':
-                this._activeItem.set(this._listItems.get(0));
+                const first = this._visibleItems.get(0)!.state
+                this._activeItem.set(first);
                 e.preventDefault();
                 break;
             case 'End':
-                this._activeItem.set(this._listItems.get(optionsCount - 1));
+                const last = this._visibleItems.get(visibleItemsCount - 1)!.state;
+                this._activeItem.set(last);
                 e.preventDefault();
                 break;
         }
 
         if (this.focus() === 'roving') {
-            this._activeItem()?.focus();
+            this._activeItem()?.listItem.focus();
+        }
+    }
+
+    private _updateValue(): void {
+        if (this.multiple()) {
+            let values: any[] = [];
+            this._selectedItems.forEach(state => {
+                values.push(this.writeBy()(state.listItem.value()));
+            });
+            this._value.set(values);
+        } else {
+            if (this._selectedItems.size > 0) {
+                let first = this._selectedItems.values().next().value!.listItem.value();
+                this._value.set(this.writeBy()(first));
+            } else {
+                this._value.set(undefined);
+            }
         }
     }
 
     private _hostAriaActiveDescendant = computed(() => {
         if (this._activeItem() && !this._isDisabled() && this.focus() == 'activeDescendant') {
-            return this._activeItem()?.id;
+            return this._activeItem()!.listItem.id();
         }
 
         return undefined;
