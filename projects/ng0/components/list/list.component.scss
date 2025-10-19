@@ -6,12 +6,16 @@ ng0-list {
        border-radius: var(--bs-border-radius);
        min-height: 1rem;
 
-       /* // &:focus, &:focus-visible {
-    //     border: 1px solid var(--bs-primary);
-    // } */
+       &:focus,
+       &:focus-visible {
+              outline: 0;
+              box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) var(--bs-focus-ring-blur, 0) var(--bs-focus-ring-width) var(--bs-focus-ring-color);
+       }
 
+       &[disabled],
        &.disabled {
-              background-color: var(--bs-secondary-bg);
+              opacity: 0.5;
+              pointer-events: none;
        }
 
        .ng0-list-loading-cover {

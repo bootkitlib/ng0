@@ -1,18 +1,20 @@
 import { input, inject, Directive, TemplateRef, effect, ViewContainerRef, EmbeddedViewRef } from '@angular/core';
 
 /**
- * ListItemStateDirective
+ * IfDirective is a structural directive that conditionally includes or excludes a template
+ * based on the boolean value of the `show` input property.
+ * 
  */
 @Directive({
-    selector: '[ng0ListItemState]',
-    exportAs: 'ng0ListItemState',
+    selector: '[ng0If]',
+    exportAs: 'ng0If',
     standalone: true,
 })
-export class ListItemStateDirective {
+export class IfDirective {
     private readonly _templateRef = inject(TemplateRef<any>);
     private _vcr = inject(ViewContainerRef);
     private _viewRef?: EmbeddedViewRef<any>;
-    public readonly show = input(true);
+    public readonly show = input(true, { alias: 'ng0If' });
 
     constructor() {
         effect(() => {

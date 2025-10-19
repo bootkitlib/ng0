@@ -31,6 +31,7 @@ interface ListItem {
 })
 export class ListExampleComponent {
 
+
     Sexuality = Sexuality;
     width = signal('200px');
     counter = signal(0);
@@ -52,7 +53,9 @@ export class ListExampleComponent {
     value20?: number; value21?: string; value22?: string; value23 = signal('Two'); value24?: string;
     value25 = 1; value26 = 'Three'; value27?: string; value28?: string; value29?: string;
     value30 = 2; value31: any; value32: any; value33: any; value34 = 2;
+    value35: any; 
 
+    isList35Disabled = false;
     list17FilterValue = model('');
     list15SelectedIndices: ReadonlyArray<number> = [];
 
@@ -80,16 +83,8 @@ export class ListExampleComponent {
         this.numberArray2 = [...this.numberArray2];
     }
 
-
-    // onRemoveSelectedItemsOfLocalDataSource1() {
-    //     if(this.list15SelectedIndices.length) {
-    //         this.localDatasource1.remove(...this.list15SelectedIndices);
-    //     }
-    // }
-
-    // onReplaceLocalDataSource1() {
-    //     this.localDatasource1.replace(0, 'This item is replaced!')
-    // }
-
+    onReplaceNumberArray2() {
+        this.numberArray2 = Array.from({ length: 3 }, () => Math.floor(Math.random() * 100) + 1);
+    }
 
 }

@@ -1,41 +1,20 @@
-@let formatter = formatBy();
 @let filter = filterBy();
 
 @for (item of _sourceItems(); track trackBy()($index, item)) {
-<ng-template ng0ListItemState [show]="filter(item)">
-       <ng0-list-item #listItem="ng0ListItem"
-                      [index]="$index"
-                      [value]="item"
-                      [ngClass]="itemClass()(item)"
-                      (click)="_handleUserSelection(listItem)">
-
-              @if(_itemTemplate) {
-              <ng-container *ngTemplateOutlet="_itemTemplate; context: { $implicit: {
-              item: listItem,
-              value: item,
-              selected: listItem.isSelected(),
-              active: listItem.isActive(),
-              }}" />
-              } @else {
-              @if(showSelectionIndicator()) {
-              <input class="form-check-input ng0-list-selection-indicator"
-                     tabindex="-1"
-                     [checked]="listItem.isSelected()"
-                     [attr.type]="multiple() ? 'checkbox' : 'radio'">
-              }
-
-              {{formatter(item)}}
-              }
-       </ng0-list-item>
-</ng-template>
-
+<ng0-list-item *ng0If="filter(item)"
+               #listItem="ng0ListItem"
+               [id]="idGenerator()?.(item)"
+               [value]="item"
+               [ngClass]="itemClass()(item)"
+               (click)="_handleUserSelection(listItem);">
+</ng0-list-item>
 }
 
 @if(_showLoadingSppiner()) {
 @if(_sourceItems().length == 0) {
-       <div style="text-align: center; padding: 0.5rem 0;">
-              <ng-container *ngTemplateOutlet="spinner"></ng-container>
-       </div>
+<div style="text-align: center; padding: 0.5rem 0;">
+       <ng-container *ngTemplateOutlet="spinner"></ng-container>
+</div>
 }@else {
 <div class="ng0-list-loading-cover">
        <ng-container *ngTemplateOutlet="spinner"></ng-container>

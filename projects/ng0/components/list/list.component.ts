@@ -1,21 +1,18 @@
-import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding, OnInit, AfterViewInit } from '@angular/core';
+import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding, OnInit, AfterViewInit, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { ListItemComponent } from "./list-item.component";
 import {
     CssClassAttribute, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
-    defaultValueWriter, filterPredicateAttribute,
-    noopFilter,
-    IdGeneratorAttribute,
-    TrackByAttribute,
-    trackByIndex
+    defaultValueWriter, filterPredicateAttribute, noopFilter, IdGeneratorAttribute, TrackByAttribute, trackByIndex, IfDirective
 } from '@bootkit/ng0/common';
-import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListItemStateDirective } from './list-item-state.directive';
-import { ListItemComponent } from "./list-item.component";
 
-/**
- * Select component that allows users to choose an option from a dropdown list.
+let uuid = 0;
+/** 
+ * ListComponent is a versatile component that displays a list of items with support for single or multiple selection,
+ * custom item templates, filtering, and keyboard navigation.
  */
 @Component({
     selector: 'ng0-list',
@@ -27,7 +24,7 @@ import { ListItemComponent } from "./list-item.component";
     encapsulation: ViewEncapsulation.None,
     imports: [
         CommonModule,
-        ListItemStateDirective,
+        IfDirective,
         ListItemComponent
     ],
     providers: [{
@@ -38,9 +35,9 @@ import { ListItemComponent } from "./list-item.component";
     host: {
         '[class.ng0-list-loading]': 'source().isLoading()',
         '[attr.aria-activedescendant]': '_hostAriaActiveDescendant()',
-        '[attr.disabled]': '_isDisabled()',
+        '[attr.disabled]': '_isDisabled() ? "" : undefined',
+        '[attr.aria-disabled]': '_isDisabled() ? "" : undefined',
         '[attr.tabindex]': '_hostTabIndex()',
-        '[attr.aria-disabled]': '_isDisabled()'
     }
 })
 export class ListComponent implements ControlValueAccessor {
@@ -48,18 +45,13 @@ export class ListComponent implements ControlValueAccessor {
     private _changeDetector = inject(ChangeDetectorRef);
     private _value = signal<any>(undefined);
     private _changeCallback?: (value: any) => void;
-    private _touchCallback?: (value: any) => void;
+    private _touchCallback?: () => void;
     protected readonly _sourceItems = signal<any[]>([]);
     private readonly _selectedValues = new Set<any>();
-    private readonly _activeItem = signal<ListItemComponent | undefined>(undefined);
+    protected readonly _activeItem = signal<ListItemComponent | undefined>(undefined);
     @ViewChildren(ListItemComponent) private readonly _visibleItems!: QueryList<ListItemComponent>;
     protected readonly _isDisabled = signal<boolean>(false);
-    @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
-
-    protected _showLoadingSppiner = computed(() => {
-        let source = this.source();
-        return source.isLoading() && source.type == 'remote';
-    });
+    @ContentChild(TemplateRef) public itemTemplate?: TemplateRef<any>;
 
     /**
      * Reference to the host element
@@ -171,12 +163,19 @@ export class ListComponent implements ControlValueAccessor {
      */
     @Output() public readonly selectionChange = new EventEmitter<ListSelectionChangeEvent>();
 
+    _uuid: number;
+
     constructor() {
+        this._uuid = ++uuid;
+
         effect(() => {
-            this.source().load(new DataRequest()).subscribe(res => {
-                this._activeItem.set(undefined);
-                this._sourceItems.set(res.data);
-                this._findAndSelectItems();
+            let source = this.source();
+            source.load(new DataRequest()).subscribe(res => {
+                untracked(() => {
+                    this._activeItem.set(undefined);
+                    this._sourceItems.set(res.data);
+                    this._findAndSelectItems();
+                })
             });
         })
     }
@@ -280,6 +279,7 @@ export class ListComponent implements ControlValueAccessor {
 
     protected _handleUserSelection(item: ListItemComponent) {
         let value = item.value();
+        this._activeItem.set(item);
 
         if (this.multiple()) {
             if (this.isSelected(value)) {
@@ -299,8 +299,13 @@ export class ListComponent implements ControlValueAccessor {
             list: this,
         });
 
-        this._changeDetector.markForCheck();
+        this._changeDetector.detectChanges();
     }
+
+    protected _showLoadingSppiner = computed(() => {
+        let source = this.source();
+        return source.isLoading() && source.type == 'remote';
+    });
 
     private _findAndSelectItems(): void {
         let value = this._value();
@@ -350,22 +355,33 @@ export class ListComponent implements ControlValueAccessor {
     });
 
     private _hostTabIndex = computed(() => {
-        if (this._isDisabled() || this.focus() === 'none') {
-            return -1;
+        let isDisabled = this._isDisabled(); // track _isDisabled
+        let activeItem = this._activeItem(); // track _activeItem
+
+        if (isDisabled) {
+            return undefined;
         }
 
-        if (this.focus() === "roving") {
-            return this._activeItem() ? -1 : 0;
-        } else {
-            return 0; // activeDescendant
+        switch (this.focus()) {
+            case 'none':
+                return undefined;
+            case 'activeDescendant':
+                return 0;
+            case 'roving':
+                return activeItem ? undefined : 0;
         }
     });
 
     @HostListener('click')
     private _onHostClick() {
-        if (this.focus() != 'none') {
-            this.elementRef.nativeElement.focus();
-        }
+        // if (this.focus() != 'none') {
+        //     this.elementRef.nativeElement.focus();
+        // }
+    }
+
+    @HostListener('blur')
+    private _onHostBlur() {
+        this._touchCallback?.();
     }
 
     @HostListener('keydown', ['$event'])
@@ -379,6 +395,7 @@ export class ListComponent implements ControlValueAccessor {
         }
 
         let activeItemindex = this._visibleItems.toArray().findIndex(i => i === this._activeItem());
+        console.log(this._activeItem(), activeItemindex)
 
         switch (e.key) {
             case 'ArrowDown':
@@ -403,7 +420,7 @@ export class ListComponent implements ControlValueAccessor {
                 break;
             case 'Enter':
                 if (activeItemindex > -1) {
-                    this._handleUserSelection(this._sourceItems()[activeItemindex]);
+                    this._handleUserSelection(this._visibleItems.get(activeItemindex)!);
                 }
                 break;
             case 'Home':

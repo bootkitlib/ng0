@@ -1,6 +1,6 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation, inject, input, model, booleanAttribute, ElementRef, signal, OnInit } from '@angular/core';
+import { Component, ChangeDetectionStrategy, ViewEncapsulation, inject, input, booleanAttribute, ElementRef, signal, OnInit } from '@angular/core';
 import { ListComponent } from './list.component';
-import { ListItemStateDirective } from './list-item-state.directive';
+import { CommonModule } from '@angular/common';
 
 /**
  * ListItemComponent represents an individual item within a ListComponent.
@@ -13,6 +13,9 @@ import { ListItemStateDirective } from './list-item-state.directive';
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     encapsulation: ViewEncapsulation.None,
+    imports: [
+        CommonModule,
+    ],
     host: {
         '[class.active]': 'isActive()',
         '[class.selected]': 'isSelected()',
@@ -20,14 +23,16 @@ import { ListItemStateDirective } from './list-item-state.directive';
         '[attr.tabIndex]': '_getTabIndex()'
     }
 })
-export class ListItemComponent implements OnInit {
-    private readonly _id = signal<any>(undefined);
+export class ListItemComponent {
+    /**
+     * The value associated with the item. This can be of any type.
+     */
+    public readonly value = input<any>();
 
     /**
-     * Reference to the host element
+     * The id of the item.
      */
-    public elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
-    public index = input.required<number>();
+    public readonly id = input<any>();
 
     /**
      * Reference to the parent list component
@@ -35,29 +40,38 @@ export class ListItemComponent implements OnInit {
     public readonly list = inject(ListComponent);
 
     /**
-     * The value associated with the item. This can be of any type.
+     * Reference to the host element
      */
-    public readonly value = input<any>();
+    public readonly elementRef = inject<ElementRef<HTMLElement>>(ElementRef);
 
-    constructor() {
-    }
-
-    ngOnInit(): void {
-        this._id.set(this.list.idGenerator()?.(this.value()))
-    }
-
+    /**
+     * Indicates whether the item is active.
+     * @returns True if the item is active, false otherwise.
+     */
     public isActive() {
         return this.list.isActive(this);
     }
 
+    /**
+     * Indicates whether the item is selected.
+     * @returns True if the item is selected, false otherwise.
+     */
     public isSelected() {
         return this.list.isSelected(this.value());
     }
 
+    /**
+     * Selects the item.
+     * @returns 
+     */
     public select() {
         return this.list.select(this.value());
     }
 
+    /**
+     * Deselects the item.
+     * @returns 
+     */
     public deselect() {
         this.list.deselect(this);
     }
@@ -70,17 +84,10 @@ export class ListItemComponent implements OnInit {
         this.list.toggle(this.value());
     }
 
-    /**
-     * Indicates whether the item is disabled. Default is false.
-     */
-    public readonly disabled = input(false, { transform: booleanAttribute });
-
-    /**
-     * The id of the item.
-     */
-    public id() {
-        return this._id();
-    }
+    // /**
+    //  * Indicates whether the item is disabled. Default is false.
+    //  */
+    // public readonly disabled = input(false, { transform: booleanAttribute });
 
     /**
      * Scrolls the item into view within its parent container.
@@ -93,6 +100,9 @@ export class ListItemComponent implements OnInit {
         this.elementRef.nativeElement.scrollIntoView({ block: position, behavior: behavior });
     }
 
+    /**
+     * Sets focus on the item.
+     */
     public focus() {
         this.elementRef.nativeElement.focus();
     }

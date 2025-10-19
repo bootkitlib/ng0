@@ -1,2 +1,14 @@
-<ng-content></ng-content>
+@let formatter = list.formatBy();
 
+@if(list.itemTemplate) {
+<ng-container *ngTemplateOutlet="list.itemTemplate; context: { $implicit: {ref: this, value: value()}}" />
+} @else {
+@if(list.showSelectionIndicator()) {
+<input class="form-check-input ng0-list-selection-indicator"
+       tabindex="-1"
+       [checked]="isSelected()"
+       [attr.type]="list.multiple() ? 'checkbox' : 'radio'">
+}
+
+{{formatter(value())}}
+}

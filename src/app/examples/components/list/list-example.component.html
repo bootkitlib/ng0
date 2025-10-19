@@ -20,9 +20,98 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
+                <h5 class="card-title">Accessibility</h5>
+                <p>
+                    Ensure that the list is accessible to all users, including those using assistive technologies. <br>
+                </p>
+
+                <div>
+                    <h6>Focus:</h6>
+                    By setting the focus property, you can control how the list is navigated using the keyboard.
+                    focus property can be set to "none", "roving" or "activeDescendant".
+                    <ul>
+                        <li>
+                            focus="none": The list will not manage focus for its items.
+                        </li>
+                        <li>
+                            focus="activeDescendant": The list will manage focus for its items using the
+                            aria-activedescendant attribute. This is default.
+                        </li>
+                        <li>
+                            focus="roving": The list will manage focus for its items using a roving tabindex.
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="row">
+                    <div class="col-12 col-md-4">
+                        focus="none"
+                        <ng0-list name="value31" [source]="numberArray" [(ngModel)]="value31" focus="none"></ng0-list>
+                        Value: {{ value31 }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        focus="activeDescendant"
+                        <ng0-list name="value33" [source]="numberArray" [(ngModel)]="value33" focus="activeDescendant">
+                        </ng0-list>
+                        Value: {{ value33 | json }}
+                    </div>
+                    <div class="col-12 col-md-4">
+                        focus="roving"
+                        <ng0-list name="value32" [source]="numberArray" [(ngModel)]="value32" focus="roving">
+                        </ng0-list>
+                        Value: {{ value32 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Disabled state</h5>
+                <p>
+                    Disable the list by setting the disabled property to true.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: number[]
+                        <ng0-list name="value35" [source]="numberArray2" [(ngModel)]="value15"
+                                  [disabled]="isList35Disabled" #value35="ngModel">
+                        </ng0-list>
+
+                        <ul>
+                            <li>
+                                Value: {{ value15 | json }}
+                            </li>
+                            <li>
+                                Touched: {{value35.touched}}
+                            </li>
+                            <li>
+                                Dirty: {{value35.dirty}}
+                            </li>
+                        </ul>
+
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <button class="btn btn-outline-secondary me-2" (click)="isList35Disabled = !isList35Disabled">
+                        Toggle disable state
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
                 <h5 class="card-title">Manipulating Data</h5>
                 <p>
-                    Bind to a simple array and manipulate the data by adding/removing items.
+                    Bind to a simple array and manipulate the data by adding/removing items or replacing the data
+                    source.
                 </p>
 
                 <div class="row">
@@ -42,10 +131,17 @@
                     <button class="btn btn-outline-secondary me-2" (click)="onRemoveFirstItemOfLocalDataSource1()">
                         Remove First Item
                     </button>
+                    <button class="btn btn-outline-secondary me-2" (click)="onReplaceNumberArray2()">
+                        Replace data source
+                    </button>
+
                 </div>
             </div>
         </div>
     </div>
+
+
+
 
     <div class="col-xl-12">
         <div class="card">
@@ -345,6 +441,7 @@
                 </div>
 
                 <div class="alert alert-warning mt-4">
+                    <strong>Note:</strong>
                     Using a value writer is useful when binding to database foreign keys.
                 </div>
             </div>
@@ -420,11 +517,8 @@
                     The let-option variable is an object with the following properties:
                 </p>
                 <ul>
-                    <li>index: the item index</li>
+                    <li>ref: a reference to the ListItemComponent</li>
                     <li>value: the item value</li>
-                    <li>selected: true if the item is selected</li>
-                    <li>active: true if the item is active</li>
-                    <li> (soon) disabled: true if the item is disabled </li>
                 </ul>
 
                 <div class="row">
@@ -475,52 +569,5 @@
         </div>
     </div>
 
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Accessibility</h5>
-                <p>
-                    Ensure that the list is accessible to all users, including those using assistive technologies. <br>
-                </p>
 
-                <div>
-                    <h6>Focus:</h6>
-                    By setting the focus property, you can control how the list is navigated using the keyboard.
-                    focus property can be set to "none", "roving" or "activeDescendant".
-                    <ul>
-                        <li>
-                            focus="none": The list will not manage focus for its items.
-                        </li>
-                        <li>
-                            focus="activeDescendant": The list will manage focus for its items using the
-                            aria-activedescendant attribute. This is default.
-                        </li>
-                        <li>
-                            focus="roving": The list will manage focus for its items using a roving tabindex.
-                        </li>
-                    </ul>
-                </div>
-
-                <div class="row">
-                    <div class="col-12 col-md-4">
-                        focus="none"
-                        <ng0-list name="value31" [source]="numberArray" [(ngModel)]="value31" focus="none"></ng0-list>
-                        Value: {{ value31 }}
-                    </div>
-                    <div class="col-12 col-md-4">
-                        focus="activeDescendant"
-                        <ng0-list name="value33" [source]="numberArray" [(ngModel)]="value33" focus="activeDescendant">
-                        </ng0-list>
-                        Value: {{ value33 | json }}
-                    </div>
-                    <div class="col-12 col-md-4">
-                        focus="roving"
-                        <ng0-list name="value32" [source]="numberArray" [(ngModel)]="value32" focus="roving">
-                        </ng0-list>
-                        Value: {{ value32 | json }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
