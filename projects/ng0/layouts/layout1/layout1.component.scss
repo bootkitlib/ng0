@@ -1,0 +1,30 @@
+$bg-color: color-mix(in srgb, var(--bs-primary) 10%, white);
+$surface-bg-color: white;
+
+ng0-layout1 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: $bg-color;
+
+    .ng0-layout1-header {
+        background-color: $surface-bg-color;
+        z-index: 10;
+
+        &.ng0-layout1-header-sticky {
+            position: sticky;
+            top: 0;
+
+        }
+    }
+
+    ng0-sidenav-container {
+        // bugfix: ng0-sidenav-container
+        overflow-x: unset !important;
+        clip-path: inset(0);
+
+        ng0-sidenav {
+            background-color: $surface-bg-color;
+        }
+    }
+}

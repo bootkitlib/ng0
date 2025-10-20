@@ -1,0 +1,35 @@
+<ng0-sidenav-container class="flex-fill">
+  <header class="ng0-layout1-header"
+          [class.ng0-layout1-header-sticky]="config.headerMode() == 'sticky'">
+    <ng-content select="header" />
+  </header>
+
+  <main>
+    <ng-content select="content" />
+  </main>
+
+  <ng0-sidenav class="ng0-layout1-start-sidenav"
+               [sidenavWidth]="250"
+               [open]="config.startSidenavOpen()"
+               [mode]="config.startSidenavMode()"
+               [hasBackdrop]="true"
+               [zIndex]="10"
+               [fixedInViewport]="config.startSidenavFixed()"
+               (backdropClick)="config.startSidenavOpen.set(false)">
+    <ng-content select="start-sidenav" />
+  </ng0-sidenav>
+
+  @for (sidenav of config.secondarySidenavs(); track $index) {
+  <ng0-sidenav class="ng0-layout1-secondary-sidenav"
+               [sidenavWidth]="sidenav.size"
+               open="true"
+               [hasBackdrop]="true"
+               position="end"
+               mode="over"
+               [fixedInViewport]="true"
+               [zIndex]="sidenav.zIndex"
+               (backdropClick)="sidenav.closeByBackdropClick ? config.popSidenav() : null">
+    <ng-container *ngTemplateOutlet="sidenav.template" />
+  </ng0-sidenav>
+  }
+</ng0-sidenav-container>
