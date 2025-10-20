@@ -8,7 +8,7 @@ import { Layout1SidenavConfiguration } from './types';
 @Injectable({
   providedIn: 'root'
 })
-export class Layout1Configuration {
+export class Layout1Manager {
   private _zIndexCounter = 1000;
 
   /**

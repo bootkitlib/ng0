@@ -1,7 +1,7 @@
 import { Component, inject, ViewEncapsulation } from '@angular/core';
 import { SidenavModule } from '@bootkit/ng0/components/sidenav';
 import { CommonModule } from '@angular/common';
-import { Layout1Configuration } from './layout1.service';
+import { Layout1Manager } from './layout1-manager';
 
 /**
  * Layout1Component
@@ -15,5 +15,5 @@ import { Layout1Configuration } from './layout1.service';
   imports: [CommonModule, SidenavModule]
 })
 export class Layout1Component {
-  public readonly config = inject(Layout1Configuration);
+  public readonly config = inject(Layout1Manager);
 }
