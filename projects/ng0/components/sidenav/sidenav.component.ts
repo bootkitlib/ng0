@@ -30,7 +30,7 @@ import { BackdropComponent } from '@bootkit/ng0/components/backdrop';
 export class SidenavComponent implements OnInit, OnDestroy {
   public open = input(true, { transform: booleanAttribute });
   public mode = input<SidenavMode>('push');
-  public hasBackdrop = input(true);
+  public hasBackdrop = input(true, { transform: booleanAttribute });
   public zIndex = input<number>();
   public position = input<SidenavPosition>('start');
   public sidenavWidth = input.required<number>();

@@ -1,4 +1,4 @@
-import { ObjectFormatter } from "./value-formatter";
+import { ObjectFormatter } from "./formatter";
 
 /** Locale dictionary */
 export type LocaleDictionary = { [key: string]: string; };

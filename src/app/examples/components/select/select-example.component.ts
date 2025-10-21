@@ -4,12 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { SelectModule } from '@bootkit/ng0/components/select';
 import { DataResult, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
+import { Sexuality } from 'src/app/common/enums';
 
-enum Sexuality {
-    male = 'Male',
-    female = 'Female',
-    other = 'Other'
-}
 
 interface Person {
     id: number;

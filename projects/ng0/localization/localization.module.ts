@@ -8,6 +8,7 @@ import { LocalizePipe } from './localize.pipe';
 import { LocalizeEnumPipe } from './localize-enum.pipe';
 import { LocalizeBooleanPipe } from './localize-boolean-pipe';
 import { LocalizeDatePipe } from './localize-date.pipe';
+import { FormatPipe } from './format.pipe';
 
 const Declares = [
   // Pure pipes
@@ -15,6 +16,7 @@ const Declares = [
   TranslateEnumPipe,
   TranslateBooleanPipe,
   DatePipe,
+  FormatPipe,
 
   // Impure pipes
   LocalizePipe,

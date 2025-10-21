@@ -1,6 +1,6 @@
 import { LocaleDefinition } from "./locale-definition";
 import { TranslatedValidationError } from "./types";
-import { ObjectFormatter } from "./value-formatter";
+import { ObjectFormatter } from "./formatter";
 
 /** Locale */
 export class Locale {
@@ -121,30 +121,5 @@ export class Locale {
  */
   formatDate(date: Date | string | number, format?: string): string {
     return date ? new Date(date).toLocaleDateString(this.definition.name, { hour: '2-digit', minute: '2-digit' }) : '';
-  }
-
-  /**
-   * Returns a formatter function by its name and parameters.
-   * @param formatterName The format string in the form of "formatterName:param1:param2:..."
-   * @returns A ValueFormatterFunction
-   */
-  getFormatter(formatterName: string): ObjectFormatter {
-    let formatter = this.definition.formatters?.[formatterName];
-    let formatterType = typeof formatter;
-
-    if (!formatter) {
-      console.warn(`The formatter "${formatterName}" is not defined in locale ${this.definition.name}`);
-      return (value) => value?.toString() || '' // return a default formatter
-    }
-
-    if (formatterType === 'function') {
-      return formatter as ObjectFormatter;
-    } else if (Array.isArray(formatter)) {
-      return (value: number | boolean) => formatter[+value]; // use + to cast boolean values to numbers
-    } else if (formatterType == 'object' && formatter != null) {
-      return (value: string) => (formatter as any)[value] || ''
-    } else {
-      throw Error(`Invalid locale formatter: ${formatterName}`);
-    }
   }
 }

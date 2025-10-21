@@ -3,13 +3,14 @@ export * from './locale-definition';
 export * from './localization.service';
 export * from './localization.module';
 export * from './types';
-export * from './value-formatter';
+export * from './formatter';
 
 // Pure pipes
 export * from './translate.pipe';
 export * from './translate-boolean-pipe';
 export * from './translate-enum.pipe';
 export * from './date.pipe';
+export * from './format.pipe';
 
 // Impure pipes
 export * from './localize.pipe';

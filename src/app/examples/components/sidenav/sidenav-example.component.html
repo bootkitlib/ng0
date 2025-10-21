@@ -1,49 +1,119 @@
-<ng0-sidenav-container class="border bg-light">
-  <ng0-sidenav
-    [zIndex]="2"
-    [sidenavWidth]="100"
-    class="bg-danger"
-    [mode]="sidenav1.mode()"
-    [fixedInViewport]="sidenav1.fixed()"
-    [position]="sidenav1.position()"
-    [open]="sidenav1.open()"
-    [sidenavWidth]="sidenav1.width"
-    [hasBackdrop]="sidenav1.hasBackdrop()"
-    (backdropClick)="sidenav1.open.set(false)"
-  >
-    Sidenav 1
-  </ng0-sidenav>
+<div class="card">
+  <div class="card-body">
+    <h5>Basic Usages</h5>
+    <p>
+      This example demonstrates how to use multiple sidenavs with different configurations.
+      To show your content inside a sidenav, wrap your content inside an <code>&lt;ng0-sidenav-container&gt;</code> component
+      and add one or more <code>&lt;ng0-sidenav&gt;</code> components as siblings to the content.
+    </p>
 
-  <ng0-sidenav
-    [zIndex]="1"
-    [sidenavWidth]="100"
-    class="bg-secondary"
-    [mode]="sidenav2.mode()"
-    [fixedInViewport]="sidenav2.fixed()"
-    [position]="sidenav2.position()"
-    [open]="sidenav2.open()"
-    [sidenavWidth]="sidenav2.width"
-    [hasBackdrop]="sidenav2.hasBackdrop()"
-    (backdropClick)="sidenav2.open.set(false)"
-  >
-    Sidenav 2
-  </ng0-sidenav>
+    <ng0-sidenav-container class="border bg-light">
+      <ng0-sidenav
+                   [zIndex]="2"
+                   [sidenavWidth]="100"
+                   class="bg-danger"
+                   [mode]="sidenav1.mode()"
+                   [fixedInViewport]="sidenav1.fixed()"
+                   [position]="sidenav1.position()"
+                   [open]="sidenav1.open()"
+                   [sidenavWidth]="sidenav1.width"
+                   [hasBackdrop]="sidenav1.hasBackdrop()"
+                   (backdropClick)="sidenav1.open.set(false)">
+        Sidenav 1
+      </ng0-sidenav>
 
-  <p>
-    This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
-    This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
-    This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
-    This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
-    This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
-    This is a text. This is a text. This is a text. This is a text. This is a text.
-  </p>
-</ng0-sidenav-container>
+      <ng0-sidenav
+                   [zIndex]="1"
+                   [sidenavWidth]="100"
+                   class="bg-secondary"
+                   [mode]="sidenav2.mode()"
+                   [fixedInViewport]="sidenav2.fixed()"
+                   [position]="sidenav2.position()"
+                   [open]="sidenav2.open()"
+                   [sidenavWidth]="sidenav2.width"
+                   [hasBackdrop]="sidenav2.hasBackdrop()"
+                   (backdropClick)="sidenav2.open.set(false)">
+        Sidenav 2
+      </ng0-sidenav>
 
-<div class="mt-2">
-  <button class="btn btn-success me-1" (click)="sidenav1.open.set(!sidenav1.open())">
-    Toggle Sidenav 1
-  </button>
-  <button class="btn btn-success" (click)="sidenav2.open.set(!sidenav2.open())">
-    Toggle Sidenav 2
-  </button>
+      <p>
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text.
+      </p>
+    </ng0-sidenav-container>
+  </div>
+
+  <div class="card-footer">
+    <button class="btn btn-success me-1" (click)="sidenav1.open.set(!sidenav1.open())">
+      Toggle Sidenav 1
+    </button>
+    <button class="btn btn-success" (click)="sidenav2.open.set(!sidenav2.open())">
+      Toggle Sidenav 2
+    </button>
+  </div>
+
+</div>
+
+<div class="card">
+  <div class="card-body">
+    <h5> sidenavs</h5>
+    <p>
+      This example demonstrates how to use multiple sidenavs with different configurations.
+      To show your content inside a sidenav, wrap your content inside an <code>&lt;ng0-sidenav-container&gt;</code> component
+      and add one or more <code>&lt;ng0-sidenav&gt;</code> components as siblings to the content.
+    </p>
+
+    <ng0-sidenav-container class="border bg-light">
+      <ng0-sidenav
+                   [zIndex]="2"
+                   [sidenavWidth]="100"
+                   class="bg-danger"
+                   [mode]="sidenav1.mode()"
+                   [fixedInViewport]="sidenav1.fixed()"
+                   [position]="sidenav1.position()"
+                   [open]="sidenav1.open()"
+                   [sidenavWidth]="sidenav1.width"
+                   [hasBackdrop]="sidenav1.hasBackdrop()"
+                   (backdropClick)="sidenav1.open.set(false)">
+        Sidenav 1
+      </ng0-sidenav>
+
+      <ng0-sidenav
+                   [zIndex]="1"
+                   [sidenavWidth]="100"
+                   class="bg-secondary"
+                   [mode]="sidenav2.mode()"
+                   [fixedInViewport]="sidenav2.fixed()"
+                   [position]="sidenav2.position()"
+                   [open]="sidenav2.open()"
+                   [sidenavWidth]="sidenav2.width"
+                   [hasBackdrop]="sidenav2.hasBackdrop()"
+                   (backdropClick)="sidenav2.open.set(false)">
+        Sidenav 2
+      </ng0-sidenav>
+
+      <p>
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text. This is a text.
+        This is a text. This is a text. This is a text. This is a text. This is a text.
+      </p>
+    </ng0-sidenav-container>
+  </div>
+
+  <div class="card-footer">
+    <button class="btn btn-success me-1" (click)="sidenav1.open.set(!sidenav1.open())">
+      Toggle Sidenav 1
+    </button>
+    <button class="btn btn-success" (click)="sidenav2.open.set(!sidenav2.open())">
+      Toggle Sidenav 2
+    </button>
+  </div>
+
 </div>

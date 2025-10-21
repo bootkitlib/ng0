@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, signal, input } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { SidenavMode, SidenavModule, SidenavPosition } from '@bootkit/ng0/components/sidenav';
 import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
 
@@ -9,7 +9,6 @@ import { BreakpointObserver, Breakpoints } from '@angular/cdk/layout';
     standalone: true,
     imports: [
         SidenavModule,
-        // LayoutModule
     ]
 })
 export class SidenavExampleComponent {

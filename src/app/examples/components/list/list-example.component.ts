@@ -5,12 +5,7 @@ import { FilterPredicate } from '@bootkit/ng0/common';
 import { ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
 import { DataResult, DataSource, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
-
-enum Sexuality {
-    male = 'Male',
-    female = 'Female',
-    other = 'Other'
-}
+import { Sexuality } from 'src/app/common/enums';
 
 interface ListItem {
     id: number;
@@ -30,8 +25,6 @@ interface ListItem {
     ]
 })
 export class ListExampleComponent {
-
-
     Sexuality = Sexuality;
     width = signal('200px');
     counter = signal(0);

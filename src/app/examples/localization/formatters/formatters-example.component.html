@@ -1,0 +1,70 @@
+<div class="alert alert-warning">
+    This example demonstrates how to use formatters in your application. <br>
+    Formatters are used to format data for display purposes, such as dates, numbers, and currencies.
+</div>
+
+
+<div class="row g-3">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Field formatter</h5>
+                <p>
+                    A field formatter formats an object by extracting a specific field from it.<br>
+                    This example shows how to use a formatter to display the 'name' field of an object.
+                </p>
+
+                Value = {{fieldExample.value | json}} <br>
+                Formatter = 'name' <br>
+
+                <span class="text-info">
+                    Formatted Value = {{fieldExample.value | ng0Format:'name'}}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Array index formatter</h5>
+                <p>
+                    An array index formatter formats an array by extracting the element at a specific index.<br>
+                    This example shows how to use a formatter to display the element at index 1 of an array.
+                </p>
+
+                Value = {{arrayIndexExample.value | json}} <br>
+                Formatter: 1 <br>
+
+                <span class="text-info">
+                    Formatted Value = {{arrayIndexExample.value | ng0Format: 1}}
+                </span>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="col-lg-12">
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Enum Formatter</h5>
+                <p>
+                    An enum formatter formats an enum value into a human-readable string.<br>
+                    This example shows how to use a formatter to display the string representation of an enum value.
+                </p>
+
+                Value = {{enumExample.value | json}} <br>
+                Formatter = Sexuality <br>
+
+                <span class="text-info">
+                    Formatted Value = {{enumExample.value | ng0Format: '@Sexuality'}}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+
+    </div>
+</div>
