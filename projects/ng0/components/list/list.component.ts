@@ -260,9 +260,9 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             this._selectedItems.clear();
             this._sourceItems().forEach(i => this._selectedItems.add(i));
             this._changeCallback?.(this._value());
+        } else {
+            throw new Error('selectAll is only available in multiple selection mode.');
         }
-
-        throw new Error('selectAll is only available in multiple selection mode.');
     }
 
     /**
