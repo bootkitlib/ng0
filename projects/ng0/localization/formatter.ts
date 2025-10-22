@@ -3,10 +3,10 @@ import { Locale } from "./locale";
 /**
  * Object formatter function type.
  * @param obj The object to format.
- * @param options Additional options for formatting.
+ * @param params Additional parameters for formatting.
  * @returns The formatted value.
  */
-export type ObjectFormatter = (obj: any, ...options: any[]) => any;
+export type ObjectFormatter = (obj: any, ...params: any[]) => any;
 
 /**
  * ObjectFormatterLike  

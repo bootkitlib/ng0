@@ -13,7 +13,7 @@ import { createObjectFormatter, ObjectFormatterLike } from './formatter';
 export class FormatPipe implements PipeTransform {
   private _localizationService = inject(LocalizationService, { optional: true });
 
-  transform(obj: any, formatter: ObjectFormatterLike): any {
-    return createObjectFormatter(formatter, this._localizationService?.get())(obj);
+  transform(obj: any, formatter: ObjectFormatterLike, ...params: any[]): any {
+    return createObjectFormatter(formatter, this._localizationService?.get())(obj, ...params);
   }
 }

@@ -1,14 +1,13 @@
-import { Component, ElementRef, Renderer2, input, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, OnInit, computed, EffectRef } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, DestroyRef, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, DOCUMENT, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, OnInit, computed, EffectRef, untracked } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataSource, DataSourceLike, DataRequest } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
 import {
-    CssClassAttribute, IdGenerator, SelectOption, sequentialIdGenerator, equalityComparerAttribute,
+    CssClassAttribute, equalityComparerAttribute,
     defaultEqualityComparer, valueWriterAttribute, defaultValueWriter, findValuesByComparer, findValueByComparer,
-    FilterPredicate,
-    noopFilter
+    FilterPredicate, noopFilter, IdGeneratorAttribute
 } from '@bootkit/ng0/common';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListComponent, ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
@@ -25,11 +24,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     standalone: true,
     encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        CommonModule,
-        OverlayModule,
-        ListModule,
-    ],
+    imports: [CommonModule, ListModule, OverlayModule],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
         useExisting: forwardRef(() => SelectComponent),
@@ -38,9 +33,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     host: {
         '[class.ng0-select-open]': 'open()',
         '[class.ng0-select-loading]': 'source().isLoading()',
-        '[attr.aria-activedescendant]': '_activeOptionIndex() > -1 ? (_options()[_activeOptionIndex()].id) : undefined',
-        '[attr.disabled]': '_isDisabled()',
-        '[attr.aria-disabled]': '_isDisabled()'
+        '[attr.disabled]': '_isDisabled() ? "" : undefined',
+        '[attr.aria-disabled]': '_isDisabled() ? "" : undefined',
     }
 })
 export class SelectComponent implements OnInit, ControlValueAccessor {
@@ -51,10 +45,10 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     @ViewChild(ListComponent) private _listComponent?: ListComponent;
     private _changeCallback!: (value: any) => void;
     private _touchCallback!: (value: any) => void;
-    protected readonly _options = signal<SelectOption[]>([]);
+    protected readonly _sourceItems = signal<any[] | undefined>(undefined);
+    protected readonly _selectedItems = new Set<any>();
     protected readonly _isDisabled = signal<boolean>(false);
-    // protected readonly _selectedOptionIndex = signal<number>(-1);
-    protected readonly _activeOptionIndex = signal<number>(-1);
+    protected readonly _selectedItemIndex = signal<number>(-1); // only for single selection
     @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
     protected _positionStrategy!: FlexibleConnectedPositionStrategy;
     protected _scrollStrategy!: ScrollStrategy;
@@ -95,22 +89,21 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     public readonly open = model(false);
 
     /**
-    * A custom comparer function or the name of a field for comparing two objects.
+    * A comparer to compare items for selection.
     */
     public readonly compareBy = input(defaultEqualityComparer, {
         transform: equalityComparerAttribute
     });
 
     /**
-     * Custom format function to convert an item to a string for display.
-     * Default converts the item to a string using its toString method.
+     * A fromatter to convert each item to a string for display.
      */
     public readonly formatBy = input(defaultObjectFormatter, {
         transform: objectFormatterAttribute(this._ls.get())
     });
 
     /**
-     * Custom value writer function to extract the value of any object while writing values.
+     * Custom value writer to extract the value of any object while writing values.
      */
     public readonly writeBy = input(defaultValueWriter, {
         transform: valueWriterAttribute
@@ -124,7 +117,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     /**
      * Placeholder text for the filter input field.
      */
-    public readonly filterPlaceholder = input('');
+    public readonly filterPlaceholder = input<string | undefined>(undefined);
 
     /**
      * Custom filter function to filter items based on a filter value.
@@ -140,50 +133,86 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     });
 
     /**
-     * Custom id generator function to generate unique ids for each item.
-     * Default generates sequential ids with the prefix 'ng0-select-item-'.
-     * If set to undefined, no ids will be generated.
+     * A function that generates unique ids for each item in the list.
+     * If set to a function, it will be called with the item as an argument to generate the id.
+     * If set to undefined, no ids will be generated for the items.
+     * @default undefined
      */
-    public readonly idGenerator = input<IdGenerator>(sequentialIdGenerator('ng0-select-item-'));
+    public readonly idGenerator = input(undefined, {
+        transform: IdGeneratorAttribute
+    });
 
     constructor() {
         this._renderer.addClass(this._el.nativeElement, 'form-select');
         this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
         this._scrollStrategy = this._overlay.scrollStrategies.block();
 
+        // effect(() => {
+        //     var value = this.value(); // track value
+        //     this._changeCallback?.(value);
+        // })
+
         effect(() => {
-            var value = this.value(); // track value
-            this._changeCallback?.(value);
-        })
-
-
-        effect(() => {
-            var value = this.open(); // track value
-        })
-
-        this._activateSlectedItemEffectRef = effect(() => {
-            var value = this.value(); // track value
-            var options = this._options(); // track options
-
-            if (!this.multiple() && this._activeOptionIndex() == -1 && options.length > 0) {
-                let index = options.findIndex(x => this.compareBy()(x, this.value()));
-                if (index > -1) {
-                    this._activeOptionIndex.set(index);
-                    this._activateSlectedItemEffectRef.destroy();
-                }
-            }
-        })
+            let source = this.source();
+            source.load(new DataRequest()).subscribe(res => {
+                untracked(() => {
+                    this._selectedItemIndex.set(-1);
+                    this._sourceItems.set(res.data);
+                    this._findAndSelectItems();
+                })
+            });
+        });
     }
 
     ngOnInit(): void {
         this.source().load(new DataRequest()).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            this._options.set(res.data);
+            this._sourceItems.set(res.data);
             this._changeDetector.markForCheck();
         });
+
+        this.value.set(this.value());
+    }
+
+    /**
+     * Indicates whether the given value is selected.
+     * @param item 
+     * @returns 
+     */
+    public isSelected(value: any): boolean {
+        return this._selectedItems.has(value);
+    }
+
+    /**
+     * Selects the given value.
+     * @param item 
+     */
+    public select(value: any): void {
+        if (this.multiple()) {
+            if (!this._selectedItems.has(value())) {
+                this._selectedItems.add(value());
+                this._updateValue();
+                this._changeCallback?.(this.value());
+            }
+        } else {
+            this._selectedItems.clear();
+            this._selectedItems.add(value);
+            this._updateValue();
+            this._changeCallback?.(this.value());
+        }
     }
 
     writeValue(obj: any): void {
+        if (this.multiple()) {
+            if (obj === null || obj === undefined) {
+                obj = [];
+            } else if (!Array.isArray(obj)) {
+                throw Error('invalid value. Expected an array in multiple selection mode.');
+            }
+        }
+
         this.value.set(obj);
+        this._findAndSelectItems();
+        this._changeDetector.markForCheck();
     }
 
     registerOnChange(fn: any): void {
@@ -196,6 +225,52 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
     setDisabledState?(isDisabled: boolean): void {
         this._isDisabled.set(isDisabled);
+    }
+
+    private _findAndSelectItems(): void {
+        let value = this.value();
+        let compareBy = this.compareBy();
+        let sourceItems = this._sourceItems();
+        if (sourceItems == undefined) {
+            return;
+        }
+
+        let findAndSelect = (v: any) => {
+            let index = sourceItems.findIndex(sourceItem => compareBy(sourceItem, v));
+            if (index > -1) {
+                let item = sourceItems.at(index)!;
+                this._selectedItems.add(item);
+            }
+        };
+
+        if (this.multiple()) {
+            if (Array.isArray(value)) {
+                (value as any[]).forEach(v => findAndSelect(v));
+            }
+        } else {
+            findAndSelect(value);
+        }
+    }
+
+    private _updateValue(): void {
+        let value: any;
+
+        if (this.multiple()) {
+            let values: any[] = [];
+            this._selectedItems.forEach(v => {
+                values.push(this.writeBy()(v));
+            });
+            value = values;
+        } else {
+            if (this._selectedItems.size > 0) {
+                let first = this._selectedItems.values().next().value;
+                value = this.writeBy()(first);
+            } else {
+                value = undefined;
+            }
+        }
+
+        this.value.set(value);
     }
 
     protected _onFilterBlur() {
@@ -234,13 +309,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         }
     }
 
-    // Find the value in options using the comparer function
-    protected _mappedValue = computed(() => {
-        return this.multiple() ?
-            findValuesByComparer(this._options(), this.value(), this.compareBy()) :
-            findValueByComparer(this._options(), this.value(), this.compareBy());
-    });
-
     private _listenToResizeEvents() {
         this._viewportRuler.change().subscribe(x => {
             this.open.set(false);
@@ -273,85 +341,65 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
         this._resizeObserverInitialized = false;
     }
 
-    private _selectFirst() {
-        let optionsCount = this._options().length;
-        if (optionsCount > 0) {
-            this._activeOptionIndex.set(0);
-            let value = this.writeBy()(this._options()[this._activeOptionIndex()]);
-            this.value.set(value);
-        }
-    }
-    private _selectLast() {
-        let optionsCount = this._options().length;
-
-        if (optionsCount > 0) {
-            this._activeOptionIndex.set(optionsCount - 1);
-            let value = this.writeBy()(this._options()[this._activeOptionIndex()]);
-            this.value.set(value);
-        }
-    }
-
-    private _selectNext() {
-        let optionsCount = this._options().length;
-
-        if (this._activeOptionIndex() < optionsCount - 1) {
-            this._activeOptionIndex.update(x => x + 1);
-            let value = this.writeBy()(this._options()[this._activeOptionIndex()]);
-            this.value.set(value);
-        }
-    }
-
-    private _selectPrevious() {
-        // let optionsCount = this._options().length;
-
-        if (this._activeOptionIndex() > 0) {
-            this._activeOptionIndex.update(x => x - 1);
-            let value = this.writeBy()(this._options()[this._activeOptionIndex()]);
-            this.value.set(value);
-        }
-    }
-
     @HostListener('keydown', ['$event'])
     private _onHostKeydown(e: KeyboardEvent) {
-        if (this._isDisabled())
-            return;
+        let sourceItems = this._sourceItems()
+        let itemsCount = sourceItems?.length || 0;
 
-        let optionsCount = this._options().length;
-        if (optionsCount == 0) {
+        if (this._isDisabled() || !sourceItems || itemsCount === 0) {
             return;
         }
 
         if (this.open()) {
             const newEvent = new KeyboardEvent(e.type, e);
             this._listComponent?.elementRef.nativeElement.dispatchEvent(newEvent);
-        } else {
-            switch (e.key) {
-                case 'ArrowDown':
-                    if (this.multiple()) return;
-                    this._selectNext();
-                    e.preventDefault();
-                    break;
-                case 'ArrowUp':
-                    if (this.multiple()) return;
-                    this._selectPrevious();
-                    e.preventDefault();
-                    break;
-                case 'Enter':
-                    this.open.set(!this.open());
-                    // e.preventDefault();
-                    break;
-                case 'Home':
-                    if (this.multiple()) return;
-                    this._selectFirst();
-                    e.preventDefault();
-                    break;
-                case 'End':
-                    if (this.multiple()) return;
-                    this._selectLast();
-                    e.preventDefault();
-                    break;
-            }
+            return;
         }
+
+        if (this.multiple())
+            return;
+
+        switch (e.key) {
+            case 'ArrowDown':
+                if (this._selectedItemIndex() < itemsCount - 1) {
+                    this._selectedItemIndex.update(x => x + 1);
+                    let value = sourceItems[this._selectedItemIndex()];
+                    this.select(value);
+                }
+                e.preventDefault();
+                break;
+            case 'ArrowUp':
+                if (this._selectedItemIndex() > 0) {
+                    this._selectedItemIndex.update(x => x - 1);
+                    let value = sourceItems[this._selectedItemIndex()];
+                    this.select(value);
+                }
+                e.preventDefault();
+                break;
+            case 'Enter':
+                this.open.set(!this.open());
+                e.preventDefault();
+                break;
+            case 'Home':
+                if (itemsCount > 0) {
+                    this._selectedItemIndex.set(0);
+                    let value = sourceItems[0];
+                    this.select(value);
+                }
+                e.preventDefault();
+                break;
+            case 'End':
+                if (itemsCount > 0) {
+                    this._selectedItemIndex.set(itemsCount - 1);
+                    let value = sourceItems[this._selectedItemIndex()];
+                    this.select(value);
+                }
+
+                e.preventDefault();
+                break;
+        }
+
+        this._changeDetector.markForCheck();
     }
 
     @HostListener('click', ['$event'])

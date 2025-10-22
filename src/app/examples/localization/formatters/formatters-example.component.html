@@ -48,17 +48,23 @@
 
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Enum Formatter</h5>
+                <h5 class="card-title">Locale Formatters</h5>
                 <p>
-                    An enum formatter formats an enum value into a human-readable string.<br>
-                    This example shows how to use a formatter to display the string representation of an enum value.
+                    A locale formatter formats a value into a human-readable string based on the app Locale.<br>
+                    A Locale formatter starts with the <span class="fw-bold text-info">@</span> character followed by the formatter name.<br>
+                    This example shows how to use locale formatters to format enums.
+                    .<br>
                 </p>
 
+            </div>
+
+            <div class="card-footer">
+                <h6>Formatting Enums</h6>
                 Value = {{enumExample.value | json}} <br>
-                Formatter = Sexuality <br>
+                Formatter = "@enum:Sexuality" <br>
 
                 <span class="text-info">
-                    Formatted Value = {{enumExample.value | ng0Format: '@Sexuality'}}
+                    Formatted Value = {{enumExample.value | ng0Format: "@enum:Sexuality"}}
                 </span>
             </div>
         </div>

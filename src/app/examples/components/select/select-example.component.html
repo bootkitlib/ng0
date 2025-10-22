@@ -4,6 +4,9 @@
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Native select</h5>
+                <p>
+                    Native select element, for comparing features and behavior.
+                </p>
 
                 <div class="input-group">
                     <select class="form-select">
@@ -15,125 +18,72 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Custom Item templates</h5>
-                <p>
-                </p>
 
-                <div class="row">
-                    <div class="col-xl-3">
-                        Select an object
-                        <ng0-select name="value14" [source]="personList1" [(ngModel)]="value14"
-                                    formatBy="@name">
-                            <ng-template let-option>
-                                <div class="py-1">
-                                    ❤️
-                                    <strong>{{option.value.name}}</strong> <br>
-                                    <small >Extra info about {{option.value.name}}</small>
-                                </div>
-                            </ng-template>
-                        </ng0-select>
-
-                        Value: {{ value14 | json }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="col-xl-6">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">Bind to string[]</h5>
-                <div class="input-group">
-                    <ng0-select name="value1" [source]="stringArray" [(ngModel)]="value1">
-                    </ng0-select>
-                </div>
+                <p>
+                    Bind to a simple string array as source.
+                </p>
 
-                Value: {{ value1 }}
+                [source]="stringArray"
+                <ng0-select name="value1" [source]="stringArray" [(ngModel)]="value1">
+                </ng0-select>
+
+
+                Value: {{ value1 | json }}
             </div>
-
         </div>
     </div>
 
     <div class="col-xl-6">
-        <div class="card">
+        <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">Bind to number[]</h5>
+                <p>
+                    Bind to a simple number array as source.
+                </p>
 
+                [source]="numberArray"
                 <ng0-select name="value2" [source]="numberArray" [(ngModel)]="value2">
                 </ng0-select>
 
-                Value: {{ value2 }}
+                Value: {{ value2 | json }}
             </div>
         </div>
     </div>
 
-    <div class="col-xl-12">
-        <div class="card">
+    <div class="col-xl-6">
+        <div class="card h-100">
             <div class="card-body">
                 <h5 class="card-title">Bind to boolean values</h5>
                 <p>
-                    Using a formatter for boolean values you can display different text for true/false
-                    values.
+                    Set source to [true, false] to bind to boolean values.
                 </p>
 
-                <div class="row">
-                    <div class="col-xl-3">
-                        Without formatter
-                        <ng0-select name="value3" [source]="[true, false]" [(ngModel)]="value3">
-                        </ng0-select>
+                [source]="[true, false]"
+                <ng0-select name="value3" [source]="[true, false]" [(ngModel)]="value3">
+                </ng0-select>
 
-                        Value: {{ value3 }}
-                    </div>
-
-                    <div class="col-xl-3">
-                        formatBy="boolean:OnOff"
-                        <ng0-select name="value4" [source]="[true, false]" [(ngModel)]="value4"
-                                    formatBy="boolean:OnOff">
-                        </ng0-select>
-                        Value: {{ value4 }}
-                    </div>
-
-                    <div class="col-xl-3">
-                        formatBy="boolean:EnableDisable"
-                        <ng0-select name="value5" [source]="[true, false]" [(ngModel)]="value5"
-                                    formatBy="boolean:EnableDisable">
-                        </ng0-select>
-                        Value: {{ value5 }}
-                    </div>
-
-                    <div class="col-xl-3">
-                        formatBy="boolean:ActiveInactive"
-                        <ng0-select name="value6" [source]="[true, false]" [(ngModel)]="value6"
-                                    formatBy="boolean:ActiveInactive">
-                        </ng0-select>
-                        Value: {{ value6 }}
-                    </div>
-                </div>
+                Value: {{ value3 | json }}
             </div>
         </div>
     </div>
 
-    <div class="col-xl-12">
+    <div class="col-xl-6">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Bind to Enums</h5>
-                Pass an Enum as source and use the formatBy to display the enum titles.
                 <p>
+                    Pass an Enum reference as source to display the enum items.
                 </p>
 
-                <div class="row">
-                    <div class="col-xl-3">
-                        Sexuality
-                        <ng0-select name="value7" [source]="Sexuality" [(ngModel)]="value7"
-                                    formatBy="enum:Sexuality">
-                        </ng0-select>
+                [source]="Sexuality"
+                <ng0-select name="value7" [source]="Sexuality" [(ngModel)]="value7">
+                </ng0-select>
 
-                        Value: {{ value7 }}
-                    </div>
-                </div>
+                Value: {{ value7 | json}}
             </div>
         </div>
     </div>
@@ -143,57 +93,115 @@
             <div class="card-body">
                 <h5 class="card-title">Bind to objects</h5>
                 <p>
+                    Pass an object array as source.
                 </p>
-                <div class="row">
-                    <div class="col-xl-3">
-                        Bind to an object array
-                        <ng0-select name="value8" [source]="personList1" [(ngModel)]="value8">
-                        </ng0-select>
 
-                        Value: {{ value8 }}
-                    </div>
-                </div>
+                [source]="personList1"
+                <ng0-select name="value8" [source]="personList1" [(ngModel)]="value8">
+                </ng0-select>
+
+                Value: {{ value8 | json }}
+
             </div>
-            <div class="card-footer">
-                <h5 class="card-title">Format items</h5>
+        </div>
+    </div>
 
-                You have 3 ways to format items:
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Format items</h5>
+                <p>
+                    Format the display of items in the dropdown and in the input field.
+                    To format a value, you need a formatter function. <br>
+                    There is a set of built-in formatters available, or you can create your own custom formatters.
+                </p>
+
+                Some built-in formatters:
                 <ul>
-                    <li>Using object fields: formatBy="@<i class="text-info">fieldName</i> "</li>
-                    <li>Using a formatBy function: [formatBy]="<i class="text-info">functionName</i>"</li>
-                    <li>Using a locale formatter: formatBy="<i class="text-info">formatterName</i> "
-                    </li>
+                    <li>Field formatter</li>
+                    <li>Number formatter</li>
+                    <li>Currency formatter</li>
+                    <li>Locale formatter</li>
                 </ul>
 
-                <div class="row">
-                    <div class="col-xl-3">
-                        format items using object fields
-                        <ng0-select name="value9" [source]="personList1" [(ngModel)]="value9" formatBy="@name">
+                To see the list of available built-in formatters, check the
+                <a routerLink="../../localization/formatters">formatters documentation</a> .
+            </div>
+
+            <div class="card-footer">
+                <h6>Field formatter:</h6>
+                <p>
+                    A field formatter uses a field name of the object to display the value.
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="personList1"; formatBy="name"
+                        <ng0-select name="value9" [(ngModel)]="value9" [source]="personList1" formatBy="name">
                         </ng0-select>
 
-                        Value: {{ value9 }}
+                        Value: {{ value9 | json }}
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card-footer">
+                <h6>Locale formatter:</h6>
+                <p>
+                    A locale formatter, formats the value according to the current locale. <br>
+                    To use a locale formatter, specify the formatter name prefixed with an @ (e.g., &#64;formatterName).
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="personList1" formatBy="@personFormatter1"
+                        <ng0-select name="value18" [(ngModel)]="value18" [source]="personList1"
+                                    formatBy="@personFormatter1">
+                        </ng0-select>
+
+                        Value: {{ value18 | json}}
                     </div>
 
-                    <div class="col-xl-3">
-                        format items using a function
-                        <ng0-select name="value17" [source]="personList1" [(ngModel)]="value17"
-                                    [formatBy]="objectFormatter1">
+                    <div class="col-xl-6">
+                        [source]="[true, false]"; formatBy="@boolean:OnOff"
+                        <ng0-select name="value4" [source]="[true, false]" [(ngModel)]="value4"
+                                    formatBy="@boolean:OnOff">
                         </ng0-select>
-
-                        Value: {{ value17 }}
+                        Value: {{ value4 | json }}
                     </div>
 
-                    <div class="col-xl-3">
-                        format items using a locale formatter
-                        <ng0-select name="value18" [source]="personList1" [(ngModel)]="value18" formatBy="personFormatter1">
+                    <div class="col-xl-6">
+                        formatBy="@boolean:EnableDisable"
+                        <ng0-select name="value5" [source]="[true, false]" [(ngModel)]="value5"
+                                    formatBy="@boolean:EnableDisable">
                         </ng0-select>
-
-                        Value: {{ value18 }}
+                        Value: {{ value5 | json }}
                     </div>
                 </div>
             </div>
 
             <div class="card-footer">
+                <h6>Custom formatter:</h6>
+                Using a formatBy function: [formatBy]="<i class="text-info">functionName</i>"
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="personList1" [formatBy]="personFormatterFunc"
+                        <ng0-select name="value17" [(ngModel)]="value17" [source]="personList1"
+                                    [formatBy]="personFormatterFunc">
+                        </ng0-select>
+
+                        Value: {{ value17 | json}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
                 <h5 class="card-title">Compare items:</h5>
 
                 <p>
@@ -205,10 +213,11 @@
                 <div class="row">
                     <div class="col-xl-3">
                         compare by a field of an object:
-                        <ng0-select name="value19" [source]="personList1" [(ngModel)]="value19" compareBy="id" formatBy="@name" >
+                        <ng0-select name="value19" [source]="personList1" [(ngModel)]="value19" compareBy="id"
+                                    formatBy="name">
                         </ng0-select>
 
-                        Value: {{ value19 }}
+                        Value: {{ value19 | json }}
                     </div>
 
                     <div class="col-xl-3">
@@ -217,15 +226,19 @@
                                     [source]="personList1"
                                     [(ngModel)]="value20"
                                     [compareBy]="personComparer1"
-                                    formatBy="@name">
+                                    formatBy="name">
                         </ng0-select>
 
-                        Value: {{ value20 }}
+                        Value: {{ value20 | json }}
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="card-footer">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
                 <h5 class="card-title">Custom value writer:</h5>
 
                 <p>
@@ -237,7 +250,8 @@
                 <div class="row">
                     <div class="col-xl-3">
                         With writeBy
-                        <ng0-select name="value10" [source]="personList1" [(ngModel)]="value10" writeBy="id" formatBy="@name">
+                        <ng0-select name="value10" [source]="personList1" [(ngModel)]="value10" writeBy="id"
+                                    compareBy="id" formatBy="name">
                         </ng0-select>
 
                         Value: {{ value10 | json }}
@@ -248,17 +262,17 @@
                         <ng0-select name="value11"
                                     [source]="personList1"
                                     [(ngModel)]="value11"
-                                    
-                                    formatBy="@name">
+                                    compareBy="id"
+                                    formatBy="name">
                         </ng0-select>
 
-                        Value: {{ value11  | json }}
+                        Value: {{ value11 | json }}
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
+
 
     <div class="col-xl-12">
         <div class="card">
@@ -272,7 +286,7 @@
                         Source: LocalDataSource
                         <ng0-select name="value12" [source]="localDatasource1" [(ngModel)]="value12">
                         </ng0-select>
-                        Value: {{ value12 }}
+                        Value: {{ value12 | json }}
                     </div>
                 </div>
             </div>
@@ -304,7 +318,7 @@
                                     [(ngModel)]="value13">
                         </ng0-select>
 
-                        Value: {{ value13 }}
+                        Value: {{ value13 | json }}
                     </div>
                 </div>
             </div>
@@ -323,8 +337,6 @@
         </div>
     </div>
 
-
-
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
@@ -341,7 +353,36 @@
                             </ng-template>
                         </ng0-select>
 
-                        Value: {{ value15 }}
+                        Value: {{ value15 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Custom Item templates</h5>
+                <p>
+                    You can customize the display of items in the select dropdown by using ng-template.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Select an object
+                        <ng0-select name="value14" [source]="personList1" [(ngModel)]="value14"
+                                    formatBy="name">
+                            <ng-template let-option>
+                                <div class="py-1">
+                                    ❤️
+                                    <strong>{{option.value.name}}</strong> <br>
+                                    <small>Extra info about {{option.value.name}}</small>
+                                </div>
+                            </ng-template>
+                        </ng0-select>
+
+                        Value: {{ value14 | json }}
                     </div>
                 </div>
             </div>
@@ -362,10 +403,12 @@
                                     formatBy="boolean">
                         </ng0-select>
 
-                        boolean 1: {{ value16 }}
+                        value: {{ value16 | json }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+
 </div>

@@ -4,116 +4,67 @@ ng0-select {
     -moz-user-select: none;
     display: flex !important;
     align-items: center;
-    &.ng0-select-open {
-        // border-end-start-radius: 0;
-    }
+    min-height: 2rem;
 
+    &[disabled],
     &.disabled {
-        background-color: var(--bs-secondary-bg);
+        opacity: 0.5;
+        pointer-events: none;
     }
-
-    &.ng0-select-loading {
-        // background-image: none !important;
-    }
-
-    .ng0-select-spinner {
-
-    }
-
-
-    // ng0-list {
-    //     height: fit-content;
-    //     transition: height 2.2s;
-    // }
 }
 
-.ng0-select-dropdown-container {
-    display: flex;
+.ng0-select-dropdown {
+    display: inline-flex;
     flex-direction: column;
     background-color: var(--bs-body-bg);
-    // border: var(--bs-border-width) solid var(--bs-border-color);
+    border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius);
-    padding: 0.5rem var(--bs-dropdown-padding-x);
-    // margin: 0.25rem 0;
-    // max-height: 300px;
+    overflow-y: auto;
 
-    --ng0-select-item-padding-x: 1rem;
-    --ng0-select-item-padding-y: 0.25rem;
+    ng0-list {
+        border: none;
+        border-radius: 0;
+    }
 
     // box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) var(--bs-focus-ring-blur, 0) var(--bs-focus-ring-width) var(--bs-focus-ring-color);
 
-    // /* Chrome, Edge, Safari */
-    // ::-webkit-scrollbar {
-    //     width: 8px;
-    //     /* vertical scrollbar */
-    //     height: 8px;
-    //     /* horizontal scrollbar */
-    // }
-
-    // ::-webkit-scrollbar-track {
-    //     background: transparent;
-    //     /* or rgba(0,0,0,0.1) */
-    // }
-
-    // ::-webkit-scrollbar-thumb {
-    //     background: rgba(0, 0, 0, 0.4);
-    //     border-radius: 4px;
-    // }
-
-    // ::-webkit-scrollbar-thumb:hover {
-    //     background: rgba(0, 0, 0, 0.6);
-    // }
-
-    ul.ng0-select-dropdown {
-        list-style: none;
-        border-start-start-radius: 0;
-        border-start-end-radius: 0;
-        padding: 0 !important;
-        margin: 0;
-        flex-grow: 1;
-        overflow-y: auto;
-
-        // Firefox scrollbar
-        scrollbar-width: thin;
-        scrollbar-color: rgba(0, 0, 0, 0.4) transparent;
-
-        &.is-open {
-            border-top: none;
-        }
-
-        li {
-            overflow: hidden;
-            cursor: pointer;
-            padding: var(--ng0-select-item-padding-y) var(--ng0-select-item-padding-x);
-
-            &:hover {
-                // color: var(--bs-dropdown-link-hover-color);
-                background-color: var(--bs-tertiary-bg);
-            }
-
-            &.ng0-select-option-selected {
-                background-color: var(--bs-primary);
-                color: var(--bs-light);
-            }
-
-            &.ng0-select-option-active:not(.ng0-select-option-selected) {
-                background-color: var(--bs-gray-300);
-                color: var(--bs-body);
-            }
-
-            &.ng0-select-option-filtered {
-                display: none !important;
-            }
-        }
-    }
-
     .ng0-select-filter-container {
-        padding: 0.5rem var(--ng0-select-item-padding-x);
+        padding: 0.5rem;
         background-color: inherit;
 
         .ng0-select-filter-input {
             width: 100%;
-            // border: none
+            border: 1px solid var(--bs-border-color);
+            padding: .25rem;
+            &:focus,
+            &:focus-visible {
+                outline: 0;
+                // box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) var(--bs-focus-ring-blur, 0) var(--bs-focus-ring-width) var(--bs-focus-ring-color);
+            }
         }
     }
 }
+
+
+
+// /* Chrome, Edge, Safari */
+// ::-webkit-scrollbar {
+//     width: 8px;
+//     /* vertical scrollbar */
+//     height: 8px;
+//     /* horizontal scrollbar */
+// }
+
+// ::-webkit-scrollbar-track {
+//     background: transparent;
+//     /* or rgba(0,0,0,0.1) */
+// }
+
+// ::-webkit-scrollbar-thumb {
+//     background: rgba(0, 0, 0, 0.4);
+//     border-radius: 4px;
+// }
+
+// ::-webkit-scrollbar-thumb:hover {
+//     background: rgba(0, 0, 0, 0.6);
+// }

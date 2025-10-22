@@ -2,7 +2,7 @@ $selected-bg-color: var(--bs-primary);
 $active-bg-color: color-mix(in srgb, var(--bs-primary), white 85%);
 $hover-bg-color: color-mix(in srgb, var(--bs-primary), white 95%);
 
-ng0-list-item {
+.ng0-list-item {
     display: flex;
     padding: 0.5rem;
 

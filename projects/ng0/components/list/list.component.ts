@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding, OnInit, AfterViewInit, untracked } from '@angular/core';
+import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding, OnInit, AfterViewInit, untracked, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -40,14 +40,14 @@ let uuid = 0;
         '[attr.tabindex]': '_hostTabIndex()',
     }
 })
-export class ListComponent implements ControlValueAccessor {
+export class ListComponent implements OnInit, ControlValueAccessor {
     private _localizationService = inject(LocalizationService);
     private _changeDetector = inject(ChangeDetectorRef);
     private _value = signal<any>(undefined);
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: () => void;
     protected readonly _sourceItems = signal<any[]>([]);
-    private readonly _selectedValues = new Set<any>();
+    private readonly _selectedItems = new Set<any>();
     protected readonly _activeItem = signal<ListItemComponent | undefined>(undefined);
     @ViewChildren(ListItemComponent) private readonly _visibleItems!: QueryList<ListItemComponent>;
     protected readonly _isDisabled = signal<boolean>(false);
@@ -67,6 +67,11 @@ export class ListComponent implements ControlValueAccessor {
         transform: v => dataSourceAttribute(v)
     });
 
+    /**
+     * The current selected value(s) of the list.
+     */
+    public readonly value = model<any>(undefined);
+
     /** 
      * Indicates whether multi selection is enabled or not.
      */
@@ -83,14 +88,15 @@ export class ListComponent implements ControlValueAccessor {
     });
 
     /**
-    * A custom comparer function or the name of a field for comparing two objects.
+    * A comparer to compare items for selection.
+    * Default uses strict equality (===).
     */
     public readonly compareBy = input(defaultEqualityComparer, {
         transform: equalityComparerAttribute
     });
 
     /**
-     * Custom format function to convert an item to a string for display.
+     * A fromatter to convert each item to a string for display.
      * Default converts the item to a string using its toString method.
      */
     public readonly formatBy = input(defaultObjectFormatter, {
@@ -98,16 +104,15 @@ export class ListComponent implements ControlValueAccessor {
     });
 
     /**
-     * Custom value extractor function to extract the value of any object while writing values.
+     * Custom value writer to extract the value of any object while writing values.
      */
     public readonly writeBy = input(defaultValueWriter, {
         transform: valueWriterAttribute
     });
 
     /**
-     * A custom filter predicate function to filter items based on a search string.
-     * Default checks if the item's string representation contains the filter string (case-insensitive).
-     * The filter predicate can be a function or a string representing the property name to filter.
+     * A custom filter predicate to filter items.
+     * Default is a noop filter that does not filter any items.
      */
     public readonly filterBy = input(noopFilter, {
         transform: filterPredicateAttribute
@@ -174,10 +179,13 @@ export class ListComponent implements ControlValueAccessor {
                 untracked(() => {
                     this._activeItem.set(undefined);
                     this._sourceItems.set(res.data);
-                    this._findAndSelectItems();
+                    this._findAndSelectedValues();
                 })
             });
-        })
+        });
+    }
+    ngOnInit(): void {
+        this._value.set(this.value());
     }
 
     /**
@@ -195,7 +203,7 @@ export class ListComponent implements ControlValueAccessor {
      * @returns 
      */
     public isSelected(value: any): boolean {
-        return this._selectedValues.has(value);
+        return this._selectedItems.has(value);
     }
 
     /**
@@ -203,9 +211,15 @@ export class ListComponent implements ControlValueAccessor {
      * @param item 
      */
     public select(value: any): void {
-        if (!this._selectedValues.has(value())) {
-            this._selectedValues.add(value());
-            this._changeCallback?.(this._value());
+        if (this.multiple()) {
+            if (!this._selectedItems.has(value())) {
+                this._selectedItems.add(value());
+                this._updateValue();
+            }
+        } else {
+            this._selectedItems.clear();
+            this._selectedItems.add(value);
+            this._updateValue();
         }
     }
 
@@ -214,7 +228,7 @@ export class ListComponent implements ControlValueAccessor {
      * @param item 
      */
     public deselect(value: any): void {
-        this._selectedValues.delete(value);
+        this._selectedItems.delete(value);
         this._changeCallback?.(this._value());
     }
 
@@ -234,7 +248,7 @@ export class ListComponent implements ControlValueAccessor {
      * Deselects all items in the list.
      */
     public deselectAll(): void {
-        this._selectedValues.clear();
+        this._selectedItems.clear();
         this._changeCallback?.(this._value());
     }
 
@@ -243,12 +257,19 @@ export class ListComponent implements ControlValueAccessor {
      */
     public selectAll(): void {
         if (this.multiple()) {
-            this._selectedValues.clear();
-            this._sourceItems().forEach(i => this._selectedValues.add(i));
+            this._selectedItems.clear();
+            this._sourceItems().forEach(i => this._selectedItems.add(i));
             this._changeCallback?.(this._value());
         }
 
         throw new Error('selectAll is only available in multiple selection mode.');
+    }
+
+    /**
+     * Gets the current items in the list.
+     */
+    public get items(): ReadonlyArray<any[]> {
+        return this._sourceItems();
     }
 
     writeValue(value: any): void {
@@ -261,7 +282,7 @@ export class ListComponent implements ControlValueAccessor {
         }
 
         this._value.set(value);
-        this._findAndSelectItems();
+        this._findAndSelectedValues();
         this._changeDetector.markForCheck();
     }
 
@@ -282,18 +303,14 @@ export class ListComponent implements ControlValueAccessor {
         this._activeItem.set(item);
 
         if (this.multiple()) {
-            if (this.isSelected(value)) {
-                this._selectedValues.delete(value);
-            } else {
-                this._selectedValues.add(value);
-            }
+            this.toggle(value);
         } else {
-            this._selectedValues.clear();
-            this._selectedValues.add(value);
+            this.select(value);
         }
 
         this._updateValue();
-        this._changeCallback?.(this._value());
+
+
         this.selectionChange.emit({
             item: item,
             list: this,
@@ -307,14 +324,14 @@ export class ListComponent implements ControlValueAccessor {
         return source.isLoading() && source.type == 'remote';
     });
 
-    private _findAndSelectItems(): void {
+    private _findAndSelectedValues(): void {
         let value = this._value();
         let compareBy = this.compareBy();
         let findAndSelect = (v: any) => {
             let index = this._sourceItems().findIndex(i => compareBy(i, v));
             if (index > -1) {
                 let item = this._sourceItems().at(index)!;
-                this._selectedValues.add(item);
+                this._selectedItems.add(item);
             }
         };
 
@@ -330,20 +347,26 @@ export class ListComponent implements ControlValueAccessor {
     }
 
     private _updateValue(): void {
+        let value: any;
+
         if (this.multiple()) {
             let values: any[] = [];
-            this._selectedValues.forEach(v => {
+            this._selectedItems.forEach(v => {
                 values.push(this.writeBy()(v));
             });
-            this._value.set(values);
+            value = values;
         } else {
-            if (this._selectedValues.size > 0) {
-                let first = this._selectedValues.values().next().value;
-                this._value.set(this.writeBy()(first));
+            if (this._selectedItems.size > 0) {
+                let first = this._selectedItems.values().next().value;
+                value = this.writeBy()(first);
             } else {
-                this._value.set(undefined);
+                value = undefined;
             }
         }
+
+        this._value.set(value);
+        this.value.set(value);
+        this._changeCallback?.(value);
     }
 
     private _hostAriaActiveDescendant = computed(() => {
@@ -395,14 +418,10 @@ export class ListComponent implements ControlValueAccessor {
         }
 
         let activeItemindex = this._visibleItems.toArray().findIndex(i => i === this._activeItem());
-        console.log(this._activeItem(), activeItemindex)
 
         switch (e.key) {
             case 'ArrowDown':
-                if (activeItemindex == -1) {
-                    const first = this._visibleItems.get(0);
-                    this._activeItem.set(first);
-                } else if (activeItemindex < visibleItemsCount - 1) {
+                if (activeItemindex < visibleItemsCount - 1) {
                     const next = this._visibleItems.get(activeItemindex + 1);
                     this._activeItem.set(next);
                 }

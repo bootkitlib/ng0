@@ -1,9 +1,9 @@
-@let formattedValue = formatBy()(_mappedValue());
+@if(multiple()) {
 
-@if(formattedValue == null || formattedValue == '') {
-&nbsp;
-}@else {
-{{formattedValue}}
+} @else {
+    @if(_selectedItems.size > 0) {
+    {{formatBy()(_selectedItems.values().next().value)}}
+    }
 }
 
 @if(source().isLoading()) {
@@ -18,17 +18,17 @@
              [cdkConnectedOverlayOpen]="open()"
              [cdkConnectedOverlayPush]="false"
              [cdkConnectedOverlayFlexibleDimensions]="true"
-             [cdkConnectedOverlayPanelClass]="['ng0-select-dropdown-container', 'shadow']"
+             [cdkConnectedOverlayPanelClass]="['ng0-select-dropdown']"
              [cdkConnectedOverlayWidth]="_el.nativeElement.clientWidth"
              (overlayOutsideClick)="open.set(false)"
              (attach)="_onOverlayAttach()"
              (detach)="_onOverlayDetach()">
 
     @if(filterable()) {
-    <div class="ng0-select-filter-container border-bottom">
+    <div class="ng0-select-filter-container">
         <input #filterInput
                type="text"
-               class="ng0-select-filter-input form-control form-control-sm"
+               class="ng0-select-filter-input"
                [attr.placeholder]="filterPlaceholder()"
                (blur)="_onFilterBlur()"
                >
@@ -38,13 +38,13 @@
     <ng0-list #list
               [source]="source()"
               [multiple]="multiple()"
-              [idGenerator]="idGenerator()"
               [filterBy]="filterBy()"
+              [formatBy]="formatBy()"
               [compareBy]="compareBy()"
+              [(value)]="value"
               focus="none"
-              style="border: none; border-radius: 0;"
               (mousedown)="$event.preventDefault(); $event.stopImmediatePropagation()"
-              (click)="open.set(false)"
+               
               (selectionChange)="_onListSelectionChange($event)">
 
         <ng-template let-option>

@@ -51,7 +51,7 @@ export const APP_FA_IR_LOCALE = FA_IR_LOCALE.extend({
             'Female': 'زن',
             'Other': 'سایر'
         },
-        'personFormatter1': (person?: { id: number, name: string }) => person ? `${person.name} (ID: ${person.id})` : ''
+        'personFormatter1': (person: { id: number, name: string }, params: any[]) => person ? `${person.name} (ID: ${person.id})` : ''
     },
     components: {
         table: {

@@ -68,28 +68,9 @@ export default [
         loadChildren: () => import('./progress/routes'),
     },
     {
-        // title: 'Select',
-        // title: (r, s) => {
-        //     console.log(r,s );
-        //     console.log(r.data);
-        //     return r.data['r1'];
-        // },
+        title: 'Select',
         path: 'select',
         data: {
-            x: 123,
-            title: (r: any, s: any) => {
-                console.log(r, s);
-                console.log(r.data);
-                return r.data['r1'];
-            },
-            // link: (r: any, s: any) => {
-            //     console.log(r, s);
-            //     console.log(r.data);
-            //     return r.data['r1'];
-            // },
-        },
-        resolve: {
-            r1: (r: any, s: any) => { return of('R1 resolved').pipe(delay(10)); }
         },
         loadChildren: () => import('./select/routes'),
     },

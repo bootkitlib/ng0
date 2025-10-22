@@ -5,6 +5,7 @@ import { SelectModule } from '@bootkit/ng0/components/select';
 import { DataResult, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
 import { Sexuality } from 'src/app/common/enums';
+import { RouterLink } from "@angular/router";
 
 
 interface Person {
@@ -17,17 +18,18 @@ interface Person {
     templateUrl: './select-example.component.html',
     standalone: true,
     imports: [
-        CommonModule,
-        SelectModule,
-        FormsModule,
-    ]
+    CommonModule,
+    SelectModule,
+    FormsModule,
+    RouterLink
+]
 })
 export class SelectExampleComponent {
     counter = signal(0);
     width = signal('200px');
 
     stringArray = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
-    numberArray = Array.from({ length: 30 }, (_, i) => i + 1);
+    numberArray = Array.from({ length: 3000 }, (_, i) => i + 1);
     personList1: Person[] = [
         { id: 1, name: 'Jane' },
         { id: 2, name: 'Doe' },
@@ -63,9 +65,11 @@ export class SelectExampleComponent {
 
     // An object formatter function
     // Note: You should handle null|undefined objects too.
-    objectFormatter1 = (item?: Person) => item?.name || '';
+    personFormatterFunc = (item?: Person) => item?.name || '';
 
-    personComparer1 = (item?: Person, other?: Person) => item?.id === other?.id;
+    personComparer1 = (item?: Person, other?: Person) => {
+        return item?.id === other?.id;
+    } 
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);
