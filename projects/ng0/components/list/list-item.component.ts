@@ -1,27 +1,19 @@
-import { Component, ChangeDetectionStrategy, ViewEncapsulation, inject, input, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { inject, input, ElementRef, Directive } from '@angular/core';
 import { ListComponent } from './list.component';
-import { CommonModule } from '@angular/common';
 
 /**
- * ListItemComponent represents an individual item within a ListComponent.
+ * ListItem represents an individual item within a ListComponent.
  */
-@Component({
+@Directive({
     selector: 'ng0-list-item',
     exportAs: 'ng0ListItem',
-    templateUrl: './list-item.component.html',
-    styleUrls: ['./list-item.component.scss'],
     standalone: true,
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    encapsulation: ViewEncapsulation.None,
-    imports: [CommonModule],
     host: {
-        '[class.active]': 'isActive()',
-        '[class.selected]': 'isSelected()',
         '[attr.id]': 'id()',
         '[attr.tabIndex]': '_getTabIndex()'
     }
 })
-export class ListItemComponent {
+export class ListItem {
     /**
      * The value associated with the item. This can be of any type.
      */

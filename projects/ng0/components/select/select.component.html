@@ -1,9 +1,9 @@
 @if(multiple()) {
 
 } @else {
-    @if(_selectedItems.size > 0) {
-    {{formatBy()(_selectedItems.values().next().value)}}
-    }
+@if(_selectedItems.size > 0) {
+{{formatBy()(_selectedItems.values().next().value)}}
+}
 }
 
 @if(source().isLoading()) {
@@ -13,13 +13,13 @@
 }
 
 <ng-template cdkConnectedOverlay
-             [cdkConnectedOverlayOrigin]="_el.nativeElement"
+             [cdkConnectedOverlayOrigin]="_elementRef.nativeElement"
              [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
              [cdkConnectedOverlayOpen]="open()"
              [cdkConnectedOverlayPush]="false"
              [cdkConnectedOverlayFlexibleDimensions]="true"
              [cdkConnectedOverlayPanelClass]="['ng0-select-dropdown']"
-             [cdkConnectedOverlayWidth]="_el.nativeElement.clientWidth"
+             [cdkConnectedOverlayWidth]="_elementRef.nativeElement.clientWidth"
              (overlayOutsideClick)="open.set(false)"
              (attach)="_onOverlayAttach()"
              (detach)="_onOverlayDetach()">
@@ -30,26 +30,24 @@
                type="text"
                class="ng0-select-filter-input"
                [attr.placeholder]="filterPlaceholder()"
-               (blur)="_onFilterBlur()"
-               >
+               (blur)="_onFilterBlur()">
     </div>
     }
 
     <ng0-list #list
+              ng0-list-unstyled-
               [source]="source()"
               [multiple]="multiple()"
               [filterBy]="filterBy()"
               [formatBy]="formatBy()"
               [compareBy]="compareBy()"
-              [(value)]="value"
-              focus="none"
+              focusMode="none"
               (mousedown)="$event.preventDefault(); $event.stopImmediatePropagation()"
-               
               (selectionChange)="_onListSelectionChange($event)">
 
         <ng-template let-option>
-            @if(_optionTemplate) {
-            <ng-container *ngTemplateOutlet="_optionTemplate; context: { $implicit: option}" />
+            @if(itemTemplate) {
+            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: option}" />
             }@else {
             {{formatBy()(option.value)}}
             }

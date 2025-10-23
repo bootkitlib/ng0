@@ -37,7 +37,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
         '[attr.aria-disabled]': '_isDisabled() ? "" : undefined',
     }
 })
-export class SelectComponent implements OnInit, ControlValueAccessor {
+export class SelectComponent implements ControlValueAccessor {
     private _resizeObserver?: ResizeObserver;
     private _resizeObserverInitialized = false;
     private _viewpoerRulerSubscription?: Subscription;
@@ -49,18 +49,20 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     protected readonly _selectedItems = new Set<any>();
     protected readonly _isDisabled = signal<boolean>(false);
     protected readonly _selectedItemIndex = signal<number>(-1); // only for single selection
-    @ContentChild(TemplateRef) protected _optionTemplate?: TemplateRef<any>;
     protected _positionStrategy!: FlexibleConnectedPositionStrategy;
     protected _scrollStrategy!: ScrollStrategy;
     private _overlay = inject(Overlay);
-    private _document = inject(DOCUMENT);
-    private _ls = inject(LocalizationService);
-    private _destroyRef = inject(DestroyRef);
-    protected _el = inject(ElementRef<HTMLDivElement>);
+    private _localizationService = inject(LocalizationService);
+    protected _elementRef = inject(ElementRef<HTMLDivElement>);
     private _renderer = inject(Renderer2);
     private _viewportRuler = inject(ViewportRuler);
     private _changeDetector = inject(ChangeDetectorRef);
-    private _activateSlectedItemEffectRef!: EffectRef;
+    private readonly _value = signal<any>(undefined);
+
+    /**
+     * Template for rendering each item in the select component.
+     */
+    @ContentChild(TemplateRef) public itemTemplate?: TemplateRef<any>;
 
     /**
      * The data source for the select component.
@@ -70,11 +72,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     public readonly source = input.required<DataSource<any>, DataSourceLike<any>>({
         transform: v => dataSourceAttribute(v)
     });
-
-    /** 
-     * Value of the select component.
-     */
-    public value = model<any>(undefined);
 
     /** 
      * Indicates whether multi selection is enabled or not.
@@ -99,7 +96,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      * A fromatter to convert each item to a string for display.
      */
     public readonly formatBy = input(defaultObjectFormatter, {
-        transform: objectFormatterAttribute(this._ls.get())
+        transform: objectFormatterAttribute(this._localizationService.get())
     });
 
     /**
@@ -143,14 +140,9 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     });
 
     constructor() {
-        this._renderer.addClass(this._el.nativeElement, 'form-select');
-        this._renderer.setAttribute(this._el.nativeElement, 'tabindex', '0');
+        this._renderer.addClass(this._elementRef.nativeElement, 'form-select');
+        this._renderer.setAttribute(this._elementRef.nativeElement, 'tabindex', '0');
         this._scrollStrategy = this._overlay.scrollStrategies.block();
-
-        // effect(() => {
-        //     var value = this.value(); // track value
-        //     this._changeCallback?.(value);
-        // })
 
         effect(() => {
             let source = this.source();
@@ -162,15 +154,6 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
                 })
             });
         });
-    }
-
-    ngOnInit(): void {
-        this.source().load(new DataRequest()).pipe(takeUntilDestroyed(this._destroyRef)).subscribe(res => {
-            this._sourceItems.set(res.data);
-            this._changeDetector.markForCheck();
-        });
-
-        this.value.set(this.value());
     }
 
     /**
@@ -188,16 +171,38 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
      */
     public select(value: any): void {
         if (this.multiple()) {
-            if (!this._selectedItems.has(value())) {
-                this._selectedItems.add(value());
+            if (!this._selectedItems.has(value)) {
+                this._selectedItems.add(value);
                 this._updateValue();
-                this._changeCallback?.(this.value());
+                this._changeCallback?.(this._value());
             }
         } else {
             this._selectedItems.clear();
             this._selectedItems.add(value);
             this._updateValue();
-            this._changeCallback?.(this.value());
+            this._changeCallback?.(this._value());
+        }
+    }
+
+    /**
+     * Deselects the given value.
+     * @param item 
+     */
+    public deselect(value: any): void {
+        this._selectedItems.delete(value);
+        this._updateValue();
+        this._changeCallback?.(this._value());
+    }
+
+    /**
+     * Toggles the selection state of the given value.
+     * @param item
+    */
+    public toggle(value: any): void {
+        if (this.isSelected(value)) {
+            this.deselect(value);
+        } else {
+            this.select(value);
         }
     }
 
@@ -210,7 +215,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             }
         }
 
-        this.value.set(obj);
+        this._value.set(obj);
         this._findAndSelectItems();
         this._changeDetector.markForCheck();
     }
@@ -228,7 +233,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
     }
 
     private _findAndSelectItems(): void {
-        let value = this.value();
+        let value = this._value();
         let compareBy = this.compareBy();
         let sourceItems = this._sourceItems();
         if (sourceItems == undefined) {
@@ -270,7 +275,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             }
         }
 
-        this.value.set(value);
+        this._value.set(value);
     }
 
     protected _onFilterBlur() {
@@ -290,6 +295,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
                 this._filterElementRef?.nativeElement.focus();
             }
 
+            this._listComponent!.writeValue(this._value());
             // if (this._activeOptionIndex() > -1) {
             //     this._listComponent?.active(this._activeOptionIndex());
             // }
@@ -298,11 +304,21 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
 
     protected _onOverlayDetach() {
         this._unlistenFromResizeEvents();
-        this._el!.nativeElement.focus();
+        this._elementRef!.nativeElement.focus();
         this.open.set(false);
     }
 
     protected _onListSelectionChange(e: ListSelectionChangeEvent) {
+        let value = e.item.value();
+
+        if (this.multiple()) {
+            this.toggle(value);
+        } else {
+            this.select(value);
+        }
+
+        // this.selectionChange.emit({ item: item, list: this });
+        this._changeDetector.detectChanges();
         if (!this.multiple()) {
             // this._activeOptionIndex.set(e.index);
             this.open.set(false);
@@ -329,7 +345,7 @@ export class SelectComponent implements OnInit, ControlValueAccessor {
             // this._connectedOverlay.overlayRef.updateSize({ width });
         });
 
-        this._resizeObserver.observe(this._el.nativeElement);
+        this._resizeObserver.observe(this._elementRef.nativeElement);
     }
 
     private _unlistenFromResizeEvents() {

@@ -1,9 +1,10 @@
 /**
  * Filter predicate function type.
  * @param item The item to test against the filter.
+ * @param params Additional parameters to pass to the filter.
  * @returns True if the item matches the filter, false otherwise.
  */
-export type FilterPredicate = (item: any) => boolean;
+export type FilterPredicate = (item: any, ...params: any[]) => boolean;
 
 /**
  * Filter predicate can be a function or a string representing the property name to filter.
@@ -11,11 +12,11 @@ export type FilterPredicate = (item: any) => boolean;
 export type FilterPredicateLike = FilterPredicate | string;
 
 /**
- * 
- * @param item 
- * @returns 
+ * No-op filter predicate that always returns true.
+ * @param item The item to test against the filter.
+ * @returns true
  */
-export const noopFilter: FilterPredicate = (item: string) => true;
+export const noopFilter: FilterPredicate = (item: any, ...params: any[]) => true;
 
 
 /**

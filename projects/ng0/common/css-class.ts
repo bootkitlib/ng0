@@ -3,7 +3,6 @@
  */
 export type CssClass = string | string[] | Set<string> | { [klass: string]: any } | null | undefined;
 
-
 /**
  * A function that takes an item and returns a CssClass.
  * @param item The item to get the CSS class for.

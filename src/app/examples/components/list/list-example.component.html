@@ -308,7 +308,7 @@
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <p>Without selection indicator</p>
-                        <ng0-list name="value1" [source]="stringArray" [(ngModel)]="value1" ></ng0-list>
+                        <ng0-list name="value1" [source]="stringArray" [(ngModel)]="value1"></ng0-list>
                         Value: {{ value1 }}
                     </div>
                     <div class="col-12 col-md-6">
@@ -372,9 +372,9 @@
                         <ng0-list name="value16" [source]="objectsSource1" [(ngModel)]="value16" writeBy="id">
                             <ng-template let-context>
                                 <div class="py-1">
-                                    ❤️ This is <strong>option {{context.value}}</strong> <br>
+                                    ❤️ This is <strong>option {{context.value.id}}</strong> <br>
                                     <small class="text-muted">This is extra info about item
-                                        {{context.value}}</small>
+                                        {{context.value.name}}</small>
                                 </div>
                             </ng-template>
                         </ng0-list>
@@ -502,12 +502,14 @@
                 <div class="row">
                     <div class="col-12 col-md-4">
                         focusMode="none"
-                        <ng0-list name="value31" [source]="numberArray" [(ngModel)]="value31" focusMode="none"></ng0-list>
+                        <ng0-list name="value31" [source]="numberArray" [(ngModel)]="value31"
+                                  focusMode="none"></ng0-list>
                         Value: {{ value31 }}
                     </div>
                     <div class="col-12 col-md-4">
                         focusMode="activeDescendant"
-                        <ng0-list name="value33" [source]="numberArray" [(ngModel)]="value33" focusMode="activeDescendant">
+                        <ng0-list name="value33" [source]="numberArray" [(ngModel)]="value33"
+                                  focusMode="activeDescendant">
                         </ng0-list>
                         Value: {{ value33 | json }}
                     </div>
@@ -533,19 +535,19 @@
                 <div class="row">
                     <div class="col-xl-3">
                         Source: number[]
-                        <ng0-list name="value35" [source]="numberArray2" [(ngModel)]="value15"
-                                  [disabled]="isList35Disabled" #value35="ngModel">
+                        <ng0-list name="value35" [source]="numberArray2" [(ngModel)]="value35"
+                                  [disabled]="isList35Disabled" #value35Model="ngModel">
                         </ng0-list>
 
                         <ul>
                             <li>
-                                Value: {{ value15 | json }}
+                                Value: {{ value35 | json }}
                             </li>
                             <li>
-                                Touched: {{value35.touched}}
+                                Touched: {{value35Model.touched}}
                             </li>
                             <li>
-                                Dirty: {{value35.dirty}}
+                                Dirty: {{value35Model.dirty}}
                             </li>
                         </ul>
 
@@ -561,4 +563,25 @@
         </div>
     </div>
 
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Unstyled list</h5>
+                <p>
+                    Remove all styles from the list by adding the "ng0-list-unstyled" attribute.
+                    List component adds "active" and "selected" CSS classes to the list items when appropriate.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: number[]
+                        <ng0-list name="value36" [source]="numberArray2" [(ngModel)]="value36" ng0-list-unstyled>
+                        </ng0-list>
+
+                        Value: {{value36 | json}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

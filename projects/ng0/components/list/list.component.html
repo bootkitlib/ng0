@@ -1,4 +1,5 @@
 @let filter = filterBy();
+@let formatter = formatBy();
 
 @for (item of _sourceItems(); track trackBy()($index, item)) {
 <ng0-list-item #listItem="ng0ListItem"
@@ -6,7 +7,23 @@
                [value]="item"
                [id]="idGenerator()?.(item)"
                [ngClass]="itemClass()?.(item)"
+               [class.active] = "isActive(listItem)"
+               [class.selected] = "isSelected(item)"
                (click)="_handleUserSelection(listItem);">
+
+       @if(itemTemplate) {
+       <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: {item: this, value: item}}" />
+       } @else {
+       @if(showSelectionIndicator()) {
+       <input class="form-check-input ng0-list-selection-indicator"
+              tabindex="-1"
+              [checked]="isSelected(item)"
+              [attr.type]="multiple() ? 'checkbox' : 'radio'">
+       }
+
+       {{formatter(item)}}
+       }
+
 </ng0-list-item>
 }
 
