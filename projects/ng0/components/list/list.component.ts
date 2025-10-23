@@ -9,7 +9,6 @@ import {
     defaultValueWriter, filterPredicateAttribute, noopFilter, IdGeneratorAttribute, TrackByAttribute, trackByIndex, IfDirective
 } from '@bootkit/ng0/common';
 
-let uuid = 0;
 /** 
  * ListComponent is a versatile component that displays a list of items with support for single or multiple selection,
  * custom item templates, filtering, and keyboard navigation.
