@@ -3,13 +3,12 @@ import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListItemComponent } from "./list-item.component";
+import { ListItem } from "./list-item";
 import {
     CssClassAttribute, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
     defaultValueWriter, filterPredicateAttribute, noopFilter, IdGeneratorAttribute, TrackByAttribute, trackByIndex, IfDirective
 } from '@bootkit/ng0/common';
 
-let uuid = 0;
 /** 
  * ListComponent is a versatile component that displays a list of items with support for single or multiple selection,
  * custom item templates, filtering, and keyboard navigation.
@@ -25,7 +24,7 @@ let uuid = 0;
     imports: [
         CommonModule,
         IfDirective,
-        ListItemComponent
+        ListItem
     ],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
@@ -43,13 +42,12 @@ let uuid = 0;
 export class ListComponent implements OnInit, ControlValueAccessor {
     private _localizationService = inject(LocalizationService);
     private _changeDetector = inject(ChangeDetectorRef);
-    private _value = signal<any>(undefined);
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: () => void;
     protected readonly _sourceItems = signal<any[]>([]);
     private readonly _selectedItems = new Set<any>();
-    protected readonly _activeItem = signal<ListItemComponent | undefined>(undefined);
-    @ViewChildren(ListItemComponent) private readonly _visibleItems!: QueryList<ListItemComponent>;
+    protected readonly _activeItem = signal<ListItem | undefined>(undefined);
+    @ViewChildren(ListItem) private readonly _visibleItems!: QueryList<ListItem>;
     protected readonly _isDisabled = signal<boolean>(false);
     @ContentChild(TemplateRef) public itemTemplate?: TemplateRef<any>;
 
@@ -140,7 +138,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * CSS class or classes to apply to the list container.
      * Default is undefined.
      */
-    public readonly itemClass = input((item) => ['ng0-list-item'], {
+    public readonly itemClass = input(undefined, {
         transform: CssClassAttribute
     });
 
@@ -168,11 +166,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      */
     @Output() public readonly selectionChange = new EventEmitter<ListSelectionChangeEvent>();
 
-    _uuid: number;
-
     constructor() {
-        this._uuid = ++uuid;
-
         effect(() => {
             let source = this.source();
             source.load(new DataRequest()).subscribe(res => {
@@ -184,17 +178,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             });
         });
     }
-    ngOnInit(): void {
-        this._value.set(this.value());
-    }
 
-    /**
-     * Indicates whether an item is active.
-     * @param item  
-     * @returns 
-     */
-    public isActive(item: ListItemComponent): boolean {
-        return item === this._activeItem();
+    ngOnInit(): void {
     }
 
     /**
@@ -229,7 +214,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      */
     public deselect(value: any): void {
         this._selectedItems.delete(value);
-        this._changeCallback?.(this._value());
+        this._updateValue();
     }
 
     /**
@@ -249,20 +234,20 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      */
     public deselectAll(): void {
         this._selectedItems.clear();
-        this._changeCallback?.(this._value());
+        this._updateValue();
     }
 
     /**
      * Selects all items in the list. Only applicable in multiple selection mode.
      */
     public selectAll(): void {
-        if (this.multiple()) {
-            this._selectedItems.clear();
-            this._sourceItems().forEach(i => this._selectedItems.add(i));
-            this._changeCallback?.(this._value());
-        } else {
+        if (!this.multiple()) {
             throw new Error('selectAll is only available in multiple selection mode.');
         }
+
+        this._selectedItems.clear();
+        this._sourceItems().forEach(i => this._selectedItems.add(i));
+        this._updateValue();
     }
 
     /**
@@ -281,7 +266,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             }
         }
 
-        this._value.set(value);
+        this.value.set(value);
         this._findAndSelectedValues();
         this._changeDetector.markForCheck();
     }
@@ -298,7 +283,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         this._isDisabled.set(isDisabled);
     }
 
-    protected _handleUserSelection(item: ListItemComponent) {
+    protected _handleUserSelection(item: ListItem) {
         let value = item.value();
         this._activeItem.set(item);
 
@@ -308,14 +293,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             this.select(value);
         }
 
-        this._updateValue();
-
-
-        this.selectionChange.emit({
-            item: item,
-            list: this,
-        });
-
+        this.selectionChange.emit({ value: value, list: this, });
         this._changeDetector.detectChanges();
     }
 
@@ -325,7 +303,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     });
 
     private _findAndSelectedValues(): void {
-        let value = this._value();
+        let value = this.value();
         let compareBy = this.compareBy();
         let findAndSelect = (v: any) => {
             let index = this._sourceItems().findIndex(i => compareBy(i, v));
@@ -346,6 +324,9 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         this._changeDetector.markForCheck();
     }
 
+    /**
+     * Updates value based on selected items.
+     */
     private _updateValue(): void {
         let value: any;
 
@@ -364,9 +345,12 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             }
         }
 
-        this._value.set(value);
         this.value.set(value);
         this._changeCallback?.(value);
+    }
+
+    protected _isActive(item: ListItem): boolean {
+        return item === this._activeItem();
     }
 
     private _hostAriaActiveDescendant = computed(() => {
@@ -376,6 +360,21 @@ export class ListComponent implements OnInit, ControlValueAccessor {
 
         return undefined;
     });
+
+
+    protected _getItemTabIndex(listitem: ListItem) {
+        let focus = this.focus();
+        // if (this.list.isDisabled()) {
+        //     return undefined;
+        // }
+
+        if (focus == 'none' || focus == 'activeDescendant') {
+            return undefined;
+        } else {
+            // focus: roving
+            return this._isActive(listitem) ? 0 : -1
+        }
+    }
 
     private _hostTabIndex = computed(() => {
         let isDisabled = this._isDisabled(); // track _isDisabled
@@ -439,7 +438,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
                 break;
             case 'Enter':
                 if (activeItemindex > -1) {
-                    this._handleUserSelection(this._visibleItems.get(activeItemindex)!);
+                    let item = this._visibleItems.get(activeItemindex)!;
+                    this._handleUserSelection(item);
                 }
                 break;
             case 'Home':
@@ -457,6 +457,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         if (this.focus() === 'roving') {
             this._activeItem()?.focus();
         }
+
+        this._changeDetector.markForCheck();
     }
 }
 
@@ -466,9 +468,9 @@ export class ListComponent implements OnInit, ControlValueAccessor {
  */
 export interface ListSelectionChangeEvent {
     /**
-     * The item that was selected or deselected.
+     * The value associated with the item that was selected or deselected.
      */
-    readonly item: ListItemComponent;
+    readonly value: any;
 
     /**
      * The list component that emitted the event.
