@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListItem } from "./list-item";
+import { ListItemComponent } from "./list-item.component";
 import {
     CssClassAttribute, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
     defaultValueWriter, filterPredicateAttribute, noopFilter, IdGeneratorAttribute, TrackByAttribute, trackByIndex, IfDirective
@@ -24,7 +24,7 @@ import {
     imports: [
         CommonModule,
         IfDirective,
-        ListItem
+        ListItemComponent
     ],
     providers: [{
         provide: NG_VALUE_ACCESSOR,
@@ -39,16 +39,25 @@ import {
         '[attr.tabindex]': '_hostTabIndex()',
     }
 })
-export class ListComponent implements OnInit, ControlValueAccessor {
+export class ListComponent implements ControlValueAccessor {
     private _localizationService = inject(LocalizationService);
     private _changeDetector = inject(ChangeDetectorRef);
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: () => void;
     protected readonly _sourceItems = signal<any[]>([]);
     private readonly _selectedItems = new Set<any>();
-    protected readonly _activeItem = signal<ListItem | undefined>(undefined);
-    @ViewChildren(ListItem) private readonly _visibleItems!: QueryList<ListItem>;
+    protected readonly _activeItem = signal<ListItemComponent | undefined>(undefined);
     protected readonly _isDisabled = signal<boolean>(false);
+    protected _valueTracked = false;
+
+    /**
+     * A list of all visible list items.
+     */
+    @ViewChildren(ListItemComponent) public readonly listItems!: QueryList<ListItemComponent>;
+
+    /**
+     * The template to use for each item in the list.
+     */
     @ContentChild(TemplateRef) public itemTemplate?: TemplateRef<any>;
 
     /**
@@ -149,7 +158,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      * - 'activeDescendant': The list can be focused, but no item is tabbable. The active item is indicated using aria-activedescendant.
      * @default 'activeDescendant'.
      */
-    public readonly focus = input<'none' | 'roving' | 'activeDescendant'>('activeDescendant');
+    public readonly focusMode = input<'none' | 'roving' | 'activeDescendant'>('activeDescendant');
 
     /**
      * A function that generates unique ids for each item in the list.
@@ -168,18 +177,34 @@ export class ListComponent implements OnInit, ControlValueAccessor {
 
     constructor() {
         effect(() => {
-            let source = this.source();
-            source.load(new DataRequest()).subscribe(res => {
+            this.source().load(new DataRequest()).subscribe(res => {
                 untracked(() => {
                     this._activeItem.set(undefined);
                     this._sourceItems.set(res.data);
-                    this._findAndSelectedValues();
-                })
+                    this._updateSelectedItems();
+                });
             });
+        });
+
+        effect(() => {
+            const value = this.value();
+            if (this._valueTracked) {
+                this._verifyValue(value);
+                this._updateSelectedItems();
+                this._changeCallback?.(value);
+            }
+
+            this._valueTracked = true;
         });
     }
 
-    ngOnInit(): void {
+    /**
+     * Indicates whether an item is active.
+     * @param item  
+     * @returns 
+     */
+    public isActive(item: ListItemComponent): boolean {
+        return item === this._activeItem();
     }
 
     /**
@@ -197,14 +222,16 @@ export class ListComponent implements OnInit, ControlValueAccessor {
      */
     public select(value: any): void {
         if (this.multiple()) {
-            if (!this._selectedItems.has(value())) {
-                this._selectedItems.add(value());
+            if (!this._selectedItems.has(value)) {
+                this._selectedItems.add(value);
                 this._updateValue();
+                this._changeCallback?.(this.value())
             }
         } else {
             this._selectedItems.clear();
             this._selectedItems.add(value);
             this._updateValue();
+            this._changeCallback?.(this.value())
         }
     }
 
@@ -215,6 +242,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     public deselect(value: any): void {
         this._selectedItems.delete(value);
         this._updateValue();
+        this._changeCallback?.(this.value());
     }
 
     /**
@@ -235,19 +263,21 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     public deselectAll(): void {
         this._selectedItems.clear();
         this._updateValue();
+        this._changeCallback?.(this.value());
     }
 
     /**
      * Selects all items in the list. Only applicable in multiple selection mode.
      */
     public selectAll(): void {
-        if (!this.multiple()) {
+        if (this.multiple()) {
+            this._selectedItems.clear();
+            this._sourceItems().forEach(i => this._selectedItems.add(i));
+            this._updateValue();
+            this._changeCallback?.(this.value());
+        } else {
             throw new Error('selectAll is only available in multiple selection mode.');
         }
-
-        this._selectedItems.clear();
-        this._sourceItems().forEach(i => this._selectedItems.add(i));
-        this._updateValue();
     }
 
     /**
@@ -258,17 +288,9 @@ export class ListComponent implements OnInit, ControlValueAccessor {
     }
 
     writeValue(value: any): void {
-        if (this.multiple()) {
-            if (value === null || value === undefined) {
-                value = [];
-            } else if (!Array.isArray(value)) {
-                throw Error('invalid value. Expected an array in multiple selection mode.');
-            }
-        }
-
+        this._verifyValue(value);
         this.value.set(value);
-        this._findAndSelectedValues();
-        this._changeDetector.markForCheck();
+        this._updateSelectedItems();
     }
 
     registerOnChange(fn: any): void {
@@ -283,9 +305,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         this._isDisabled.set(isDisabled);
     }
 
-    protected _handleUserSelection(item: ListItem) {
+    protected _handleUserSelection(item: ListItemComponent) {
         let value = item.value();
-        this._activeItem.set(item);
 
         if (this.multiple()) {
             this.toggle(value);
@@ -293,8 +314,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             this.select(value);
         }
 
-        this.selectionChange.emit({ value: value, list: this, });
-        this._changeDetector.detectChanges();
+        this.selectionChange.emit({ item: item, list: this });
     }
 
     protected _showLoadingSppiner = computed(() => {
@@ -302,7 +322,17 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         return source.isLoading() && source.type == 'remote';
     });
 
-    private _findAndSelectedValues(): void {
+    private _verifyValue(value: any) {
+        if (this.multiple()) {
+            if (value === null || value === undefined) {
+                value = [];
+            } else if (!Array.isArray(value)) {
+                throw Error('invalid value. Expected an array in multiple selection mode.');
+            }
+        }
+    }
+
+    private _updateSelectedItems(): void {
         let value = this.value();
         let compareBy = this.compareBy();
         let findAndSelect = (v: any) => {
@@ -313,6 +343,7 @@ export class ListComponent implements OnInit, ControlValueAccessor {
             }
         };
 
+        this._selectedItems.clear();
         if (this.multiple()) {
             if (Array.isArray(value)) {
                 (value as any[]).forEach(v => findAndSelect(v));
@@ -320,13 +351,8 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         } else {
             findAndSelect(value);
         }
-
-        this._changeDetector.markForCheck();
     }
 
-    /**
-     * Updates value based on selected items.
-     */
     private _updateValue(): void {
         let value: any;
 
@@ -346,60 +372,34 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         }
 
         this.value.set(value);
-        this._changeCallback?.(value);
-    }
-
-    protected _isActive(item: ListItem): boolean {
-        return item === this._activeItem();
     }
 
     private _hostAriaActiveDescendant = computed(() => {
-        if (this._activeItem() && !this._isDisabled() && this.focus() == 'activeDescendant') {
+        if (this._activeItem() && !this._isDisabled() && this.focusMode() == 'activeDescendant') {
             return this._activeItem()!.id();
         }
 
         return undefined;
     });
 
-
-    protected _getItemTabIndex(listitem: ListItem) {
-        let focus = this.focus();
-        // if (this.list.isDisabled()) {
-        //     return undefined;
-        // }
-
-        if (focus == 'none' || focus == 'activeDescendant') {
-            return undefined;
-        } else {
-            // focus: roving
-            return this._isActive(listitem) ? 0 : -1
-        }
-    }
-
     private _hostTabIndex = computed(() => {
-        let isDisabled = this._isDisabled(); // track _isDisabled
-        let activeItem = this._activeItem(); // track _activeItem
+        let isDisabled = this._isDisabled(); // track the value
+        let activeItem = this._activeItem(); // track the value
 
         if (isDisabled) {
             return undefined;
         }
 
-        switch (this.focus()) {
+        switch (this.focusMode()) {
             case 'none':
                 return undefined;
             case 'activeDescendant':
                 return 0;
             case 'roving':
+              
                 return activeItem ? undefined : 0;
         }
     });
-
-    @HostListener('click')
-    private _onHostClick() {
-        // if (this.focus() != 'none') {
-        //     this.elementRef.nativeElement.focus();
-        // }
-    }
 
     @HostListener('blur')
     private _onHostBlur() {
@@ -411,54 +411,51 @@ export class ListComponent implements OnInit, ControlValueAccessor {
         if (this._isDisabled())
             return;
 
-        let visibleItemsCount = this._visibleItems.length;
+        let visibleItemsCount = this.listItems.length;
         if (visibleItemsCount == 0) {
             return;
         }
 
-        let activeItemindex = this._visibleItems.toArray().findIndex(i => i === this._activeItem());
+        let activeItemindex = this.listItems.toArray().findIndex(i => i === this._activeItem());
 
         switch (e.key) {
             case 'ArrowDown':
                 if (activeItemindex < visibleItemsCount - 1) {
-                    const next = this._visibleItems.get(activeItemindex + 1);
+                    const next = this.listItems.get(activeItemindex + 1);
                     this._activeItem.set(next);
                 }
                 e.preventDefault();
                 break;
             case 'ArrowUp':
                 if (activeItemindex == -1) {
-                    const last = this._visibleItems.get(visibleItemsCount - 1);
+                    const last = this.listItems.get(visibleItemsCount - 1);
                     this._activeItem.set(last);
                 } else if (activeItemindex > 0) {
-                    const previous = this._visibleItems.get(activeItemindex - 1);
+                    const previous = this.listItems.get(activeItemindex - 1);
                     this._activeItem.set(previous);
                 }
                 e.preventDefault();
                 break;
             case 'Enter':
                 if (activeItemindex > -1) {
-                    let item = this._visibleItems.get(activeItemindex)!;
-                    this._handleUserSelection(item);
+                    this._handleUserSelection(this.listItems.get(activeItemindex)!);
                 }
                 break;
             case 'Home':
-                const first = this._visibleItems.get(0);
+                const first = this.listItems.get(0);
                 this._activeItem.set(first);
                 e.preventDefault();
                 break;
             case 'End':
-                const last = this._visibleItems.get(visibleItemsCount - 1);
+                const last = this.listItems.get(visibleItemsCount - 1);
                 this._activeItem.set(last);
                 e.preventDefault();
                 break;
         }
 
-        if (this.focus() === 'roving') {
+        if (this.focusMode() === 'roving') {
             this._activeItem()?.focus();
         }
-
-        this._changeDetector.markForCheck();
     }
 }
 
@@ -468,9 +465,9 @@ export class ListComponent implements OnInit, ControlValueAccessor {
  */
 export interface ListSelectionChangeEvent {
     /**
-     * The value associated with the item that was selected or deselected.
+     * The item that was selected or deselected.
      */
-    readonly value: any;
+    readonly item: ListItemComponent;
 
     /**
      * The list component that emitted the event.

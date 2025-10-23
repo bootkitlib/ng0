@@ -302,14 +302,13 @@
             <div class="card-body">
                 <h5 class="card-title">Single selection</h5>
                 <p>
-
+                    By default, the list allows single selection.
                 </p>
 
                 <div class="row">
                     <div class="col-12 col-md-6">
                         <p>Without selection indicator</p>
-                        <ng0-list name="value1" [source]="stringArray" [(ngModel)]="value1">
-                        </ng0-list>
+                        <ng0-list name="value1" [source]="stringArray" [(ngModel)]="value1" ></ng0-list>
                         Value: {{ value1 }}
                     </div>
                     <div class="col-12 col-md-6">
@@ -336,8 +335,7 @@
                 <div class="row">
                     <div class="col-12 col-md-6">
                         multiple="true"
-                        <ng0-list name="value3" [source]="stringArray" [(ngModel)]="value3"
-                                  multiple="true">
+                        <ng0-list name="value3" [source]="stringArray" [(ngModel)]="value3" multiple="true">
                         </ng0-list>
                         Value: [{{ value3 }}]
                     </div>
@@ -372,11 +370,11 @@
                     <div class="col-xl-6">
                         [source]="objectsSource1"; writeBy="id"
                         <ng0-list name="value16" [source]="objectsSource1" [(ngModel)]="value16" writeBy="id">
-                            <ng-template let-item>
+                            <ng-template let-context>
                                 <div class="py-1">
-                                    ❤️ This is <strong>option {{item.value}}</strong> <br>
+                                    ❤️ This is <strong>option {{context.value}}</strong> <br>
                                     <small class="text-muted">This is extra info about item
-                                        {{item.value}}</small>
+                                        {{context.value}}</small>
                                 </div>
                             </ng-template>
                         </ng0-list>
@@ -485,37 +483,37 @@
 
                 <div>
                     <h6>Focus:</h6>
-                    By setting the focus property, you can control how the list is navigated using the keyboard.
-                    focus property can be set to "none", "roving" or "activeDescendant".
+                    By setting the focusMode property, you can control how the list is navigated using the keyboard.
+                    focusMode property can be set to "none", "roving" or "activeDescendant".
                     <ul>
                         <li>
                             focus="none": The list will not manage focus for its items.
                         </li>
                         <li>
-                            focus="activeDescendant": The list will manage focus for its items using the
+                            focusMode="activeDescendant": The list will manage focus for its items using the
                             aria-activedescendant attribute. This is default.
                         </li>
                         <li>
-                            focus="roving": The list will manage focus for its items using a roving tabindex.
+                            focusMode="roving": The list will manage focus for its items using a roving tabindex.
                         </li>
                     </ul>
                 </div>
 
                 <div class="row">
                     <div class="col-12 col-md-4">
-                        focus="none"
-                        <ng0-list name="value31" [source]="numberArray" [(ngModel)]="value31" focus="none"></ng0-list>
+                        focusMode="none"
+                        <ng0-list name="value31" [source]="numberArray" [(ngModel)]="value31" focusMode="none"></ng0-list>
                         Value: {{ value31 }}
                     </div>
                     <div class="col-12 col-md-4">
-                        focus="activeDescendant"
-                        <ng0-list name="value33" [source]="numberArray" [(ngModel)]="value33" focus="activeDescendant">
+                        focusMode="activeDescendant"
+                        <ng0-list name="value33" [source]="numberArray" [(ngModel)]="value33" focusMode="activeDescendant">
                         </ng0-list>
                         Value: {{ value33 | json }}
                     </div>
                     <div class="col-12 col-md-4">
-                        focus="roving"
-                        <ng0-list name="value32" [source]="numberArray" [(ngModel)]="value32" focus="roving">
+                        focusMode="roving"
+                        <ng0-list name="value32" [source]="numberArray" [(ngModel)]="value32" focusMode="roving">
                         </ng0-list>
                         Value: {{ value32 | json }}
                     </div>

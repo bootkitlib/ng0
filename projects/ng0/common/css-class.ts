@@ -14,7 +14,7 @@ export type CssClassGetter = (obj: any) => CssClass;
 /**
  * A type that represents a CSS class or a function that returns a CSS class.
  */
-export type CssClassLike = CssClass | CssClassGetter | null | undefined;
+export type CssClassLike = CssClass | CssClassGetter;
 
 
 /**
