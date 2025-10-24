@@ -40,39 +40,3 @@ export function equalityComparerAttribute(e: EqualityComparerLike): EqualityComp
 
     throw Error('invalid equality comparer');
 }
-
-/**
- * @private 
- * @param items 
- * @param value 
- * @param comparer 
- */
-export function findValueByComparer(items: any[], value: any, comparer: EqualityComparer): any {
-    if (!items || items.length === 0 || value === undefined || value === null) {
-        return undefined;
-    }
-    
-    return items.find(i => comparer(i, value));
-}
-
-/**
- * @private 
- * @param items 
- * @param values
- * @param comparer 
- */
-export function findValuesByComparer(items: any[], values: any[], comparer: EqualityComparer): any[] {
-    if (!items || items.length === 0 || !values || values.length === 0) {
-        return [];
-    }
-
-    const result: any[] = [];
-    for (let v of values) {
-        const item = items.find(i => comparer(i, v));
-        if (item) {
-            result.push(item);
-        }
-    }
-
-    return result;
-}

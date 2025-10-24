@@ -19,6 +19,159 @@
         </div>
     </div>
 
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to LocalDataSource</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: LocalDataSource
+                        <ng0-select name="value12" [source]="localDatasource1" [(ngModel)]="value12">
+                        </ng0-select>
+                        Value: {{ value12 | json }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">Add new Item</button>
+                <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
+                    Remove First Item
+                </button> -->
+                <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
+                    Replace First Item
+                </button> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to RemoteDataSource</h5>
+                <p>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-3">
+                        Source: RemoteDataSource
+                        <ng0-select name="value13"
+                                    [source]="fakeRemoteDataSource1"
+                                    [(ngModel)]="value13">
+                        </ng0-select>
+
+                        Value: {{ value13 | json }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
+                    Add new Item
+                </button>
+                <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
+                    Remove First Item
+                </button> -->
+                <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
+                    Replace First Item
+                </button> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Multi select</h5>
+                <p>
+                    A multi-select component allows the user to select multiple options from a list.
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="stringArray"; multiple="true"
+                        <ng0-select name="multiSelectExample.value1"
+                                    [source]="stringArray"
+                                    [(ngModel)]="multiSelectExample.value1"
+                                    multiple="true" filterable="true">
+                        </ng0-select>
+
+                        Value: {{ multiSelectExample.value1 | json }}
+                    </div>
+
+                    <div class="col-xl-6">
+                        [source]="stringArray"; multiple="true"; showSelectionIndicator="true"
+                        <ng0-select name="multiSelectExample.value2" [source]="stringArray"
+                                    [(ngModel)]="multiSelectExample.value2" multiple="true"
+                                    showSelectionIndicator="true">
+                        </ng0-select>
+
+                        Value: {{ multiSelectExample.value2 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Filter</h5>
+                <p>
+                    To filter the options in the select component, set filterable to true and provide a filter
+                    predicate. <br>
+                    You can pass the name of the property to filter by using the filterBy input or a custom filter
+                    function.
+
+                    by default, the select component will filter item values using a default filter function.
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="stringArray"; filterable="true"
+                        <ng0-select name="filterExample.value1"
+                                    [source]="stringArray"
+                                    [(ngModel)]="filterExample.value1"
+                                    filterable="true">
+                        </ng0-select>
+
+                        Value: {{ filterExample.value1 | json }}
+                    </div>
+
+                    <div class="col-xl-6">
+                        [source]="personList1"; filterable="true"; formatBy="name"; filterBy="name"
+                        <ng0-select name="filterExample.value2"
+                                    [source]="personList1"
+                                    [(ngModel)]="filterExample.value2"
+                                    formatBy="name"
+                                    filterable="true"
+                                    filterBy="name">
+                        </ng0-select>
+
+                        Value: {{ filterExample.value2 | json }}
+                    </div>
+
+                    <div class="col-xl-12">
+                        [source]="personList1"; filterable="true"; formatBy="name";
+                        [filterBy]="filterExample.filterFunc"
+                        <ng0-select name="filterExample.value3"
+                                    [source]="personList1"
+                                    [(ngModel)]="filterExample.value3"
+                                    formatBy="name"
+                                    filterable="true"
+                                    [filterBy]="'name'">
+                        </ng0-select>
+
+                        Value: {{ filterExample.value3 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="col-xl-6">
         <div class="card h-100">
             <div class="card-body">
@@ -267,93 +420,6 @@
                         </ng0-select>
 
                         Value: {{ value11 | json }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to LocalDataSource</h5>
-                <p>
-                </p>
-
-                <div class="row">
-                    <div class="col-xl-3">
-                        Source: LocalDataSource
-                        <ng0-select name="value12" [source]="localDatasource1" [(ngModel)]="value12">
-                        </ng0-select>
-                        Value: {{ value12 | json }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">Add new Item</button>
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
-                    Remove First Item
-                </button> -->
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
-                    Replace First Item
-                </button> -->
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to RemoteDataSource</h5>
-                <p>
-                </p>
-
-                <div class="row">
-                    <div class="col-xl-3">
-                        Source: RemoteDataSource
-                        <ng0-select name="value13"
-                                    [source]="fakeRemoteDataSource1"
-                                    [(ngModel)]="value13">
-                        </ng0-select>
-
-                        Value: {{ value13 | json }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
-                    Add new Item
-                </button>
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
-                    Remove First Item
-                </button> -->
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
-                    Replace First Item
-                </button> -->
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Filter</h5>
-                <p>
-                </p>
-
-                <div class="row">
-                    <div class="col-xl-3">
-                        Source: String[]
-                        <ng0-select name="value15" [source]="stringArray" [(ngModel)]="value15" filterable="true">
-                            <ng-template let-option>
-                                ❤️ {{option.value}}
-                            </ng-template>
-                        </ng0-select>
-
-                        Value: {{ value15 | json }}
                     </div>
                 </div>
             </div>

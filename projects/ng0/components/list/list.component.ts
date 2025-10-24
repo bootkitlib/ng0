@@ -1,9 +1,9 @@
-import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding, OnInit, AfterViewInit, untracked, model } from '@angular/core';
+import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding, OnInit, AfterViewInit, untracked, model, Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListItem } from "./list-item.component";
+import { ListItem } from "./list-item";
 import {
     CssClassAttribute, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
     defaultValueWriter, filterPredicateAttribute, noopFilter, IdGeneratorAttribute, TrackByAttribute, trackByIndex, IfDirective
@@ -14,7 +14,7 @@ import {
  * custom item templates, filtering, and keyboard navigation.
  */
 @Component({
-    selector: 'ng0-list',
+    selector: 'ng0-list, ng0-select-list',
     exportAs: 'ng0List',
     templateUrl: './list.component.html',
     styleUrl: './list.component.scss',
@@ -44,21 +44,19 @@ export class ListComponent implements ControlValueAccessor {
     private _changeDetector = inject(ChangeDetectorRef);
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: () => void;
-    protected readonly _sourceItems = signal<any[]>([]);
     private readonly _selectedItems = new Set<any>();
+
+    protected readonly _sourceItems = signal<any[]>([]);
+    @ContentChild(TemplateRef) protected _itemTemplate?: TemplateRef<any>;
     protected readonly _activeItem = signal<ListItem | undefined>(undefined);
     protected readonly _isDisabled = signal<boolean>(false);
     private readonly _value = signal<any>(undefined);
+    private _renderer = inject(Renderer2);
 
     /**
      * A list of all visible list items.
      */
     @ViewChildren(ListItem) public readonly listItems?: QueryList<ListItem>;
-
-    /**
-     * The template to use for each item in the list.
-     */
-    @ContentChild(TemplateRef) public itemTemplate?: TemplateRef<any>;
 
     /**
      * Reference to the host element
@@ -113,7 +111,7 @@ export class ListComponent implements ControlValueAccessor {
     });
 
     /**
-     * A custom filter predicate to filter items.
+     * Custom filter function to filter items.
      * Default is a noop filter that does not filter any items.
      */
     public readonly filterBy = input(noopFilter, {
@@ -170,6 +168,11 @@ export class ListComponent implements ControlValueAccessor {
      */
     @Output() public readonly selectionChange = new EventEmitter<ListSelectionChangeEvent>();
 
+    /**
+     * The template to use for each item in the list.
+     */
+    public readonly itemTemplate = input<TemplateRef<any> | undefined>(undefined);
+
     constructor() {
         effect(() => {
             this.source().load(new DataRequest()).subscribe(res => {
@@ -177,7 +180,7 @@ export class ListComponent implements ControlValueAccessor {
                     this._activeItem.set(undefined);
                     this._sourceItems.set(res.data);
                     this._updateSelectedItems();
-                    this._activateSelectedItem();
+                    this._activateFirstSelectedItem();
                 });
             });
         });
@@ -290,7 +293,7 @@ export class ListComponent implements ControlValueAccessor {
 
         this._value.set(value);
         this._updateSelectedItems();
-        this._activateSelectedItem();
+        this._activateFirstSelectedItem();
         this._changeDetector.markForCheck();
     }
 
@@ -306,7 +309,7 @@ export class ListComponent implements ControlValueAccessor {
         this._isDisabled.set(isDisabled);
     }
 
-    protected _handleUserSelection(item: ListItem) {
+    protected _handleUserSelection(item: ListItem, index: number) {
         let value = item.value();
 
         if (this.multiple()) {
@@ -316,7 +319,7 @@ export class ListComponent implements ControlValueAccessor {
         }
 
         this._activeItem.set(item);
-        this.selectionChange.emit({ item: item, list: this });
+        this.selectionChange.emit({ index, value: item.value(), item: item, list: this });
         this._changeDetector.detectChanges();
     }
 
@@ -348,11 +351,10 @@ export class ListComponent implements ControlValueAccessor {
         }
     }
 
-    private _activateSelectedItem(): void {
-        if (!this.multiple()) {
-            let value = this._value();
-            let compareBy = this.compareBy();
-            let item = this.listItems?.find(i => compareBy(i.value(), value));
+    private _activateFirstSelectedItem(): void {
+        if (this._selectedItems.size > 0) {
+            let value = this._selectedItems.values().next().value;
+            let item = this.listItems?.find(i => i.value() === value);
             if (item) {
                 this._activeItem.set(item);
             }
@@ -417,16 +419,17 @@ export class ListComponent implements ControlValueAccessor {
         if (this._isDisabled())
             return;
 
-        let visibleItemsCount = this.listItems!.length;
-        if (visibleItemsCount == 0) {
+        let listLength = this.listItems!.length;
+        if (listLength == 0) {
             return;
         }
 
-        let activeItemindex = this.listItems!.toArray().findIndex(i => i === this._activeItem());
+        let activeItem = this._activeItem();
+        let activeItemindex = activeItem ? this.listItems!.toArray().findIndex(i => i === activeItem) : -1;
 
         switch (e.key) {
             case 'ArrowDown':
-                if (activeItemindex < visibleItemsCount - 1) {
+                if (activeItemindex < listLength - 1) {
                     const next = this.listItems!.get(activeItemindex + 1);
                     this._activeItem.set(next);
                 }
@@ -434,7 +437,7 @@ export class ListComponent implements ControlValueAccessor {
                 break;
             case 'ArrowUp':
                 if (activeItemindex == -1) {
-                    const last = this.listItems!.get(visibleItemsCount - 1);
+                    const last = this.listItems!.get(listLength - 1);
                     this._activeItem.set(last);
                 } else if (activeItemindex > 0) {
                     const previous = this.listItems!.get(activeItemindex - 1);
@@ -443,8 +446,8 @@ export class ListComponent implements ControlValueAccessor {
                 e.preventDefault();
                 break;
             case 'Enter':
-                if (activeItemindex > -1) {
-                    this._handleUserSelection(this.listItems!.get(activeItemindex)!);
+                if (activeItem) {
+                    this._handleUserSelection(activeItem, activeItemindex);
                 }
                 break;
             case 'Home':
@@ -453,12 +456,13 @@ export class ListComponent implements ControlValueAccessor {
                 e.preventDefault();
                 break;
             case 'End':
-                const last = this.listItems!.get(visibleItemsCount - 1);
+                const last = this.listItems!.get(listLength - 1);
                 this._activeItem.set(last);
                 e.preventDefault();
                 break;
         }
 
+        this._activeItem()?.scrollIntoView('nearest', listLength > 100 ? 'instant' : 'smooth');
         if (this.focusMode() === 'roving') {
             this._activeItem()?.focus();
         }
@@ -470,6 +474,17 @@ export class ListComponent implements ControlValueAccessor {
  * Event emitted when the selection state of the list changes by user interaction.
  */
 export interface ListSelectionChangeEvent {
+    /**
+     * The index of the item that was selected or deselected.
+     * This is the index of the item in the list and ignores any items that are not currently visible.
+     */
+    index: number;
+
+    /**
+     * The value of the item that was selected or deselected.
+     */
+    value: any;
+
     /**
      * The item that was selected or deselected.
      */

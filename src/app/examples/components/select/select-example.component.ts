@@ -57,6 +57,19 @@ export class SelectExampleComponent {
     value13?: number;
     value14?: number;
     value15?: number;
+    filterExample = {
+        value1: undefined,
+        value2: undefined,
+        value3: undefined,
+        filterFunc: (item: Person, filter: string) => item.name.toLocaleLowerCase().includes(filter.toLowerCase())
+    };
+
+    multiSelectExample = {
+        value1: undefined,
+        value2: undefined,
+        value3: undefined,
+    };
+
     value16?: number;
     value17?: number;
     value18?: number;

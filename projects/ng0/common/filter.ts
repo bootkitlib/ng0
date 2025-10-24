@@ -20,6 +20,25 @@ export const noopFilter: FilterPredicate = (item: any, ...params: any[]) => true
 
 
 /**
+ * A simple filter predicate that checks if the item's string representation includes the match string.
+ * @param item The item to test against the filter.
+ * @param match The string to match.
+ * @returns True if the item matches the filter, false otherwise.
+ */
+export const defaultFilter: FilterPredicate = (item: any, match: string) => {
+    if (match == undefined || match == '') {
+        return true;
+    }
+
+    if (item == undefined) {
+        return false;
+    }
+
+    return (item as Object).toString().toLowerCase().includes(match.toLowerCase());
+}
+
+
+/**
  * Converts a FilterPredicateLike to a FilterPredicate function.
  * If the input is a string, it creates a predicate that checks the property with that name.
  * @param v The FilterPredicateLike to convert.
@@ -28,6 +47,10 @@ export const noopFilter: FilterPredicate = (item: any, ...params: any[]) => true
 export function filterPredicateAttribute(v: FilterPredicateLike): FilterPredicate {
     if (typeof v === 'function')
         return v;
+    else if (typeof v === 'string') {
+        return (item: any, match: string) => 
+            item != null && Object.hasOwn(item, v) ? defaultFilter(item[v], match) : false;
+    }
 
     throw Error('invalid filter predicate');
 }

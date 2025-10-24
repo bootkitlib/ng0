@@ -1,5 +1,9 @@
 @if(multiple()) {
 
+@for(item of _selectedItems.values(); track $index; let last=$last) {
+{{formatBy()(item)}}@if(!last) {,}
+}
+
 } @else {
 @if(_selectedItems.size > 0) {
 {{formatBy()(_selectedItems.values().next().value)}}
@@ -12,7 +16,7 @@
 </div>
 }
 
-<ng-template cdkConnectedOverlay
+<ng-template cdkConnectedOverlay 
              [cdkConnectedOverlayOrigin]="_elementRef.nativeElement"
              [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
              [cdkConnectedOverlayOpen]="open()"
@@ -20,8 +24,8 @@
              [cdkConnectedOverlayFlexibleDimensions]="true"
              [cdkConnectedOverlayPanelClass]="['ng0-select-dropdown']"
              [cdkConnectedOverlayWidth]="_elementRef.nativeElement.clientWidth"
-             (overlayOutsideClick)="open.set(false)"
-             (attach)="_onOverlayAttach()"
+             (overlayOutsideClick)="_onOverlayOutsideClick()"
+             (attach)="_onOverlayAttach();"
              (detach)="_onOverlayDetach()">
 
     @if(filterable()) {
@@ -30,28 +34,23 @@
                type="text"
                class="ng0-select-filter-input"
                [attr.placeholder]="filterPlaceholder()"
+               (input)="_filterValue.set($event.target.value)"
+               (keydown)="_onFilterKeydown($event)"
                (blur)="_onFilterBlur()">
     </div>
     }
 
-    <ng0-list #list
-              ng0-list-unstyled-
-              [source]="source()"
-              [multiple]="multiple()"
-              [filterBy]="filterBy()"
-              [formatBy]="formatBy()"
-              [compareBy]="compareBy()"
-              focusMode="none"
-              (mousedown)="$event.preventDefault(); $event.stopImmediatePropagation()"
-              (selectionChange)="_onListSelectionChange($event)">
-
-        <ng-template let-option>
-            @if(itemTemplate) {
-            <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: option}" />
-            }@else {
-            {{formatBy()(option.value)}}
-            }
-        </ng-template>
-
-    </ng0-list>
+    <ng0-select-list #list
+                     [source]="source()"
+                     [multiple]="multiple()"
+                     [showSelectionIndicator]="showSelectionIndicator()"
+                     [filterBy]="_filterPredicate()"
+                     [formatBy]="formatBy()"
+                     [compareBy]="compareBy()"
+                     [itemClass]="itemClass()"
+                     [itemTemplate]="itemTemplate"
+                     focusMode="none"
+                     (mousedown)="$event.preventDefault(); $event.stopImmediatePropagation()"
+                     (selectionChange)="_onListSelectionChange($event)">
+    </ng0-select-list>
 </ng-template>

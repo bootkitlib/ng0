@@ -568,17 +568,25 @@
             <div class="card-body">
                 <h5 class="card-title">Unstyled list</h5>
                 <p>
-                    Remove all styles from the list by adding the "ng0-list-unstyled" attribute.
-                    List component adds "active" and "selected" CSS classes to the list items when appropriate.
+                    Remove all styles from the list by adding "ng0-list-unstyled" class.
+                    List component allways adds "active" and "selected" CSS classes to the list items when appropriate.
+                    You can apply custom styles to the list items by targeting these classes.
                 </p>
 
                 <div class="row">
                     <div class="col-xl-3">
-                        Source: number[]
-                        <ng0-list name="value36" [source]="numberArray2" [(ngModel)]="value36" ng0-list-unstyled>
+                        <p>
+                            Source: number[]
+                        </p>
+
+                        <ng0-list name="value36" [source]="numberArray2" [(ngModel)]="value36"
+                                  class="ng0-list-unstyled">
                         </ng0-list>
 
-                        Value: {{value36 | json}}
+                        <div class="mt-2">
+                            Value: {{value36 | json}}
+                        </div>
+
                     </div>
                 </div>
             </div>
