@@ -22,56 +22,64 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Bind to LocalDataSource</h5>
+                <h5 class="card-title">Bind to RemoteDataSource</h5>
                 <p>
+                    This select is bound to a RemoteDataSource.
+                    A remote data source is a data source that retrieves data from a remote server (or any source that is resolved asynchronously).
                 </p>
 
                 <div class="row">
                     <div class="col-xl-3">
-                        Source: LocalDataSource
-                        <ng0-select name="value12" [source]="localDatasource1" [(ngModel)]="value12">
+                        Source: RemoteDataSource
+                        <ng0-select name="remoteDatasourceExample.value1"
+                                    [source]="fakeRemoteDataSource1"
+                                    formatBy="name"
+                                    compareBy="id"
+                                    writeBy="id"
+                                    [(ngModel)]="remoteDatasourceExample.value1">
                         </ng0-select>
-                        Value: {{ value12 | json }}
+
+                        Value: {{ remoteDatasourceExample.value1 | json }}
                     </div>
                 </div>
             </div>
 
-            <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">Add new Item</button>
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
+            <!-- <div class="card-footer">
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
+                    Add new Item
+                </button>
+                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
                     Remove First Item
-                </button> -->
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
+                </button> 
+                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
                     Replace First Item
-                </button> -->
-            </div>
+                </button> 
+            </div> -->
         </div>
     </div>
 
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Bind to RemoteDataSource</h5>
+                <h5 class="card-title">Bind to LocalDataSource</h5>
                 <p>
+                    This select is bound to a LocalDataSource.
                 </p>
 
                 <div class="row">
                     <div class="col-xl-3">
-                        Source: RemoteDataSource
-                        <ng0-select name="value13"
-                                    [source]="fakeRemoteDataSource1"
-                                    [(ngModel)]="value13">
+                        Source: LocalDataSource
+                        <ng0-select name="localDatasourceExample.value1" [source]="localDatasource1"
+                                    [(ngModel)]="localDatasourceExample.value1">
                         </ng0-select>
-
-                        Value: {{ value13 | json }}
+                        Value: {{ localDatasourceExample.value1 | json }}
                     </div>
                 </div>
             </div>
 
             <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
-                    Add new Item
-                </button>
+                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()" disabled>Add new
+                    Item</button>
                 <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
                     Remove First Item
                 </button> -->

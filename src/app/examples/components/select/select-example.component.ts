@@ -18,11 +18,11 @@ interface Person {
     templateUrl: './select-example.component.html',
     standalone: true,
     imports: [
-    CommonModule,
-    SelectModule,
-    FormsModule,
-    RouterLink
-]
+        CommonModule,
+        SelectModule,
+        FormsModule,
+        RouterLink
+    ]
 })
 export class SelectExampleComponent {
     counter = signal(0);
@@ -39,7 +39,7 @@ export class SelectExampleComponent {
     ];
 
     localDatasource1 = new LocalDataSource(["Option 1", "Option 2", "Option 3"]);
-    fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult([1, 2, 3, 4, 5])).pipe(delay(100)))
+    fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult(this.personList1)).pipe(delay(3000)))
     Sexuality = Sexuality;
 
     value1 = 'Ten';
@@ -53,8 +53,14 @@ export class SelectExampleComponent {
     value9?: boolean;
     value10?: number;
     value11?: number;
-    value12?: number;
-    value13?: number;
+    localDatasourceExample = {
+        value1: undefined
+    }
+
+    remoteDatasourceExample = {
+        value1: 3
+    }
+
     value14?: number;
     value15?: number;
     filterExample = {
@@ -82,7 +88,7 @@ export class SelectExampleComponent {
 
     personComparer1 = (item?: Person, other?: Person) => {
         return item?.id === other?.id;
-    } 
+    }
 
     onAddToDataSource1() {
         this.counter.update(x => ++x);

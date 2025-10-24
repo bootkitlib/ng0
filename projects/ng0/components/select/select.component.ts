@@ -4,14 +4,12 @@ import { dataSourceAttribute, DataSource, DataSourceLike, DataRequest } from '@b
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import {
-    CssClassAttribute, equalityComparerAttribute,
-    defaultEqualityComparer, valueWriterAttribute, defaultValueWriter, IdGeneratorAttribute,
-    defaultFilter,
-    filterPredicateAttribute
-} from '@bootkit/ng0/common';
 import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListComponent, ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
+import {
+    CssClassAttribute, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter,
+    IdGeneratorAttribute, defaultFilter, filterPredicateAttribute
+} from '@bootkit/ng0/common';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -57,9 +55,8 @@ export class SelectComponent implements ControlValueAccessor {
     protected readonly _filterValue = signal('');
     private _renderer = inject(Renderer2);
     private _viewportRuler = inject(ViewportRuler);
-    private _changeDetector = inject(ChangeDetectorRef);
+    private _changeDetectorRef = inject(ChangeDetectorRef);
     private readonly _value = signal<any>(undefined);
-
 
     /**
      * Template for rendering each item in the select component.
@@ -161,6 +158,7 @@ export class SelectComponent implements ControlValueAccessor {
                 untracked(() => {
                     this._sourceItems.set(res.data);
                     this._findAndSelectItems();
+                    this._changeDetectorRef.markForCheck();
                 })
             });
         });
@@ -227,7 +225,7 @@ export class SelectComponent implements ControlValueAccessor {
 
         this._value.set(obj);
         this._findAndSelectItems();
-        this._changeDetector.markForCheck();
+        this._changeDetectorRef.markForCheck();
     }
 
     registerOnChange(fn: any): void {
@@ -288,15 +286,6 @@ export class SelectComponent implements ControlValueAccessor {
         this._value.set(value);
     }
 
-    protected _onFilterBlur() {
-        // use setTimeout to allow next element receives the focus.
-        // setTimeout(() => {
-        //     if (!this._el.nativeElement.matches(':focus')) {
-        //         this.open.set(false);
-        //     }
-        // }, 0);
-    }
-
     protected _onOverlayAttach() {
         this._listenToResizeEvents();
 
@@ -329,7 +318,7 @@ export class SelectComponent implements ControlValueAccessor {
         }
 
         // this.selectionChange.emit({ item: item, list: this });
-        this._changeDetector.detectChanges();
+        this._changeDetectorRef.detectChanges();
         if (!this.multiple()) {
             this.open.set(false);
         }
@@ -344,15 +333,17 @@ export class SelectComponent implements ControlValueAccessor {
 
     protected _onFilterKeydown(e: KeyboardEvent) {
         let keys = ['ArrowDown', 'ArrowUp', 'Enter', 'Home', 'End'];
+
+        if (e.key === 'Tab') {
+            e.preventDefault();
+            this.open.set(false);
+        }
+
         if (keys.includes(e.key)) {
             e.preventDefault();
             const newEvent = new KeyboardEvent(e.type, e);
             this._listComponent?.elementRef.nativeElement.dispatchEvent(newEvent);
         }
-    }
-
-    protected _onOverlayOutsideClick() {
-        this.open.set(false);
     }
 
     private _listenToResizeEvents() {
@@ -431,14 +422,16 @@ export class SelectComponent implements ControlValueAccessor {
                 break;
         }
 
-        this._changeDetector.markForCheck();
+        this._changeDetectorRef.markForCheck();
     }
 
     @HostListener('click', ['$event'])
     private _onHostClick(e: MouseEvent) {
-        if (!this._isDisabled()) {
-            this.open.update(x => !x);
-            this._touchCallback?.();
+        if (this._isDisabled() || this.source().isLoading()) {
+            return;
         }
+
+        this.open.update(x => !x);
+        this._touchCallback?.();
     }
 }
