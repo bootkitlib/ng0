@@ -29,12 +29,12 @@ export const APP_EN_US_LOCALE = EN_US_LOCALE.extend({
         }
     },
     formatters: {
-        'boolean:Default': ['No', 'Yes'],
+        'boolean': ['No', 'Yes'],
         'boolean:ActiveInactive': ['Inactive', 'Active'],
-        'boolean:YesNo': ['No', 'Yes'],
-        'boolean:TrueFalse': ['False', 'True'],
-        'boolean:EnableDisable': ['Disabled', 'Enabled'],
-        'boolean:OnOff': ['Off', 'On'],
+        'YesNoboolean': ['No', 'Yes'],
+        'TrueFalseBoolean:': ['False', 'True'],
+        'EnableDisableBoolean': ['Disabled', 'Enabled'],
+        'OnOffBoolean': ['Off', 'On'],
     },
     components: {
         table: {

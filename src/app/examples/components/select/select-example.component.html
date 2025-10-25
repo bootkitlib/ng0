@@ -19,167 +19,6 @@
         </div>
     </div>
 
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to RemoteDataSource</h5>
-                <p>
-                    This select is bound to a RemoteDataSource.
-                    A remote data source is a data source that retrieves data from a remote server (or any source that is resolved asynchronously).
-                </p>
-
-                <div class="row">
-                    <div class="col-xl-3">
-                        Source: RemoteDataSource
-                        <ng0-select name="remoteDatasourceExample.value1"
-                                    [source]="fakeRemoteDataSource1"
-                                    formatBy="name"
-                                    compareBy="id"
-                                    writeBy="id"
-                                    [(ngModel)]="remoteDatasourceExample.value1">
-                        </ng0-select>
-
-                        Value: {{ remoteDatasourceExample.value1 | json }}
-                    </div>
-                </div>
-            </div>
-
-            <!-- <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()">
-                    Add new Item
-                </button>
-                <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
-                    Remove First Item
-                </button> 
-                <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
-                    Replace First Item
-                </button> 
-            </div> -->
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Bind to LocalDataSource</h5>
-                <p>
-                    This select is bound to a LocalDataSource.
-                </p>
-
-                <div class="row">
-                    <div class="col-xl-3">
-                        Source: LocalDataSource
-                        <ng0-select name="localDatasourceExample.value1" [source]="localDatasource1"
-                                    [(ngModel)]="localDatasourceExample.value1">
-                        </ng0-select>
-                        Value: {{ localDatasourceExample.value1 | json }}
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <button class="btn btn-outline-secondary me-2" (click)="onAddToDataSource1()" disabled>Add new
-                    Item</button>
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onRemoveFromLocalDataSource1()">
-                    Remove First Item
-                </button> -->
-                <!-- <button class="btn btn-outline-secondary me-2" (click)="onReplaceLocalDataSource1()">
-                    Replace First Item
-                </button> -->
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Multi select</h5>
-                <p>
-                    A multi-select component allows the user to select multiple options from a list.
-                </p>
-
-                <div class="row g-4">
-                    <div class="col-xl-6">
-                        [source]="stringArray"; multiple="true"
-                        <ng0-select name="multiSelectExample.value1"
-                                    [source]="stringArray"
-                                    [(ngModel)]="multiSelectExample.value1"
-                                    multiple="true" filterable="true">
-                        </ng0-select>
-
-                        Value: {{ multiSelectExample.value1 | json }}
-                    </div>
-
-                    <div class="col-xl-6">
-                        [source]="stringArray"; multiple="true"; showSelectionIndicator="true"
-                        <ng0-select name="multiSelectExample.value2" [source]="stringArray"
-                                    [(ngModel)]="multiSelectExample.value2" multiple="true"
-                                    showSelectionIndicator="true">
-                        </ng0-select>
-
-                        Value: {{ multiSelectExample.value2 | json }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-xl-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Filter</h5>
-                <p>
-                    To filter the options in the select component, set filterable to true and provide a filter
-                    predicate. <br>
-                    You can pass the name of the property to filter by using the filterBy input or a custom filter
-                    function.
-
-                    by default, the select component will filter item values using a default filter function.
-                </p>
-
-                <div class="row g-4">
-                    <div class="col-xl-6">
-                        [source]="stringArray"; filterable="true"
-                        <ng0-select name="filterExample.value1"
-                                    [source]="stringArray"
-                                    [(ngModel)]="filterExample.value1"
-                                    filterable="true">
-                        </ng0-select>
-
-                        Value: {{ filterExample.value1 | json }}
-                    </div>
-
-                    <div class="col-xl-6">
-                        [source]="personList1"; filterable="true"; formatBy="name"; filterBy="name"
-                        <ng0-select name="filterExample.value2"
-                                    [source]="personList1"
-                                    [(ngModel)]="filterExample.value2"
-                                    formatBy="name"
-                                    filterable="true"
-                                    filterBy="name">
-                        </ng0-select>
-
-                        Value: {{ filterExample.value2 | json }}
-                    </div>
-
-                    <div class="col-xl-12">
-                        [source]="personList1"; filterable="true"; formatBy="name";
-                        [filterBy]="filterExample.filterFunc"
-                        <ng0-select name="filterExample.value3"
-                                    [source]="personList1"
-                                    [(ngModel)]="filterExample.value3"
-                                    formatBy="name"
-                                    filterable="true"
-                                    [filterBy]="'name'">
-                        </ng0-select>
-
-                        Value: {{ filterExample.value3 | json }}
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <div class="col-xl-6">
         <div class="card h-100">
             <div class="card-body">
@@ -189,11 +28,11 @@
                 </p>
 
                 [source]="stringArray"
-                <ng0-select name="value1" [source]="stringArray" [(ngModel)]="value1">
+                <ng0-select name="examples.stringArray.value1" [source]="stringArray"
+                            [(ngModel)]="examples.stringArray.value1">
                 </ng0-select>
 
-
-                Value: {{ value1 | json }}
+                Value: {{ examples.stringArray.value1 | json }}
             </div>
         </div>
     </div>
@@ -203,14 +42,15 @@
             <div class="card-body">
                 <h5 class="card-title">Bind to number[]</h5>
                 <p>
-                    Bind to a simple number array as source.
+                    Bind to a simple number array with a lot of items as source.
                 </p>
 
                 [source]="numberArray"
-                <ng0-select name="value2" [source]="numberArray" [(ngModel)]="value2">
+                <ng0-select name="examples.numberArray.value1" [source]="numberArray"
+                            [(ngModel)]="examples.numberArray.value1">
                 </ng0-select>
 
-                Value: {{ value2 | json }}
+                Value: {{ examples.numberArray.value1 | json }}
             </div>
         </div>
     </div>
@@ -221,13 +61,15 @@
                 <h5 class="card-title">Bind to boolean values</h5>
                 <p>
                     Set source to [true, false] to bind to boolean values.
+                    To format the values, use a formatter.
                 </p>
 
                 [source]="[true, false]"
-                <ng0-select name="value3" [source]="[true, false]" [(ngModel)]="value3">
+                <ng0-select name="examples.booleanArray.value1" [source]="[true, false]"
+                            [(ngModel)]="examples.booleanArray.value1">
                 </ng0-select>
 
-                Value: {{ value3 | json }}
+                Value: {{ examples.booleanArray.value1 | json }}
             </div>
         </div>
     </div>
@@ -238,13 +80,14 @@
                 <h5 class="card-title">Bind to Enums</h5>
                 <p>
                     Pass an Enum reference as source to display the enum items.
+                    To format the values, use a formatter.
                 </p>
 
                 [source]="Sexuality"
-                <ng0-select name="value7" [source]="Sexuality" [(ngModel)]="value7">
+                <ng0-select name="examples.enum.value1" [source]="Sexuality" [(ngModel)]="examples.enum.value1">
                 </ng0-select>
 
-                Value: {{ value7 | json}}
+                Value: {{ examples.enum.value1 | json }}
             </div>
         </div>
     </div>
@@ -258,10 +101,11 @@
                 </p>
 
                 [source]="personList1"
-                <ng0-select name="value8" [source]="personList1" [(ngModel)]="value8">
+                <ng0-select name="examples.personList1.value1" [source]="personList1"
+                            [(ngModel)]="examples.objectArray.value1">
                 </ng0-select>
 
-                Value: {{ value8 | json }}
+                Value: {{ examples.objectArray.value1 | json }}
 
             </div>
         </div>
@@ -272,21 +116,21 @@
             <div class="card-body">
                 <h5 class="card-title">Format items</h5>
                 <p>
-                    Format the display of items in the dropdown and in the input field.
-                    To format a value, you need a formatter function. <br>
+                    To format the display of items in the select component, use "formatBy" input. <br>
+                    To format a value, you need a formatter. <br>
                     There is a set of built-in formatters available, or you can create your own custom formatters.
                 </p>
 
                 Some built-in formatters:
                 <ul>
                     <li>Field formatter</li>
-                    <li>Number formatter</li>
-                    <li>Currency formatter</li>
-                    <li>Locale formatter</li>
+                    <li>Locale formatter </li>
+                    <li>Number formatter (soon)</li>
+                    <li>Currency formatter (soon)</li>
                 </ul>
 
-                To see the list of available built-in formatters, check the
-                <a routerLink="../../localization/formatters">formatters documentation</a> .
+                To read more about formatters, check the
+                <a routerLink="../../localization/formatters">formatters</a> page.
             </div>
 
             <div class="card-footer">
@@ -298,10 +142,11 @@
                 <div class="row g-4">
                     <div class="col-xl-6">
                         [source]="personList1"; formatBy="name"
-                        <ng0-select name="value9" [(ngModel)]="value9" [source]="personList1" formatBy="name">
+                        <ng0-select name="examples.format.value5" [(ngModel)]="examples.format.value5"
+                                    [source]="personList1" formatBy="name">
                         </ng0-select>
 
-                        Value: {{ value9 | json }}
+                        Value: {{ examples.format.value5 | json }}
                     </div>
                 </div>
             </div>
@@ -311,34 +156,48 @@
                 <h6>Locale formatter:</h6>
                 <p>
                     A locale formatter, formats the value according to the current locale. <br>
-                    To use a locale formatter, specify the formatter name prefixed with an @ (e.g., &#64;formatterName).
+                    To use a locale formatter, specify the locale formatter name prefixed with an @ (e.g.,
+                    "&#64;formatterName").
                 </p>
 
                 <div class="row g-4">
                     <div class="col-xl-6">
+                        [source]="[true, false]"; formatBy="@OnOffBoolean"
+                        <ng0-select name="examples.format.value1" [source]="[true, false]"
+                                    [(ngModel)]="examples.format.value1"
+                                    formatBy="@OnOffBoolean">
+                        </ng0-select>
+                        Value: {{ examples.format.value1 | json }}
+                    </div>
+                    <div class="col-xl-6">
+                        formatBy="@EnableDisableBoolean"
+                        <ng0-select name="examples.format.value2" [source]="[true, false]"
+                                    [(ngModel)]="examples.format.value2"
+                                    formatBy="@EnableDisableBoolean">
+                        </ng0-select>
+                        Value: {{ examples.format.value2 | json }}
+                    </div>
+
+                    <div class="col-xl-6">
+                        [source]="Sexuality" formatBy="@SexualityEnum"
+                        <ng0-select name="examples.format.value3" [(ngModel)]="examples.format.value3"
+                                    [source]="Sexuality"
+                                    formatBy="@SexualityEnum">
+                        </ng0-select>
+
+                        Value: {{ examples.format.value3 | json}}
+                    </div>
+
+                    <div class="col-xl-6">
                         [source]="personList1" formatBy="@personFormatter1"
-                        <ng0-select name="value18" [(ngModel)]="value18" [source]="personList1"
+                        <ng0-select name="examples.format.value4" [(ngModel)]="examples.format.value4"
+                                    [source]="personList1"
                                     formatBy="@personFormatter1">
                         </ng0-select>
 
-                        Value: {{ value18 | json}}
+                        Value: {{ examples.format.value4 | json}}
                     </div>
 
-                    <div class="col-xl-6">
-                        [source]="[true, false]"; formatBy="@boolean:OnOff"
-                        <ng0-select name="value4" [source]="[true, false]" [(ngModel)]="value4"
-                                    formatBy="@boolean:OnOff">
-                        </ng0-select>
-                        Value: {{ value4 | json }}
-                    </div>
-
-                    <div class="col-xl-6">
-                        formatBy="@boolean:EnableDisable"
-                        <ng0-select name="value5" [source]="[true, false]" [(ngModel)]="value5"
-                                    formatBy="@boolean:EnableDisable">
-                        </ng0-select>
-                        Value: {{ value5 | json }}
-                    </div>
                 </div>
             </div>
 
@@ -366,31 +225,34 @@
                 <h5 class="card-title">Compare items:</h5>
 
                 <p>
-                    Compare source items with the selected value(s) by a specific field or by a custom function. <br>
-                    This is useful when the source items are objects and the selected value(s) are not the same object
-                    instances.
+                    When working with reference types (e.g., object arrays), you need to specify how to compare the
+                    source items with the selected value(s). <br>
+                    By default, the select component uses strict equality (===) to compare items.
+                    You can change this behavior using the compareBy input. <br>
+
+                    You can compare items by a specific field or by a custom function.
                 </p>
 
-                <div class="row">
-                    <div class="col-xl-3">
-                        compare by a field of an object:
-                        <ng0-select name="value19" [source]="personList1" [(ngModel)]="value19" compareBy="id"
-                                    formatBy="name">
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="personList1"; compareBy="id"
+                        <ng0-select name="examples.compare.value1" [source]="personList1"
+                                    [(ngModel)]="examples.compare.value1" compareBy="id" formatBy="name">
                         </ng0-select>
 
-                        Value: {{ value19 | json }}
+                        Value: {{ examples.compare.value1 | json }}
                     </div>
 
-                    <div class="col-xl-3">
-                        compare by a custom function:
-                        <ng0-select name="value20"
+                    <div class="col-xl-6">
+                        [source]="personList1"; [compareBy]="personComparerFunc"
+                        <ng0-select name="examples.compare.value2"
                                     [source]="personList1"
-                                    [(ngModel)]="value20"
-                                    [compareBy]="personComparer1"
+                                    [(ngModel)]="examples.compare.value2"
+                                    [compareBy]="examples.compare.personComparerFunc"
                                     formatBy="name">
                         </ng0-select>
 
-                        Value: {{ value20 | json }}
+                        Value: {{ examples.compare.value2 | json }}
                     </div>
                 </div>
             </div>
@@ -403,36 +265,202 @@
                 <h5 class="card-title">Custom value writer:</h5>
 
                 <p>
-                    Write back the selected value(s) by a specific field or by a custom function. <br>
+                    When user selects an item, the select component writes back the selected value to the bound
+                    variable. <br>
+                    Sometimes you want customize the value that is written back.
                     This is useful when you want to bind the component to a specific property of an object instead of
-                    the whole object.
+                    the whole object. <br>
+
+                    you can write back the selected value(s) by a specific field or by a custom function.
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="personList1" (default, without using writeBy)
+                        <ng0-select name="examples.write.value1" [source]="personList1"
+                                    [(ngModel)]="examples.write.value1"
+                                    compareBy="id" formatBy="name">
+                        </ng0-select>
+
+                        Value: {{ examples.write.value1 | json }}
+                    </div>
+
+                    <div class="col-xl-6">
+                        [source]="personList1"; writeBy="id"
+                        <ng0-select name="examples.write.value2" [source]="personList1"
+                                    [(ngModel)]="examples.write.value2"
+                                    compareBy="id" formatBy="name" writeBy="id">
+                        </ng0-select>
+
+                        Value: {{ examples.write.value2 | json }}
+                    </div>
+
+                    <div class="col-xl-6">
+                        [source]="personList1"; [writeBy]="personIdWriterFunc"
+                        <ng0-select name="examples.write.value3"
+                                    [source]="personList1"
+                                    [(ngModel)]="examples.write.value3"
+                                    compareBy="id"
+                                    formatBy="name"
+                                    [writeBy]="examples.write.personIdWriterFunc">
+                        </ng0-select>
+
+                        Value: {{ examples.write.value3 | json }}
+                    </div>
+                </div>
+
+                <div class="alert alert-warning mt-4">
+                    <strong>Note:</strong>
+                    Using a value writer is useful when binding to database foreign keys.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Bind to RemoteDataSource</h5>
+                <p>
+                    This select is bound to a RemoteDataSource.
+                    A remote data source is a data source that retrieves data from a remote server (or any source that
+                    is resolved asynchronously).
                 </p>
 
                 <div class="row">
                     <div class="col-xl-3">
-                        With writeBy
-                        <ng0-select name="value10" [source]="personList1" [(ngModel)]="value10" writeBy="id"
-                                    compareBy="id" formatBy="name">
-                        </ng0-select>
-
-                        Value: {{ value10 | json }}
-                    </div>
-
-                    <div class="col-xl-3">
-                        With formatBy + writeBy
-                        <ng0-select name="value11"
-                                    [source]="personList1"
-                                    [(ngModel)]="value11"
+                        [source]="fakeRemoteDataSource1"
+                        <ng0-select name="examples.remoteDatasource.value1"
+                                    [source]="fakeRemoteDataSource1"
+                                    formatBy="name"
                                     compareBy="id"
-                                    formatBy="name">
+                                    [(ngModel)]="examples.remoteDatasource.value1">
                         </ng0-select>
 
-                        Value: {{ value11 | json }}
+                        Value: {{ examples.remoteDatasource.value1 | json }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Manipulating items</h5>
+                <p>
+                    You can change(add/remove/replace) select items.
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-6">
+                        [source]="stringArray"
+                        <ng0-select name="examples.manipulation.value1"
+                                    [source]="stringArray"
+                                    [(ngModel)]="examples.manipulation.value1">
+                        </ng0-select>
+                        Value: {{ examples.manipulation.value1 | json }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-outline-secondary me-2" (click)="examples.manipulation.add()">
+                    Add new Item
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Multi select</h5>
+                <p>
+                    A multi-select component allows the user to select multiple options from a list.
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="stringArray"; multiple="true"
+                        <ng0-select name="multiSelectExample.value1"
+                                    [source]="stringArray"
+                                    [(ngModel)]="multiSelectExample.value1"
+                                    multiple="true">
+                        </ng0-select>
+
+                        Value: {{ multiSelectExample.value1 | json }}
+                    </div>
+
+                    <div class="col-xl-6">
+                        [source]="stringArray"; multiple="true"; showSelectionIndicator="true"
+                        <ng0-select name="multiSelectExample.value2" [source]="stringArray"
+                                    [(ngModel)]="multiSelectExample.value2" multiple="true"
+                                    showSelectionIndicator="true">
+                        </ng0-select>
+
+                        Value: {{ multiSelectExample.value2 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Filter</h5>
+                <p>
+                    To filter the options in the select component, set filterable to true and provide a filter
+                    predicate. <br>
+                    You can pass the name of the property to filter by using the filterBy input or a custom filter
+                    function. <br>
+
+                    By default, the select component will filter item values using a default filter function.
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="stringArray"; filterable="true"
+                        <ng0-select name="examples.filterExample.value1"
+                                    [source]="stringArray"
+                                    [(ngModel)]="examples.filterExample.value1"
+                                    filterable="true">
+                        </ng0-select>
+
+                        Value: {{ examples.filterExample.value1 | json }}
+                    </div>
+
+                    <div class="col-xl-6">
+                        [source]="personList1"; filterable="true"; filterBy="name"
+                        <ng0-select name="examples.filterExample.value1"
+                                    [source]="personList1"
+                                    [(ngModel)]="examples.filterExample.value2"
+                                    formatBy="name"
+                                    filterable="true"
+                                    filterBy="name">
+                        </ng0-select>
+
+                        Value: {{ examples.filterExample.value2 | json }}
+                    </div>
+
+                    <div class="col-xl-12">
+                        [source]="personList1"; filterable="true"; [filterBy]="filterFunc"
+                        <ng0-select name="examples.filterExample.value3"
+                                    [source]="personList1"
+                                    [(ngModel)]="examples.filterExample.value3"
+                                    formatBy="name"
+                                    filterable="true"
+                                    [filterBy]="examples.filterExample.filterFunc">
+                        </ng0-select>
+
+                        Value: {{ examples.filterExample.value3 | json }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <div class="col-xl-12">
         <div class="card">
@@ -442,22 +470,27 @@
                     You can customize the display of items in the select dropdown by using ng-template.
                 </p>
 
-                <div class="row">
-                    <div class="col-xl-3">
-                        Select an object
-                        <ng0-select name="value14" [source]="personList1" [(ngModel)]="value14"
-                                    formatBy="name">
-                            <ng-template let-option>
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        [source]="personList1"; formatBy="name"
+                        <ng0-select name="examples.customTemplate.value1" [source]="personList1"
+                                    [(ngModel)]="examples.customTemplate.value1" formatBy="name">
+                            <ng-template let-context>
                                 <div class="py-1">
                                     ❤️
-                                    <strong>{{option.value.name}}</strong> <br>
-                                    <small>Extra info about {{option.value.name}}</small>
+                                    <strong>{{context.value.name}}</strong> (ID: {{context.value.id}}) <br>
+                                    <small class="me-1">isActive: {{context.item.isActive()}}, </small>
+                                    <small class="">isSelected: {{context.item.isSelected()}}</small>
                                 </div>
                             </ng-template>
                         </ng0-select>
 
-                        Value: {{ value14 | json }}
+                        Value: {{ examples.customTemplate.value1 | json }}
                     </div>
+                </div>
+
+                <div class="alert alert-warning mt-3">
+                    This feature is not stable yet. Do not use it for the moment.
                 </div>
             </div>
         </div>
@@ -466,23 +499,30 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h5 class="card-title">Handle empty item</h5>
+                <h5 class="card-title">Disabled state</h5>
                 <p>
+                    Disable the select by setting the disabled property to true.
                 </p>
 
                 <div class="row">
-                    <div class="col-xl-3">
-                        Default
-                        <ng0-select name="value16" [source]="[true, false]" [(ngModel)]="value16"
-                                    formatBy="boolean">
+                    <div class="col-xl-6">
+                        [source]="stringArray"
+                        <ng0-select name="examples.disabledState.isDisabled" [source]="stringArray"
+                                    [(ngModel)]="examples.disabledState.value1"
+                                    [disabled]="examples.disabledState.isDisabled">
                         </ng0-select>
+                        Value: {{ examples.disabledState.value1 | json }}
 
-                        value: {{ value16 | json }}
                     </div>
+                </div>
+
+                <div class="mt-4">
+                    <button class="btn btn-outline-secondary me-2"
+                            (click)="examples.disabledState.isDisabled = !examples.disabledState.isDisabled">
+                        Toggle disable state
+                    </button>
                 </div>
             </div>
         </div>
     </div>
-
-
 </div>

@@ -6,6 +6,7 @@ import { DataResult, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data
 import { delay, of } from 'rxjs';
 import { Sexuality } from 'src/app/common/enums';
 import { RouterLink } from "@angular/router";
+import { format } from 'path';
 
 
 interface Person {
@@ -25,9 +26,8 @@ interface Person {
     ]
 })
 export class SelectExampleComponent {
-    counter = signal(0);
+    Sexuality = Sexuality;
     width = signal('200px');
-
     stringArray = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
     numberArray = Array.from({ length: 3000 }, (_, i) => i + 1);
     personList1: Person[] = [
@@ -40,35 +40,68 @@ export class SelectExampleComponent {
 
     localDatasource1 = new LocalDataSource(["Option 1", "Option 2", "Option 3"]);
     fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult(this.personList1)).pipe(delay(3000)))
-    Sexuality = Sexuality;
 
-    value1 = 'Ten';
-    value2?: string;
-    value3?: number;
-    value4 = true;
-    value5?: boolean;
-    value6?: boolean;
-    value7?: boolean;
-    value8?: boolean;
-    value9?: boolean;
-    value10?: number;
-    value11?: number;
-    localDatasourceExample = {
-        value1: undefined
+    examples = {
+        stringArray: {
+            value1: 'Three'
+        },
+        numberArray: {
+            value1: 5
+        },
+        booleanArray: {
+            value1: undefined
+        },
+        enum: {
+            value1: Sexuality.female
+        },
+        objectArray: {
+            value1: undefined
+        },
+        format: {
+            value1: undefined,
+            value2: undefined,
+            value3: undefined,
+            value4: undefined,
+            value5: undefined,
+        },
+        compare: {
+            value1: 2,
+            value2: { id: 3 },
+            personComparerFunc: (sourceItem?: Person, value?: Person) => {
+                // Expect null values for sourceItem or value, so compare values with null-safe operator (?.)
+                return sourceItem?.id === value?.id;
+            }
+        },
+        write: {
+            value1: undefined,
+            value2: undefined,
+            value3: undefined,
+            personIdWriterFunc: (item: Person) => item.id
+        },
+        remoteDatasource: {
+            value1: 3
+        },
+        manipulation: {
+            value1: undefined,
+            add: () => {
+                let newItem = `[${Date()}]: A new Item!`;
+                this.stringArray = [...this.stringArray, newItem];
+            }
+        },
+        filterExample: {
+            value1: undefined,
+            value2: undefined,
+            value3: undefined,
+            filterFunc: (item: Person, filter: string) => item.name.toLocaleLowerCase().includes(filter.toLowerCase())
+        },
+        customTemplate: {
+            value1: undefined,
+        },
+        disabledState: {
+            value1: undefined,
+            isDisabled: false
+        }
     }
-
-    remoteDatasourceExample = {
-        value1: 3
-    }
-
-    value14?: number;
-    value15?: number;
-    filterExample = {
-        value1: undefined,
-        value2: undefined,
-        value3: undefined,
-        filterFunc: (item: Person, filter: string) => item.name.toLocaleLowerCase().includes(filter.toLowerCase())
-    };
 
     multiSelectExample = {
         value1: undefined,
@@ -79,27 +112,12 @@ export class SelectExampleComponent {
     value16?: number;
     value17?: number;
     value18?: number;
-    value19 = { id: 2 };
-    value20 = { id: 3 };
 
     // An object formatter function
     // Note: You should handle null|undefined objects too.
     personFormatterFunc = (item?: Person) => item?.name || '';
 
-    personComparer1 = (item?: Person, other?: Person) => {
-        return item?.id === other?.id;
-    }
 
-    onAddToDataSource1() {
-        this.counter.update(x => ++x);
-        // this.localDatasource1.push(`Option ${this.counter()} was pushed.`)
-    }
 
-    // onRemoveFromLocalDataSource1() {
-    //     this.localDatasource1.remove(0);
-    // }
 
-    // onReplaceLocalDataSource1() {
-    //     this.localDatasource1.replace(0, 'This item is replaced!')
-    // }
 }

@@ -75,25 +75,25 @@
                     </div>
 
                     <div class="col-xl-6">
-                        [source]="[true, false]"; formatBy="@boolean:OnOff"
+                        [source]="[true, false]"; formatBy="@OnOffBoolean"
                         <ng0-list name="value6" [source]="[true, false]" [(ngModel)]="value6"
-                                  formatBy="@boolean:OnOff">
+                                  formatBy="@OnOffBoolean">
                         </ng0-list>
                         Value: {{ value6 }}
                     </div>
 
                     <div class="col-xl-6">
-                        [source]="[true, false]"; formatBy="@boolean:CorrectIncorrect"
+                        [source]="[true, false]"; formatBy="@CorrectIncorrectBoolean"
                         <ng0-list name="value7" [source]="[true, false]" [(ngModel)]="value7"
-                                  formatBy="@boolean:CorrectIncorrect">
+                                  formatBy="@CorrectIncorrectBoolean">
                         </ng0-list>
                         Value: {{ value7 }}
                     </div>
 
                     <div class="col-xl-6">
-                        [source]="[true, false]"; formatBy="@boolean:EnableDisable"
+                        [source]="[true, false]"; formatBy="@EnableDisableBoolean"
                         <ng0-list name="value8" [source]="[true, false]" [(ngModel)]="value8"
-                                  formatBy="@boolean:EnableDisable">
+                                  formatBy="@EnableDisableBoolean">
                         </ng0-list>
                         Value: {{ value8 }}
                     </div>
@@ -119,9 +119,9 @@
                         Value: {{ value18 }}
                     </div>
                     <div class="col-xl-6">
-                        [source]="Sexuality"; formatBy="@enum:Sexuality"
+                        [source]="Sexuality"; formatBy="@SexualityEnum"
                         <ng0-list name="value24" [source]="Sexuality" [(ngModel)]="value24"
-                                  formatBy="@enum:Sexuality">
+                                  formatBy="@SexualityEnum">
                         </ng0-list>
 
                         Value: {{ value24 }}

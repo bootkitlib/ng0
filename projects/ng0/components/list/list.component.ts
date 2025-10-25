@@ -2,7 +2,7 @@ import { Component, ElementRef, input, signal, HostListener, inject, forwardRef,
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { objectFormatterAttribute, defaultFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListItem } from "./list-item";
 import {
     CssClassAttribute, defaultEqualityComparer, equalityComparerAttribute, valueWriterAttribute,
@@ -99,7 +99,7 @@ export class ListComponent implements ControlValueAccessor {
      * A fromatter to convert each item to a string for display.
      * Default converts the item to a string using its toString method.
      */
-    public readonly formatBy = input(defaultObjectFormatter, {
+    public readonly formatBy = input(defaultFormatter, {
         transform: objectFormatterAttribute(this._localizationService.get())
     });
 

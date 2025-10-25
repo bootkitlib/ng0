@@ -4,7 +4,7 @@ import { dataSourceAttribute, DataSource, DataSourceLike, DataRequest } from '@b
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { objectFormatterAttribute, defaultObjectFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { objectFormatterAttribute, defaultFormatter, LocalizationService } from '@bootkit/ng0/localization';
 import { ListComponent, ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
 import {
     CssClassAttribute, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter,
@@ -102,7 +102,7 @@ export class SelectComponent implements ControlValueAccessor {
     /**
      * A fromatter to convert each item to a string for display.
      */
-    public readonly formatBy = input(defaultObjectFormatter, {
+    public readonly formatBy = input(defaultFormatter, {
         transform: objectFormatterAttribute(this._localizationService.get())
     });
 

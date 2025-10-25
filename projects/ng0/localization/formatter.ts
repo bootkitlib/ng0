@@ -9,16 +9,16 @@ import { Locale } from "./locale";
 export type ObjectFormatter = (obj: any, ...params: any[]) => any;
 
 /**
- * ObjectFormatterLike  
+ * Object formatter-like types.  
  */
 export type ObjectFormatterLike = ObjectFormatter | string | number | Array<ObjectFormatter | string | number>;
 
 /**
- * Default format function.
+ * Default object formatter function.
  * @param value The item to format.
  * @returns The formatted string.
  */
-export function defaultObjectFormatter(obj: any): string {
+export function defaultFormatter(obj: any): string {
     return obj?.toString() || '';
 }
 
@@ -34,19 +34,29 @@ function createFieldFormatter(field: string): ObjectFormatter {
 
 /**
  * Creates an array index formatter function.
+ * An array index formatter always returns the item at the specified index from an array object.
  * @param index 
- * @returns 
+ * @returns an ObjectFormatter function.
  * @private
  */
-function createArrayIndexFormatter(index: number): ObjectFormatter {
+function createIndexFormatter(index: number | boolean): ObjectFormatter {
     return (obj: any) => {
         if (Array.isArray(obj)) {
-            return obj[index];
+            return obj[+index]; // use + to cast boolean values to numbers
         }
 
         throw Error('Object is not an array');
     }
 }
+
+function createArrayFormatter(array: any[]): ObjectFormatter {
+    if (!Array.isArray(array)) {
+        throw Error('Object is not an array');
+    }
+
+    return (index: number | boolean) => array[+index];
+}
+
 
 /**
  * Returns a formatter function by its name and parameters.
@@ -60,15 +70,15 @@ function createLocaleFormatter(locale: Locale, formatterName: string): ObjectFor
 
     if (!formatter) {
         console.warn(`The formatter "${formatterName}" is not defined in locale ${locale.definition.name}`);
-        return (value) => value?.toString() || '' // return a default formatter
+        return defaultFormatter;
     }
 
     if (formatterType === 'function') {
         return formatter as ObjectFormatter;
     } else if (Array.isArray(formatter)) {
-        return (value: number | boolean) => formatter[+value]; // use + to cast boolean values to numbers
+        return createArrayFormatter(formatter);
     } else if (formatterType == 'object' && formatter != null) {
-        return (value: string) => (formatter as any)[value] || ''
+        return (value: string) => (formatter as any)[value] || '';
     } else {
         throw Error(`Invalid locale formatter: ${formatterName}`);
     }
@@ -85,7 +95,7 @@ export function createObjectFormatter(formatter: ObjectFormatterLike, locale?: L
         case 'function':
             return formatter;
         case 'number':
-            return createArrayIndexFormatter(formatter);
+            return createIndexFormatter(formatter);
         case 'string':
             if (formatter.startsWith('@')) {
                 if (locale == null) {
@@ -97,6 +107,7 @@ export function createObjectFormatter(formatter: ObjectFormatterLike, locale?: L
             }
         case 'object':
             if (Array.isArray(formatter)) {
+                // Create a composite formatter from multiple formatters.
                 const formatters = formatter.map(item => createObjectFormatter(item, locale));
                 return (obj: any) => formatters.reduce((previous, current, index) => index == 0 ? current(obj) : current(previous));
             }

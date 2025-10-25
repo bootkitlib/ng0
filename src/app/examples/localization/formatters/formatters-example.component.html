@@ -1,8 +1,7 @@
-<div class="alert alert-warning">
-    This example demonstrates how to use formatters in your application. <br>
-    Formatters are used to format data for display purposes, such as dates, numbers, and currencies.
-</div>
-
+<p>
+    Formatters are used to format data for display purposes, such as dates, numbers, and currencies.<br>
+    You can use built-in formatters or create your own custom formatters.
+</p>
 
 <div class="row g-3">
     <div class="col-lg-12">
@@ -18,7 +17,7 @@
                 Formatter = 'name' <br>
 
                 <span class="text-info">
-                    Formatted Value = {{fieldExample.value | ng0Format:'name'}}
+                    Formatted Value = {{fieldExample.value | ng0Format:'name' | json}}
                 </span>
             </div>
         </div>
@@ -41,7 +40,42 @@
                 </span>
             </div>
         </div>
+    </div>
 
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Number formatter</h5>
+                <p>
+                    Number formatter formats numeric values for display purposes.<br>
+                </p>
+                Not implemented!
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Currency formatter</h5>
+                <p>
+                    Currency formatter formats numeric values as currency for display purposes.<br>
+                </p>
+
+                Not implemented!
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Date formatter</h5>
+                <p>
+                    Date formatter formats date values for display purposes.<br>
+                </p>
+
+                Not implemented!
+            </div>
+        </div>
     </div>
 
     <div class="col-lg-12">
@@ -51,7 +85,8 @@
                 <h5 class="card-title">Locale Formatters</h5>
                 <p>
                     A locale formatter formats a value into a human-readable string based on the app Locale.<br>
-                    A Locale formatter starts with the <span class="fw-bold text-info">@</span> character followed by the formatter name.<br>
+                    A Locale formatter starts with the <span class="fw-bold text-info">@</span> character followed by
+                    the formatter name.<br>
                     This example shows how to use locale formatters to format enums.
                     .<br>
                 </p>
@@ -61,16 +96,30 @@
             <div class="card-footer">
                 <h6>Formatting Enums</h6>
                 Value = {{enumExample.value | json}} <br>
-                Formatter = "@enum:Sexuality" <br>
+                Formatter = "@SexualityEnum" <br>
 
                 <span class="text-info">
-                    Formatted Value = {{enumExample.value | ng0Format: "@enum:Sexuality"}}
+                    Formatted Value = {{enumExample.value | ng0Format: "@SexualityEnum"}}
                 </span>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-6">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Composite formatters</h5>
+                <p>
+                    A Composite formatter is a series of formatters that are applied sequentially to transform data
+                    through multiple stages.<br>
+                    Each formatter in the chain processes the output of the previous formatter, allowing for complex
+                    data transformations.<br>
+                    This example shows how to combine multiple formatters to achieve the desired output format.
+                </p>
+
+                Not implemented!
+            </div>
+        </div>
 
     </div>
 </div>

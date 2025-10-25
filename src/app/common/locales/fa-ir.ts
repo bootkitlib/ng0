@@ -40,13 +40,14 @@ export const APP_FA_IR_LOCALE = FA_IR_LOCALE.extend({
         }
     },
     formatters: {
-        'boolean:Default': ['خیر', 'بله'],
-        'boolean:CorrectIncorrect': ['غلط', 'صحیح'],
-        'boolean:YesNo': ['خیر', 'بله'],
-        'boolean:TrueFalse': ['غلط', 'درست'],
-        'boolean:EnableDisable': ['غیرفعال', 'فعال'],
-        'boolean:OnOff': ['خاموش', 'روشن'],
-        'enum:Sexuality': {
+        'Boolean': ['خیر', 'بله'],
+        'CorrectIncorrectBoolean': ['غلط', 'صحیح'],
+        'YesNoboolean': ['خیر', 'بله'],
+        'TrueFalseBoolean:': ['غلط', 'درست'],
+        'EnableDisableBoolean': ['غیرفعال', 'فعال'],
+        'OnOffBoolean': ['خاموش', 'روشن'],
+        
+        'SexualityEnum': {
             'Male': 'مرد',
             'Female': 'زن',
             'Other': 'سایر'
