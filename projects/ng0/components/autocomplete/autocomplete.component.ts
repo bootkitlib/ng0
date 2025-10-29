@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, input, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, computed, untracked } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, computed, untracked, numberAttribute } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataSource, DataSourceLike, DataRequest } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -38,6 +38,7 @@ import {
     }
 })
 export class AutocompleteComponent implements ControlValueAccessor {
+
     // private _resizeObserver?: ResizeObserver;
     private _viewpoerRulerSubscription?: Subscription;
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
@@ -77,6 +78,13 @@ export class AutocompleteComponent implements ControlValueAccessor {
      */
     public readonly multiple = input(false, {
         transform: booleanAttribute
+    });
+
+    /**
+     * Indicates the maximum number of suggestions to display.
+     */
+    public readonly suggestions = input(10, {
+        transform: numberAttribute
     });
 
     /**
@@ -149,18 +157,24 @@ export class AutocompleteComponent implements ControlValueAccessor {
     });
 
     constructor() {
-        ['ng0-select', 'form-select'].forEach(c => this._renderer.addClass(this._elementRef.nativeElement, c));
+        ['ng0-autocomplete', 'form-control'].forEach(c => this._renderer.addClass(this._elementRef.nativeElement, c));
         this._scrollStrategy = this._overlay.scrollStrategies.block();
 
-        effect(() => {
-            let source = this.source();
-            source.load(new DataRequest()).subscribe(res => {
-                untracked(() => {
-                    this._sourceItems.set(res.data);
-                    this._findAndSelectItems();
-                    this._changeDetectorRef.markForCheck();
-                })
-            });
+    }
+
+    _onInputChange(value: string) {
+        let source = this.source();
+        let request = new DataRequest({
+            page: { index: 0, size: this.suggestions(), zeroBased: true },
+            filters: [{ value }],
+            computeTotal: false,
+        });
+        source.load(request).subscribe(res => {
+            untracked(() => {
+                this._sourceItems.set(res.data);
+                this._findAndSelectItems();
+                this._changeDetectorRef.markForCheck();
+            })
         });
     }
 

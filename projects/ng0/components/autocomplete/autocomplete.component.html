@@ -10,6 +10,8 @@
 }
 }
 
+<input type="text" (input)="_onInputChange($event.target.value)" >
+
 @if(source().isLoading()) {
 <div class="spinner-grow text-secondary spinner-grow-sm ng0-select-spinner" role="status">
     <span class="visually-hidden">Loading...</span>

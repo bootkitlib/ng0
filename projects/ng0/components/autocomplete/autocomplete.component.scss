@@ -26,6 +26,11 @@ ng0-autocomplete {
         outline: 0;
         box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) var(--bs-focus-ring-blur, 0) var(--bs-focus-ring-width) var(--bs-focus-ring-color);
     }
+
+    input {
+        outline: 0;
+        border: 0;
+    }
 }
 
 .ng0-select-dropdown {

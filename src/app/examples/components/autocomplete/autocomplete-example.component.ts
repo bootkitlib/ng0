@@ -15,6 +15,7 @@ import { AutocompleteModule } from '@bootkit/ng0/components/autocomplete';
 export class AutocompleteExampleComponent {
     fruit = { name: 'Apple', value: 'apple' };
 
-    source = [ { name: 'Apple', value: 'apple' },];
+    stringArray = ['One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+
     formatter = (v: any) => v ? v.name : '';
 }
