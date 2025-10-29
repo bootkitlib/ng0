@@ -38,23 +38,23 @@ export class LocalDataSource extends DataSource {
     let result: any[];
 
     // Filtering
-    if (Array.isArray(request.filters) && request.filters.length > 0) {
-      request.filters.forEach(filter => {
-        if (!filter.field) {
-          throw Error('DataRequestFilter "field" cannot be null.');
-        }
+    // if (Array.isArray(request.filters) && request.filters.length > 0) {
+    //   request.filters.forEach(filter => {
+    //     if (!filter.filterBy) {
+    //       throw Error('A filterBy function must be provided for LocalDataSource filters.');
+    //     }
 
-        let isPassedByFilter = getFilterFunction(filter);
+    //     let isPassedByFilter = getFilterFunction(filter);
 
-        for (let i = 0; i < filteredValues.length; i++) {
-          let row = filteredValues[i];
-          if (!isPassedByFilter(row[filter.field], filter.value)) {
-            filteredValues.splice(i, 1);
-            i--; // Adjust index after removal
-          }
-        }
-      });
-    }
+    //     for (let i = 0; i < filteredValues.length; i++) {
+    //       let row = filteredValues[i];
+    //       if (!isPassedByFilter(row[filter.field], filter.value)) {
+    //         filteredValues.splice(i, 1);
+    //         i--; // Adjust index after removal
+    //       }
+    //     }
+    //   });
+    // }
 
     // Pagination
     if (request.page) {

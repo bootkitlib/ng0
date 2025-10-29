@@ -1,3 +1,5 @@
+import { FilterPredicate } from "@bootkit/ng0/common";
+
 /**
  * DataRequest class represents a request for data with pagination, filtering, sorting, and field selection.
  * It is used to encapsulate the parameters needed to fetch data from a data source.
@@ -84,6 +86,11 @@ export interface DataRequestFilter {
      * Default is false.
      */
     caseSensitive?: boolean;
+
+    /**
+     * A custom filter function to apply for filtering.
+     */
+    filterBy?: FilterPredicate;
 }
 
 // export enum DataRequestFilterOperator {
