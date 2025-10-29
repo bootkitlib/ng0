@@ -1,0 +1,57 @@
+@if(multiple()) {
+
+@for(item of _selectedItems.values(); track $index; let last=$last) {
+{{formatBy()(item)}}@if(!last) {,}
+}
+
+} @else {
+@if(_selectedItems.size > 0) {
+{{formatBy()(_selectedItems.values().next().value)}}
+}
+}
+
+@if(source().isLoading()) {
+<div class="spinner-grow text-secondary spinner-grow-sm ng0-select-spinner" role="status">
+    <span class="visually-hidden">Loading...</span>
+</div>
+
+&nbsp; <!-- This space is required to prevent layout shift after loading indicator hides. -->
+}
+
+<ng-template cdkConnectedOverlay
+             [cdkConnectedOverlayOrigin]="_elementRef.nativeElement"
+             [cdkConnectedOverlayOpen]="open()"
+             [cdkConnectedOverlayScrollStrategy]="_scrollStrategy"
+             [cdkConnectedOverlayPush]="false"
+             [cdkConnectedOverlayFlexibleDimensions]="true"
+             [cdkConnectedOverlayPanelClass]="['ng0-select-dropdown']"
+             [cdkConnectedOverlayWidth]="_elementRef.nativeElement.clientWidth"
+             (overlayOutsideClick)="this.open.set(false)"
+             (attach)="_onOverlayAttach();"
+             (detach)="_onOverlayDetach()">
+
+    @if(filterable()) {
+    <div class="ng0-select-filter-container">
+        <input #filterInput
+               type="text"
+               class="ng0-select-filter-input"
+               [attr.placeholder]="filterPlaceholder()"
+               (input)="_filterValue.set($event.target.value)"
+               (keydown)="_onFilterKeydown($event)">
+    </div>
+    }
+
+    <ng0-select-list #list
+                     [source]="_sourceItems()"
+                     [multiple]="multiple()"
+                     [formatBy]="formatBy()"
+                     [compareBy]="compareBy()"
+                     [itemClass]="itemClass()"
+                     [showSelectionIndicator]="showSelectionIndicator()"
+                     [itemTemplate]="itemTemplate"
+                     [filterBy]="_filterPredicate()"
+                     focusMode="none"
+                     (mousedown)="$event.preventDefault(); $event.stopImmediatePropagation()"
+                     (itemSelect)="_onListSelectionChange($event)">
+    </ng0-select-list>
+</ng-template>

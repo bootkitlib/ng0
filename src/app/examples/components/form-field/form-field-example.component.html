@@ -1,29 +1,102 @@
-Form Field
-<!-- <form [ngFormOptions]="{updateOn: 'blur'}">
-    <ng0-form-field label="Field 1">
-        <input type="text" class="form-control" name="p1" [(ngModel)]="p1" [required]="true" [minlength]="5">
-    </ng0-form-field>
+<p>
+    A form field is a wrapper component that provides common UI and functionality for form controls,
+    such as labels, hints, and error messages. <br>
 
-</form> -->
+    You can put any form control inside a form field, including inputs, selects, and textareas.
+    Form field supports both template driven and reactive forms.
+    It detects control validation errors and shows a localized error message.
+</p>
 
-<form >
-    <ng0-form-field label="Field 1">
-        <input type="number" class="form-control" name="p1" [(ngModel)]="p1" [required]="true" [min]="5" max="10">
-    </ng0-form-field>
+<div class="row g-4">
+    <div class="col-xl-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Template driven forms</h5>
+                <p>
+                    This example demonstrates how to use the form field component with template driven forms.
+                </p>
 
-    <!-- <jss-form-field label="p2" hint="this is hint">
-        <input type="text" class="form-control" name="p2" [formControl]="p2" [required]="true">
-    </jss-form-field> -->
-</form>
-
-
-
-<!-- <div class="input-group mb-3 was-validated">
-    <span class="input-group-text" id="basic-addon1">@</span>
-    <input type="text" aria-label="First name" class="form-control" required> -->
-    <!-- <div class="form-floating">
-        <input class="form-control" id="floatingPassword">
-        <label for="floatingPassword">Password</label>
+                <ng0-form-field label="This is a label" hint="This is a hint">
+                    <input class="form-control" name="examples.basicUsage.value"
+                           [(ngModel)]="examples.basicUsage.value">
+                </ng0-form-field>
+            </div>
+        </div>
     </div>
-    <input type="text" aria-label="First name" class="form-control"> -->
-<!-- </div> -->
+
+    <div class="col-xl-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Reactive forms</h5>
+                <p>
+                    This example demonstrates how to use the form field component with reactive forms.
+                </p>
+
+                <ng0-form-field label="Field" hint="This is a hint">
+                    <input class="form-control" [formControl]="examples.reactiveForms.formControl1">
+                </ng0-form-field>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Required field</h5>
+                <p>
+                    This example shows a required form field. The asterisk (*) indicates that the field is required.
+                </p>
+
+                <ng0-form-field label="Field" hint="This is a hint">
+                    <input class="form-control" name="examples.required.value"
+                           [(ngModel)]="examples.required.value" required>
+                </ng0-form-field>
+
+                <div class="alert alert-warning mt-3">
+                    When the field is required, the form-field component automatically detects it and shows the
+                    required indicator next to the label.
+                    If you want to manually control the display of the required indicator, use the showRequired input
+                    property.
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="col-xl-6">
+        <div class="card h-100">
+            <div class="card-body">
+                <h5 class="card-title">Conditional required</h5>
+                <p>
+                    This example shows a form field that is conditionally required based on the value of another
+                    control. <br><br>
+                </p>
+
+                <abbr>
+                    When the required validation is changed dynamically, the form field can not detects it
+                    automatically.
+                    You need to bind the showRequired input to a variable that tracks the required state.
+                </abbr>
+
+                [showRequired]="isRequired"
+                <ng0-form-field hint="This is a hint"
+                                [showRequired]="examples.conditionalRequired.isRequired">
+                    <input class="form-control"
+                           [(ngModel)]="examples.conditionalRequired.value"
+                           [required]="examples.conditionalRequired.isRequired">
+                </ng0-form-field>
+
+
+
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-secondary"
+                        (click)="examples.conditionalRequired.isRequired = !examples.conditionalRequired.isRequired">Toggle
+                    Required
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

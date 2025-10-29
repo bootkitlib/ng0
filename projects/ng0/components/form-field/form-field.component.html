@@ -1,7 +1,12 @@
+@let errorText = _errorText();
+@let showRequiredIndicator = showRequired();
+
 @if(label()) {
-<label class="form-field-label">
+<label class="ng0-form-field-label">
   {{label()}}
-  <span *ngIf="isRequired && showRequiredIndicator()" class="isc-form-field-required-marker">*</span>
+  @if((showRequiredIndicator === true || (showRequiredIndicator == undefined && _hasRequiredControl()))) {
+  <span class="ng0-form-field-required-indicator">*</span>
+  }
 </label>
 }
 
@@ -18,15 +23,15 @@
 </ng-template>
 
 @if(showSubscripts()) {
-<div class="form-field-subscript-wrapper">
-  @if(showErrors() && errorText && (touched || dirty)) {
-  <span class="form-field-error text-danger">
+<div class="ng0-form-field-subscript">
+  @if(showErrors() && errorText && _ngControl?.touched) {
+  <small class="ng0-form-field-error text-danger" animate.enter="ng0-form-field-fadein">
     {{errorText}}
-  </span>
+  </small>
   }@else if(hint()) {
-  <span class="form-field-hint">
+  <small class="ng0-form-field-hint">
     {{hint()}}
-  </span>
+  </small>
   }
 </div>
 }

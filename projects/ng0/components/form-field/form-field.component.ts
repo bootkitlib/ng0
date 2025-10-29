@@ -1,128 +1,98 @@
 import { CommonModule } from '@angular/common';
-import { DestroyRef, HostListener, input, signal } from '@angular/core';
-import { Component, Input, ContentChild, AfterContentInit, Optional, HostBinding, OnInit, OnDestroy, ElementRef, Renderer2 } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, computed, DestroyRef, ElementRef, HostListener, inject, input, Renderer2, signal, ViewEncapsulation } from '@angular/core';
+import { Component, ContentChild, AfterContentInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormControl, NgControl, NgForm } from '@angular/forms';
-import { Locale, LocalizationService } from '@bootkit/ng0/localization';
+import { LocalizationService } from '@bootkit/ng0/localization';
 
 @Component({
   selector: 'ng0-form-field, ng0-field',
   exportAs: 'ng0FormField',
   templateUrl: './form-field.component.html',
   styleUrls: ['./form-field.component.scss'],
+  encapsulation: ViewEncapsulation.None,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [
-    CommonModule
-  ],
+  imports: [CommonModule],
+  host: {
+    '[class.ng0-form-field-required]': '_hasRequiredControl()',
+  }
 })
-export class FormFieldComponent implements OnInit, AfterContentInit, OnDestroy {
+export class FormFieldComponent implements AfterContentInit {
+  @ContentChild(NgControl, { static: true, read: ElementRef }) private _ngControlElement?: ElementRef;
+  private _destroyRef = inject(DestroyRef);
+  private _renderer = inject(Renderer2);
+  private _localizationService = inject(LocalizationService);
+  // private _form = inject(NgForm, { optional: true });
+  @ContentChild(NgControl) protected _ngControl?: NgControl;
+  protected _status = signal('');
+  protected _hasRequiredControl = signal(false);
+  protected _errorText = computed<string | undefined>(() =>
+    this._status() === 'INVALID' ?
+      this._localizationService.get()?.translateFirstError(this._ngControl!.errors, 'Invalid')?.text :
+      undefined
+  );
 
   /**
    * The label text for the form field.
    */
-  public label = input<string>();
+  public readonly label = input<string>();
 
   /**
    * The hint text to display below the form field.
-   * This is typically used to provide additional information or instructions to the user.
    */
-  public hint = input<string>();
+  public readonly hint = input<string>();
 
   /**
    * If true, the form-field will show validation errors.
-   * This is useful for displaying validation messages when the form control is invalid.
    */
-  public showErrors = input(true);
+  public readonly showErrors = input(true, { transform: booleanAttribute });
 
   /**
-   * If true, the form-field will show a red asterisk for required fields.
-   * This is only a visual indicator and does not enforce validation.
+   * If undefined, the indicator will be shown based on the control's required state.
+   * If true, the form-field will show a required indicator (*) next to the label (regardless of the control's required state).
+   * If false, the required indicator will not be shown (regardless of the control's required state).
    */
-  public showRequiredIndicator = input(true);
+  public readonly showRequired = input<boolean | undefined>(undefined);
 
   /**
    * If true, the form-field will show subscripts (e.g. hints, errors) for the field label.
-   * This is useful for displaying additional information or validation messages.
    */
-  public showSubscripts = input(true);
+  public readonly showSubscripts = input(true, { transform: booleanAttribute });
 
   /**
    * If true, the form-field will be rendered inside a ".input-group" element.
    */
-  public inputGroup = input(true);
-
-  /**
-   * Returns the first localized error of the control 
-   */
-  public get errorText() { return this._errorText; }
-
-  /** Reports whether the control is touched. */
-  public get touched(): boolean | null | undefined { return this._ngControl?.touched; }
-
-  /** Reports whether the control is dirty. */
-  public get dirty(): boolean | null | undefined { return this._ngControl?.dirty; }
-
-  /** Returns true if this form-field is required, otherwise returns false. */
-  @HostBinding('class.required-form-field')
-  public get isRequired(): boolean { return this._isRequired; }
-
-  @HostListener('focusout')
-  private _onFocusOut() { this._validate(); }
-
-  @ContentChild(NgControl, { static: true })
-  private _ngControl?: NgControl;
-
-  @ContentChild(NgControl, { static: true, read: ElementRef })
-  private _ngControlElement?: ElementRef;
-
-  private _isRequired = false;
-  private _locale?: Locale;
-  private _errorText?: string;
-
-  constructor(
-    private _renderer: Renderer2,
-    private _destroyRef: DestroyRef,
-    @Optional() private _form: NgForm,
-    private _ls: LocalizationService,
-  ) {
-    this._locale = this._ls.get();
-    this._ls.change.pipe(takeUntilDestroyed()).subscribe(e => this._locale = e.new);
-  }
-
-  ngOnInit(): void {
-  }
+  public readonly inputGroup = input(true, { transform: booleanAttribute });
 
   ngAfterContentInit(): void {
-    this._isRequired = this._isRequiredField();
+    this._hasRequiredControl.set(this._isControlRequired());
 
     if (this._ngControl) {
       this._ngControl?.statusChanges?.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(change => {
-        this._validate();
+        this._status.set(change);
+        this._updateControlStyles();
       });
     }
   }
 
-  private _validate() {
-    if (!this._ngControl || !this.dirty || !this.touched) {
-      return;
-    }
-
-    const invalid = this._ngControl.status === 'INVALID';
-    if (invalid) {
-      this._errorText = this._locale?.translateFirstError(this._ngControl.errors, 'Invalid')?.text;
-    } else {
-      this._errorText = undefined;
-    }
-    this._renderer.addClass(this._ngControlElement!.nativeElement, invalid ? 'is-invalid' : 'is-valid');
-    this._renderer.removeClass(this._ngControlElement!.nativeElement, invalid ? 'is-valid' : 'is-invalid');
-  }
-
-  private _isRequiredField(): boolean {
-    const validator = this._ngControl?.validator;
+  private _isControlRequired(): boolean {
+    const validator = this._ngControl?.validator || this._ngControl?.control?.validator;
     const errors = validator && validator(new FormControl(null));
     return errors != null && errors['required'] === true;
   }
 
-  ngOnDestroy(): void {
+  private _updateControlStyles() {
+    if (this._ngControl?.touched) {
+      let invalid = this._status() === 'INVALID';
+      let elm = this._ngControlElement!.nativeElement;
+      this._renderer.addClass(elm, invalid ? 'is-invalid' : 'is-valid');
+      this._renderer.removeClass(elm, invalid ? 'is-valid' : 'is-invalid');
+    }
+  }
+
+  @HostListener('focusout')
+  private _onFocusOut() {
+    this._updateControlStyles();
   }
 }

@@ -1,2 +1,2 @@
-export * from './autocomplete-container.component';
+export * from './autocomplete.component';
 export * from './autocomplete.module';
