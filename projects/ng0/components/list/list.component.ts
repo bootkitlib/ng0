@@ -166,7 +166,7 @@ export class ListComponent implements ControlValueAccessor {
     /**
      * Event emitted when the selection state of an item changes by user interaction.
      */
-    @Output() public readonly selectionChange = new EventEmitter<ListSelectionChangeEvent>();
+    @Output() public readonly itemSelect = new EventEmitter<ListItemSelectEvent>();
 
     /**
      * The template to use for each item in the list.
@@ -319,7 +319,7 @@ export class ListComponent implements ControlValueAccessor {
         }
 
         this._activeItem.set(item);
-        this.selectionChange.emit({ index, value: item.value(), item: item, list: this });
+        this.itemSelect.emit({ value: item.value(), item: item, list: this });
         this._changeDetector.detectChanges();
     }
 
@@ -473,13 +473,7 @@ export class ListComponent implements ControlValueAccessor {
 /**
  * Event emitted when the selection state of the list changes by user interaction.
  */
-export interface ListSelectionChangeEvent {
-    /**
-     * The index of the item that was selected or deselected.
-     * This is the index of the item in the list and ignores any items that are not currently visible.
-     */
-    index: number;
-
+export interface ListItemSelectEvent {
     /**
      * The value of the item that was selected or deselected.
      */

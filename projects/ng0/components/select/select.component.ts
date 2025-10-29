@@ -1,11 +1,11 @@
-import { Component, ElementRef, Renderer2, input, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, computed, untracked } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, computed, untracked, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataSource, DataSourceLike, DataRequest } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
 import { objectFormatterAttribute, defaultFormatter, LocalizationService } from '@bootkit/ng0/localization';
-import { ListComponent, ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
+import { ListComponent, ListModule, ListItemSelectEvent } from '@bootkit/ng0/components/list';
 import {
     CssClassAttribute, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter,
     IdGeneratorAttribute, defaultFilter, filterPredicateAttribute
@@ -147,6 +147,11 @@ export class SelectComponent implements ControlValueAccessor {
     public readonly idGenerator = input(undefined, {
         transform: IdGeneratorAttribute
     });
+
+    /**
+     * Event emitted when the selected value changes.
+     */
+    @Output() public readonly valueChange = new EventEmitter<SelectItemEvent>();
 
     constructor() {
         ['ng0-select', 'form-select'].forEach(c => this._renderer.addClass(this._elementRef.nativeElement, c));
@@ -308,7 +313,7 @@ export class SelectComponent implements ControlValueAccessor {
         this.open.set(false);
     }
 
-    protected _onListSelectionChange(e: ListSelectionChangeEvent) {
+    protected _onListSelectionChange(e: ListItemSelectEvent) {
         let value = e.item.value();
 
         if (this.multiple()) {
@@ -317,7 +322,7 @@ export class SelectComponent implements ControlValueAccessor {
             this.select(value);
         }
 
-        // this.selectionChange.emit({ item: item, list: this });
+        this.valueChange.emit({ value: e.value, select: this });
         this._changeDetectorRef.detectChanges();
         if (!this.multiple()) {
             this.open.set(false);
@@ -381,6 +386,16 @@ export class SelectComponent implements ControlValueAccessor {
             const newEvent = new KeyboardEvent(e.type, e);
             this._listComponent?.elementRef.nativeElement.dispatchEvent(newEvent);
             return;
+        } else {
+            if (e.key == 'Enter') {
+                this.open.set(true);
+                e.preventDefault();
+                return;
+            }
+        }
+
+        if (this.multiple()) {
+            return;
         }
 
         let selectedItemindex: number;
@@ -391,38 +406,43 @@ export class SelectComponent implements ControlValueAccessor {
             selectedItemindex = sourceItems.findIndex(i => i === firstValue);
         }
 
+        let newItemIndex = selectedItemindex;
+
         switch (e.key) {
             case 'ArrowDown':
                 if (selectedItemindex < itemsCount - 1) {
-                    this.select(sourceItems[selectedItemindex + 1]);
+                    newItemIndex = selectedItemindex + 1;
+                    this.select(sourceItems[newItemIndex]);
                 }
                 e.preventDefault();
                 break;
             case 'ArrowUp':
                 if (selectedItemindex > 0) {
-                    this.select(sourceItems[selectedItemindex - 1]);
+                    newItemIndex = selectedItemindex - 1;
+                    this.select(sourceItems[newItemIndex]);
                 }
-                e.preventDefault();
-                break;
-            case 'Enter':
-                this.open.set(true);
                 e.preventDefault();
                 break;
             case 'Home':
                 if (itemsCount > 0) {
+                    newItemIndex = 0;
                     this.select(sourceItems[0]);
                 }
                 e.preventDefault();
                 break;
             case 'End':
                 if (itemsCount > 0) {
-                    this.select(sourceItems[itemsCount - 1]);
+                    newItemIndex = itemsCount - 1;
+                    this.select(sourceItems[newItemIndex]);
                 }
                 e.preventDefault();
                 break;
         }
 
-        this._changeDetectorRef.markForCheck();
+        if (selectedItemindex != newItemIndex!) {
+            this.valueChange.emit({ value: sourceItems[newItemIndex], select: this });
+            this._changeDetectorRef.markForCheck();
+        }
     }
 
     @HostListener('click', ['$event'])
@@ -434,4 +454,20 @@ export class SelectComponent implements ControlValueAccessor {
         this.open.update(x => !x);
         this._touchCallback?.();
     }
+}
+
+
+/**
+ * Event emitted when the selection state of the select component changes by user interaction.
+ */
+export interface SelectItemEvent {
+    /**
+     * The value of the item that was selected or deselected.
+     */
+    value: any;
+
+    /**
+     * The select component that emitted the event.
+     */
+    readonly select: SelectComponent
 }

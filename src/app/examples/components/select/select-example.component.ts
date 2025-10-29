@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SelectModule } from '@bootkit/ng0/components/select';
+import { SelectModule, SelectItemEvent } from '@bootkit/ng0/components/select';
 import { DataResult, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
 import { Sexuality } from 'src/app/common/enums';
@@ -100,6 +100,12 @@ export class SelectExampleComponent {
         disabledState: {
             value1: undefined,
             isDisabled: false
+        },
+        events: {
+            value1: [],
+            onValueChange(e: SelectItemEvent) {
+                console.log(e)
+            }
         }
     }
 

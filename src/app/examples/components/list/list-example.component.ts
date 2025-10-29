@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, model, signal, ViewEncapsulation } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { FilterPredicate } from '@bootkit/ng0/common';
-import { ListModule, ListSelectionChangeEvent } from '@bootkit/ng0/components/list';
+import { ListModule, ListItemSelectEvent } from '@bootkit/ng0/components/list';
 import { DataResult, DataSource, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
 import { Sexuality } from 'src/app/common/enums';
@@ -46,7 +46,7 @@ export class ListExampleComponent {
     value20?: number; value21?: string; value22?: string; value23 = signal('Two'); value24?: string;
     value25 = 1; value26 = 'Three'; value27?: string; value28?: string; value29?: string;
     value30 = 2; value31: any; value32: any; value33: any; value34 = 2;
-    value35: any; value36: any;
+    value35: any; value36: any; value37: any;
 
     isList35Disabled = false;
     list17FilterValue = model('');
@@ -63,10 +63,6 @@ export class ListExampleComponent {
 
     idGenerator1 = (item: any, index?: number) => item;
 
-    onList15SelectionChange(e: ListSelectionChangeEvent) {
-        // this.list15SelectedIndices = e.selectedIndices;
-    }
-
     onPushToDataSource1() {
         this.numberArray2 = [...this.numberArray2, this.numberArray2.length + 1];
     }
@@ -80,4 +76,7 @@ export class ListExampleComponent {
         this.numberArray2 = Array.from({ length: 3 }, () => Math.floor(Math.random() * 100) + 1);
     }
 
+    _onList37ValueChange(e: ListItemSelectEvent) {
+        console.log(e)
+    }
 }
