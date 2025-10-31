@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
-import { booleanAttribute, ChangeDetectionStrategy, computed, DestroyRef, ElementRef, HostListener, inject, input, Renderer2, signal, ViewEncapsulation } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, DestroyRef, ElementRef, HostListener, inject, input, Renderer2, signal, ViewEncapsulation } from '@angular/core';
 import { Component, ContentChild, AfterContentInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormControl, NgControl, NgForm } from '@angular/forms';
+import { FormControl, NgControl } from '@angular/forms';
 import { LocalizationService } from '@bootkit/ng0/localization';
 
 @Component({
@@ -27,11 +27,7 @@ export class FormFieldComponent implements AfterContentInit {
   @ContentChild(NgControl) protected _ngControl?: NgControl;
   protected _status = signal<string | null>('');
   protected _hasRequiredControl = signal(false);
-  protected _errorText = computed<string | undefined>(() =>
-    this._status() === 'INVALID' ?
-      this._localizationService.get()?.translateFirstError(this._ngControl!.errors, 'Invalid')?.text :
-      undefined
-  );
+  protected _errorText = signal<string | undefined>(undefined);
 
   /**
    * The label text for the form field.
@@ -69,12 +65,35 @@ export class FormFieldComponent implements AfterContentInit {
     this._hasRequiredControl.set(this._isControlRequired());
 
     if (this._ngControl) {
-      this._status.set(this._ngControl.status);     
-      this._ngControl?.statusChanges?.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(change => {
+      this._status.set(this._ngControl.status);
+
+      this._ngControl.statusChanges?.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(change => {
         this._status.set(change);
-        this._updateControlStyles();
+        this._checkValidation();
+      });
+
+      this._ngControl.valueChanges?.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(value => {
+        if (this._status() === 'INVALID' && this._ngControl!.errors) {
+          this._checkValidation(); // Recheck validation errors
+        }
       });
     }
+  }
+
+  private _checkValidation() {
+    if (!this._ngControl || !this._ngControl.touched) {
+      return;
+    }
+
+    let elm = this._ngControlElement!.nativeElement;
+    let invalid = this._status() === 'INVALID';
+    let errorText = invalid ?
+      this._localizationService.get()?.translateFirstError(this._ngControl!.errors, 'Invalid')?.text :
+      undefined;
+
+    this._errorText.set(errorText);
+    this._renderer.addClass(elm, invalid ? 'is-invalid' : 'is-valid');
+    this._renderer.removeClass(elm, invalid ? 'is-valid' : 'is-invalid');
   }
 
   private _isControlRequired(): boolean {
@@ -83,17 +102,8 @@ export class FormFieldComponent implements AfterContentInit {
     return errors != null && errors['required'] === true;
   }
 
-  private _updateControlStyles() {
-    if (this._ngControl?.touched) {
-      let invalid = this._status() === 'INVALID';
-      let elm = this._ngControlElement!.nativeElement;
-      this._renderer.addClass(elm, invalid ? 'is-invalid' : 'is-valid');
-      this._renderer.removeClass(elm, invalid ? 'is-valid' : 'is-invalid');
-    }
-  }
-
   @HostListener('focusout')
   private _onFocusOut() {
-    this._updateControlStyles();
+    this._checkValidation();
   }
 }

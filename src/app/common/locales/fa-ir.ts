@@ -33,12 +33,12 @@ export const APP_FA_IR_LOCALE = FA_IR_LOCALE.extend({
             'Other': 'سایر',
         }
     },
-    form: {
-        validation: {
-            errors: {
-            }
-        }
-    },
+    // form: {
+    //     validation: {
+    //         errors: {
+    //         }
+    //     }
+    // },
     formatters: {
         'Boolean': ['خیر', 'بله'],
         'CorrectIncorrectBoolean': ['غلط', 'صحیح'],

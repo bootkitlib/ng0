@@ -49,7 +49,7 @@
 
                 <ng0-form-field label="Field" hint="This is a hint">
                     <input class="form-control" name="examples.required.value"
-                           [(ngModel)]="examples.required.value" required>
+                           [(ngModel)]="examples.required.value" required minlength="3">
                 </ng0-form-field>
 
                 <div class="alert alert-warning mt-3">
@@ -62,8 +62,6 @@
             </div>
         </div>
     </div>
-
-
 
     <div class="col-xl-6">
         <div class="card h-100">
@@ -99,4 +97,5 @@
             </div>
         </div>
     </div>
+
 </div>
