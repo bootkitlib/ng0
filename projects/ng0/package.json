@@ -1,6 +1,6 @@
 {
   "name": "@bootkit/ng0",
-  "version": "0.0.0-alpha.28",
+  "version": "0.0.0-alpha.29",
   "description": "Angular+Bootstrap Component Library",
   "homepage": "https://bootkitlib.github.io/",
   "author": "BootKit",
@@ -17,9 +17,9 @@
     "component library"
   ],
   "peerDependencies": {
-    "@angular/common": ">=20.0.0",
-    "@angular/core": ">=20.0.0",
-    "@angular/cdk": ">=20.0.0"
+    "@angular/common": ">=20.2.0",
+    "@angular/core": ">=20.2.0",
+    "@angular/cdk": ">=20.2.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"

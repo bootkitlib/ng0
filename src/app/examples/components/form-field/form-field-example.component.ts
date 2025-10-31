@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { FormFieldModule } from '@bootkit/ng0/components/form-field';
 
@@ -7,6 +7,7 @@ import { FormFieldModule } from '@bootkit/ng0/components/form-field';
     selector: 'app-examples-components-form-field',
     templateUrl: './form-field-example.component.html',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         ReactiveFormsModule,
         FormsModule,

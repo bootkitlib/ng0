@@ -25,7 +25,7 @@ export class FormFieldComponent implements AfterContentInit {
   private _localizationService = inject(LocalizationService);
   // private _form = inject(NgForm, { optional: true });
   @ContentChild(NgControl) protected _ngControl?: NgControl;
-  protected _status = signal('');
+  protected _status = signal<string | null>('');
   protected _hasRequiredControl = signal(false);
   protected _errorText = computed<string | undefined>(() =>
     this._status() === 'INVALID' ?
@@ -69,6 +69,7 @@ export class FormFieldComponent implements AfterContentInit {
     this._hasRequiredControl.set(this._isControlRequired());
 
     if (this._ngControl) {
+      this._status.set(this._ngControl.status);     
       this._ngControl?.statusChanges?.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(change => {
         this._status.set(change);
         this._updateControlStyles();
