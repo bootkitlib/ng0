@@ -151,7 +151,7 @@ export class SelectComponent implements ControlValueAccessor {
     /**
      * Event emitted when the selected value changes.
      */
-    @Output() public readonly valueChange = new EventEmitter<SelectItemEvent>();
+    @Output() public readonly itemSelect = new EventEmitter<ItemSelectEvent>();
 
     constructor() {
         ['ng0-select', 'form-select'].forEach(c => this._renderer.addClass(this._elementRef.nativeElement, c));
@@ -322,7 +322,7 @@ export class SelectComponent implements ControlValueAccessor {
             this.select(value);
         }
 
-        this.valueChange.emit({ value: e.value, select: this });
+        this.itemSelect.emit({ value: e.value, select: this });
         this._changeDetectorRef.detectChanges();
         if (!this.multiple()) {
             this.open.set(false);
@@ -440,7 +440,7 @@ export class SelectComponent implements ControlValueAccessor {
         }
 
         if (selectedItemindex != newItemIndex!) {
-            this.valueChange.emit({ value: sourceItems[newItemIndex], select: this });
+            this.itemSelect.emit({ value: sourceItems[newItemIndex], select: this });
             this._changeDetectorRef.markForCheck();
         }
     }
@@ -460,7 +460,7 @@ export class SelectComponent implements ControlValueAccessor {
 /**
  * Event emitted when the selection state of the select component changes by user interaction.
  */
-export interface SelectItemEvent {
+export interface ItemSelectEvent {
     /**
      * The value of the item that was selected or deselected.
      */

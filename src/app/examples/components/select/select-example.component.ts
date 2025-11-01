@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { afterNextRender, Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { SelectModule, SelectItemEvent } from '@bootkit/ng0/components/select';
+import { SelectModule, ItemSelectEvent } from '@bootkit/ng0/components/select';
 import { DataResult, LocalDataSource, RemoteDataSource } from '@bootkit/ng0/data';
 import { delay, of } from 'rxjs';
 import { Sexuality } from 'src/app/common/enums';
@@ -103,7 +103,7 @@ export class SelectExampleComponent {
         },
         events: {
             value1: [],
-            onValueChange(e: SelectItemEvent) {
+            onValueChange(e: ItemSelectEvent) {
                 console.log(e)
             }
         }

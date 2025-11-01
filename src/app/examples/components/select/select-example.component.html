@@ -543,7 +543,7 @@
                                     [source]="stringArray"
                                     [multiple]="false"
                                     [(ngModel)]="examples.events.value1"
-                                    (valueChange)="examples.events.onValueChange($event)">
+                                    (itemSelect)="examples.events.onValueChange($event)">
                         </ng0-select>
 
                         Value: {{ examples.events.value1 | json }}
