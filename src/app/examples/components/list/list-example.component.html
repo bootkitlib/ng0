@@ -75,25 +75,25 @@
                     </div>
 
                     <div class="col-xl-6">
-                        [source]="[true, false]"; formatBy="@OnOffBoolean"
+                        [source]="[true, false]"; formatBy="*OnOffBoolean"
                         <ng0-list name="value6" [source]="[true, false]" [(ngModel)]="value6"
-                                  formatBy="@OnOffBoolean">
+                                  formatBy="*OnOffBoolean">
                         </ng0-list>
                         Value: {{ value6 }}
                     </div>
 
                     <div class="col-xl-6">
-                        [source]="[true, false]"; formatBy="@CorrectIncorrectBoolean"
+                        [source]="[true, false]"; formatBy="*CorrectIncorrectBoolean"
                         <ng0-list name="value7" [source]="[true, false]" [(ngModel)]="value7"
-                                  formatBy="@CorrectIncorrectBoolean">
+                                  formatBy="*CorrectIncorrectBoolean">
                         </ng0-list>
                         Value: {{ value7 }}
                     </div>
 
                     <div class="col-xl-6">
-                        [source]="[true, false]"; formatBy="@EnableDisableBoolean"
+                        [source]="[true, false]"; formatBy="*EnableDisableBoolean"
                         <ng0-list name="value8" [source]="[true, false]" [(ngModel)]="value8"
-                                  formatBy="@EnableDisableBoolean">
+                                  formatBy="*EnableDisableBoolean">
                         </ng0-list>
                         Value: {{ value8 }}
                     </div>
@@ -119,9 +119,9 @@
                         Value: {{ value18 }}
                     </div>
                     <div class="col-xl-6">
-                        [source]="Sexuality"; formatBy="@SexualityEnum"
+                        [source]="Sexuality"; formatBy="*SexualityEnum"
                         <ng0-list name="value24" [source]="Sexuality" [(ngModel)]="value24"
-                                  formatBy="@SexualityEnum">
+                                  formatBy="*SexualityEnum">
                         </ng0-list>
 
                         Value: {{ value24 }}
@@ -167,7 +167,7 @@
                 You have 3 ways to format items:
                 <ul>
                     <li>Using object fields: formatBy="<i class="text-info">fieldName</i> "</li>
-                    <li>Using a locale formatter: formatBy="@<i class="text-info">formatterName</i> "</li>
+                    <li>Using a locale formatter: formatBy="*<i class="text-info">formatterName</i> "</li>
                     <li>Using a formatBy function: [formatBy]="<i class="text-info">functionName</i>"</li>
                 </ul>
 
@@ -181,9 +181,9 @@
                     </div>
 
                     <div class="col-xl-6">
-                        [source]="objectsSource1"; formatBy="@personFormatter1"
+                        [source]="objectsSource1"; formatBy="*personFormatter1"
                         <ng0-list name="value29" [source]="objectsSource1" [(ngModel)]="value29"
-                                  formatBy="@personFormatter1">
+                                  formatBy="*personFormatter1">
                         </ng0-list>
 
                         Value: {{ value29 | json}}

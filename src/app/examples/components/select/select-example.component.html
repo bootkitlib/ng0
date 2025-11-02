@@ -156,43 +156,43 @@
                 <h6>Locale formatter:</h6>
                 <p>
                     A locale formatter, formats the value according to the current locale. <br>
-                    To use a locale formatter, specify the locale formatter name prefixed with an @ (e.g.,
-                    "&#64;formatterName").
+                    To use a locale formatter, specify the locale formatter name prefixed with an * (e.g.,
+                    "*formatterName").
                 </p>
 
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        [source]="[true, false]"; formatBy="@OnOffBoolean"
+                        [source]="[true, false]"; formatBy="*OnOffBoolean"
                         <ng0-select name="examples.format.value1" [source]="[true, false]"
                                     [(ngModel)]="examples.format.value1"
-                                    formatBy="@OnOffBoolean">
+                                    formatBy="*OnOffBoolean">
                         </ng0-select>
                         Value: {{ examples.format.value1 | json }}
                     </div>
                     <div class="col-xl-6">
-                        formatBy="@EnableDisableBoolean"
+                        formatBy="*EnableDisableBoolean"
                         <ng0-select name="examples.format.value2" [source]="[true, false]"
                                     [(ngModel)]="examples.format.value2"
-                                    formatBy="@EnableDisableBoolean">
+                                    formatBy="*EnableDisableBoolean">
                         </ng0-select>
                         Value: {{ examples.format.value2 | json }}
                     </div>
 
                     <div class="col-xl-6">
-                        [source]="Sexuality" formatBy="@SexualityEnum"
+                        [source]="Sexuality" formatBy="*SexualityEnum"
                         <ng0-select name="examples.format.value3" [(ngModel)]="examples.format.value3"
                                     [source]="Sexuality"
-                                    formatBy="@SexualityEnum">
+                                    formatBy="*SexualityEnum">
                         </ng0-select>
 
                         Value: {{ examples.format.value3 | json}}
                     </div>
 
                     <div class="col-xl-6">
-                        [source]="personList1" formatBy="@personFormatter1"
+                        [source]="personList1" formatBy="*personFormatter1"
                         <ng0-select name="examples.format.value4" [(ngModel)]="examples.format.value4"
                                     [source]="personList1"
-                                    formatBy="@personFormatter1">
+                                    formatBy="*personFormatter1">
                         </ng0-select>
 
                         Value: {{ examples.format.value4 | json}}

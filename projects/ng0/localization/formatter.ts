@@ -11,7 +11,7 @@ export type ObjectFormatter = (obj: any, ...params: any[]) => any;
 /**
  * Object formatter-like types.  
  */
-export type ObjectFormatterLike = ObjectFormatter | string | number | Array<ObjectFormatter | string | number>;
+export type ObjectFormatterLike = ObjectFormatter | string | number | Array<ObjectFormatter | string | number | boolean | undefined>;
 
 /**
  * Default object formatter function.
@@ -22,24 +22,11 @@ export function defaultFormatter(obj: any): string {
     return obj?.toString() || '';
 }
 
-/**
- * Creates a field formatter function.
- * @param field 
- * @returns
- * @private
- */
 function createFieldFormatter(field: string): ObjectFormatter {
     return (obj: any) => obj?.[field];
 }
 
-/**
- * Creates an array index formatter function.
- * An array index formatter always returns the item at the specified index from an array object.
- * @param index 
- * @returns an ObjectFormatter function.
- * @private
- */
-function createIndexFormatter(index: number | boolean): ObjectFormatter {
+function createIndexFormatter(index: number | boolean, ...params: any[]): ObjectFormatter {
     return (obj: any) => {
         if (Array.isArray(obj)) {
             return obj[+index]; // use + to cast boolean values to numbers
@@ -57,6 +44,29 @@ function createArrayFormatter(array: any[]): ObjectFormatter {
     return (index: number | boolean) => array[+index];
 }
 
+function createNumberFormatter(
+    locale: string,
+    minimumIntegerDigits?: number,
+    minimumFractionDigits?: number,
+    maximumFractionDigits?: number,
+    useGrouping = true): ObjectFormatter {
+    const formatter = new Intl.NumberFormat(locale, {
+        minimumIntegerDigits,
+        minimumFractionDigits,
+        maximumFractionDigits,
+        useGrouping,
+    })
+
+    return (n: number) => Number.isFinite(n) ? formatter.format(n) : '';
+}
+
+function createCurrencyFormatter(minFractions = 1, maxFractions = 2): ObjectFormatter {
+    return (n: number, minFractions, maxFractions) => Number.isFinite(n) ? n.toString() : '';
+}
+
+function createDateFormatter(minFractions = 1, maxFractions = 2): ObjectFormatter {
+    return (n: number, minFractions, maxFractions) => Number.isFinite(n) ? n.toString() : '';
+}
 
 /**
  * Returns a formatter function by its name and parameters.
@@ -87,29 +97,47 @@ function createLocaleFormatter(locale: Locale, formatterName: string): ObjectFor
 /**
  * Creates an ObjectFormatter from various ObjectFormatterLike types.
  * @param formatter The ObjectFormatterLike value to convert. 
- * @param locale Optional locale object for locale-based formatting. 
+ * @param locale Optional locale object for locale-based formatting.
+ * @param params Additional parameters for the formatter.
  * @returns An ObjectFormatter function.
  */
-export function createObjectFormatter(formatter: ObjectFormatterLike, locale?: Locale): ObjectFormatter {
+export function createObjectFormatter(formatter: ObjectFormatterLike, locale?: Locale, ...params: any[]): ObjectFormatter {
+    const localeName = locale?.definition.name || 'en-US';
+
     switch (typeof formatter) {
         case 'function':
             return formatter;
         case 'number':
-            return createIndexFormatter(formatter);
+            return createIndexFormatter(formatter, ...params);
         case 'string':
-            if (formatter.startsWith('@')) {
-                if (locale == null) {
-                    throw Error('For using locale formatters, provide a Locale object.')
-                }
-                return createLocaleFormatter(locale, formatter.substring(1));
-            } else {
-                return createFieldFormatter(formatter);
+            switch (formatter.at(0)) {
+                case '*':
+                    if (locale == null) {
+                        throw Error('For using locale formatters, provide a Locale object.')
+                    }
+                    return createLocaleFormatter(locale, formatter.substring(1));
+                case '#':
+                    return createNumberFormatter(localeName, ...params);
+                case '@':
+                    return createDateFormatter();
+                case '$':
+                    return createCurrencyFormatter();
+                default:
+                    return createFieldFormatter(formatter);
             }
+
         case 'object':
-            if (Array.isArray(formatter)) {
-                // Create a composite formatter from multiple formatters.
-                const formatters = formatter.map(item => createObjectFormatter(item, locale));
-                return (obj: any) => formatters.reduce((previous, current, index) => index == 0 ? current(obj) : current(previous));
+            if (Array.isArray(formatter) && formatter.length > 0) {
+                if (formatter[0] == '|') {
+                    // Create a composite formatter.
+                    const formatters = formatter.slice(1).map(item => createObjectFormatter(item as any, locale));
+                    return (obj: any) => formatters.reduce(
+                        (previous, current, index) => index == 0 ? current(obj, ...params) : current(previous)
+                    );
+                } else {
+                    // Create a formatter with parameters.
+                    return createObjectFormatter(formatter[0] as string, locale, ...formatter.slice(1));
+                }
             }
             break;
     }

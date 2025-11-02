@@ -23,16 +23,17 @@ enum Enum1 {
 })
 export class FormattersExampleComponent {
     Sexuality = Sexuality;
-    
-    fieldExample = {
-        value: { name: 'Test', age: 30 },
-    }
+    object1 = { name: 'Sample Name', age: 25 };
 
-    enumExample = {
-        value: Sexuality.male,
-    }
-
-    arrayIndexExample = {
-        value: ['First', 'Second', 'Third'],
+    examples = {
+        fieldFormatter: {
+            value: { name: 'Test', age: 30 },
+        },
+        enumFormatter: {
+            value: Sexuality.male,
+        },
+        indexFormatter: {
+            value: ['First', 'Second', 'Third'],
+        }
     }
 }

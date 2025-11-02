@@ -7,17 +7,76 @@
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
+                <h5 class="card-title">Number formatter</h5>
+                <p>
+                    Number formatter formats numeric values for display purposes.<br>
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-4">
+                        Value = {{123456789 | json}} <br>
+                        Formatter: '#'<br>
+                        <span class="text-info">Formatted Value = {{123456 | ng0Format: '#'}}</span>
+                    </div>
+                    <div class="col-xl-4">
+                        Value = {{12345.12 | json}} <br>
+                        Formatter: '#' <br>
+                        <span class="text-info">Formatted Value = {{12345.12 | ng0Format: '#'}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <h6>Use with parameters:</h6>
+                <p>
+                    You can provide additional parameters to customize the number formatting.<br>
+                    Create an array with the formatter name as the first element, followed by the parameters.<br>
+                </p>
+
+                <div class="text-danger my-3">
+                    ['#', minIntegerDigits, minFractionDigits, maxFractionDigits, useGrouping]
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-xl-4">
+                        Value = {{0 | json}} <br>
+                        Formatter: ['#', 5, 2] <br>
+                        <span class="text-info">Formatted Value = {{0 | ng0Format: ['#', 5, 2]}}</span>
+                    </div>
+                    <div class="col-xl-4">
+                        Value = {{-1.5 | json}} <br>
+                        Formatter: ['#', 2, 3] <br>
+                        <span class="text-info">Formatted Value = {{-1.5 | ng0Format: ['#', 3, 3]}}</span>
+                    </div>
+                    <div class="col-xl-4">
+                        Value = {{-1.123456789 | json}} <br>
+                        Formatter: ['#', 2, undefined, 5] <br>
+                        <span class="text-info">Formatted Value = {{-1.123456789 | ng0Format: ['#', 2, undefined, 5]}}</span>
+                    </div>
+                    <div class="col-xl-4">
+                        Value = {{12345678.123456789 | json}} <br>
+                        Formatter: ['#', 2, 3, undefined, false] <br>
+                        <span class="text-info">Formatted Value = {{ 12345678.0 | ng0Format: ['#', 2, 3, undefined, false] }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
                 <h5 class="card-title">Field formatter</h5>
                 <p>
                     A field formatter formats an object by extracting a specific field from it.<br>
                     This example shows how to use a formatter to display the 'name' field of an object.
                 </p>
 
-                Value = {{fieldExample.value | json}} <br>
+                Value = {{object1 | json}} <br>
                 Formatter = 'name' <br>
 
                 <span class="text-info">
-                    Formatted Value = {{fieldExample.value | ng0Format:'name' | json}}
+                    Formatted Value = {{object1 | ng0Format:'name' | json}}
                 </span>
             </div>
         </div>
@@ -32,27 +91,18 @@
                     This example shows how to use a formatter to display the element at index 1 of an array.
                 </p>
 
-                Value = {{arrayIndexExample.value | json}} <br>
-                Formatter: 1 <br>
+                Value = {{examples.indexFormatter.value | json}} <br>
+                Formatter: 2 <br>
 
                 <span class="text-info">
-                    Formatted Value = {{arrayIndexExample.value | ng0Format: 1}}
+                    Formatted Value = {{examples.indexFormatter.value | ng0Format: 2}}
                 </span>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-12">
-        <div class="card">
-            <div class="card-body">
-                <h5 class="card-title">Number formatter</h5>
-                <p>
-                    Number formatter formats numeric values for display purposes.<br>
-                </p>
-                Not implemented!
-            </div>
-        </div>
-    </div>
+
+
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
@@ -85,7 +135,7 @@
                 <h5 class="card-title">Locale Formatters</h5>
                 <p>
                     A locale formatter formats a value into a human-readable string based on the app Locale.<br>
-                    A Locale formatter starts with the <span class="fw-bold text-info">@</span> character followed by
+                    A Locale formatter starts with the <mark class="fw-bold">*</mark> character followed by
                     the formatter name.<br>
                     This example shows how to use locale formatters to format enums.
                     .<br>
@@ -95,11 +145,11 @@
 
             <div class="card-footer">
                 <h6>Formatting Enums</h6>
-                Value = {{enumExample.value | json}} <br>
-                Formatter = "@SexualityEnum" <br>
+                Value = {{examples.enumFormatter.value | json}} <br>
+                Formatter = "*SexualityEnum" <br>
 
                 <span class="text-info">
-                    Formatted Value = {{enumExample.value | ng0Format: "@SexualityEnum"}}
+                    Formatted Value = {{examples.enumFormatter.value | ng0Format: "*SexualityEnum"}}
                 </span>
             </div>
         </div>
