@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, input, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, computed, untracked, Output, EventEmitter } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, computed, untracked, Output, EventEmitter, EnvironmentInjector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataSource, DataSourceLike, DataRequest } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -40,6 +40,7 @@ import {
 export class SelectComponent implements ControlValueAccessor {
     // private _resizeObserver?: ResizeObserver;
     private _viewpoerRulerSubscription?: Subscription;
+    private _injector = inject(EnvironmentInjector);
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
     @ViewChild(ListComponent) private _listComponent?: ListComponent;
     private _changeCallback!: (value: any) => void;
@@ -49,13 +50,13 @@ export class SelectComponent implements ControlValueAccessor {
     protected readonly _isDisabled = signal<boolean>(false);
     protected _positionStrategy!: FlexibleConnectedPositionStrategy;
     protected _scrollStrategy!: ScrollStrategy;
-    private _overlay = inject(Overlay);
-    private _localizationService = inject(LocalizationService);
-    protected _elementRef = inject(ElementRef<HTMLDivElement>);
+    private readonly _overlay = inject(Overlay);
+    private readonly _localizationService = inject(LocalizationService);
+    protected readonly _elementRef = inject(ElementRef<HTMLDivElement>);
     protected readonly _filterValue = signal('');
-    private _renderer = inject(Renderer2);
-    private _viewportRuler = inject(ViewportRuler);
-    private _changeDetectorRef = inject(ChangeDetectorRef);
+    private readonly _renderer = inject(Renderer2);
+    private readonly _viewportRuler = inject(ViewportRuler);
+    private readonly _changeDetectorRef = inject(ChangeDetectorRef);
     private readonly _value = signal<any>(undefined);
 
     /**
@@ -103,7 +104,7 @@ export class SelectComponent implements ControlValueAccessor {
      * A fromatter to convert each item to a string for display.
      */
     public readonly formatBy = input(defaultFormatter, {
-        transform: objectFormatterAttribute(this._localizationService.get())
+       transform: objectFormatterAttribute(this._injector)
     });
 
     /**

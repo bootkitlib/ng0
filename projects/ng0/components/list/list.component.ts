@@ -1,4 +1,4 @@
-import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding, OnInit, AfterViewInit, untracked, model, Renderer2 } from '@angular/core';
+import { Component, ElementRef, input, signal, HostListener, inject, forwardRef, TemplateRef, ContentChild, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, EventEmitter, Output, computed, ViewChildren, QueryList, ViewEncapsulation, ViewContainerRef, HostBinding, OnInit, AfterViewInit, untracked, model, Renderer2, EnvironmentInjector, runInInjectionContext } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataRequest, DataSource, DataSourceLike } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -42,6 +42,7 @@ import {
 export class ListComponent implements ControlValueAccessor {
     private _localizationService = inject(LocalizationService);
     private _changeDetector = inject(ChangeDetectorRef);
+    private _injector = inject(EnvironmentInjector);
     private _changeCallback?: (value: any) => void;
     private _touchCallback?: () => void;
     private readonly _selectedItems = new Set<any>();
@@ -100,7 +101,7 @@ export class ListComponent implements ControlValueAccessor {
      * Default converts the item to a string using its toString method.
      */
     public readonly formatBy = input(defaultFormatter, {
-        transform: objectFormatterAttribute(this._localizationService.get())
+        transform: objectFormatterAttribute(this._injector)
     });
 
     /**

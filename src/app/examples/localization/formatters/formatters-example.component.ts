@@ -1,8 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, ChangeDetectionStrategy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { LocalizationModule, LocalizationService } from '@bootkit/ng0/localization';
-import { FA_IR_LOCALE } from '@bootkit/ng0/localization/locales/fa-ir';
+import { LocalizationModule, numberFormatter } from '@bootkit/ng0/localization';
 import { Sexuality } from 'src/app/common/enums';
 
 enum Enum1 {
@@ -24,6 +23,7 @@ enum Enum1 {
 export class FormattersExampleComponent {
     Sexuality = Sexuality;
     object1 = { name: 'Sample Name', age: 25 };
+    numberFormatter = numberFormatter;
 
     examples = {
         fieldFormatter: {

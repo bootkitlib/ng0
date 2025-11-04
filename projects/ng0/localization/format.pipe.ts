@@ -1,5 +1,4 @@
-import { inject, Pipe, PipeTransform } from '@angular/core';
-import { LocalizationService } from './localization.service';
+import { EnvironmentInjector, inject, Pipe, PipeTransform, runInInjectionContext } from '@angular/core';
 import { createObjectFormatter, ObjectFormatterLike } from './formatter';
 
 /**
@@ -11,10 +10,10 @@ import { createObjectFormatter, ObjectFormatterLike } from './formatter';
   pure: true
 })
 export class FormatPipe implements PipeTransform {
-  private _localizationService = inject(LocalizationService, { optional: true });
-
-  transform(obj: any, formatter: ObjectFormatterLike): any {
-    const f = createObjectFormatter(formatter, this._localizationService?.get());
+  private _injector = inject(EnvironmentInjector);
+    
+  transform(obj: any, formatter: ObjectFormatterLike, ...params: any[]): any {
+    const f = runInInjectionContext(this._injector, createObjectFormatter.bind(null, formatter, ...params));
     return f(obj);
   }
 }

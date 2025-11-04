@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, input, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, computed, untracked, numberAttribute } from '@angular/core';
+import { Component, ElementRef, Renderer2, input, signal, model, HostListener, inject, forwardRef, ViewChild, TemplateRef, ContentChild, ViewEncapsulation, ChangeDetectionStrategy, booleanAttribute, ChangeDetectorRef, effect, computed, untracked, numberAttribute, EnvironmentInjector } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataSource, DataSourceLike, DataRequest } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -45,6 +45,7 @@ export class AutocompleteComponent implements ControlValueAccessor {
     @ViewChild(ListComponent) private _listComponent?: ListComponent;
     private _changeCallback!: (value: any) => void;
     private _touchCallback!: () => void;
+    private _injector = inject(EnvironmentInjector);
     protected readonly _sourceItems = signal<any[] | undefined>(undefined);
     protected readonly _selectedItems = new Set<any>();
     protected readonly _isDisabled = signal<boolean>(false);
@@ -111,7 +112,7 @@ export class AutocompleteComponent implements ControlValueAccessor {
      * A fromatter to convert each item to a string for display.
      */
     public readonly formatBy = input(defaultFormatter, {
-        transform: objectFormatterAttribute(this._localizationService.get())
+        transform: objectFormatterAttribute(this._injector)
     });
 
     /**

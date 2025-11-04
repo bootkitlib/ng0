@@ -1,4 +1,6 @@
+import { EnvironmentInjector, inject, runInInjectionContext } from "@angular/core";
 import { Locale } from "./locale";
+import { LocalizationService } from "./localization.service";
 
 /**
  * Object formatter function type.
@@ -22,11 +24,21 @@ export function defaultFormatter(obj: any): string {
     return obj?.toString() || '';
 }
 
-function createFieldFormatter(field: string): ObjectFormatter {
+/**
+ * Creates a field formatter that retrieves the value of a specified field from an object.
+ * @param field The field name to retrieve.
+ * @returns An ObjectFormatter function.
+ */
+export function fieldFormatter(field: string): ObjectFormatter {
     return (obj: any) => obj?.[field];
 }
 
-function createIndexFormatter(index: number | boolean, ...params: any[]): ObjectFormatter {
+/**
+ * Creates an index formatter that retrieves the value at a specified index from an array.
+ * @param index The index to retrieve (number or boolean).
+ * @returns An ObjectFormatter function.
+ */
+export function indexFormatter(index: number | boolean): ObjectFormatter {
     return (obj: any) => {
         if (Array.isArray(obj)) {
             return obj[+index]; // use + to cast boolean values to numbers
@@ -36,7 +48,12 @@ function createIndexFormatter(index: number | boolean, ...params: any[]): Object
     }
 }
 
-function createArrayFormatter(array: any[]): ObjectFormatter {
+/**
+ * Creates an array formatter.
+ * @param array 
+ * @returns An ObjectFormatter function.
+ */
+export function arrayFormatter(array: Array<any>): ObjectFormatter {
     if (!Array.isArray(array)) {
         throw Error('Object is not an array');
     }
@@ -44,37 +61,65 @@ function createArrayFormatter(array: any[]): ObjectFormatter {
     return (index: number | boolean) => array[+index];
 }
 
-function createNumberFormatter(
-    locale: string,
+
+/**
+ * Creates a number formatter.
+ * @param minimumIntegerDigits  
+ * @param minimumFractionDigits 
+ * @param maximumFractionDigits 
+ * @param useGrouping 
+ * @returns An ObjectFormatter function.
+ */
+export function numberFormatter(
     minimumIntegerDigits?: number,
     minimumFractionDigits?: number,
     maximumFractionDigits?: number,
     useGrouping = true): ObjectFormatter {
-    const formatter = new Intl.NumberFormat(locale, {
+    let locale = inject(LocalizationService, { optional: true })?.get();
+    const localeName = locale?.definition.name || 'en-US';
+
+    const f = new Intl.NumberFormat(localeName, {
         minimumIntegerDigits,
         minimumFractionDigits,
         maximumFractionDigits,
         useGrouping,
     })
 
-    return (n: number) => Number.isFinite(n) ? formatter.format(n) : '';
+    return (n: number) => Number.isFinite(n) ? f.format(n) : '';
 }
 
-function createCurrencyFormatter(minFractions = 1, maxFractions = 2): ObjectFormatter {
-    return (n: number, minFractions, maxFractions) => Number.isFinite(n) ? n.toString() : '';
-}
-
-function createDateFormatter(minFractions = 1, maxFractions = 2): ObjectFormatter {
+/**
+ * Creates a currency formatter.
+ * @param minFractions 
+ * @param maxFractions 
+ * @returns 
+ */
+export function currencyFormatter(minFractions = 1, maxFractions = 2): ObjectFormatter {
     return (n: number, minFractions, maxFractions) => Number.isFinite(n) ? n.toString() : '';
 }
 
 /**
- * Returns a formatter function by its name and parameters.
+ * Creates a date formatter.
+ * @returns 
+ */
+export function dateFormatter(): ObjectFormatter {
+    return (n: number, minFractions, maxFractions) => Number.isFinite(n) ? n.toString() : '';
+}
+
+/**
+ * Creates a locale-based formatter.
+ * @param locale The Locale object.
  * @param formatterName The format string in the form of "formatterName:param1:param2:..."
  * @returns A ValueFormatterFunction
  * @private
  */
-function createLocaleFormatter(locale: Locale, formatterName: string): ObjectFormatter {
+export function localeFormatter(formatterName: string): ObjectFormatter {
+    let locale = inject(LocalizationService, { optional: true })?.get();
+
+    if (locale == null) {
+        throw Error('For using locale formatters, provide a Locale object.')
+    }
+
     let formatter = locale.definition.formatters?.[formatterName];
     let formatterType = typeof formatter;
 
@@ -86,12 +131,24 @@ function createLocaleFormatter(locale: Locale, formatterName: string): ObjectFor
     if (formatterType === 'function') {
         return formatter as ObjectFormatter;
     } else if (Array.isArray(formatter)) {
-        return createArrayFormatter(formatter);
+        return arrayFormatter(formatter);
     } else if (formatterType == 'object' && formatter != null) {
         return (value: string) => (formatter as any)[value] || '';
     } else {
         throw Error(`Invalid locale formatter: ${formatterName}`);
     }
+}
+
+/**
+ * Creates a composite formatter that applies multiple formatters in sequence. 
+ * @param formatters The list of ObjectFormatterLike values to compose.
+ * @returns An ObjectFormatter function.
+ */
+export function composite(...formatters: ObjectFormatterLike[]): ObjectFormatter {
+    const formattersFuncs = formatters.map(item => createObjectFormatter(item as any));
+    return (obj: any) => formattersFuncs.reduce(
+        (previous, current, index) => index == 0 ? current(obj) : current(previous)
+    );
 }
 
 /**
@@ -101,55 +158,45 @@ function createLocaleFormatter(locale: Locale, formatterName: string): ObjectFor
  * @param params Additional parameters for the formatter.
  * @returns An ObjectFormatter function.
  */
-export function createObjectFormatter(formatter: ObjectFormatterLike, locale?: Locale, ...params: any[]): ObjectFormatter {
-    const localeName = locale?.definition.name || 'en-US';
-
+export function createObjectFormatter(formatter: ObjectFormatterLike, ...params: any[]): ObjectFormatter {
     switch (typeof formatter) {
         case 'function':
-            return formatter;
+            return formatter.bind(null, ...params);
         case 'number':
-            return createIndexFormatter(formatter, ...params);
+            return indexFormatter(formatter);
         case 'string':
-            switch (formatter.at(0)) {
-                case '*':
-                    if (locale == null) {
-                        throw Error('For using locale formatters, provide a Locale object.')
-                    }
-                    return createLocaleFormatter(locale, formatter.substring(1));
+            switch (formatter[0]) {
                 case '#':
-                    return createNumberFormatter(localeName, ...params);
-                case '@':
-                    return createDateFormatter();
+                    return numberFormatter(...params);
                 case '$':
-                    return createCurrencyFormatter();
+                    return currencyFormatter();
+                case '@':
+                    return dateFormatter();
+                case '*':
+                    return localeFormatter(formatter.substring(1));
                 default:
-                    return createFieldFormatter(formatter);
+                    return fieldFormatter(formatter);
             }
 
         case 'object':
             if (Array.isArray(formatter) && formatter.length > 0) {
-                if (formatter[0] == '|') {
-                    // Create a composite formatter.
-                    const formatters = formatter.slice(1).map(item => createObjectFormatter(item as any, locale));
-                    return (obj: any) => formatters.reduce(
-                        (previous, current, index) => index == 0 ? current(obj, ...params) : current(previous)
-                    );
+                if (formatter[0] == 'C') {
+                    return composite(formatter.slice(1))
                 } else {
-                    // Create a formatter with parameters.
-                    return createObjectFormatter(formatter[0] as string, locale, ...formatter.slice(1));
+                    return createObjectFormatter(formatter[0] as string, ...formatter.slice(1));
                 }
             }
             break;
     }
 
-    throw Error('invalid formatter value', { cause: formatter });
+    throw Error('invalid formatter', { cause: formatter });
 }
 
 /**
- * Creates a function that converts a ObjectFormatterLike value into a ObjectFormatter.
- * @param locale Optional locale object for locale-based formatting.
+ * Creates a transform function that converts a ObjectFormatterLike value into a ObjectFormatter.
+ * @param injector The EnvironmentInjector to use for dependency injection.
  * @returns A function that takes a ObjectFormatterLike and returns a ObjectFormatter.
  */
-export function objectFormatterAttribute(locale?: Locale): ((v: ObjectFormatterLike) => ObjectFormatter) {
-    return (v) => createObjectFormatter(v, locale);
+export function objectFormatterAttribute(injector: EnvironmentInjector): ((v: ObjectFormatterLike) => ObjectFormatter) {
+    return (x: ObjectFormatterLike) => runInInjectionContext(injector, createObjectFormatter.bind(null, x));
 };
