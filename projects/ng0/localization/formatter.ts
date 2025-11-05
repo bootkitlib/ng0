@@ -102,8 +102,11 @@ export function currencyFormatter(minFractions = 1, maxFractions = 2): ObjectFor
  * Creates a date formatter.
  * @returns 
  */
-export function dateFormatter(): ObjectFormatter {
-    return (n: number, minFractions, maxFractions) => Number.isFinite(n) ? n.toString() : '';
+export function dateFormatter(options?: Intl.DateTimeFormatOptions): ObjectFormatter {
+    let locale = inject(LocalizationService, { optional: true })?.get();
+    
+    const f = new Intl.DateTimeFormat(locale?.name, options)
+    return (d: string | number | Date) => f.format(new Date(d as number));
 }
 
 /**

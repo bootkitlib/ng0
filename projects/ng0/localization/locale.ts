@@ -122,4 +122,23 @@ export class Locale {
   formatDate(date: Date | string | number, format?: string): string {
     return date ? new Date(date).toLocaleDateString(this.definition.name, { hour: '2-digit', minute: '2-digit' }) : '';
   }
+
+  format(object: any, formatterName: string, ...params: any[]): string {
+    let formatter = this.definition.formatters?.[formatterName];
+
+    if (!formatter) {
+      throw Error(`The formatter "${formatterName}" is not defined in locale ${this.definition.name}`);
+    }
+
+    let formatterType = typeof formatter;
+    if (formatterType === 'function') {
+      return (formatter as ObjectFormatter)(object, ...params);
+    } else if (Array.isArray(formatter)) {
+      return formatter[+object];
+    } else if (formatterType == 'object' && formatter != null) {
+      return (formatter as any)[object] || '';
+    } else {
+      throw Error(`Invalid locale formatter: ${formatterName}`);
+    }
+  }
 }

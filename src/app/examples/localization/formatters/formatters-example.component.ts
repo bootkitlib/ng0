@@ -34,6 +34,9 @@ export class FormattersExampleComponent {
         },
         indexFormatter: {
             value: ['First', 'Second', 'Third'],
+        },
+        date: {
+            value1: new Date(),
         }
     }
 }
