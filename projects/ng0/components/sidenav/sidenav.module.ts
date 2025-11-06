@@ -1,18 +1,21 @@
 import { NgModule } from '@angular/core';
 import { SidenavContainerComponent } from './sidenav-container.component';
 import { SidenavComponent } from './sidenav.component';
+import { SidenavContentComponent } from './sidenav-content.component';
 
 /**
- * This module is used to contain the sidenav components and provide their functionality.
+ * Sidenav module
  */
 @NgModule({
   imports: [
     SidenavContainerComponent,
-    SidenavComponent
+    SidenavComponent,
+    SidenavContentComponent
   ],
   exports: [
     SidenavContainerComponent,
-    SidenavComponent
+    SidenavComponent,
+    SidenavContentComponent
   ]
 })
 export class SidenavModule { }

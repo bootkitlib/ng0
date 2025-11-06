@@ -19,10 +19,10 @@ import {
     trigger('fade', [
       transition(':enter', [
         style({ opacity: 0 }),
-        animate('150ms ease', style({ opacity: 1 })),
+        animate('100ms ease', style({ opacity: 1 })),
       ]),
       transition(':leave', [
-        animate('150ms ease', style({ opacity: 0 })),
+        animate('100ms ease', style({ opacity: 0 })),
       ]),
     ]),
   ],

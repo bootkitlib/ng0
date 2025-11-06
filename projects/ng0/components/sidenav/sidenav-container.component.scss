@@ -1,12 +1,19 @@
-$sidenav-transition-duration: 100ms;
-$sidenav-transition-timing-function: ease-in-out;
+:root {
+  --ng0-sidenav-transition-duration: 100ms; 
+  --ng0-sidenav-transition-function: ease-in-out;
+}
 
-:host {
-  --ng0-sidenav-transition-duration: #{$sidenav-transition-duration};
-  --ng0-sidenav-transition-function: #{$sidenav-transition-timing-function};
-
+ng0-sidenav-container {
   position: relative;
-  transition: padding var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-function);
   display: block;
-  overflow-x: hidden;
+  overflow: hidden;
+  will-change: padding;
+
+  &.ng0-sidenav-transition {
+    transition: padding var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-function);
+  }
+
+  &.ng0-sidenav-content-hidden ng0-sidenav-content {
+    opacity: 0;
+  }
 }

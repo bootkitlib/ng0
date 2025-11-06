@@ -25,23 +25,6 @@ export class Layout1Manager {
    * Whether the start sidenav is fixed.
    */
   public readonly startSidenavFixed = signal(true);
-  // public readonly endSidenavOpen = signal(true);
-  // public readonly endSidenavMode = signal<SidenavMode>('push');
-
-  /**
-   * Default size of the first secondary sidenav.
-   */
-  public readonly secondarySidenavDefaultSize = signal(600);
-
-  /**
-   * Reduce size step for the secondary sidenavs.
-   */
-  public readonly secondarySidenavReduceSize = signal(100);
-
-  /**
-   * Minimum size of a secondary sidenav.
-   */
-  public readonly secondarySidenavMinSize = signal(100);
 
   /**
    * List of secondary sidenavs.
@@ -61,21 +44,10 @@ export class Layout1Manager {
    * @param options Options for the sidenav.
    */
   public pushSidenav(template: TemplateRef<any>, options?: Partial<Omit<Layout1SidenavConfiguration, 'template' | 'zIndex'>>): void {
-    let size = options?.size;
-    if (!size) {
-      if (this.secondarySidenavs().length == 0) {
-        size = this.secondarySidenavDefaultSize();
-      } else {
-        size = this.secondarySidenavs().at(-1)!.size - this.secondarySidenavReduceSize();
-        if (size < this.secondarySidenavMinSize()) {
-          size = this.secondarySidenavMinSize();
-        }
-      }
-    }
-
     this.secondarySidenavs().push({
       template,
-      size: size,
+      size: options?.size,
+      position: options?.position ?? 'end',
       zIndex: this._zIndexCounter++,
       closeByBackdropClick: options?.closeByBackdropClick ?? true,
     });

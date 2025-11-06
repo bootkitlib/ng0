@@ -9,7 +9,7 @@
   </main>
 
   <ng0-sidenav class="ng0-layout1-start-sidenav"
-               [sidenavWidth]="250"
+               [size]="250"
                [open]="config.startSidenavOpen()"
                [mode]="config.startSidenavMode()"
                [hasBackdrop]="true"
@@ -21,11 +21,11 @@
 
   @for (sidenav of config.secondarySidenavs(); track $index) {
   <ng0-sidenav class="ng0-layout1-secondary-sidenav"
-               [sidenavWidth]="sidenav.size"
                open="true"
-               [hasBackdrop]="true"
-               position="end"
                mode="over"
+               [size]="sidenav.size"
+               [hasBackdrop]="true"
+               [position]="sidenav.position"
                [fixedInViewport]="true"
                [zIndex]="sidenav.zIndex"
                (backdropClick)="sidenav.closeByBackdropClick ? config.popSidenav() : null">
