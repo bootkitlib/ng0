@@ -2,7 +2,6 @@ ng0-sidenav {
   display: block;
   position: absolute;
   will-change: transform, width, height;
-  pointer-events: none;
 }
 
 .ng0-sidenav-transition ng0-sidenav {

@@ -1,20 +1,23 @@
 <button #mainButton
-        [class]="cssClass()"
+        [class]="toggleCss()"
         [class.dropdown-toggle]="!split()"
         [class.btn-sm]="size() == 'small'"
         [class.btn-lg]="size() == 'large'"
-        type="button">
+        [disabled]="disabled()"
+        type="button"
+        (click)="toggleClick.emit($event)">
     <ng-content></ng-content>
 </button>
 
 @if(split()) {
 <button #splitButton
         type="button"
-        [class]="splitCssClass()"
+        [class]="splitCss()"
         [class.btn-sm]="size() == 'small'"
         [class.btn-lg]="size() == 'large'"
-        class="dropdown-toggle dropdown-toggle-split">
-    <span class="visually-hidden">Toggle Dropdown</span>
+        class="dropdown-toggle dropdown-toggle-split"
+        [disabled]="disabled()">
+    <!-- <span class="visually-hidden">Toggle Dropdown</span> -->
 </button>
 }
 
