@@ -1,5 +1,5 @@
-import { Pipe, PipeTransform } from '@angular/core';
-import { LocalizationService } from './localization.service';
+import { EnvironmentInjector, inject, Pipe, PipeTransform, runInInjectionContext } from '@angular/core';
+import { createDateFormatter } from './formatter';
 
 @Pipe({
   name: 'ng0Date',
@@ -7,10 +7,16 @@ import { LocalizationService } from './localization.service';
   pure: true
 })
 export class DatePipe implements PipeTransform {
-  constructor(private _ls: LocalizationService) {
-  }
+  private _injector = inject(EnvironmentInjector);
 
-  transform(value: Date | string | number, format?: string) {
-    return this._ls.get()?.formatDate(value, format);
+  transform(value: Date | string | number,
+    dateStyle?: 'short' | 'medium' | 'long' | 'full',
+    timeStyle?: 'short' | 'medium' | 'long' | 'full',
+    zone?: string[],
+    calendar?: string): string;
+  transform(value: Date | string | number, options?: Intl.DateTimeFormatOptions): string;
+  transform(value: Date | string | number, ...options: any[]): string {
+    const formatter = runInInjectionContext(this._injector, createDateFormatter.bind(null, ...options));
+    return formatter(value);
   }
 }

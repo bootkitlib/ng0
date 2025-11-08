@@ -29,7 +29,7 @@ export function defaultFormatter(obj: any): string {
  * @param field The field name to retrieve.
  * @returns An ObjectFormatter function.
  */
-export function fieldFormatter(field: string): ObjectFormatter {
+export function createFieldFormatter(field: string): ObjectFormatter {
     return (obj: any) => obj?.[field];
 }
 
@@ -38,7 +38,7 @@ export function fieldFormatter(field: string): ObjectFormatter {
  * @param index The index to retrieve (number or boolean).
  * @returns An ObjectFormatter function.
  */
-export function indexFormatter(index: number | boolean): ObjectFormatter {
+export function createIndexFormatter(index: number | boolean): ObjectFormatter {
     return (obj: any) => {
         if (Array.isArray(obj)) {
             return obj[+index]; // use + to cast boolean values to numbers
@@ -56,7 +56,7 @@ export function indexFormatter(index: number | boolean): ObjectFormatter {
  * @param useGrouping 
  * @returns An ObjectFormatter function.
  */
-export function numberFormatter(
+export function createNumberFormatter(
     minimumIntegerDigits?: number,
     minimumFractionDigits?: number,
     maximumFractionDigits?: number,
@@ -80,23 +80,21 @@ export function numberFormatter(
  * @param maxFractions 
  * @returns 
  */
-export function currencyFormatter(minFractions = 1, maxFractions = 2): ObjectFormatter {
+export function createCurrencyFormatter(minFractions = 1, maxFractions = 2): ObjectFormatter {
     return (n: number, minFractions, maxFractions) => Number.isFinite(n) ? n.toString() : '';
 }
 
 /**
  * Creates a date formatter.
- * @param dateStyle 
- * @returns 
  */
-export function dateFormatter(
+export function createDateFormatter(
     dateStyle?: 'short' | 'medium' | 'long' | 'full',
     timeStyle?: 'short' | 'medium' | 'long' | 'full',
     zone?: string[], // zone[0]: name, zone[1]: display ('long' | 'short' | 'shortOffset' | 'longOffset' | 'narrowOffset' | 'longGeneric' | 'shortGeneric')
     calendar?: string
 ): ObjectFormatter;
-export function dateFormatter(options?: Intl.DateTimeFormatOptions): ObjectFormatter;
-export function dateFormatter(options?: any): ObjectFormatter {
+export function createDateFormatter(options?: Intl.DateTimeFormatOptions): ObjectFormatter;
+export function createDateFormatter(options?: any): ObjectFormatter {
     let intlOptions: Intl.DateTimeFormatOptions;
 
     if (options && (typeof options === 'object')) {
@@ -115,7 +113,7 @@ export function dateFormatter(options?: any): ObjectFormatter {
     let intlFormatter: Intl.DateTimeFormat;
 
     try {
-        intlFormatter = new Intl.DateTimeFormat(locale?.name, intlOptions)
+        intlFormatter = new Intl.DateTimeFormat(locale?.name, intlOptions as Intl.DateTimeFormatOptions);
         return (d: string | number | Date) => intlFormatter.format(new Date(d));
     } catch (err) {
         console.warn('Invalid date format options:', intlOptions, err);
@@ -131,7 +129,7 @@ export function dateFormatter(options?: any): ObjectFormatter {
  * @returns A ValueFormatterFunction
  * @private
  */
-export function localeFormatter(formatterName: string): ObjectFormatter {
+export function createLocaleFormatter(formatterName: string): ObjectFormatter {
     let locale = inject(LocalizationService, { optional: true })?.get();
 
     if (locale == null) {
@@ -162,7 +160,7 @@ export function localeFormatter(formatterName: string): ObjectFormatter {
  * @param formatters The list of ObjectFormatterLike values to compose.
  * @returns An ObjectFormatter function.
  */
-export function composite(...formatters: ObjectFormatterLike[]): ObjectFormatter {
+export function createCompositeFormatter(...formatters: ObjectFormatterLike[]): ObjectFormatter {
     const formattersFuncs = formatters.map(item => createObjectFormatter(item as any));
     return (obj: any) => formattersFuncs.reduce(
         (previous, current, index) => index == 0 ? current(obj) : current(previous)
@@ -181,24 +179,24 @@ export function createObjectFormatter(formatter: ObjectFormatterLike, ...params:
         case 'function':
             return formatter.bind(null, ...params);
         case 'number':
-            return indexFormatter(formatter);
+            return createIndexFormatter(formatter);
         case 'string':
             switch (formatter[0]) {
                 case '#':
-                    return numberFormatter(...params);
+                    return createNumberFormatter(...params);
                 case '$':
-                    return currencyFormatter(...params);
+                    return createCurrencyFormatter(...params);
                 case '@':
-                    return dateFormatter(...params);
+                    return createDateFormatter(...params);
                 case '*':
-                    return localeFormatter(formatter.substring(1));
+                    return createLocaleFormatter(formatter.substring(1));
                 default:
-                    return fieldFormatter(formatter);
+                    return createFieldFormatter(formatter);
             }
         case 'object':
             if (Array.isArray(formatter) && formatter.length > 0) {
                 if (formatter[0] == 'C') {
-                    return composite(formatter.slice(1))
+                    return createCompositeFormatter(formatter.slice(1))
                 } else {
                     return createObjectFormatter(formatter[0] as string, ...formatter.slice(1));
                 }
