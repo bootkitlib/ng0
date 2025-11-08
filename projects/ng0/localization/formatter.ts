@@ -13,7 +13,7 @@ export type ObjectFormatter = (obj: any, ...params: any[]) => any;
 /**
  * Object formatter-like types.  
  */
-export type ObjectFormatterLike = ObjectFormatter | string | number | Array<ObjectFormatter | string | number | boolean | undefined>;
+export type ObjectFormatterLike = ObjectFormatter | string | number | Array<any>;
 
 /**
  * Default object formatter function.
@@ -47,20 +47,6 @@ export function indexFormatter(index: number | boolean): ObjectFormatter {
         throw Error('Object is not an array');
     }
 }
-
-/**
- * Creates an array formatter.
- * @param array 
- * @returns An ObjectFormatter function.
- */
-export function arrayFormatter(array: Array<any>): ObjectFormatter {
-    if (!Array.isArray(array)) {
-        throw Error('Object is not an array');
-    }
-
-    return (index: number | boolean) => array[+index];
-}
-
 
 /**
  * Creates a number formatter.
@@ -100,13 +86,42 @@ export function currencyFormatter(minFractions = 1, maxFractions = 2): ObjectFor
 
 /**
  * Creates a date formatter.
+ * @param dateStyle 
  * @returns 
  */
-export function dateFormatter(options?: Intl.DateTimeFormatOptions): ObjectFormatter {
-    let locale = inject(LocalizationService, { optional: true })?.get();
-    
-    const f = new Intl.DateTimeFormat(locale?.name, options)
-    return (d: string | number | Date) => f.format(new Date(d as number));
+export function dateFormatter(
+    dateStyle?: 'short' | 'medium' | 'long' | 'full',
+    timeStyle?: 'short' | 'medium' | 'long' | 'full',
+    zone?: string[], // zone[0]: name, zone[1]: display ('long' | 'short' | 'shortOffset' | 'longOffset' | 'narrowOffset' | 'longGeneric' | 'shortGeneric')
+    calendar?: string
+): ObjectFormatter;
+export function dateFormatter(options?: Intl.DateTimeFormatOptions): ObjectFormatter;
+export function dateFormatter(options?: any): ObjectFormatter {
+    let intlOptions: Intl.DateTimeFormatOptions;
+
+    if (options && (typeof options === 'object')) {
+        intlOptions = options;
+    } else {
+        intlOptions = {
+            dateStyle: arguments[0],
+            timeStyle: arguments[1],
+            timeZone: arguments[2]?.[0],
+            timeZoneName: arguments[2]?.[1],
+            calendar: arguments[3]
+        }
+    }
+
+    const locale = inject(LocalizationService, { optional: true })?.get();
+    let intlFormatter: Intl.DateTimeFormat;
+
+    try {
+        intlFormatter = new Intl.DateTimeFormat(locale?.name, intlOptions)
+        return (d: string | number | Date) => intlFormatter.format(new Date(d));
+    } catch (err) {
+        console.warn('Invalid date format options:', intlOptions, err);
+        // Return a fallback formatter
+        return (d: string | number | Date) => new Date(d).toLocaleString()
+    }
 }
 
 /**
@@ -134,7 +149,7 @@ export function localeFormatter(formatterName: string): ObjectFormatter {
     if (formatterType === 'function') {
         return formatter as ObjectFormatter;
     } else if (Array.isArray(formatter)) {
-        return arrayFormatter(formatter);
+        return (index: number | boolean) => formatter[+index];
     } else if (formatterType == 'object' && formatter != null) {
         return (value: string) => (formatter as any)[value] || '';
     } else {
@@ -172,15 +187,14 @@ export function createObjectFormatter(formatter: ObjectFormatterLike, ...params:
                 case '#':
                     return numberFormatter(...params);
                 case '$':
-                    return currencyFormatter();
+                    return currencyFormatter(...params);
                 case '@':
-                    return dateFormatter();
+                    return dateFormatter(...params);
                 case '*':
                     return localeFormatter(formatter.substring(1));
                 default:
                     return fieldFormatter(formatter);
             }
-
         case 'object':
             if (Array.isArray(formatter) && formatter.length > 0) {
                 if (formatter[0] == 'C') {

@@ -13,7 +13,7 @@ export class FormatPipe implements PipeTransform {
   private _injector = inject(EnvironmentInjector);
     
   transform(obj: any, formatter: ObjectFormatterLike, ...params: any[]): any {
-    const f = runInInjectionContext(this._injector, createObjectFormatter.bind(null, formatter, ...params));
-    return f(obj);
+    const frmtFunc = runInInjectionContext(this._injector, createObjectFormatter.bind(null, formatter, ...params));
+    return frmtFunc(obj);
   }
 }

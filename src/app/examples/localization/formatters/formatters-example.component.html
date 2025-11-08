@@ -10,25 +10,158 @@
                 <h5 class="card-title">Date formatter</h5>
                 <p>
                     Date formatter formats date values for display purposes.<br>
+                    A date formatter accepts dates of type Date, number (timestamp), or string (ISO 8601 date
+                    string).<br>
                 </p>
 
-                <div class="row">
-                    <div class="col-xl-4">
+                <ol>
+                    <li>
+                        Using predefined styles for date and time:<br>
+
+                        <mark>['@', dateStyle?: string , timeStyle?: string, zone?: [name, display?], calendar?:
+                            string]</mark>
+                        <ul>
+                            <li>
+                                dateStyle: 'short' | 'medium' | 'long' | 'full',
+                            </li>
+                            <li>
+                                timeStyle: 'short' | 'medium' | 'long' | 'full',
+                            </li>
+                            <li>
+                                zone: [name: string, display: string],
+                            </li>
+                            <li>
+                                calendar: string. <br>
+                                The calendar to use, such as "chinese", "gregory", "persian",
+                            </li>
+                        </ul>
+
+                    </li>
+                    <li>
+                        Using custom Intl.DateTimeFormatOptions to specify detailed formatting options.<br>
+
+                        <mark>['@', {{"{"}} ...Intl.DateTimeFormatOptions {{"}"}}]</mark>
+                    </li>
+                </ol>
+            </div>
+            <div class="card-footer">
+                <h6 class="card-title">Show Date</h6>
+                <p>
+                    To display only the date, you can provide the dateStyle parameter.<br>
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
                         Value = {{examples.date.value1 | json}} <br>
-                        Formatter: '@'<br>
-                        <span class="text-info">Formatted Value = {{examples.date.value1 | ng0Format: '@'}}</span>
+                        Formatter: "@"<br>
+                        <span class="text-info">Formatted Value = {{examples.date.value1 | ng0Format: "@"}}</span>
                     </div>
-                    <!-- <div class="col-xl-4">
-                        Value = {{12345.12 | json}} <br>
-                        Formatter: '#' <br>
-                        <span class="text-info">Formatted Value = {{12345.12 | ng0Format: '#'}}</span>
-                    </div> -->
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', 'short'] <br>
+                        <span class="text-info">
+                            Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'short']}}
+                        </span>
+                    </div>
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', 'medium'] <br>
+                        <span class="text-info">
+                            Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'medium']}}
+                        </span>
+                    </div>
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', 'long'] <br>
+                        <span class="text-info">
+                            Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'long']}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <h6 class="card-title">Show Date and time</h6>
+
+                <p>
+                    To display both date and time, you can provide additional parameters to customize the date
+                    formatting.<br>
+                </p>
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', 'short', 'short'] <br>
+                        <span class="text-info">
+                            Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'short', 'short']}}
+                        </span>
+                    </div>
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', 'short', 'medium'] <br>
+                        <span class="text-info">
+                            Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'short', 'medium']}}</span>
+                    </div>
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', 'short', 'long'] <br>
+                        <span class="text-info">
+                            Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'short', 'long']}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <h6 class="card-title">Time zone</h6>
+                <p>
+                    You can specify the time zone to format the date and time accordingly.<br>
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', undefined, undefined, ['Asia/Tehran', 'long' ]] <br>
+                        <span class="text-info">
+                            {{examples.date.value1 | ng0Format: ['@', undefined, undefined, ['Asia/Tehran', 'long' ]]}}
+                        </span>
+                    </div>
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', undefined, undefined, ['America/New_York', 'long' ]] <br>
+                        <span class="text-info">
+                            {{examples.date.value1 | ng0Format: ['@', undefined, undefined, ['America/New_York', 'long'
+                            ]]}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <h6 class="card-title">Calendar</h6>
+                <p>
+                    You can specify the calendar system to format the date accordingly.<br>
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', 'medium', 'long', 'medium', 'gregory'] <br>
+                        <span class="text-info d-inline-block" style="direction: rtl;">
+                            {{examples.date.value1 | ng0Format: ['@', 'long', 'medium', undefined, 'gregory']}}
+                        </span>
+                    </div>
+
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br>
+                        Formatter: ['@', 'medium', 'long', 'medium', 'persian'] <br>
+                        <span class="text-info d-inline-block" style="direction: rtl;">
+                            {{examples.date.value1 | ng0Format: ['@', 'long', 'medium', undefined, 'persian']}}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- <div class="col-lg-12">
+    <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Number formatter</h5>
@@ -182,5 +315,5 @@
             </div>
         </div>
 
-    </div> -->
+    </div>
 </div>
