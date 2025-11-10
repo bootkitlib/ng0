@@ -8,26 +8,28 @@ export default [
         component: BootKitExampleComponent,
     },
     {
-        title: 'Localization',
         path: 'localization',
+        title: 'Localization',
         loadChildren: () => import('./localization/routes')
     },
     {
-        title: 'HTTP',
         path: 'http',
+        title: 'HTTP',
         loadChildren: () => import('./http/routes')
     },
     {
-        title: 'Forms',
         path: 'form',
+        title: 'Forms',
         loadChildren: () => import('./form/routes')
     },
     {
-        title: 'Components', 
         path: 'components',
-        data: {
-            // routerLink: '/components'
-        },
+        title: 'Components',
         loadChildren: () => import('./components/routes')
-    }
+    },
+    {
+        path: 'layouts',
+        title: 'Layouts',
+        loadChildren: () => import('./layouts/routes')
+    },
 ] satisfies Route[];

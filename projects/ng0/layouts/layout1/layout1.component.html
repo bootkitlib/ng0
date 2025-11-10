@@ -1,35 +1,41 @@
 <ng0-sidenav-container class="flex-fill">
-  <header class="ng0-layout1-header"
-          [class.ng0-layout1-header-sticky]="config.headerMode() == 'sticky'">
+  <header class="ng0-layout1-header" [class.ng0-layout1-header-sticky]="stickyHeader()">
     <ng-content select="header" />
   </header>
 
-  <main>
+  <ng0-sidenav-content>
     <ng-content select="content" />
-  </main>
+  </ng0-sidenav-content>
 
-  <ng0-sidenav class="ng0-layout1-start-sidenav"
-               [size]="250"
-               [open]="config.startSidenavOpen()"
-               [mode]="config.startSidenavMode()"
-               [hasBackdrop]="true"
-               [zIndex]="10"
-               [fixedInViewport]="config.startSidenavFixed()"
-               (backdropClick)="config.startSidenavOpen.set(false)">
-    <ng-content select="start-sidenav" />
-  </ng0-sidenav>
-
-  @for (sidenav of config.secondarySidenavs(); track $index) {
-  <ng0-sidenav class="ng0-layout1-secondary-sidenav"
-               open="true"
-               mode="over"
-               [size]="sidenav.size"
-               [hasBackdrop]="true"
-               [position]="sidenav.position"
+  @for (sidenav of _sidenavs; track $index) {
+  <ng0-sidenav class="ng0-layout1-sidenav"
+               [size]="sidenav.size()"
+               [open]="sidenav.open()"
+               [mode]="sidenav.mode()"
+               [hasBackdrop]="sidenav.hasBackdrop()"
+               [position]="sidenav.position()"
+               [zIndex]="sidenav.zIndex()"
                [fixedInViewport]="true"
-               [zIndex]="sidenav.zIndex"
-               (backdropClick)="sidenav.closeByBackdropClick ? config.popSidenav() : null">
+               [ngClass]="sidenav.css()"
+               (backdropClick)="sidenav.backdropClick.emit($event)">
     <ng-container *ngTemplateOutlet="sidenav.template" />
   </ng0-sidenav>
   }
+
+  @for (sidenav of _secondarySidenavs(); track $index) {
+  <ng0-sidenav class="ng0-layout1-sidenav"
+               [size]="sidenav.size()"
+               [open]="_openSecondarySidenavs.has(sidenav)"
+               [mode]="sidenav.mode()"
+               [hasBackdrop]="sidenav.hasBackdrop()"
+               [position]="sidenav.position()"
+               [zIndex]="sidenav.zIndex()"
+               [fixedInViewport]="true"
+               [ngClass]="sidenav.css()"
+               (transitionEnd)="_onSecondarySidenavTransitionEnd(sidenav)"
+               (backdropClick)="sidenav.closeByBackdropClick() ? _removeSidenav(sidenav) : null">
+    <ng-container *ngTemplateOutlet="sidenav.template" />
+  </ng0-sidenav>
+  }
+
 </ng0-sidenav-container>

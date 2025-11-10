@@ -1,35 +1,14 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
-  <div class="container-fluid">
-    <a class="navbar-brand" href="#">Bootkit</a>
-    <button class="navbar-toggler" type="button" aria-controls="navbarSupportedContent" aria-expanded="false"
-            aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" routerLink="/examples">NG0</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" aria-current="page">Bootstrap Styles</a>
-        </li>
-      </ul>
+<ng0-layout1>
+  <app-layout-header ngProjectAs="header"></app-layout-header>
+
+  <div ngProjectAs="content">
+    <div class="container-fluid mt-3">
+      <router-outlet />
     </div>
   </div>
-</nav>
 
-<div class="container pt-4 pb-5">
-  <nav class="mb-5">
-    <ol class="breadcrumb">
-      @for (route of _routes(); track $index) {
-      @if(route.title) {
-      <li class="breadcrumb-item">
-        <a [routerLink]="route.link">{{ route?.title }}</a>
-      </li>
-      }
-      }
-    </ol>
-  </nav>
+  <ng-template ng0Layout1Sidenav css="bg-light p-3" >
+    BootKit
+  </ng-template>
 
-  <router-outlet></router-outlet>
-</div>
+</ng0-layout1>

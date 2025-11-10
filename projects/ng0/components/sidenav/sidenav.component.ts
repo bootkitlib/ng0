@@ -1,5 +1,5 @@
-import { booleanAttribute, numberAttribute, Component, ComponentRef, effect, ElementRef, EventEmitter, input, OnDestroy, Output, Renderer2, ViewContainerRef, inject, ChangeDetectionStrategy, ViewEncapsulation, PLATFORM_ID } from '@angular/core';
-import { SidenavMode, SidenavPosition } from './types';
+import { booleanAttribute, numberAttribute, Component, ComponentRef, effect, ElementRef, EventEmitter, input, OnDestroy, Output, Renderer2, ViewContainerRef, inject, ChangeDetectionStrategy, ViewEncapsulation, PLATFORM_ID, Inject, DOCUMENT } from '@angular/core';
+import { SidenavMode, SidenavPosition, SidenavSize } from './types';
 import { BackdropComponent } from '@bootkit/ng0/components/backdrop';
 import { isPlatformServer } from '@angular/common';
 import { SidenavContainerComponent } from './sidenav-container.component';
@@ -32,6 +32,7 @@ import { Observable, Subscription, throttleTime } from 'rxjs';
   }
 })
 export class SidenavComponent implements OnDestroy {
+  private _bodyOverflowStyle?: string;
   private _sidenavContainer = inject(SidenavContainerComponent);
   private _vcr = inject(ViewContainerRef);
   private _renderer = inject(Renderer2);
@@ -41,6 +42,7 @@ export class SidenavComponent implements OnDestroy {
   protected _isPlatformServer = isPlatformServer(this._platformId)
   private _resizeSubscription?: Subscription;
   private readonly _elementRef = inject(ElementRef<HTMLElement>);
+
 
   /**
    * Whether the sidenav is open.
@@ -83,7 +85,7 @@ export class SidenavComponent implements OnDestroy {
    * @example
    * - 100, '300px', '50%', '50vh', 'small', 'full', ...
    */
-  public size = input<number | string | 'small' | 'medium' | 'large' | 'full' | undefined>();
+  public size = input<SidenavSize>();
 
   /**
    * Whether the sidenav is fixed in the viewport.
@@ -95,7 +97,7 @@ export class SidenavComponent implements OnDestroy {
   /**
    * Emits when the backdrop is clicked.
    */
-  @Output() public backdropClick = new EventEmitter<MouseEvent>();
+  @Output() public backdropClick = new EventEmitter<PointerEvent>();
 
   constructor() {
     effect(() => {
@@ -141,6 +143,8 @@ export class SidenavComponent implements OnDestroy {
   }
 
   private _createBackdrop() {
+    if (this._backdropRef) return;
+
     this._backdropRef = this._vcr.createComponent(BackdropComponent);
     const backdropElm = this._backdropRef.location.nativeElement;
     this._backdropRef.instance.fixed.set(this.fixedInViewport());
@@ -155,14 +159,28 @@ export class SidenavComponent implements OnDestroy {
     const hostElm = this.elmentRef.nativeElement;
     const parentElm = hostElm.parentNode;
     this._renderer.insertBefore(parentElm, backdropElm, hostElm);
+
+
+    // disable body scroll when sidenav is open and fixedInViewport is true
+    if (!this._isPlatformServer && this.fixedInViewport()) {
+      const body = document.getElementsByTagName('body')[0];
+      this._bodyOverflowStyle = body.style.overflow;
+      body.style.overflow = 'hidden';
+      this._renderer.setStyle(body, 'overflow', 'hidden');
+    }
   }
 
   private _destroyBackdrop() {
     this._backdropClickHandlerUnlisten?.();
     this._backdropRef?.destroy();
-
     this._backdropClickHandlerUnlisten = undefined;
     this._backdropRef = undefined;
+
+    // restore body scroll when sidenav is closed
+    if (!this._isPlatformServer && this.fixedInViewport()) {
+      const body = document.getElementsByTagName('body')[0];
+      this._renderer.setStyle(body, 'overflow', this._bodyOverflowStyle);
+    }
   }
 
   ngOnDestroy(): void {

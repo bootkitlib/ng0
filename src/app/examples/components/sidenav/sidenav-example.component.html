@@ -12,7 +12,7 @@
 
         <ng0-sidenav-container class="border bg-light">
           <ng0-sidenav
-                       [zIndex]="144"
+                       [zIndex]="4"
                        class="bg-secondary"
                        [mode]="examples.basicUsage.sidenav1.mode()"
                        [position]="examples.basicUsage.sidenav1.position()"
@@ -21,7 +21,7 @@
                        [fixedInViewport]="true"
                        [hasBackdrop]="examples.basicUsage.sidenav1.hasBackdrop()"
                        (backdropClick)="examples.basicUsage.sidenav1.open.set(false)">
-            Sidenav 1 content.
+            Sidenav 1 content .
           </ng0-sidenav>
 
           <ng0-sidenav
@@ -83,7 +83,7 @@
 
           <div class="col-xl-2">
             Size:
-            <select name="size" class="form-select"
+            <select name="sidenav1.size" class="form-select"
                     [(ngModel)]="examples.basicUsage.sidenav1.size">
               <option value="200px">200 px</option>
               <option value="50%">50 %</option>
@@ -103,7 +103,7 @@
         <h6>Sidenav 2 configurations:</h6>
 
         <div class="row">
-          <div class="col-xl-3">
+          <div class="col-xl-2">
             Open:
             <div class="input-group">
               <input type="text" class="form-control" [value]="examples.basicUsage.sidenav2.open()" readonly />
@@ -113,27 +113,41 @@
               </button>
             </div>
           </div>
-          <div class="col-xl-3">
+          <div class="col-xl-2">
             Position:
             <select name="sidenav2.position" class="form-select" [(ngModel)]="examples.basicUsage.sidenav2.position">
               <option value="start">Start</option>
               <option value="end">End</option>
             </select>
           </div>
-          <div class="col-xl-3">
+          <div class="col-xl-2">
             Mode:
             <select name="sidenav2.mode" class="form-select" [(ngModel)]="examples.basicUsage.sidenav2.mode">
               <option value="push">Push</option>
               <option value="over">Over</option>
             </select>
           </div>
-          <div class="col-xl-3">
+          <div class="col-xl-2">
             hasBackdrop:
             <select name="sidenav2.hasBackdrop" class="form-select"
                     [(ngModel)]="examples.basicUsage.sidenav2.hasBackdrop"
                     [disabled]="examples.basicUsage.sidenav2.mode() === 'push'">
               <option [value]="true">True</option>
               <option [value]="false">False</option>
+            </select>
+          </div>
+          <div class="col-xl-2">
+            Size:
+            <select name="sidenav2.size" class="form-select"
+                    [(ngModel)]="examples.basicUsage.sidenav2.size">
+              <option value="200px">200 px</option>
+              <option value="50%">50 %</option>
+              <option value="75vh">75 vh</option>
+              <option value="50vw">50 vw</option>
+              <option value="small">Small</option>
+              <option value="medium">Medium</option>
+              <option value="large">Large</option>
+              <option value="full">Full</option>
             </select>
           </div>
         </div>
@@ -156,7 +170,7 @@
     And this is some more content. <br>
     And this is the last piece of content.
   </p>
-    <p class="my-5">
+  <p class="my-5">
     This is a simple content. <br>
     And this is some more content. <br>
     And this is the last piece of content.

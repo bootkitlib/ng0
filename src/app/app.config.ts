@@ -9,6 +9,7 @@ import { map } from 'rxjs';
 import { DataResult } from '@bootkit/ng0/data';
 import { LocalizationService } from '@bootkit/ng0/localization';
 import { APP_FA_IR_LOCALE } from './common/locales/fa-ir';
+import { provideClientHydration } from '@angular/platform-browser';
 
 const appHttpDataRequestResolver: HttpDataRequestResolver = (url, request, options) => {
   let http = inject(HttpClient);
@@ -30,7 +31,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: false }),
     // provideRouter(routes, withDebugTracing()),
     provideRouter(routes),
-    // provideClientHydration(),
+    provideClientHydration(),
     provideHttpClient(),
     provideHttpService({
       baseUrl: 'https://dummyjson.com/',

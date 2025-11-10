@@ -1,7 +1,10 @@
 ng0-sidenav {
-  display: block;
   position: absolute;
   will-change: transform, width, height;
+  overflow: auto;
+  // Before angular load the component and assign other classes to the sidenav (.ng0-sidenav-start, ...), 
+  // we should hide the sidenav to avoid flash
+  display: none;
 }
 
 .ng0-sidenav-transition ng0-sidenav {
@@ -15,6 +18,7 @@ ng0-sidenav {
 }
 
 .ng0-sidenav-top {
+  display: block;
   left: 0;
   right: 0;
   top: 0;
@@ -26,6 +30,7 @@ ng0-sidenav {
 }
 
 .ng0-sidenav-bottom {
+  display: block;
   left: 0;
   right: 0;
   bottom: 0;
@@ -37,6 +42,7 @@ ng0-sidenav {
 }
 
 .ng0-sidenav-start {
+  display: block;
   top: 0;
   bottom: 0;
   inset-inline-start: 0;
@@ -53,6 +59,7 @@ ng0-sidenav {
 }
 
 .ng0-sidenav-end {
+  display: block;
   top: 0;
   bottom: 0;
   inset-inline-end: 0;
