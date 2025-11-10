@@ -1,12 +1,14 @@
-<ol class="breadcrumb m-0 p-3">
-  <li class="breadcrumb-item">
-    <a>NG0</a>
-  </li>
-  @for (route of _routes(); track $index) {
-  @if(route.title) {
-  <li class="breadcrumb-item">
-    <a [routerLink]="route.link">{{ route?.title }}</a>
-  </li>
-  }
-  }
-</ol>
+<div class="container">
+  <ol class="breadcrumb m-0 p-3">
+    <li class="breadcrumb-item">
+      <a>NG0</a>
+    </li>
+    @for (route of _routes(); track $index) {
+    @if(route.title) {
+    <li class="breadcrumb-item">
+      <a [routerLink]="route.link">{{ route?.title }}</a>
+    </li>
+    }
+    }
+  </ol>
+</div>

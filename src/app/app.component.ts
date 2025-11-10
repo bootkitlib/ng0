@@ -3,8 +3,9 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { RouterModule, RouterOutlet } from '@angular/router';
 import { RouterService } from '@bootkit/ng0/routing';
 import { Layout1Manager, Layout1Module, Layout1SidenavDirective } from '@bootkit/ng0/layouts/layout1';
-import { HeaderComponent } from './common/layout/header/header.component';
+import { AppHeaderComponent } from './common/layout/header/header.component';
 import { SidenavModule } from '@bootkit/ng0/components/sidenav';
+import { AppSidenavComponent } from './common/layout/sidenav/sidenav.component';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,8 @@ import { SidenavModule } from '@bootkit/ng0/components/sidenav';
     RouterModule,
     Layout1Module,
     SidenavModule,
-    HeaderComponent,
+    AppHeaderComponent,
+    AppSidenavComponent,
     Layout1SidenavDirective
 ],
   templateUrl: './app.component.html',

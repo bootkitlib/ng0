@@ -20,6 +20,6 @@ export class Layout1ExampleComponent {
     sidenav!: Layout1SecondarySidenav;
 
     onClick() {
-        this.sidenav = this.manager.pushSidenav(this.t, { css: 'bg-secondary', mode: 'push' });
+        this.sidenav = this.manager.pushSidenav(this.t, { css: 'bg-secondary', closeOnBackdropClick: true });
     }
 }

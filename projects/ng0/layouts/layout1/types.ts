@@ -13,7 +13,7 @@ export interface Layout1SecondarySidenavOptions {
     fixedInViewport?: boolean;
     hasBackdrop?: boolean;
     css?: CssClass;
-    closeByBackdropClick?: boolean
+    closeOnBackdropClick?: boolean
 }
 
 export class Layout1SecondarySidenav {
@@ -24,7 +24,7 @@ export class Layout1SecondarySidenav {
     position: WritableSignal<SidenavPosition>;
     mode: WritableSignal<SidenavMode>;
     hasBackdrop: WritableSignal<boolean>;
-    closeByBackdropClick: WritableSignal<boolean>;
+    closeOnBackdropClick: WritableSignal<boolean>;
 
     constructor(template: TemplateRef<any>, options?: Layout1SecondarySidenavOptions) {
         this.template = template;
@@ -34,6 +34,6 @@ export class Layout1SecondarySidenav {
         this.position = signal(options?.position ?? 'start');
         this.mode = signal(options?.mode ?? 'over');
         this.hasBackdrop = signal(options?.hasBackdrop ?? true);
-        this.closeByBackdropClick = signal(options?.closeByBackdropClick ?? false);
+        this.closeOnBackdropClick = signal(options?.closeOnBackdropClick ?? false);
     }
 }

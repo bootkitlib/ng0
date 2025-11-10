@@ -19,7 +19,6 @@ import { Layout1SecondarySidenav } from './types';
   imports: [CommonModule, SidenavModule]
 })
 export class Layout1Component {
-  // private _zIndexCounter = 1000;
   private readonly _manager = inject(Layout1Manager);
   @ContentChildren(Layout1SidenavDirective) protected readonly _sidenavs?: QueryList<Layout1SidenavDirective>;
   protected readonly _secondarySidenavs = signal<Layout1SecondarySidenav[]>([]);
@@ -32,11 +31,16 @@ export class Layout1Component {
   public readonly stickyHeader = model(true);
 
   constructor() {
-    this._manager.sidenavPushNotification.pipe(takeUntilDestroyed()).subscribe(c => this._pushSidenav(c));
-    this._manager.sidenavRemoveNotification.pipe(takeUntilDestroyed()).subscribe(c => this._removeSidenav(c));
+    this._manager.sidenavPushNotification.pipe(takeUntilDestroyed()).subscribe(c => this.pushSidenav(c));
+    this._manager.sidenavRemoveNotification.pipe(takeUntilDestroyed()).subscribe(c => this.removeSidenav(c));
+    this._manager.sidenavPopNotification.pipe(takeUntilDestroyed()).subscribe(c => this.popSidenav());
   }
 
-  private _pushSidenav(sidenav: Layout1SecondarySidenav): void {
+  /**
+   * Push a secondary sidenav.
+   * @param sidenav 
+   */
+  public pushSidenav(sidenav: Layout1SecondarySidenav): void {
     this._secondarySidenavs().push(sidenav);
     this._changeDetectorRef.markForCheck();
     setTimeout(() => {
@@ -46,7 +50,21 @@ export class Layout1Component {
     });
   }
 
-  protected _removeSidenav(sidenav: Layout1SecondarySidenav): void {
+  /**
+   * Pop the last secondary sidenav.
+   */
+  public popSidenav(): void {
+    const last = this._secondarySidenavs().at(-1);
+    if (last) {
+      this.removeSidenav(last);
+    }
+  }
+
+  /**
+   * Remove a secondary sidenav.
+   * @param sidenav 
+   */
+  public removeSidenav(sidenav: Layout1SecondarySidenav): void {
     // Close the sidenav first. After the transition ends, it will be removed from DOM.
     this._openSecondarySidenavs.delete(sidenav);
   }

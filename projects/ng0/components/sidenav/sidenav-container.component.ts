@@ -51,7 +51,7 @@ export class SidenavContainerComponent implements AfterViewInit {
       }
     } else {
       let horizontal = position == 'start' || position == 'end';
-      let sizes = filteredSidenavs.map(x => horizontal ? x.elmentRef.nativeElement.clientWidth : x.elmentRef.nativeElement.clientHeight);
+      let sizes = filteredSidenavs.map(x => horizontal ? x.elmentRef.nativeElement.offsetWidth : x.elmentRef.nativeElement.offsetHeight);
       return `${Math.max(...sizes)}px`;
     }
   };

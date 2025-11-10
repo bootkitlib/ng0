@@ -1,6 +1,5 @@
-import { Directive, EventEmitter, inject, input, model, OnDestroy, Output, TemplateRef } from '@angular/core';
+import { Directive, EventEmitter, inject, input, Output, TemplateRef } from '@angular/core';
 import { SidenavMode, SidenavPosition, SidenavSize } from '@bootkit/ng0/components/sidenav';
-import { Layout1Manager } from './layout1-manager';
 import { CssClass } from '@bootkit/ng0/common';
 
 /** 

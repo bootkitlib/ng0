@@ -4,17 +4,16 @@ import { RouterModule } from '@angular/router';
 import { RouterService } from 'dist/ng0/routing';
 
 @Component({
-  selector: 'app-layout-header',
-  templateUrl: './header.component.html',
-  styleUrl: './header.component.scss',
+  selector: 'app-layout-sidenav',
+  templateUrl: './sidenav.component.html',
+  styleUrl: './sidenav.component.scss',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     RouterModule
   ]
 })
-export class AppHeaderComponent {
-  private routerService = inject(RouterService);
-  protected _routes = toSignal(this.routerService.getActivatedRoutes());
+export class AppSidenavComponent {
+
 
 }

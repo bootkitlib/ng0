@@ -1,14 +1,14 @@
 <ng0-layout1>
-  <app-layout-header ngProjectAs="header"></app-layout-header>
+  <app-layout-header ngProjectAs="ng0-layout1-header"></app-layout-header>
 
-  <div ngProjectAs="content">
-    <div class="container-fluid mt-3">
+  <div ngProjectAs="ng0-layout1-content">
+    <div class="container mt-5">
       <router-outlet />
     </div>
   </div>
 
-  <ng-template ng0Layout1Sidenav css="bg-light p-3" >
-    BootKit
+  <ng-template ng0Layout1Sidenav css="p-3 border-end">
+    <app-layout-sidenav />
   </ng-template>
 
 </ng0-layout1>
