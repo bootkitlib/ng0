@@ -16,7 +16,6 @@ import { AppSidenavComponent } from './common/layout/sidenav/sidenav.component';
     SidenavModule,
     AppHeaderComponent,
     AppSidenavComponent,
-    Layout1SidenavDirective
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
