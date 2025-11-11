@@ -14,8 +14,19 @@ export class Layout1Manager {
   private _sidenavPopSubject = new Subject<any>();
   private _sidenavRemoveSubject = new Subject<Layout1SecondarySidenav>();
 
+  /**
+   * @private
+   */
   public sidenavPushNotification = this._sidenavPushSubject.asObservable();
+
+  /**
+   * @private
+   */
   public sidenavPopNotification = this._sidenavPopSubject.asObservable();
+
+  /**
+   * @private
+   */
   public sidenavRemoveNotification = this._sidenavRemoveSubject.asObservable();
 
   /**

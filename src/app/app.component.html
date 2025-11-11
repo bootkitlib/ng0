@@ -1,14 +1,15 @@
 <ng0-layout1>
-  <app-layout-header ngProjectAs="ng0-layout1-header"></app-layout-header>
+  <ng0-layout1-header class="ng0-layout1-header-sticky">
+    <app-layout-header></app-layout-header>
+  </ng0-layout1-header>
 
-  <div ngProjectAs="ng0-layout1-content">
+  <ng0-layout1-content>
     <div class="container mt-5">
       <router-outlet />
     </div>
-  </div>
+  </ng0-layout1-content>
 
   <ng-template ng0Layout1Sidenav css="p-3 border-end">
     <app-layout-sidenav />
   </ng-template>
-
 </ng0-layout1>

@@ -6,7 +6,7 @@ import { SidenavMode, SidenavPosition, SidenavSize } from "@bootkit/ng0/componen
  * Represents a secondary sidenav options in the Layout1Component.
  */
 export interface Layout1SecondarySidenavOptions {
-    size?: number | string | undefined;
+    size?: SidenavSize;
     zIndex?: number;
     position?: SidenavPosition;
     mode?: SidenavMode;

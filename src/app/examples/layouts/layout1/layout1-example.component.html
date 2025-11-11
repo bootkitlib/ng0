@@ -1,8 +1,68 @@
-<button class="btn btn-secondary" (click)="onClick()">
-    Show a secondary sidenav
-</button>
+<p>
+    Layout1 is a layout component with sidenav support.
+    This application is using Layout1 with one primary sidenav and secondary sidenavs.
 
-<p>This is page content</p>
+    In bellow examples, you can see how to use Layout1 component and how to open/close secondary sidenavs using
+    Layout1Manager service.
+</p>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h4 class="card-title">Primary Sidenavs</h4>
+                <p>
+                    The main sidenav is defined in app.component.html using ng0Layout1Sidenav directive.
+                    You can control its properties using Layout1Manager service.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-secondary" (click)="onClick()">
+                    Show a secondary sidenav
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h4 class="card-title">Secondary sidenavs</h4>
+                <p>
+                    The main sidenav is defined in app.component.html using ng0Layout1Sidenav directive.
+                    You can control its properties using Layout1Manager service.
+                </p>
+
+
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-secondary" (click)="onClick()">
+                    Show a secondary sidenav
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h4 class="card-title">Header</h4>
+                <p>
+                    You can define a header for layout1 using ng0-layout1-header selector.
+                    You can also make the header sticky using stickyHeader method.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-secondary" (click)="onClick()">
+                    Toggle Sticky Header
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <ng-template #t>
     <div class="position-sticky" style="top: 0;">

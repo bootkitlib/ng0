@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, inject, input, Output, TemplateRef } from '@angular/core';
+import { booleanAttribute, Directive, EventEmitter, inject, input, numberAttribute, Output, TemplateRef } from '@angular/core';
 import { SidenavMode, SidenavPosition, SidenavSize } from '@bootkit/ng0/components/sidenav';
 import { CssClass } from '@bootkit/ng0/common';
 
@@ -12,9 +12,9 @@ import { CssClass } from '@bootkit/ng0/common';
 })
 export class Layout1SidenavDirective {
     public readonly template = inject(TemplateRef<any>);
-    public readonly open = input(true);
+    public readonly open = input(true, { transform: booleanAttribute });
     public readonly mode = input<SidenavMode>('push');
-    public readonly hasBackdrop = input(true);
+    public readonly hasBackdrop = input(true, { transform: booleanAttribute });
     public readonly zIndex = input<number | undefined>(undefined);
     public readonly position = input<SidenavPosition>('start');
     public readonly size = input<SidenavSize>();

@@ -25,11 +25,6 @@ export class Layout1Component {
   protected readonly _openSecondarySidenavs = new Set<Layout1SecondarySidenav>();
   private readonly _changeDetectorRef = inject(ChangeDetectorRef);
 
-  /**
-   * Whether the header is sticky.
-   */
-  public readonly stickyHeader = model(true);
-
   constructor() {
     this._manager.sidenavPushNotification.pipe(takeUntilDestroyed()).subscribe(c => this.pushSidenav(c));
     this._manager.sidenavRemoveNotification.pipe(takeUntilDestroyed()).subscribe(c => this.removeSidenav(c));
