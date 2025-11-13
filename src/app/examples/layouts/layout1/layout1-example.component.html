@@ -7,45 +7,82 @@
 </p>
 
 <div class="row g-4">
-    <div class="col-lg-6">
+    <div class="col-lg-12">
         <div class="card example-card">
             <div class="card-body">
                 <h4 class="card-title">Primary Sidenavs</h4>
                 <p>
-                    The main sidenav is defined in app.component.html using ng0Layout1Sidenav directive.
-                    You can control its properties using Layout1Manager service.
+                    Primary sidenavs are defined inside ng0-layout1 component using ng0Layout1Sidenav directive.
+                    You can control theme using their properties.
                 </p>
             </div>
 
-            <div class="card-footer">
+            <!-- <div class="card-footer">
                 <button class="btn btn-secondary" (click)="onClick()">
                     Show a secondary sidenav
                 </button>
-            </div>
+            </div> -->
         </div>
     </div>
 
-    <div class="col-lg-6">
+    <div class="col-lg-12">
         <div class="card example-card">
             <div class="card-body">
                 <h4 class="card-title">Secondary sidenavs</h4>
                 <p>
-                    The main sidenav is defined in app.component.html using ng0Layout1Sidenav directive.
-                    You can control its properties using Layout1Manager service.
+                    Secondary sidenavs are opened using Layout1Manager service.
+                    You can open a secondary sidenav and control its properties after opening.
                 </p>
-
-
             </div>
 
             <div class="card-footer">
-                <button class="btn btn-secondary" (click)="onClick()">
-                    Show a secondary sidenav
+                <button class="btn btn-secondary" (click)="_showSidenav1(template1)">
+                    Open a secondary sidenav
                 </button>
             </div>
         </div>
     </div>
 
-    <div class="col-lg-6">
+    <div class="col-lg-12">
+        <div class="card example-card">
+            <div class="card-body">
+                <h4 class="card-title">Dispose event</h4>
+                <p>
+                    You can listen to dispose event of secondary sidenavs opened using Layout1Manager service. <br>
+                    Dispose event is fired when the secondary sidenav is closed and disposed.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-secondary" (click)="_layoutManager.pushSidenav(template1)">
+                    Open a secondary sidenav
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <div class="card example-card">
+            <div class="card-body">
+                <h4 class="card-title">Multiple Secondary sidenavs</h4>
+                <p>
+                    You can open multiple secondary sidenavs using Layout1Manager service.
+                    Each time you call pushSidenav method, a new secondary sidenav will be opened. <br>
+                    Secondary sidenavs are stacked on each other. <br>
+                    You can get a reference to the last opened secondary sidenav using Layout1Manager.last property.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-secondary" (click)="_layoutManager.pushSidenav(template1)">
+                    Open secondary sidenav 1
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-lg-12">
         <div class="card example-card">
             <div class="card-body">
                 <h4 class="card-title">Header</h4>
@@ -56,7 +93,7 @@
             </div>
 
             <div class="card-footer">
-                <button class="btn btn-secondary" (click)="onClick()">
+                <button class="btn btn-secondary" (click)="_toggleStickyHeader()">
                     Toggle Sticky Header
                 </button>
             </div>
@@ -64,12 +101,29 @@
     </div>
 </div>
 
-<ng-template #t>
-    <div class="position-sticky" style="top: 0;">
-        Header
-    </div>
-    <button (click)="manager.popSidenav()">Pop</button>
-    <button (click)="sidenav.size.set('large')">Large</button>
+<ng-template #template1>
+    <div class="card h-100 border-0 rounded-0">
+        <div class="card-header position-sticky" style="top: 0;">
+            Sidenav 1
+        </div>
 
-    <p>This is Sidenav content</p>
+        <div class="card-body">
+            This is a secondary sidenav opened using Layout1Manager service. <br>
+            You can get a refrence to the last opened secondary sidenav using Layout1Manager.last property.
+        </div>
+
+        <div class="card-footer">
+            <button class="btn btn-danger me-2" (click)="_layoutManager.popSidenav(true)">
+                Dispose
+            </button>
+
+            <button class="btn btn-secondary me-2" (click)="_layoutManager.last!.size.set('large')">
+                Enlarge Me!
+            </button>
+
+            <button class="btn btn-secondary" (click)="_layoutManager.last!.size.set(undefined)">
+                Reset Size
+            </button>
+        </div>
+    </div>
 </ng-template>

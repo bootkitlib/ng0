@@ -30,7 +30,7 @@
                [fixedInViewport]="true"
                [ngClass]="sidenav.css()"
                (transitionEnd)="_onSecondarySidenavTransitionEnd(sidenav)"
-               (backdropClick)="sidenav.closeOnBackdropClick() ? removeSidenav(sidenav) : null">
+               (backdropClick)="sidenav.closeOnBackdropClick() ? sidenav.dispose() : null">
     <ng-container *ngTemplateOutlet="sidenav.template" />
   </ng0-sidenav>
   }

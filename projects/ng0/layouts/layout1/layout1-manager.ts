@@ -1,6 +1,6 @@
 import { Injectable, TemplateRef } from '@angular/core';
-import { Subject } from 'rxjs';
-import { Layout1SecondarySidenav, Layout1SecondarySidenavOptions } from './types';
+import { Layout1SecondarySidenav, Layout1SecondarySidenavOptions } from './secondary-sidenav';
+import { Layout1Component } from './layout1.component';
 
 /**
  * Service to manage the configuration and state of Layout1Component.
@@ -9,53 +9,39 @@ import { Layout1SecondarySidenav, Layout1SecondarySidenavOptions } from './types
   providedIn: 'root'
 })
 export class Layout1Manager {
-  private _zIndexCounter = 1000;
-  private _sidenavPushSubject = new Subject<Layout1SecondarySidenav>();
-  private _sidenavPopSubject = new Subject<any>();
-  private _sidenavRemoveSubject = new Subject<Layout1SecondarySidenav>();
-
   /**
-   * @private
+   * The Layout1Component instance associated with this manager.
    */
-  public sidenavPushNotification = this._sidenavPushSubject.asObservable();
-
-  /**
-   * @private
-   */
-  public sidenavPopNotification = this._sidenavPopSubject.asObservable();
-
-  /**
-   * @private
-   */
-  public sidenavRemoveNotification = this._sidenavRemoveSubject.asObservable();
+  public component!: Layout1Component;
 
   /**
    * Push a secondary sidenav.
-   * @param template  
-   * @param options 
-   * @returns 
+   * @param content The template for the secondary sidenav.
+   * @param options Options for the secondary sidenav.
+   * @returns The reference to the pushed secondary sidenav.
    */
-  public pushSidenav(template: TemplateRef<any>, options?: Layout1SecondarySidenavOptions): Layout1SecondarySidenav {
-    options = options || {};
-    options.zIndex = options.zIndex ?? this._zIndexCounter++;
-
-    const sidenav = new Layout1SecondarySidenav(template, options);
-    this._sidenavPushSubject.next(sidenav);
-    return sidenav;
+  public pushSidenav(content: TemplateRef<any>, options?: Layout1SecondarySidenavOptions): Layout1SecondarySidenav {
+    return this.component.pushSidenav(content, options);
   }
 
   /**
-   * Pop the last secondary sidenav.
+   * Close the last secondary sidenav and dispose it.
    */
-  public popSidenav(): void {
-    this._sidenavPopSubject.next(undefined);
+  public popSidenav(result?: any): Layout1SecondarySidenav | undefined {
+    return this.component.popSidenav(result);
   }
 
   /**
-   * Remove a secondary sidenav.
-   * @param sidenav 
+   * Get the list of secondary sidenavs.
    */
-  public removeSidenav(sidenav: Layout1SecondarySidenav): void {
-    this._sidenavRemoveSubject.next(sidenav);
+  public get secondarySidenavs(): ReadonlyArray<Layout1SecondarySidenav> {
+    return this.component.secondarySidenavs;
+  }
+
+  /**
+   * Get the last secondary sidenav.
+   */
+  public get last(): Layout1SecondarySidenav | undefined {
+    return this.component.secondarySidenavs.at(-1);
   }
 }

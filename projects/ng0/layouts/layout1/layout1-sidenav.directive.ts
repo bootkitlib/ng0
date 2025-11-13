@@ -1,4 +1,4 @@
-import { booleanAttribute, Directive, EventEmitter, inject, input, numberAttribute, Output, TemplateRef } from '@angular/core';
+import { booleanAttribute, Directive, EventEmitter, inject, input, Output, TemplateRef } from '@angular/core';
 import { SidenavMode, SidenavPosition, SidenavSize } from '@bootkit/ng0/components/sidenav';
 import { CssClass } from '@bootkit/ng0/common';
 

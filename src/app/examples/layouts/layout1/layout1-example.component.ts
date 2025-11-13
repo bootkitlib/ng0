@@ -1,7 +1,7 @@
 import { Component, ChangeDetectionStrategy, inject, signal, ViewChild, TemplateRef } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Layout1Manager } from '@bootkit/ng0/layouts/layout1';
-import { Layout1SecondarySidenav } from '@bootkit/ng0/layouts/layout1/types';
+import { Layout1SecondarySidenav } from '@bootkit/ng0/layouts/layout1/secondary-sidenav';
 
 @Component({
     selector: 'app-examples-layouts-layout1',
@@ -13,13 +13,18 @@ import { Layout1SecondarySidenav } from '@bootkit/ng0/layouts/layout1/types';
     ]
 })
 export class Layout1ExampleComponent {
-    public readonly manager = inject(Layout1Manager);
-    @ViewChild('t', { static: true }) t!: TemplateRef<any>;
+    protected _layoutManager = inject(Layout1Manager);
+    protected _sidenav1!: Layout1SecondarySidenav;
 
-    showSidenav1 = signal(false);
-    sidenav!: Layout1SecondarySidenav;
+    _showSidenav1(template: TemplateRef<any>) {
+        this._sidenav1 = this._layoutManager.pushSidenav(template, { closeOnBackdropClick: true });
 
-    onClick() {
-        this.sidenav = this.manager.pushSidenav(this.t, { css: 'bg-secondary', closeOnBackdropClick: true });
+        this._sidenav1.disposed.subscribe((result: any) => {
+            console.log('Sidenav 1 disposed', result);
+        });
+    }
+
+    _toggleStickyHeader() {
+
     }
 }
