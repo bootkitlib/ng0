@@ -1,16 +1,25 @@
-import { OnInit, ElementRef, Renderer2, effect, HostListener, Directive, input, Output, EventEmitter, OnDestroy, afterNextRender, untracked } from '@angular/core';
+import { ElementRef, Renderer2, effect, HostListener, Directive, input, Output, EventEmitter, OnDestroy, afterNextRender, untracked, booleanAttribute } from '@angular/core';
 
 @Directive({
     selector: '[ng0Offcanvas]',
     exportAs: 'ng0Offcanvas',
     standalone: true,
 })
-export class OffcanvasDirective implements OnInit, OnDestroy {
-    public show = input(false);
-    public hasBackdrop = input(false);
+export class OffcanvasDirective implements OnDestroy {
+    /**
+     * Whether to show the offcanvas element.
+     */
+    public show = input(false, { transform: booleanAttribute });
 
-    @Output()
-    public backdropClick = new EventEmitter<MouseEvent>;
+    /**
+     * Whether to show a backdrop element behind the offcanvas.
+     */
+    public hasBackdrop = input(false, { transform: booleanAttribute });
+
+    /**
+     * Emitted when the backdrop is clicked.
+     */
+    @Output() public backdropClick = new EventEmitter<MouseEvent>;
 
     private _firstShowEffectRun = true;
     private _firstBackdropEffectRun = true;
@@ -68,8 +77,6 @@ export class OffcanvasDirective implements OnInit, OnDestroy {
         });
     }
 
-    ngOnInit(): void {
-    }
 
     private _createBackdrop() {
         if (!this._backdropElement) {

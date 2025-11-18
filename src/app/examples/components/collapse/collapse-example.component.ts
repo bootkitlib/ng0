@@ -9,29 +9,7 @@ import { CollapseModule } from '@bootkit/ng0/components/collapse';
         CollapseModule
     ]
 })
-export class CollapseExampleComponent implements OnInit, AfterViewInit {
-    c1 = true;
+export class CollapseExampleComponent  {
+    c1 = false;
     c2 = false;
-    observer!: ResizeObserver;
-
-    constructor() {
-    }
-
-    ngOnInit(): void {
-        // this.observer = new ResizeObserver((entries) => {
-        //     for (const entry of entries) {
-        //         console.log('entry:', entry);
-
-        //         // if (entry.) {
-        //         //   const contentBoxSize = entry.contentBoxSize[0];
-        //         // }
-        //     }
-        // });
-    }
-
-    ngAfterViewInit(): void {
-        // this.observer.observe(document.querySelector('#p1'));
-        // this.observer.observe(document.querySelector('#p2'));
-        // this.observer.observe(document.querySelector('#p3'));
-    }
 }

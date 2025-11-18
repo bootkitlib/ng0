@@ -1,21 +1,62 @@
-<!-- <ng0-layout1 class="bg-light">
+<div class="alert alert-light">
+    An offcanvas is a hidden sidebar that can be revealed and hidden via a toggle button.
+</div>
 
-</ng0-layout1> -->
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h4 class="card-title">Default offcanvas</h4>
+                <p>
+                    Default offcanvas can be created using the `ng0Offcanvas` directive.
 
-<div class="offcanvas offcanvas-end" ng0Offcanvas [show]="show()" [hasBackdrop]="backdrop" (backdropClick)="onClick()">
+                </p>
+            </div>
+            <div class="card-footer">
+                <button (click)="show1.set(!show1())" class="btn btn-secondary ">
+                    Show/Hide
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="card example-card">
+            <div class="card-body">
+                <h4 class="card-title">Backdrop</h4>
+                <p>
+                    You can enable or disable the backdrop by setting the `backdrop` property.
+                </p>
+            </div>
+            <div class="card-footer">
+                <button (click)="show1.set(!show1())" class="btn btn-secondary ">
+                    Show/Hide
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="offcanvas offcanvas-end" ng0Offcanvas [show]="show1()" (backdropClick)="onClick()">
     <div class="offcanvas-header">
         <h4 class="offcanvas-title">Offcanvas</h4>
-        <button type="button">s</button>
     </div>
     <div class="offcanvas-body">
         Content for the offcanvas goes here. You can place just about any Bootstrap component or custom elements here.
 
 
-        <button (click)="show.set(!show())" class="btn btn-secondary " style="float: right;">Show/Hide</button>
-        <button (click)="backdrop = !backdrop" class="btn btn-secondary " style="float: right;">backdrop</button>
+        <button (click)="show1.set(!show1())" class="btn btn-secondary " style="float: right;">Show/Hide</button>
     </div>
 </div>
 
+<div class="offcanvas offcanvas-end" ng0Offcanvas [show]="show2()" [hasBackdrop]="true" (backdropClick)="onClick()">
+    <div class="offcanvas-header">
+        <h4 class="offcanvas-title">Offcanvas</h4>
+    </div>
+    <div class="offcanvas-body">
+        Content for the offcanvas goes here. You can place just about any Bootstrap component or custom elements here.
 
-<button (click)="show.set(!show())" class="btn btn-secondary " style="float: right;">Show/Hide</button>
-<button (click)="backdrop = !backdrop" class="btn btn-secondary " style="float: right;">backdrop</button>
+        <button (click)="show2.set(!show2())" class="btn btn-secondary " style="float: right;">Show/Hide</button>
+    </div>
+</div>

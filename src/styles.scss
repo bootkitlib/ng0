@@ -1,3 +1,6 @@
+$body-bg: #f8f9fa !default;
+$card-bg: white !default;
+
 @import '@angular/cdk/overlay-prebuilt.css';
 @import './../node_modules/bootstrap/scss/bootstrap.scss';
 // @import  '../public/css/bootstrap.css';
@@ -12,6 +15,8 @@
 //     min-height: 100vh;
 // }
 
+
+
 section {
     margin-bottom: 2rem;
 }
@@ -25,11 +30,11 @@ mark {
 .card {
     .card-title {
         margin-bottom: 1.5rem !important;
-        background-color: transparent !important;
+        // background-color: transparent !important;
     }
 
     .card-footer {
-        background-color: transparent !important;
+        // background-color: transparent !important;
     }
 
     &.example-card {

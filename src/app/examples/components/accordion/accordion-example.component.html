@@ -1,32 +1,59 @@
-<h4>Default accordion</h4>
-<ng0-accordion >
-    <ng0-accordion-item header="Item 1">
-        Item 1
-    </ng0-accordion-item>
+<div class="alert alert-light">
+    Accordions are used to toggle the display of sections of content.
+</div>
 
-    <ng0-accordion-item header="Item 2">
-        Item 2
-    </ng0-accordion-item>
+<div class="row g-4">
+    <div class="col-lg-12">
+        <div class="card example-card">
+            <div class="card-body">
+                <h4 class="card-title">Default</h4>
+                <p>
+                    This is a default accordion example.
+                </p>
 
-    <ng0-accordion-item header="Item 3">
-        Item 3
-    </ng0-accordion-item>
-</ng0-accordion>
+                <ng0-accordion>
+                    <ng0-accordion-item header="Item 1">
+                        Item 1
+                    </ng0-accordion-item>
+
+                    <ng0-accordion-item header="Item 2">
+                        Item 2
+                    </ng0-accordion-item>
+
+                    <ng0-accordion-item header="Item 3">
+                        Item 3
+                    </ng0-accordion-item>
+                </ng0-accordion>
+
+            </div>
+        </div>
+    </div>
 
 
-<h4 class="mt-5">Flush</h4>
+    <div class="col-lg-12">
+        <div class="card example-card">
+            <div class="card-body">
+                <h4 class="card-title">Flush</h4>
+                <p>
+                    Add .accordion-flush to remove some borders and rounded corners to render accordions edge-to-edge
+                    with their parent container.
+                </p>
+                <ng0-accordion class="accordion-flush">
+                    <ng0-accordion-item header="Item 1">
+                        Item 1
+                    </ng0-accordion-item>
 
-<ng0-accordion class="accordion-flush">
-    <ng0-accordion-item header="Item 1">
-        Item 1
-    </ng0-accordion-item>
+                    <ng0-accordion-item header="Item 2">
+                        Item 2
+                    </ng0-accordion-item>
 
-    <ng0-accordion-item header="Item 2">
-        Item 2
-    </ng0-accordion-item>
+                    <ng0-accordion-item header="Item 3">
+                        Item 3
+                    </ng0-accordion-item>
+                </ng0-accordion>
 
-    <ng0-accordion-item header="Item 3">
-        Item 3
-    </ng0-accordion-item>
-</ng0-accordion>
+            </div>
+        </div>
+    </div>
 
+</div>

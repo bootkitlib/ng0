@@ -10,7 +10,11 @@ import { AccordionItemComponent } from './accordion-item.component';
     styles: `:host {display: block;}`
 })
 export class AccordionComponent {
-    /** Items open mode */
+    /**
+     * The mode of the accordion - 'single' or 'multiple'.
+     * 'single' mode allows only one item to be expanded at a time.
+     * 'multiple' mode allows multiple items to be expanded simultaneously.
+     */
     public mode = input<'single' | 'multiple'>('single');
 
     @ContentChildren(AccordionItemComponent)

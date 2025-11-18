@@ -9,12 +9,10 @@ import { OffcanvasModule } from '@bootkit/ng0/components/offcanvas';
     imports: [CommonModule, OffcanvasModule]
 })
 export class OffcanvasExampleComponent {
-    show = signal(true);
-    backdrop = false;
-
+    show1 = signal(false);
+    show2 = signal(false);
 
     onClick() {
-        this.show.set(false)
-        console.log(this.show)
+        this.show1.set(false)
     }
 }

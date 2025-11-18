@@ -1,14 +1,30 @@
-<ng0-pagination [totalRecords]="17"
-                [pageSize]="1"
-                [selectedPage]="selectedPage"
-                (itemClick)="selectedPage = $event"
+<div class="alert alert-light">
+    Pagination component is used to divide content into separate pages, and to navigate between these pages.
+</div>
 
-                [maxVisiblePages]="8">
+<div class="row g-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <p>
+                    Basic pagination example with total records of 17 and page size of 2.
+                </p>
+                <ng0-pagination [totalRecords]="17"
+                                [pageSize]="2"
+                                [selectedPage]="selectedPage"
+                                (itemClick)="selectedPage = $event"
+                                [maxVisiblePages]="8">
 
-                <!-- <ng-container ngProjectAs="first"> << </ng-container> -->
-                <!-- <ng-container ngProjectAs="last"> >> </ng-container> -->
-                <!-- <ng-container ngProjectAs="next"> > </ng-container> -->
-                <!-- <ng-container ngProjectAs="previous"> > </ng-container> -->
-</ng0-pagination>
+                    <!-- <ng-container ngProjectAs="first"> << </ng-container> -->
+                    <!-- <ng-container ngProjectAs="last"> >> </ng-container> -->
+                    <!-- <ng-container ngProjectAs="next"> > </ng-container> -->
+                    <!-- <ng-container ngProjectAs="previous"> > </ng-container> -->
+                </ng0-pagination>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- <button class="btn btn-secondary me-3" [ng0Popover]="t" placement="bottom" header="header"  triggerBy="focus" >bottom</button> -->
