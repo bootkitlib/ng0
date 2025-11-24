@@ -145,7 +145,7 @@ export class HttpService {
           const field = body[key];
           let value;
 
-          if (typeof field === 'string' || field instanceof File) {
+          if (typeof field === 'string' || field instanceof File || field instanceof Blob) {
             value = field;
           } else if (typeof field === 'number') {
             value = field.toString();
