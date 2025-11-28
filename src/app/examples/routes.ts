@@ -32,4 +32,9 @@ export default [
         title: 'Layouts',
         loadChildren: () => import('./layouts/routes')
     },
+    {
+        path: 'platform/browser',
+        title: 'Platform',
+        loadChildren: () => import('./platform/browser/routes')
+    },
 ] satisfies Route[];

@@ -1,0 +1,76 @@
+<div class="alert alert-light">
+    <strong>Note:</strong> This directive is only available in browser platform.
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">ng0IntersectionObserver Directive</h4>
+
+                <div class="border" style="overflow-y: scroll; height: 500px;" #root>
+                    This is a scrollable container.
+
+                    <div class="bg-secondary" style="height: 800px;"></div>
+
+                    <div class="box hide" ng0IntersectionObserver #intObs="ng0IntersectionObserver"
+                         [root]="root"
+                         [once]="false"
+                         enterClass="fade-in"
+                         leaveClass="fade-out"
+                         [threshold]=".5">
+                        This is a box.
+                    </div>
+
+                    <div class="bg-secondary" style="height: 1200px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<style>
+    .hide {
+        opacity: 0;
+    }
+
+    .box {
+        height: 50px;
+        width: 200px;
+        background-color: red;
+        border: 1px solid #000;
+    }
+
+    .fade-in {
+        animation: fadeInAnimation 1s forwards;
+    }
+
+    @keyframes fadeInAnimation {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .fade-out {
+        animation: fadeOutAnimation 1s forwards;
+    }
+
+    @keyframes fadeOutAnimation {
+        from {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        to {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+    }
+</style>
