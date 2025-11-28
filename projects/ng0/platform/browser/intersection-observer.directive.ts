@@ -55,7 +55,7 @@ export class IntersectionObserverDirective implements OnInit, OnDestroy {
      * If true, the observer will disconnect after the first intersection event.
      * @default false
      */
-    public readonly once = input(false, { transform: booleanAttribute });
+    public readonly once = input(true, { transform: booleanAttribute });
 
     /**
      * Event emitted when the element enters the viewport.
@@ -84,9 +84,10 @@ export class IntersectionObserverDirective implements OnInit, OnDestroy {
                     if (entry.isIntersecting) {
                         if (this.enterClass()) {
                             this._addClass(this.enterClass()!);
-                        }
-                        if (this._entered === false && this.leaveClass()) {
-                            this._removeClass(this.leaveClass()!);
+
+                            if (this._entered === false && this.leaveClass()) {
+                                this._removeClass(this.leaveClass()!);
+                            }
                         }
 
                         this._entered = true;
@@ -99,9 +100,10 @@ export class IntersectionObserverDirective implements OnInit, OnDestroy {
                         if (this._entered) {
                             if (this.leaveClass()) {
                                 this._addClass(this.leaveClass()!);
-                            }
-                            if (this.enterClass()) {
-                                this._removeClass(this.enterClass()!);
+
+                                if (this.enterClass()) {
+                                    this._removeClass(this.enterClass()!);
+                                }
                             }
 
                             this._entered = false;

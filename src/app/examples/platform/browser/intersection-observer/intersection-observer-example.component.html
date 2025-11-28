@@ -15,9 +15,9 @@
 
                     <div class="box hide" ng0IntersectionObserver #intObs="ng0IntersectionObserver"
                          [root]="root"
-                         [once]="false"
+                         [once]="true"
                          enterClass="fade-in"
-                         leaveClass="fade-out"
+
                          [threshold]=".5">
                         This is a box.
                     </div>
@@ -36,7 +36,7 @@
     }
 
     .box {
-        height: 50px;
+        height: 100px;
         width: 200px;
         background-color: red;
         border: 1px solid #000;
