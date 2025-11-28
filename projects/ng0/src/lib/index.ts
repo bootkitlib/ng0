@@ -1,3 +1,1 @@
-export * from './types';
- 
-export const LibName = 'bootkit/angular-pro';
+export const libName = 'bootkit/ng0';
