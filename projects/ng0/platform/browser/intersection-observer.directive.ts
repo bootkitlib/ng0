@@ -53,7 +53,7 @@ export class IntersectionObserverDirective implements OnInit, OnDestroy {
     /**
      * Whether to observe only once (true) or continuously (false).
      * If true, the observer will disconnect after the first intersection event.
-     * @default false
+     * @default true
      */
     public readonly once = input(true, { transform: booleanAttribute });
 
