@@ -37,4 +37,9 @@ export default [
         title: 'Platform',
         loadChildren: () => import('./platform/browser/routes')
     },
+    {
+        path: 'utils',
+        title: 'Utils',
+        loadChildren: () => import('./utils/routes')
+    },
 ] satisfies Route[];

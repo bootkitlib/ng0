@@ -1,0 +1,21 @@
+<p>
+    This example demonstrates a simple counter.
+</p>
+
+<div class="row g-4">
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Counter</h4>
+
+                Counter Value: <h1>{{ _counter1.value() | number:'1.0-0' }}</h1>
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-secondary me-2" (click)="_counter1.start()">Start</button>
+                <button class="btn btn-secondary" (click)="_counter1.stop()" [disabled]="!_counter1.running()">Stop</button>
+            </div>
+        </div>
+    </div>
+</div>
