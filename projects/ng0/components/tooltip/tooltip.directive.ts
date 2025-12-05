@@ -32,20 +32,20 @@ export class TooltipDirective implements OnInit, OnDestroy {
     }
 
     @HostListener('mouseenter') 
-    private onMouseEnter(): void {
-        this.createOverlay();
+    private _onMouseEnter(): void {
+        this._createOverlay();
     }
 
     @HostListener('mouseleave') 
-    private onMouseLeave(): void {
-        this.disposeOverlay();
+    private _onMouseLeave(): void {
+        this._disposeOverlay();
     }
 
-    private createOverlay(): void {
+    private _createOverlay(): void {
         let wrapperInstance: TooltipWrapperComponent;
 
         const scrollStrategy = this.overlayService.scrollStrategies.reposition();
-        const positionStrategy = this.overlayService.position().flexibleConnectedTo(this.elementRef).withPositions(this.getPositions());
+        const positionStrategy = this.overlayService.position().flexibleConnectedTo(this.elementRef).withPositions(this._getPositions());
 
         positionStrategy.positionChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(p => {
             wrapperRef.instance.set(this.content(), (p.connectionPair as any).key);
@@ -56,14 +56,14 @@ export class TooltipDirective implements OnInit, OnDestroy {
         wrapperRef.instance.set(this.content(), this.placement());
     }
 
-    private disposeOverlay(): void {
+    private _disposeOverlay(): void {
         if (this.overlayRef) {
             this.overlayRef.dispose();
             this.overlayRef = undefined;
         }
     }
 
-    private getPositions(): any[] {
+    private _getPositions(): any[] {
         const c = 'center', t = 'top', b = 'bottom', s = 'start', e = 'end';
         const top = { key: t, originX: c, originY: t, overlayX: c, overlayY: b, };
         const bottom = { key: b, originX: c, originY: b, overlayX: c, overlayY: t, };
@@ -93,6 +93,6 @@ export class TooltipDirective implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.disposeOverlay();
+        this._disposeOverlay();
     }
 }
