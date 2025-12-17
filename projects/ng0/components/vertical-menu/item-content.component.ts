@@ -1,4 +1,4 @@
-import { Component, ElementRef, HostListener, Renderer2 } from '@angular/core';
+import { Component, HostListener, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VerticalMenuComponent } from './vertical-menu.component';
 import { VerticalMenuItemComponent } from './item.component';
@@ -11,18 +11,12 @@ import { VerticalMenuItemComponent } from './item.component';
   imports: [CommonModule]
 })
 export class VerticalMenuItemContentComponent {
-  constructor(
-    public menuItem: VerticalMenuItemComponent,
-    private _renderer: Renderer2,
-    private _el: ElementRef,
-    protected _menu: VerticalMenuComponent,
-  ) {
-    // _renderer.addClass(_el.nativeElement, '')
-  }
+  protected readonly _menu = inject(VerticalMenuComponent);
+  protected readonly menuItem = inject(VerticalMenuItemComponent);
 
-  @HostListener('click', ['$event'])
-  private _onClick() {
-    if (this._menu.toggleByItemClick() && this.menuItem.hasChildren) {
+  @HostListener('click')
+  protected _onClick() {
+    if (this._menu.expandItemsByClick() && this.menuItem.hasChildren) {
       this.menuItem.children?.expanded.update(x => !x);
     }
   }

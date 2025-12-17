@@ -9,13 +9,14 @@ import { VerticalMenuArrowDirective } from './item-arrow.directive';
   imports: [],
 })
 export class VerticalMenuComponent {
-  public toggleByItemClick = input(true);
-  
-  public collapseTimings = input<string | number>('0.15s');
+  /**
+   * Whether to expand/collapse items when clicking on them
+   */
+  public readonly expandItemsByClick = input(true);
 
-  @ContentChild(VerticalMenuArrowDirective, { descendants: false }) public readonly arrowDirective?: VerticalMenuArrowDirective;
+  public readonly collapseTimings = input<string | number>('0.15s');
 
-  constructor() {
-  }
+  @ContentChild(VerticalMenuArrowDirective, { descendants: false })
+  public readonly arrowDirective?: VerticalMenuArrowDirective;
 }
 

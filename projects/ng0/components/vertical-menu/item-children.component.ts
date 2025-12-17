@@ -12,7 +12,7 @@ import { CollapseDirective } from '@bootkit/ng0/components/collapse';
     styles: `:host {display: block}`,
     imports: [CommonModule, CollapseDirective],
     host: {
-        '[class.isc-expanded]': 'expanded()'
+        '[class.ng0-expanded]': 'expanded()'
     }
 })
 export class VerticalMenuItemChildrenComponent {

@@ -1,126 +1,59 @@
-<h1>Vertical Menu</h1>
+<div class="row g-4">
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Basic Usage</h4>
+                <p>
+                    The vertical menu component is used to create a vertical navigation menu with expandable and
+                    collapsible items.
+                </p>
 
+                <ng0-vmenu>
+                    <ng-template ng0VerticalMenuArrow>
+                        >
+                    </ng-template>
+                    
+                    <ng0-vmenu-item>
+                        <ng0-vmenu-item-content>
+                            Item 1
+                        </ng0-vmenu-item-content>
+                    </ng0-vmenu-item>
+                    <ng0-vmenu-item>
+                        <ng0-vmenu-item-content>
+                            Item 2
+                        </ng0-vmenu-item-content>
+                    </ng0-vmenu-item>
 
-<ng0-vmenu>
-    <ng0-vmenu-item>
-       
-        <ng0-vmenu-item-content>
- this is
-    </ng0-vmenu-item-content>
+                    <ng0-vmenu-item>
+                        <ng0-vmenu-item-content>
+                            Parent 1
+                        </ng0-vmenu-item-content>
+                        <ng0-vmenu-item-children>
+                            <ng0-vmenu-item>
+                                Item 1.1
+                            </ng0-vmenu-item>
+                        </ng0-vmenu-item-children>
+                    </ng0-vmenu-item>
+                    <ng0-vmenu-item>
+                        <ng0-vmenu-item-content>
+                            Parent 2
+                        </ng0-vmenu-item-content>
+                        <ng0-vmenu-item-children>
+                            <ng0-vmenu-item>
+                                <ng0-vmenu-item-content>
+                                    Parent 2.1
+                                </ng0-vmenu-item-content>
+                                <ng0-vmenu-item-children>
+                                    <ng0-vmenu-item>
+                                        Item 2.1.1
+                                    </ng0-vmenu-item>
+                                </ng0-vmenu-item-children>
+                            </ng0-vmenu-item>
+                        </ng0-vmenu-item-children>
+                    </ng0-vmenu-item>
 
-    <ng0-vmenu-item-children>
-                <ng0-vmenu-item>
-        this is
-            </ng0-vmenu-item>
-    </ng0-vmenu-item-children>
-
-    </ng0-vmenu-item>
-</ng0-vmenu>
-
-
-<!-- <bk-vmenu [collapseTimings]="100">
-    <ng-template bkVMenuArrow let-item>
-        <span [style.transform]="item.isExpanded ? ' rotate(0deg)' : ' rotate(180deg)'" style="transition: transform .2s;"> > </span>
-    </ng-template>
-    
-    <bk-vmenu-item class="bg-light">
-        Item 0
-    </bk-vmenu-item>
-
-    <bk-vmenu-item class="bg-light">
-        <hr style="background-color: black;">
-    </bk-vmenu-item>
-
-    <bk-vmenu-item class="bg-light">
-        <bk-vmenu-item-content >Item 1</bk-vmenu-item-content>
-        
-        <bk-vmenu-item-children  class="bg-warning">
-            <bk-vmenu-item>
-                Item 1 - 1
-            </bk-vmenu-item>
-            <bk-vmenu-item>
-                Item 1 - 2
-            </bk-vmenu-item>
-        </bk-vmenu-item-children>
-    </bk-vmenu-item>
-
-   <bk-vmenu-item class="bg-light"> 
-        <h4>Section 2</h4>
-    </bk-vmenu-item> 
-
-    <bk-vmenu-item class="bg-light">
-        <bk-vmenu-item-content>Item 2</bk-vmenu-item-content>
-
-        <bk-vmenu-item-children  class="bg-warning">
-            <bk-vmenu-item>
-                <bk-vmenu-item-content>Item 21</bk-vmenu-item-content>
-            </bk-vmenu-item>
-
-            <bk-vmenu-item>
-                <bk-vmenu-item-content>Item 22</bk-vmenu-item-content>
-
-                <bk-vmenu-item-children  class="bg-warning">
-                    <bk-vmenu-item>
-                        <bk-vmenu-item-content>Item 221</bk-vmenu-item-content>
-                    </bk-vmenu-item>
-                    <bk-vmenu-item>
-                        <bk-vmenu-item-content>Item 222</bk-vmenu-item-content>
-        
-                    </bk-vmenu-item>
-                </bk-vmenu-item-children>
-            </bk-vmenu-item>
-        </bk-vmenu-item-children>
-    </bk-vmenu-item>
-</bk-vmenu> -->
-
-<!-- <bk-vertical-menu class="d-block mt-3 " [collapseTimings]="100">
-    <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: _menuItems}"></ng-container>
-
-    <ng-template bkVMenuArrow let-item>
-        <span class="ms-auto" *ngIf="item"
-              style="transition: transform .2s;"
-              [style.transform]="item?.isExpanded ? ' rotate(-90deg)' : ' rotate(0)'">
-              >
-        </span>
-    </ng-template>
-
-    <ng-template #menuItemTemplate let-items>
-        @for (item of items; track $index) {
-
-        <ng-container>
-            @if(item.type == 'divider') {
-            <hr class="my-1">
-            } @else if (item.type == 'section'){
-            <h6 class="mt-3 section-title">{{item.text}}</h6>
-            <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }"></ng-container>
-            }@else if (item.type == 'text'){
-            <bk-vmenu-item [class.active]="item.active">
-                @if(item.routerLink) {
-                <a [routerLink]="item.routerLink"
-                   routerLinkActive
-                   (isActiveChange)="_onActiveChange(item, $event)">
-                    <bk-vmenu-item-content [class.active]="item.active">
-                        <i *ngIf="item.icon" style="font-size: 110%;" [class]="item.icon" class="me-2"></i>
-                        {{item.text}}
-                    </bk-vmenu-item-content>
-                </a>
-                }@else {
-                <bk-vmenu-item-content [class.active]="item.active">
-                    <i *ngIf="item.icon" style="font-size: 110%;" [class]="item.icon" class="me-2"></i>
-                    {{item.text}}
-                </bk-vmenu-item-content>
-                }
-
-                @if(item.children != null) {
-                <bk-vmenu-item-children class="ps-3" [(expanded)]="item.expanded">
-                    <ng-container
-                                  *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }"></ng-container>
-                </bk-vmenu-item-children>
-                }
-            </bk-vmenu-item>
-            }
-        </ng-container>
-        }
-    </ng-template>
-</bk-vertical-menu>
- -->
+                </ng0-vmenu>
+            </div>
+        </div>
+    </div>
+</div>

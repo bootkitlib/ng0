@@ -1,4 +1,4 @@
-import { Component, ContentChild, ElementRef, HostBinding, input, model, Renderer2 } from '@angular/core';
+import { Component, ContentChild, HostBinding, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VerticalMenuItemChildrenComponent } from './item-children.component';
 import { VerticalMenuComponent } from './vertical-menu.component';
@@ -13,12 +13,12 @@ import { VerticalMenuComponent } from './vertical-menu.component';
   }
 })
 export class VerticalMenuItemComponent {
-  public toggleByClick = input(true);
-  public active = model(false);
+  public readonly active = model(false);
 
-  @ContentChild(VerticalMenuItemChildrenComponent, { descendants: false }) public readonly children?: VerticalMenuItemChildrenComponent;
+  @ContentChild(VerticalMenuItemChildrenComponent, { descendants: false }) 
+  public readonly children?: VerticalMenuItemChildrenComponent;
 
-  constructor(private _renderer: Renderer2, private _el: ElementRef, protected _menu: VerticalMenuComponent) {
+  constructor(protected _menu: VerticalMenuComponent) {
   }
 
   @HostBinding('class.ng0-has-children')
