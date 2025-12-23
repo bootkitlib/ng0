@@ -104,7 +104,7 @@ export class SelectComponent implements ControlValueAccessor {
      * A fromatter to convert each item to a string for display.
      */
     public readonly formatBy = input(defaultFormatter, {
-       transform: objectFormatterAttribute(this._injector)
+        transform: objectFormatterAttribute(this._injector)
     });
 
     /**
@@ -250,7 +250,8 @@ export class SelectComponent implements ControlValueAccessor {
         let value = this._value();
         let compareBy = this.compareBy();
         let sourceItems = this._sourceItems();
-        if (sourceItems == undefined) {
+        this._selectedItems.clear();
+        if (sourceItems == undefined || sourceItems.length == 0) {
             return;
         }
 
@@ -375,7 +376,7 @@ export class SelectComponent implements ControlValueAccessor {
     }
 
     @HostListener('keydown', ['$event'])
-    private _onHostKeydown(e: KeyboardEvent) {
+    protected _onHostKeydown(e: KeyboardEvent) {
         let sourceItems = this._sourceItems()
         let itemsCount = sourceItems?.length || 0;
 
@@ -447,7 +448,7 @@ export class SelectComponent implements ControlValueAccessor {
     }
 
     @HostListener('click', ['$event'])
-    private _onHostClick(e: MouseEvent) {
+    protected _onHostClick(e: MouseEvent) {
         if (this._isDisabled() || this.source().isLoading()) {
             return;
         }

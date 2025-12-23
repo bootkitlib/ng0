@@ -18,7 +18,7 @@ ng0-layout1 {
         display: block;
     }
 
-    ng0-sidenav-container {
+    &>ng0-sidenav-container {
         // Sticky header requires this to be unset
         overflow: unset !important;
     }

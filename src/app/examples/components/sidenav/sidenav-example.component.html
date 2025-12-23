@@ -12,28 +12,33 @@
 
         <ng0-sidenav-container class="border bg-light">
           <ng0-sidenav
-                       [zIndex]="4"
-                       class="bg-secondary"
+                       class="bg-warning"
                        [mode]="examples.basicUsage.sidenav1.mode()"
                        [position]="examples.basicUsage.sidenav1.position()"
                        [open]="examples.basicUsage.sidenav1.open()"
                        [size]="examples.basicUsage.sidenav1.size"
-                       [fixedInViewport]="true"
+
                        [hasBackdrop]="examples.basicUsage.sidenav1.hasBackdrop()"
                        (backdropClick)="examples.basicUsage.sidenav1.open.set(false)">
-            Sidenav 1 content .
+            Sidenav 1 content. <br>
+            I'm an ordinary sidenav. <br>
+            <button class="btn btn-light" (click)="examples.basicUsage.sidenav1.open.set(false)">Close</button>
+
           </ng0-sidenav>
 
           <ng0-sidenav
-                       [zIndex]="2"
                        class="bg-primary"
                        [mode]="examples.basicUsage.sidenav2.mode()"
                        [position]="examples.basicUsage.sidenav2.position()"
                        [open]="examples.basicUsage.sidenav2.open()"
                        [size]="examples.basicUsage.sidenav2.size"
+                       [fixedInViewport]="true"
                        [hasBackdrop]="examples.basicUsage.sidenav2.hasBackdrop()"
                        (backdropClick)="examples.basicUsage.sidenav2.open.set(false)">
-            Sidenav 2 content.
+            Sidenav 2 content. <br>
+            I'm Fixed in viewport. <br>
+
+            <button class="btn btn-light" (click)="examples.basicUsage.sidenav2.open.set(false)">Close</button>
           </ng0-sidenav>
 
           <ng0-sidenav-content>
@@ -43,6 +48,9 @@
       </div>
       <div class="card-footer">
         <h6>Sidenav 1 configurations:</h6>
+        <p>
+          This sidenav is not fixed in viewport. It will move together with the content.
+        </p>
 
         <div class="row">
           <div class="col-xl-2">
@@ -101,7 +109,9 @@
 
       <div class="card-footer">
         <h6>Sidenav 2 configurations:</h6>
-
+        <p>
+          This sidenav is fixed in viewport. It will stay in the same position even when the content is scrolled.
+        </p>
         <div class="row">
           <div class="col-xl-2">
             Open:

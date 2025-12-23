@@ -68,7 +68,7 @@ export class SidenavComponent implements OnDestroy {
    * Sidenav z-index.
    * Determines the stack order of the sidenav.
    */
-  public zIndex = input(undefined, { transform: numberAttribute });
+  public zIndex = input(1000, { transform: numberAttribute });
 
   /**
    * Sidenav position.
