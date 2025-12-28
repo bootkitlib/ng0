@@ -20,4 +20,4 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.npm_token }}
       - run: npm ci
       - run: npm run build
-      - run: npm publish dist/ng0 --access public
+      - run: npm publish ./dist/ng0 --access public
