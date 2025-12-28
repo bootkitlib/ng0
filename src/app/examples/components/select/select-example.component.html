@@ -27,10 +27,12 @@
                     Bind to a simple string array as source.
                 </p>
 
-                [source]="stringArray"
-                <ng0-select name="examples.stringArray.value1" [source]="stringArray"
-                            [(ngModel)]="examples.stringArray.value1">
-                </ng0-select>
+                <ng0-form-field label="[source]=stringArray">
+                    <ng0-select name="examples.stringArray.value1" [source]="stringArray"
+                                [(ngModel)]="examples.stringArray.value1" [required]="true">
+                    </ng0-select>
+                </ng0-form-field>
+
 
                 Value: {{ examples.stringArray.value1 | json }}
             </div>

@@ -7,6 +7,7 @@ import { delay, of } from 'rxjs';
 import { Sexuality } from 'src/app/common/enums';
 import { RouterLink } from "@angular/router";
 import { format } from 'path';
+import { FormFieldModule } from '@bootkit/ng0/components/form-field';
 
 
 interface Person {
@@ -22,7 +23,8 @@ interface Person {
         CommonModule,
         SelectModule,
         FormsModule,
-        RouterLink
+        RouterLink,
+        FormFieldModule
     ]
 })
 export class SelectExampleComponent {
@@ -43,7 +45,7 @@ export class SelectExampleComponent {
 
     examples = {
         stringArray: {
-            value1: 'Three'
+            value1: ''
         },
         numberArray: {
             value1: 5
