@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, ContentChildren, ElementRef, input, QueryList, Renderer2 } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ContentChildren, ElementRef, inject, input, QueryList, Renderer2 } from '@angular/core';
 import { AccordionItemComponent } from './accordion-item.component';
 
 @Component({
@@ -20,7 +20,10 @@ export class AccordionComponent {
     @ContentChildren(AccordionItemComponent)
     public readonly items!: QueryList<AccordionItemComponent>;
 
-    constructor(private _element: ElementRef, private _renderer: Renderer2) {
+    private _element = inject(ElementRef);
+    private _renderer = inject(Renderer2);
+
+    constructor() {
         this._renderer.addClass(this._element.nativeElement, 'accordion');
     }
 }

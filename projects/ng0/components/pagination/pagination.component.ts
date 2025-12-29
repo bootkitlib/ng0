@@ -54,7 +54,7 @@ export class PaginationComponent {
    */
   public get totalPagesCount() { return this._totalPagesCount; }
 
-  /**
+  /** 
    * Emits the selected page index when a page is clicked.
    * The index starts from 1.
    */

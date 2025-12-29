@@ -1,4 +1,4 @@
-import { Directive, OnInit, ElementRef, Renderer2, input, effect, OnDestroy } from '@angular/core';
+import { Directive, OnInit, ElementRef, Renderer2, input, effect, OnDestroy, inject } from '@angular/core';
 import { animate, AnimationBuilder, AnimationMetadata, AnimationPlayer, style } from '@angular/animations';
 
 /** 
@@ -24,9 +24,13 @@ export class CollapseDirective implements OnInit, OnDestroy {
     private _player?: AnimationPlayer;
     private _firstExecution = true;
 
-    constructor(private el: ElementRef, private builder: AnimationBuilder, private renderer: Renderer2) {
-        renderer.setStyle(el.nativeElement, 'overflow', 'hidden');
- 
+    private _el = inject(ElementRef)
+    private _animationBuilder = inject(AnimationBuilder)
+    private _renderer = inject(Renderer2);
+
+    constructor() {
+        this._renderer.setStyle(this._el.nativeElement, 'overflow', 'hidden');
+
         effect(() => {
             var collapsed = this.collapsed();
             if (this._firstExecution) {
@@ -83,12 +87,12 @@ export class CollapseDirective implements OnInit, OnDestroy {
     }
 
     private _playAnimation(animation: AnimationMetadata | AnimationMetadata[]) {
-        this._player = this.builder.build(animation).create(this.el.nativeElement);
+        this._player = this._animationBuilder.build(animation).create(this._el.nativeElement);
         this._player.play();
     }
 
-    private _addClass = (cls: string) => this.renderer.addClass(this.el.nativeElement, cls);
-    private _removeClass = (cls: string) => this.renderer.removeClass(this.el.nativeElement, cls);
+    private _addClass = (cls: string) => this._renderer.addClass(this._el.nativeElement, cls);
+    private _removeClass = (cls: string) => this._renderer.removeClass(this._el.nativeElement, cls);
 
     ngOnDestroy(): void {
         this._player?.destroy();

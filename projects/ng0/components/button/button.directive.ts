@@ -1,4 +1,4 @@
-import { Directive, Renderer2, ElementRef, OnInit, OnDestroy, input, DestroyRef, model, booleanAttribute } from '@angular/core';
+import { Directive, Renderer2, ElementRef, OnInit, OnDestroy, input, DestroyRef, model, booleanAttribute, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpService } from '@bootkit/ng0/http';
 
@@ -33,20 +33,21 @@ export class ButtonDirective implements OnInit, OnDestroy {
    * This is useful for preventing multiple clicks while waiting for a response.
    * Default is true.
    */
-  public disableDuringRequest = input(true, {transform: booleanAttribute});
+  public disableDuringRequest = input(true, { transform: booleanAttribute });
 
   /**
    * Whether to show a loading indicator when the HTTP request is in progress.
    * If true, a loading spinner will be displayed on the button while the request is being processed.
    * Default is true.
    */
-  public loadingIndicator = input(false, {transform: booleanAttribute});
+  public loadingIndicator = input(false, { transform: booleanAttribute });
 
-  constructor(
-    private _element: ElementRef,
-    private _renderer: Renderer2,
-    private _http: HttpService,
-    private _destroyRef: DestroyRef) {
+  private _element = inject(ElementRef);
+  private _renderer = inject(Renderer2);
+  private _http = inject(HttpService);
+  private _destroyRef = inject(DestroyRef);
+
+  constructor() {
   }
 
   ngOnInit(): void {

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { CodeFormatters } from './code-formatters';
 
@@ -11,6 +11,8 @@ import { CodeFormatters } from './code-formatters';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CodeComponent {
+  private _formatters = inject(CodeFormatters);
+  private _domSanitizer = inject(DomSanitizer);
 
   /** Code formatter name */
   formatter = input.required<string>();
@@ -19,15 +21,13 @@ export class CodeComponent {
   code = input.required<string>();
 
   protected _safeHtml = computed(() => {
-    var frmt = this.formatters.find(this.formatter());
+    var frmt = this._formatters.find(this.formatter());
 
     if (frmt == null) {
       console.warn(`Code formatter named "${this.formatter()}" not found.`)
       return undefined;
     }
 
-    return this.domSanitizer.bypassSecurityTrustHtml(frmt.format(this.code()));
+    return this._domSanitizer.bypassSecurityTrustHtml(frmt.format(this.code()));
   })
-
-  constructor(private formatters: CodeFormatters, private domSanitizer: DomSanitizer) { }
 }

@@ -103,7 +103,7 @@ export class FormFieldComponent implements AfterContentInit {
   }
 
   @HostListener('focusout')
-  private _onFocusOut() {
+  protected _onFocusOut() {
     this._checkValidation();
   }
 }

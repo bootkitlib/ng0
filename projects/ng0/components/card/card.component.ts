@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, ContentChild, ChangeDetectionStrategy, input } from '@angular/core';
+import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -11,8 +11,10 @@ import { CommonModule } from '@angular/common';
 })
 export class CardComponent {
     public header = input<string>();
- 
-    constructor(private _element: ElementRef, private _renderer: Renderer2) {
-        this._renderer.addClass(this._element.nativeElement, 'card');        
+    private _element = inject(ElementRef);
+    private _renderer = inject(Renderer2);
+
+    constructor() {
+        this._renderer.addClass(this._element.nativeElement, 'card');
     }
 }
