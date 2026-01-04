@@ -25,9 +25,9 @@ export class PaginationComponent {
   public pageSize = input<number>(10);
 
   /** 
-   * Selected page Index. starts from 1.
+   * Zero-based index of the selected page.
    */
-  public selectedPage = input<number | undefined>(1);
+  public selectedPage = input<number>(0);
 
   /**
    * Maximum number of visible pages.
@@ -63,7 +63,7 @@ export class PaginationComponent {
   protected _totalPagesCount!: number;
 
   protected _visiblePages = computed(() => {
-    let selectedPage = this.selectedPage() || 0;
+    let selectedPage = this.selectedPage();
     let totalRecords = this.totalRecords();
     let pageSize = this.pageSize();
 
@@ -78,7 +78,7 @@ export class PaginationComponent {
     this._totalPagesCount = Math.ceil(totalRecords / pageSize);
 
     if (selectedPage < 0 || selectedPage > this._totalPagesCount) {
-      throw new Error(`Selected page must be between 0 and ${this._totalPagesCount}.`);
+      throw new Error(`Selected page index must be between 0 and ${this._totalPagesCount - 1}.`);
     }
 
     let indices = [];
@@ -87,8 +87,8 @@ export class PaginationComponent {
     let maxVisiblePages = this.maxVisiblePages();
     indices.push(firstVisiblePage);
 
-    for (let i = 1; i <= maxVisiblePages; i++) {
-      if (lastVisiblePage < this._totalPagesCount) {
+    for (let i = 0; i < maxVisiblePages; i++) {
+      if (lastVisiblePage < this._totalPagesCount - 1) {
         lastVisiblePage++;
         indices.push(lastVisiblePage);
       }
@@ -97,7 +97,7 @@ export class PaginationComponent {
         break;
       }
 
-      if (firstVisiblePage > 1) {
+      if (firstVisiblePage > 0) {
         firstVisiblePage--;
         indices.unshift(firstVisiblePage);
       }

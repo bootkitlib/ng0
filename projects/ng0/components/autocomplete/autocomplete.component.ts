@@ -166,7 +166,7 @@ export class AutocompleteComponent implements ControlValueAccessor {
     _onInputChange(value: string) {
         let source = this.source();
         let request = new DataRequest({
-            page: { index: 0, size: this.suggestions(), zeroBased: true },
+            page: { index: 0, size: this.suggestions() },
             filters: [{ value, filterBy: this.source().type == 'local' ? this.filterBy() : undefined }],
             computeTotal: false,
         });

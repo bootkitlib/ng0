@@ -9,11 +9,11 @@
                 <p>
                     Basic pagination example with total records of 17 and page size of 2.
                 </p>
-                <ng0-pagination [totalRecords]="17"
-                                [pageSize]="2"
+                <ng0-pagination [totalRecords]="13"
+                                [pageSize]="4"
                                 [selectedPage]="selectedPage"
                                 (itemClick)="selectedPage = $event"
-                                [maxVisiblePages]="8">
+                                [maxVisiblePages]="1">
 
                     <!-- <ng-container ngProjectAs="first"> << </ng-container> -->
                     <!-- <ng-container ngProjectAs="last"> >> </ng-container> -->
@@ -21,6 +21,7 @@
                     <!-- <ng-container ngProjectAs="previous"> > </ng-container> -->
                 </ng0-pagination>
 
+                selectedPage: {{selectedPage}}
             </div>
         </div>
     </div>

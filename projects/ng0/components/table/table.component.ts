@@ -201,9 +201,8 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
 
     if (this.pageable()) {
       page = {
-        index: pageIndex || this._lastRequest?.page?.index || 1,
+        index: pageIndex || this._lastRequest?.page?.index || 0,
         size: this._lastRequest?.page?.size || 10,
-        zeroBased: false
       };
     }
 

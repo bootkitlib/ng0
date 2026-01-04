@@ -58,7 +58,7 @@ export class LocalDataSource extends DataSource {
 
     // Pagination
     if (request.page) {
-      let startItemIndex = (request.page.zeroBased ? request.page.index : request.page.index - 1) * request.page.size;
+      let startItemIndex = request.page.index * request.page.size;
       result = filteredValues.slice(startItemIndex, startItemIndex + request.page.size);
     } else {
       result = filteredValues;

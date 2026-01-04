@@ -25,13 +25,13 @@
     @for (page of _visiblePages(); track page) {
     <li class="page-item" [class.active]="_selectedPage === page">
       <button class="page-link" (click)="itemClick.emit(page)">
-        {{page}}
+        {{page + 1}}
       </button>
     </li>
     }
 
     @if(showNextPreviousButtons() || showNextPreviousButtons() == undefined) {
-    <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage >= _totalPagesCount">
+    <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage >= _totalPagesCount - 1">
       <button class="page-link" (click)="itemClick.emit(_selectedPage! + 1)">
         <ng-content select="next">
           {{'next' | ng0Translate}}
@@ -41,7 +41,7 @@
     }
 
     @if(showFirstLastButtons() || showFirstLastButtons() == undefined) {
-    <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage >= _totalPagesCount">
+    <li class="page-item" [class.disabled]="_selectedPage == undefined || _selectedPage >= _totalPagesCount - 1">
       <button class="page-link" (click)="itemClick.emit(_totalPagesCount)">
         <ng-content select="last">
           {{'last' | ng0Translate}}
