@@ -1,7 +1,7 @@
 <ng-content></ng-content>
 
 @defer {
-@if(_menu.arrowDirective && menuItem.hasChildren) {
-<ng-container *ngTemplateOutlet="_menu.arrowDirective.templateRef!; context: {$implicit: menuItem}"></ng-container>
+@if(menu.arrowDirective && menuItem.children != null) {
+<ng-container *ngTemplateOutlet="menu.arrowDirective.templateRef!; context: {$implicit: menuItem}"></ng-container>
 }
 }

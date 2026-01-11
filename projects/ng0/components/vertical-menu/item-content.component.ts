@@ -11,13 +11,13 @@ import { VerticalMenuItemComponent } from './item.component';
   imports: [CommonModule]
 })
 export class VerticalMenuItemContentComponent {
-  protected readonly _menu = inject(VerticalMenuComponent);
-  protected readonly menuItem = inject(VerticalMenuItemComponent);
+  public readonly menu = inject(VerticalMenuComponent);
+  public readonly menuItem = inject(VerticalMenuItemComponent);
 
   @HostListener('click')
   protected _onClick() {
-    if (this._menu.expandItemsByClick() && this.menuItem.hasChildren) {
-      this.menuItem.children?.expanded.update(x => !x);
+    if (this.menu.expandItemsByClick() && this.menuItem.children != null) {
+      this.menuItem.expanded.update(x => !x);
     }
   }
 }

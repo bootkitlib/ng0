@@ -16,8 +16,8 @@ export class TooltipExampleComponent {
     // _menuItems = MenuItems;
 
     protected _onActiveChange(item: MenuItem, isActive: boolean) {
-        item.active = isActive;
-        if (item.parent)
-          item.parent.active = isActive;
-      }
+        // item.active = isActive;
+        // if (item.parent)
+        //     item.parent.active = isActive;
+    }
 }

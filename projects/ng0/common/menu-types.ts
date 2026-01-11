@@ -8,7 +8,6 @@ export interface MenuItem {
     active?: boolean;
     show?: boolean;
     claim?: ClaimLike;
-    parent?: MenuItem;
     text?: string;
     expanded?: boolean;
     icon?: string;
