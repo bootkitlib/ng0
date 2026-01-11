@@ -1,40 +1,83 @@
 :host {
+  display: block;
   position: relative;
-  padding: var(--bs-tooltip-arrow-height);
+}
+
+.tooltip {
+  opacity: unset;
+  position: relative;
+  display: flex;
+  align-items: center;
+  --bs-tooltip-arrow-width: 11px;
+  --bs-tooltip-arrow-height: 7px;
 
   .tooltip-arrow {
-    position: absolute;
+    &::before {
+      bottom: unset;
+      top: unset;
+      left: unset;
+      right: unset;
+    }
   }
 
-  &.bs-tooltip-top .tooltip-arrow {
-    bottom: 0;
-    left: calc(50% - var(--bs-tooltip-arrow-width) / 2);
+  // .tooltip-inner {}
+
+  &.bs-tooltip-top {
+    flex-direction: column-reverse;
   }
 
-  &.bs-tooltip-bottom .tooltip-arrow {
-    top: 0;
-    left: calc(50% - var(--bs-tooltip-arrow-width) / 2);
+  &.bs-tooltip-bottom {
+    flex-direction: column;
   }
 
-  &.bs-tooltip-start .tooltip-arrow {
-    right: 0;
-    top: calc(50% - var(--bs-tooltip-arrow-width) / 2);
+  &.bs-tooltip-start {
+    flex-direction: row-reverse;
   }
 
-  [dir="rtl"] &.bs-tooltip-start .tooltip-arrow {
-    right: unset !important;
-    left: 0;
-    transform: rotate(180deg);
+  &.bs-tooltip-end {
+    flex-direction: row;
   }
 
-  &.bs-tooltip-end .tooltip-arrow {
-    left: 0;
-    top: calc(50% - var(--bs-tooltip-arrow-width) / 2);
+  // [dir="rtl"] &.bs-tooltip-start .tooltip-arrow {
+  //   right: unset !important;
+  //   left: 0;
+  //   transform: rotate(180deg);
+  // }
+
+  // [dir="rtl"] &.bs-tooltip-end .tooltip-arrow {
+  //   left: unset !important;
+  //   right: 0;
+  //   transform: rotate(180deg);
+  // }
+}
+
+@keyframes fade-in {
+  from {
+    transform: scale(0.9);
   }
 
-  [dir="rtl"] &.bs-tooltip-end .tooltip-arrow {
-    left: unset !important;
-    right: 0;
-    transform: rotate(180deg);
+  to {
+    transform: scale(1);
   }
+}
+
+@keyframes fade-out {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(0.5);
+  }
+}
+
+
+.fade-in {
+  animation-name: fade-in;
+  animation-duration: 0.2s;
+}
+
+.fade-out {
+  animation-name: fade-out;
+  animation-duration: 0.2s;
 }

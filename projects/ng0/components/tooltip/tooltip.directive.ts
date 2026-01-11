@@ -1,7 +1,6 @@
 import {
-    Directive, TemplateRef, ViewContainerRef, OnDestroy, ElementRef, HostListener, OnInit,
-    input,
-    DestroyRef
+    Directive, TemplateRef, ViewContainerRef, OnDestroy, ElementRef, HostListener, OnInit, input, DestroyRef,
+    inject
 } from '@angular/core';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
@@ -14,52 +13,57 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     exportAs: 'ng0Tooltip',
     standalone: true
 })
-export class TooltipDirective implements OnInit, OnDestroy {
+export class TooltipDirective implements OnDestroy {
+    private _portal!: ComponentPortal<TooltipWrapperComponent>;
+    private _overlayRef?: OverlayRef;
+    private _overlayService = inject(Overlay);
+    private _elementRef = inject(ElementRef);
+    private _destroyRef = inject(DestroyRef);
+    private _viewRef = inject(ViewContainerRef);
+
+    /**
+     * Tooltip content. Can be a string or a TempateRef.
+     */
     public content = input<string | TemplateRef<any> | undefined | null>(undefined, { alias: 'ng0Tooltip' });
+
+    /**
+     * Tooltip placement.
+     */
     public placement = input<TooltipPlacement>('bottom');
-    private portal!: ComponentPortal<TooltipWrapperComponent>;
-    private overlayRef?: OverlayRef;
 
-    constructor(
-        private overlayService: Overlay,
-        private elementRef: ElementRef,
-        private destroyRef: DestroyRef,
-        private viewRef: ViewContainerRef) {
+    constructor() {
+        this._portal = new ComponentPortal(TooltipWrapperComponent, this._viewRef);
     }
 
-    ngOnInit(): void {
-        this.portal = new ComponentPortal(TooltipWrapperComponent, this.viewRef);
-    }
-
-    @HostListener('mouseenter') 
-    private _onMouseEnter(): void {
+    @HostListener('mouseenter')
+    protected _onMouseEnter(): void {
         this._createOverlay();
     }
 
-    @HostListener('mouseleave') 
-    private _onMouseLeave(): void {
+    @HostListener('mouseleave')
+    protected _onMouseLeave(): void {
         this._disposeOverlay();
     }
 
     private _createOverlay(): void {
         let wrapperInstance: TooltipWrapperComponent;
 
-        const scrollStrategy = this.overlayService.scrollStrategies.reposition();
-        const positionStrategy = this.overlayService.position().flexibleConnectedTo(this.elementRef).withPositions(this._getPositions());
+        const scrollStrategy = this._overlayService.scrollStrategies.reposition();
+        const positionStrategy = this._overlayService.position().flexibleConnectedTo(this._elementRef).withPositions(this._getPositions());
 
-        positionStrategy.positionChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(p => {
+        positionStrategy.positionChanges.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(p => {
             wrapperRef.instance.set(this.content(), (p.connectionPair as any).key);
         });
 
-        this.overlayRef = this.overlayService.create({ scrollStrategy, positionStrategy });
-        let wrapperRef = this.overlayRef.attach(this.portal);
+        this._overlayRef = this._overlayService.create({ scrollStrategy, positionStrategy });
+        let wrapperRef = this._overlayRef.attach(this._portal);
         wrapperRef.instance.set(this.content(), this.placement());
     }
 
     private _disposeOverlay(): void {
-        if (this.overlayRef) {
-            this.overlayRef.dispose();
-            this.overlayRef = undefined;
+        if (this._overlayRef) {
+            this._overlayRef.dispose();
+            this._overlayRef = undefined;
         }
     }
 

@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, OnInit, TemplateRef, ChangeDetectorRef } from '@angular/core';
+import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, OnInit, TemplateRef, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TooltipContent, TooltipPlacement } from '../types';
 
@@ -12,36 +12,25 @@ import { TooltipContent, TooltipPlacement } from '../types';
     templateUrl: './tooltip-wrapper.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
-    imports: [CommonModule],
-    host: {
-        '[class.bs-tooltip-top]': 'placement == "top"',
-        '[class.bs-tooltip-bottom]': 'placement == "bottom"',
-        '[class.bs-tooltip-start]': 'placement == "start"',
-        '[class.bs-tooltip-end]': 'placement == "end"',
-    }
+    imports: [CommonModule]
 })
 export class TooltipWrapperComponent implements OnInit {
-    protected placement!: TooltipPlacement;
-    protected content!: TooltipContent;
-    protected hasTemplate!: boolean;
+    protected _placement!: TooltipPlacement;
+    protected _content!: TooltipContent;
+    protected _hasTemplate!: boolean;
+    protected _changeDetectorRef = inject(ChangeDetectorRef);
 
-    constructor(
-        private elementRef: ElementRef,
-        private renderer: Renderer2,
-        private changeDetectorRef: ChangeDetectorRef) {
+    constructor() {
     }
 
     ngOnInit(): void {
-        this.hasTemplate = this.content instanceof TemplateRef;
-        const elm = this.elementRef.nativeElement;
-        this.renderer.setAttribute(elm, 'role', 'tooltip');
-        ['tooltip', 'fade', 'show'].forEach(c => this.renderer.addClass(elm, c));
+        this._hasTemplate = this._content instanceof TemplateRef;
     }
 
     public set(content: any, placement: TooltipPlacement) {
-        this.content = content;
-        this.placement = placement;
-        this.hasTemplate = content instanceof TemplateRef;
-        this.changeDetectorRef.markForCheck();
+        this._content = content;
+        this._placement = placement;
+        this._hasTemplate = content instanceof TemplateRef;
+        this._changeDetectorRef.markForCheck();
     }
 }
