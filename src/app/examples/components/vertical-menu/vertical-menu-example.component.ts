@@ -13,7 +13,9 @@ import { VerticalMenuModule } from '@bootkit/ng0/components/vertical-menu';
     ]
 })
 export class TooltipExampleComponent {
-    // _menuItems = MenuItems;
+    _menuItems: MenuItem[] = [
+        {}
+    ];
 
     protected _onActiveChange(item: MenuItem, isActive: boolean) {
         // item.active = isActive;

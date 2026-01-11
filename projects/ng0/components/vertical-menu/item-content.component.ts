@@ -4,7 +4,7 @@ import { VerticalMenuComponent } from './vertical-menu.component';
 import { VerticalMenuItemComponent } from './item.component';
 
 @Component({
-  selector: 'ng0-vertical-menu-item-content, ng0-vmenu-item-content, ng0-vmenu-content',
+  selector: 'ng0-vertical-menu-item-content, ng0-vmenu-item-content',
   templateUrl: './item-content.component.html',
   standalone: true,
   styles: `:host {display: flex; align-items: center;  }`,

@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
-import { UserDirective } from './claim.directive';
+import { ClaimDirective } from './claim.directive';
 import { GuestUserDirective } from './guest-user.directive';
 
 const items = [
-    UserDirective,
+    ClaimDirective,
     GuestUserDirective
 ]
 

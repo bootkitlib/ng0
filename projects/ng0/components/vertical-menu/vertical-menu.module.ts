@@ -4,6 +4,8 @@ import { VerticalMenuComponent } from './vertical-menu.component';
 import { VerticalMenuItemChildrenComponent } from './item-children.component';
 import { VerticalMenuArrowDirective } from './item-arrow.directive';
 import { VerticalMenuItemContentComponent } from './item-content.component';
+import { VerticalMenuDividerComponent } from './divider.component';
+import { VerticalMenuGroupComponent } from './group.component';
 
 const items = [
   VerticalMenuComponent,
@@ -11,6 +13,8 @@ const items = [
   VerticalMenuItemChildrenComponent,
   VerticalMenuItemContentComponent,
   VerticalMenuArrowDirective,
+  VerticalMenuDividerComponent,
+  VerticalMenuGroupComponent
 ];
 
 @NgModule({

@@ -1,4 +1,4 @@
-import { Directive, TemplateRef } from '@angular/core';
+import { Directive, inject, TemplateRef } from '@angular/core';
 
 @Directive({
     selector: '[ng0VerticalMenuArrow], [ng0VmenuArrow]',
@@ -6,5 +6,5 @@ import { Directive, TemplateRef } from '@angular/core';
     standalone: true,
 })
 export class VerticalMenuArrowDirective {
-    constructor(public readonly templateRef: TemplateRef<any>) { }
+    public readonly templateRef = inject(TemplateRef);
 }

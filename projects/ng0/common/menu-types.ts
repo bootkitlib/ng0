@@ -2,7 +2,7 @@ import { ClaimLike } from "./security-types";
 
 /** Menu item  */
 export interface MenuItem {
-    type?: string;
+    type?: 'item' | 'divider' | 'group';
     id?: any;
     disabled?: boolean;
     active?: boolean;
@@ -13,4 +13,5 @@ export interface MenuItem {
     icon?: string;
     children?: MenuItem[];
     routerLink?: string | string[];
+    data?: any;
 }

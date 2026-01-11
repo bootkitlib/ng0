@@ -1,5 +1,4 @@
 import { Directive, TemplateRef, ViewContainerRef, input, effect } from '@angular/core';
-
 import { UserStore } from './user-store';
 import { ClaimLike } from '@bootkit/ng0/common';
 
@@ -8,7 +7,7 @@ import { ClaimLike } from '@bootkit/ng0/common';
   exportAs: 'ng0Claim',
   standalone: true
 })
-export class UserDirective {
+export class ClaimDirective {
   public claim = input<ClaimLike | null | undefined>(undefined, { alias: 'ng0Claim' });
   private _viewCreated = false;
 

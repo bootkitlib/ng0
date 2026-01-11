@@ -1,3 +1,43 @@
+@let user = _userStore.user();
+
 <ng-content></ng-content>
 
+<ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: items()}" />
 
+<ng-template #menuItemTemplate let-items>
+    @for (item of items; track $index) {
+    @if ((!item.claim) || (user && user.hasClaim(item.claim))) {
+    @switch (item.type) {
+    @case('divider') {
+    <ng0-vmenu-divider></ng0-vmenu-divider>
+    }
+    @case('group') {
+    <ng0-vmenu-group [label]="item.text">
+        <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children}" />
+    </ng0-vmenu-group>
+    }
+    @case('item') {
+    <ng0-vmenu-item [(expanded)]="item.expanded">
+        <ng0-vmenu-item-content>
+            <a [routerLink]="item.routerLink"
+               routerLinkActive
+               routerLinkActive="active"
+               (isActiveChange)="_onActiveChange(item, $event)">
+                @if(item.icon) {
+                <i [class]="item.icon" class="ng0-vmenu-item-icon"></i>
+                }
+                {{ item.text }}
+            </a>
+        </ng0-vmenu-item-content>
+
+        @if (item.children != undefined) {
+        <ng0-vmenu-item-children>
+            <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }" />
+        </ng0-vmenu-item-children>
+        }
+    </ng0-vmenu-item>
+    }
+    }
+    }
+    }
+</ng-template>
