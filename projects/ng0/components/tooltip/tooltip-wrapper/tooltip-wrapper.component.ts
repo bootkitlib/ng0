@@ -1,4 +1,4 @@
-import { Component, ElementRef, Renderer2, ChangeDetectionStrategy, OnInit, TemplateRef, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, TemplateRef, ChangeDetectorRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TooltipContent, TooltipPlacement } from '../types';
 

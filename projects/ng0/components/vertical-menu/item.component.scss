@@ -1,0 +1,34 @@
+:host {
+    display: block;
+}
+
+.ng0-vmenu-item-content {
+    display: flex;
+    cursor: pointer;
+    padding: .2rem .4rem;
+    border-radius: 0.3rem;
+
+//   &:hover:not(:has(a.active))
+    &:hover:not(:has(a.active)) {
+        background-color: var(--bs-light);
+    }
+}
+
+.ng0-vmenu-item-text {
+    flex-grow: 1;
+}
+
+.ng0-vmenu-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+
+    &.active {
+        color: var(--bs-primary);
+    }
+}
+
+/* .ng0-vmenu-item-expander {
+    } */

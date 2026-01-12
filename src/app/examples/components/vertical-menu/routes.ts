@@ -1,9 +1,9 @@
 import { Route } from "@angular/router";
-import { TooltipExampleComponent } from "./vertical-menu-example.component";
+import { VerticalMenuExampleComponent } from "./vertical-menu-example.component";
 
 export default [
     {
         path: '',
-        component: TooltipExampleComponent,
+        component: VerticalMenuExampleComponent,
     }
 ] satisfies Route[];

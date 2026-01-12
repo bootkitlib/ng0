@@ -1,1 +1,22 @@
+<div class="ng0-vmenu-item-content" (click)="_onContentClick($event)">
+    @if(text()) {
+    <span class="ng0-vmenu-item-text">
+        @if(link()) {
+        <a class="ng0-vmenu-item-link"
+           [routerLink]="link()"
+           routerLinkActive="active"
+           (isActiveChange)="_onActiveChange($event)">{{text()}}</a>
+        }@else {
+        {{text()}}
+        }
+    </span>
+    }
+
+    @if(menu.showExpanderIcon() && children != null) {
+    <div class="ng0-vmenu-item-expander">
+        >
+    </div>
+    }
+</div>
+
 <ng-content></ng-content>

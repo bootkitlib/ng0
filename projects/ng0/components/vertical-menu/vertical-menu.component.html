@@ -12,24 +12,12 @@
     <ng0-vmenu-divider></ng0-vmenu-divider>
     }
     @case('group') {
-    <ng0-vmenu-group [label]="item.text">
+    <ng0-vmenu-group [text]="item.text">
         <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children}" />
     </ng0-vmenu-group>
     }
     @case('item') {
-    <ng0-vmenu-item [(expanded)]="item.expanded">
-        <ng0-vmenu-item-content>
-            <a [routerLink]="item.routerLink"
-               routerLinkActive
-               routerLinkActive="active"
-               (isActiveChange)="_onActiveChange(item, $event)">
-                @if(item.icon) {
-                <i [class]="item.icon" class="ng0-vmenu-item-icon"></i>
-                }
-                {{ item.text }}
-            </a>
-        </ng0-vmenu-item-content>
-
+    <ng0-vmenu-item [(expanded)]="item.expanded" [text]="item.text()" [routerLink]="item.routerLink()">
         @if (item.children != undefined) {
         <ng0-vmenu-item-children>
             <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }" />

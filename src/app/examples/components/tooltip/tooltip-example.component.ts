@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { TooltipDirective } from '@bootkit/ng0/components/tooltip';
+import { TooltipDirective, TooltipModule } from '@bootkit/ng0/components/tooltip';
 
 @Component({
     selector: 'app-tooltip-example',
@@ -8,7 +8,7 @@ import { TooltipDirective } from '@bootkit/ng0/components/tooltip';
     standalone: true,
     imports: [
         CommonModule,
-        TooltipDirective
+        TooltipModule
     ]
 })
 export class TooltipExampleComponent {

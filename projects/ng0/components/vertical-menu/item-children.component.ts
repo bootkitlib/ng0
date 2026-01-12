@@ -5,7 +5,7 @@ import { VerticalMenuComponent } from './vertical-menu.component';
 import { CollapseDirective } from '@bootkit/ng0/components/collapse';
 
 @Component({
-    selector: 'ng0-vertical-menu-item-children, ng0-vmenu-item-children',
+    selector: 'ng0-vmenu-item-children, ng0-vmenu-children',
     templateUrl: './item-children.component.html',
     exportAs: 'ng0VmenuItemChildren',
     standalone: true,
