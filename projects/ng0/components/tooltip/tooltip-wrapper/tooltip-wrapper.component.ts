@@ -1,6 +1,7 @@
-import { Component, ChangeDetectionStrategy, OnInit, TemplateRef, ChangeDetectorRef, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, OnInit, TemplateRef, ChangeDetectorRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TooltipContent, TooltipPlacement } from '../types';
+import { Subject } from 'rxjs';
 
 /**
  * @private
@@ -14,23 +15,22 @@ import { TooltipContent, TooltipPlacement } from '../types';
     standalone: true,
     imports: [CommonModule]
 })
-export class TooltipWrapperComponent implements OnInit {
+export class TooltipWrapperComponent {
     protected _placement!: TooltipPlacement;
     protected _content!: TooltipContent;
     protected _hasTemplate!: boolean;
-    protected _changeDetectorRef = inject(ChangeDetectorRef);
+    protected readonly _changeDetectorRef = inject(ChangeDetectorRef);
+    protected readonly _show = signal(true);
+    public readonly transitionEnd = new Subject<TransitionEvent>();
 
-    constructor() {
-    }
-
-    ngOnInit(): void {
-        this._hasTemplate = this._content instanceof TemplateRef;
-    }
-
-    public set(content: any, placement: TooltipPlacement) {
+    public show(content: any, placement: TooltipPlacement) {
         this._content = content;
         this._placement = placement;
         this._hasTemplate = content instanceof TemplateRef;
-        this._changeDetectorRef.markForCheck();
+        this._show.set(true);
+    }
+
+    public hide() {
+        this._show.set(false);
     }
 }

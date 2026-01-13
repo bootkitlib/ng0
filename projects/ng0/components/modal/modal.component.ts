@@ -8,28 +8,26 @@ import { ModalCloseRequest } from './types';
     templateUrl: 'modal.component.html',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        CommonModule,
-    ]
+    imports: [CommonModule]
 })
 export class ModalComponent {
     /**
      * Is modal scrollable?
      */
-    public scrollable = input<boolean>(false);
+    public readonly scrollable = input<boolean>(false);
 
     /** Is modal vertically centered? */
-    public centered = input<boolean>(false);
+    public readonly centered = input<boolean>(false);
 
     /**
      * Size of the modal.
      */
-    public size = input<'sm' | 'default' | 'lg' | 'xl'>('default');
+    public readonly size = input<'sm' | 'default' | 'lg' | 'xl'>('default');
 
     /**
      * Is modal fullscreen?
      */
-    public fullscreen = input<'always' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'>();
+    public readonly fullscreen = input<'always' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl'>();
 
     /**
      * Emitted when user clicks the backdrop or presses the escape key.
@@ -41,7 +39,7 @@ export class ModalComponent {
      */
     @Output() public backdropClick = new EventEmitter<Event>();
 
-    protected _modalStatic = signal(false);
+    protected readonly _modalStatic = signal(false);
 
     constructor() {
     }
@@ -53,7 +51,7 @@ export class ModalComponent {
     }
 
     @HostListener('document:keydown', ['$event'])
-    private _onDocumentKeyDown(event: KeyboardEvent) {
+    protected _onDocumentKeyDown(event: KeyboardEvent) {
         if (event.key === 'Escape') {
             this.closeRequest.emit({ reason: 'escape', event });
             this._shakeModal();

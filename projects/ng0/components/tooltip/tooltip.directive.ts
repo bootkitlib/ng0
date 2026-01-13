@@ -1,6 +1,7 @@
 import {
     Directive, TemplateRef, ViewContainerRef, OnDestroy, ElementRef, HostListener, input, DestroyRef,
-    inject
+    inject,
+    ComponentRef
 } from '@angular/core';
 import { Overlay, OverlayRef } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
@@ -20,6 +21,7 @@ export class TooltipDirective implements OnDestroy {
     private _elementRef = inject(ElementRef);
     private _destroyRef = inject(DestroyRef);
     private _viewRef = inject(ViewContainerRef);
+    private _wrapperRef?: ComponentRef<TooltipWrapperComponent>;
 
     /**
      * Tooltip content. Can be a string or a TempateRef.
@@ -42,28 +44,34 @@ export class TooltipDirective implements OnDestroy {
 
     @HostListener('mouseleave')
     protected _onMouseLeave(): void {
-        this._disposeOverlay();
+        var subscription = this._wrapperRef!.instance.transitionEnd.subscribe(e => {
+            subscription.unsubscribe();
+            this._disposeOverlay();
+        })
+
+        this._wrapperRef?.instance.hide();
     }
 
     private _createOverlay(): void {
-        let wrapperInstance: TooltipWrapperComponent;
-
         const scrollStrategy = this._overlayService.scrollStrategies.reposition();
         const positionStrategy = this._overlayService.position().flexibleConnectedTo(this._elementRef).withPositions(this._getPositions());
 
         positionStrategy.positionChanges.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(p => {
-            wrapperRef.instance.set(this.content(), (p.connectionPair as any).key);
+            this._wrapperRef!.instance.show(this.content(), (p.connectionPair as any).key);
         });
 
         this._overlayRef = this._overlayService.create({ scrollStrategy, positionStrategy });
-        let wrapperRef = this._overlayRef.attach(this._portal);
-        wrapperRef.instance.set(this.content(), this.placement());
+        this._wrapperRef = this._overlayRef.attach(this._portal);
+        this._wrapperRef.instance.show(this.content(), this.placement());
     }
 
     private _disposeOverlay(): void {
         if (this._overlayRef) {
             this._overlayRef.dispose();
+            this._wrapperRef?.destroy();
+
             this._overlayRef = undefined;
+            this._wrapperRef = undefined;
         }
     }
 
