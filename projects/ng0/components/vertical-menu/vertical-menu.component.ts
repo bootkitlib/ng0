@@ -23,17 +23,12 @@ import { VerticalMenuGroupComponent } from './group.component';
   ],
 })
 export class VerticalMenuComponent {
-  protected _userStore = inject<UserStore<User>>(UserStore);
+  protected readonly _userStore = inject<UserStore<User>>(UserStore);
 
   /**
    * Menu items
    */
-  public items = input<MenuItem[]>();
-
-  /**
-   * Whether to expand/collapse items when clicking on them
-   */
-  public readonly expandItemsByClick = input(true);
+  public readonly items = input<MenuItem[]>([]);
 
   /**
    * Whether to show a expander icon for the items that have children.

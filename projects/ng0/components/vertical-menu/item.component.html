@@ -4,6 +4,7 @@
         @if(link()) {
         <a class="ng0-vmenu-item-link"
            [routerLink]="link()"
+           [attr.target]="target()"
            routerLinkActive="active"
            (isActiveChange)="_onActiveChange($event)">{{text()}}</a>
         }@else {
@@ -12,7 +13,7 @@
     </span>
     }
 
-    @if(menu.showExpanderIcon() && children != null) {
+    @if(children != null) {
     <div class="ng0-vmenu-item-expander">
         >
     </div>

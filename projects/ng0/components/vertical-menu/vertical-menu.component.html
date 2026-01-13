@@ -17,9 +17,9 @@
     </ng0-vmenu-group>
     }
     @case('item') {
-    <ng0-vmenu-item [(expanded)]="item.expanded" [text]="item.text()" [routerLink]="item.routerLink()">
+    <ng0-vmenu-item [text]="item.text" [link]="item.routerLink" [target]="item.target">
         @if (item.children != undefined) {
-        <ng0-vmenu-item-children>
+        <ng0-vmenu-item-children [(expanded)]="item.expanded">
             <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }" />
         </ng0-vmenu-item-children>
         }

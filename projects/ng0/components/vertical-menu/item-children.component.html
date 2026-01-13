@@ -1,5 +1,11 @@
 <div ng0Collapse
-   [collapsed]="!menuItem.expanded()"
-   [timings]="menu.collapseTimings()">
+     [collapsed]="!expanded()">
    <ng-content></ng-content>
 </div>
+
+<style>
+   :host {
+      display: block;
+      padding-inline-start: .5rem;
+   }
+</style>

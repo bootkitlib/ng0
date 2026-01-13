@@ -13,9 +13,39 @@ import { VerticalMenuModule } from '@bootkit/ng0/components/vertical-menu';
     ]
 })
 export class VerticalMenuExampleComponent {
-
     _menuItems: MenuItem[] = [
-        {}
+        {
+            type: 'item',
+            text: 'Item 1',
+            routerLink: '.',
+            target: '_blank'
+        },
+        {
+            type: 'divider'
+        },
+        {
+            type: 'group',
+            text: 'Group 1',
+            children: [
+                {
+                    type: 'item',
+                    text: 'Item 1',
+                    routerLink: '.',
+                },
+                {
+                    type: 'item',
+                    text: 'Item 1',
+                    routerLink: '.',
+                    children: [
+                        {
+                            type: 'item',
+                            text: 'Item 1',
+                            routerLink: '.',
+                        },
+                    ]
+                },
+            ]
+        },
     ];
 
     protected _onActiveChange(item: MenuItem, isActive: boolean) {

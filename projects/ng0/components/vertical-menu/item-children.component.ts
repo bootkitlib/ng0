@@ -1,5 +1,4 @@
 import { Component, ContentChild, inject, model } from '@angular/core';
-import { VerticalMenuItemComponent } from './item.component';
 import { CommonModule } from '@angular/common';
 import { VerticalMenuComponent } from './vertical-menu.component';
 import { CollapseDirective } from '@bootkit/ng0/components/collapse';
@@ -9,15 +8,18 @@ import { CollapseDirective } from '@bootkit/ng0/components/collapse';
     templateUrl: './item-children.component.html',
     exportAs: 'ng0VmenuItemChildren',
     standalone: true,
-    styles: `:host {display: block}`,
     imports: [CommonModule, CollapseDirective],
     host: {
-        '[class.ng0-expanded]': 'menuItem.expanded()'
+        '[class.ng0-expanded]': 'expanded()'
     }
 })
 export class VerticalMenuItemChildrenComponent {
-    public menuItem = inject(VerticalMenuItemComponent);
-    public menu = inject(VerticalMenuComponent);
+    // public menu = inject(VerticalMenuComponent);
+
+    /**
+     * Whether the item is expanded.
+     */
+    public expanded = model(false);
 
     // @ContentChild(VerticalMenuItemComponent, { descendants: false })
     // protected _items?: VerticalMenuItemComponent;

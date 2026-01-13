@@ -5,7 +5,6 @@ export interface MenuItem {
     type?: 'item' | 'divider' | 'group';
     id?: any;
     disabled?: boolean;
-    active?: boolean;
     show?: boolean;
     claim?: ClaimLike;
     text?: string;
@@ -13,5 +12,6 @@ export interface MenuItem {
     icon?: string;
     children?: MenuItem[];
     routerLink?: string | string[];
+    target?: '_blank' | '_parent' | '_self' | '_top';
     data?: any;
 }
