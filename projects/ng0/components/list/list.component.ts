@@ -383,7 +383,7 @@ export class ListComponent implements ControlValueAccessor {
         this._value.set(value);
     }
 
-    private _hostAriaActiveDescendant = computed(() => {
+    protected _hostAriaActiveDescendant = computed(() => {
         if (this._activeItem() && !this._isDisabled() && this.focusMode() == 'activeDescendant') {
             return this._activeItem()!.id();
         }
@@ -391,7 +391,7 @@ export class ListComponent implements ControlValueAccessor {
         return undefined;
     });
 
-    private _hostTabIndex = computed(() => {
+    protected _hostTabIndex = computed(() => {
         let isDisabled = this._isDisabled(); // track the value
         let activeItem = this._activeItem(); // track the value
 
@@ -411,12 +411,12 @@ export class ListComponent implements ControlValueAccessor {
     });
 
     @HostListener('blur')
-    private _onHostBlur() {
+    protected _onHostBlur() {
         this._touchCallback?.();
     }
 
     @HostListener('keydown', ['$event'])
-    private _onKeydown(e: KeyboardEvent) {
+    protected _onKeydown(e: KeyboardEvent) {
         if (this._isDisabled())
             return;
 

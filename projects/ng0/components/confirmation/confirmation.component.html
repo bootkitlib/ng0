@@ -23,15 +23,19 @@
                 </div>
 
                 <div class="ms-auto">
-                    <div class="spinner-border text-success" role="status" *ngIf="_config?.icon == 'loading'">
+                    @if(_config?.icon == 'loading') {
+                    <div class="spinner-border text-success" role="status">
                         <span class="visually-hidden">Processing</span>
                     </div>
+                    }
 
-                    <svg *ngIf="_config?.icon == 'check'" xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'
+                    @if(_config?.icon == 'check') {
+                    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'
                          width="32" height="32">
                         <path fill='#0493A8'
                               d='M2.3 6.73L.6 4.53c-.4-1.04.46-1.4 1.1-.8l1.1 1.4 3.4-3.8c.6-.63 1.6-.27 1.2.7l-4 4.6c-.43.5-.8.4-1.1.1z' />
                     </svg>
+                    }
                 </div>
             </div>
         </div>

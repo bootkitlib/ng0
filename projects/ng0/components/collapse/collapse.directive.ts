@@ -10,6 +10,12 @@ import { animate, AnimationBuilder, AnimationMetadata, AnimationPlayer, style } 
     standalone: true,
 })
 export class CollapseDirective implements OnInit, OnDestroy {
+    private _player?: AnimationPlayer;
+    private _firstExecution = true;
+    private _el = inject(ElementRef)
+    private _animationBuilder = inject(AnimationBuilder)
+    private _renderer = inject(Renderer2);
+
     /**
      * Indicates whether the host element is collapsed. 
      * @input 
@@ -20,13 +26,6 @@ export class CollapseDirective implements OnInit, OnDestroy {
      * @input 
      */
     public timings = input<string | number>('0.2s');
-
-    private _player?: AnimationPlayer;
-    private _firstExecution = true;
-
-    private _el = inject(ElementRef)
-    private _animationBuilder = inject(AnimationBuilder)
-    private _renderer = inject(Renderer2);
 
     constructor() {
         this._renderer.setStyle(this._el.nativeElement, 'overflow', 'hidden');

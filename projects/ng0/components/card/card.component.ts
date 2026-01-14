@@ -10,9 +10,10 @@ import { CommonModule } from '@angular/common';
     imports: [CommonModule]
 })
 export class CardComponent {
-    public header = input<string>();
     private _element = inject(ElementRef);
     private _renderer = inject(Renderer2);
+
+    public readonly header = input<string>();
 
     constructor() {
         this._renderer.addClass(this._element.nativeElement, 'card');

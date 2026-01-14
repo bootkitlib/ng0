@@ -27,9 +27,6 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
     ]
 })
 export class StepperComponent {
-    public step = model.required<any>();
+    public readonly step = model.required<any>();
     @ContentChildren(StepDirective) protected _steps!: QueryList<StepDirective>;
-
-    constructor() {
-    }
 }

@@ -1,8 +1,12 @@
 <div class="ng0-vmenu-item-content" (click)="_onContentClick($event)">
+    @if(icon()) {
+    <i class="ng0-vmenu-item-icon" [ngClass]="icon()"></i>
+    }
+
     @if(text()) {
     <span class="ng0-vmenu-item-text">
         @if(link()) {
-        <a class="ng0-vmenu-item-link"
+        <a
            [routerLink]="link()"
            [attr.target]="target()"
            routerLinkActive="active"

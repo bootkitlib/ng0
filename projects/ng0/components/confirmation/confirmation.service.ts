@@ -1,5 +1,5 @@
 import { Dialog } from '@angular/cdk/dialog';
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { ConfirmationComponent } from './confirmation.component';
 import { ConfirmationConfig, ConfirmationRef } from './types';
 
@@ -7,10 +7,10 @@ import { ConfirmationConfig, ConfirmationRef } from './types';
   providedIn: 'root'
 })
 export class ConfirmationService {
-  constructor(private dialog: Dialog) { }
+  private _dialog = inject(Dialog);
 
   open(config: ConfirmationConfig = {}): ConfirmationRef {
-    var dlgRef = this.dialog.open(ConfirmationComponent, {
+    var dlgRef = this._dialog.open(ConfirmationComponent, {
       disableClose: false,
     });
 

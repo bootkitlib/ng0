@@ -97,7 +97,7 @@ export class ListItem {
         this.elementRef.nativeElement.focus();
     }
 
-    private _getTabIndex() {
+    protected _getTabIndex() {
         let focus = this.list.focusMode();
         // if (this.list.isDisabled()) {
         //     return undefined;

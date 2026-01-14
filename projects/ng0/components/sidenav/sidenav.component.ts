@@ -47,7 +47,7 @@ export class SidenavComponent implements OnDestroy {
   /**
    * Whether the sidenav is open.
    */
-  public open = input(false, { transform: booleanAttribute });
+  public readonly open = input(false, { transform: booleanAttribute });
 
   /**
    * Sidenav mode.
@@ -56,26 +56,26 @@ export class SidenavComponent implements OnDestroy {
    * - 'push': The content is pushed aside to make room for the sidenav.
    * - 'over': The sidenav is displayed on top of the content.
    */
-  public mode = input<SidenavMode>('push');
+  public readonly mode = input<SidenavMode>('push');
 
   /**
    * Whether the sidenav has a backdrop.
    * The backdrop is shown only when the sidenav is open and mode is 'over'.
    */
-  public hasBackdrop = input(true, { transform: booleanAttribute });
+  public readonly hasBackdrop = input(true, { transform: booleanAttribute });
 
   /**
    * Sidenav z-index.
    * Determines the stack order of the sidenav.
    */
-  public zIndex = input(1000, { transform: numberAttribute });
+  public readonly zIndex = input(1000, { transform: numberAttribute });
 
   /**
    * Sidenav position.
    * Determines the position of the sidenav.
    * Can be either 'start', 'end', 'top', or 'bottom'.
    */
-  public position = input<SidenavPosition>('start');
+  public readonly position = input<SidenavPosition>('start');
 
   /**
    * Sidenav size.
@@ -85,19 +85,19 @@ export class SidenavComponent implements OnDestroy {
    * @example
    * - 100, '300px', '50%', '50vh', 'small', 'full', ...
    */
-  public size = input<SidenavSize>();
+  public readonly size = input<SidenavSize>();
 
   /**
    * Whether the sidenav is fixed in the viewport.
    */
-  public fixedInViewport = input(false, { transform: booleanAttribute });
+  public readonly fixedInViewport = input(false, { transform: booleanAttribute });
 
-  public elmentRef = inject(ElementRef);
+  public readonly elmentRef = inject(ElementRef);
 
   /**
    * Emits when the backdrop is clicked.
    */
-  @Output() public backdropClick = new EventEmitter<PointerEvent>();
+  @Output() public readonly backdropClick = new EventEmitter<PointerEvent>();
 
   constructor() {
     effect(() => {

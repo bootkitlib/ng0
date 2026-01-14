@@ -21,12 +21,12 @@ export class AccordionItemComponent {
     /**
      * The header text of the accordion item.
      */
-    public header = input<string>();
+    public readonly header = input<string>();
 
     /**
      * Whether the accordion item is collapsed or expanded.
      */
-    public collapsed = model(true);
+    public readonly collapsed = model(true);
 
     constructor() {
         this._renderer.addClass(this._element.nativeElement, 'accordion-item');

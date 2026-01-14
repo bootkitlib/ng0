@@ -29,7 +29,7 @@ export class DropdownItemComponent {
     public readonly disabled = input(false, { transform: booleanAttribute });
 
     @HostListener('click', ['$event'])
-    private _onClick(e: MouseEvent) {
+    protected _onClick(e: MouseEvent) {
         if (this.disabled()) {
             e.stopImmediatePropagation();
             e.preventDefault();

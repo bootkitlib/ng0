@@ -10,18 +10,18 @@ import { AccordionItemComponent } from './accordion-item.component';
     styles: `:host {display: block;}`
 })
 export class AccordionComponent {
+    private _element = inject(ElementRef);
+    private _renderer = inject(Renderer2);
+
     /**
      * The mode of the accordion - 'single' or 'multiple'.
      * 'single' mode allows only one item to be expanded at a time.
      * 'multiple' mode allows multiple items to be expanded simultaneously.
      */
-    public mode = input<'single' | 'multiple'>('single');
+    public readonly mode = input<'single' | 'multiple'>('single');
 
     @ContentChildren(AccordionItemComponent)
     public readonly items!: QueryList<AccordionItemComponent>;
-
-    private _element = inject(ElementRef);
-    private _renderer = inject(Renderer2);
 
     constructor() {
         this._renderer.addClass(this._element.nativeElement, 'accordion');

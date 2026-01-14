@@ -19,6 +19,7 @@ export class VerticalMenuItemComponent {
 
   public readonly text = input<string>();
   public readonly link = input<string | string[]>();
+  public readonly icon = input<string>();
   public readonly target = input<'_blank' | '_parent' | '_self' | '_top'>();
 
   @ContentChild(VerticalMenuItemChildrenComponent, { descendants: false })

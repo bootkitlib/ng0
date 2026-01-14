@@ -1,4 +1,4 @@
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, DestroyRef, HostBinding, input, model, OnDestroy, OnInit, QueryList, signal } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, DestroyRef, HostBinding, inject, input, model, OnDestroy, OnInit, QueryList, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TableColumnDirective } from './table-column.directive';
 import { TableDetailRowDirective } from './table-detail-row.directive';
@@ -34,36 +34,55 @@ import { NumberDirective } from '@bootkit/ng0/form';
     OverlayModule
   ]
 })
-export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
+export class TableComponent implements AfterContentInit, OnDestroy {
+  protected _ls = inject(LocalizationService);
+  private _destroyRef = inject(DestroyRef);
+  private _changeSubscription?: Subscription;
+
+  @ContentChildren(TableColumnDirective)
+  protected _columns!: QueryList<TableColumnDirective>;
+
+  @ContentChild(TableDetailRowDirective)
+  protected _detailRow?: TableDetailRowDirective;
+
+  protected _dataResult = signal<DataResult | undefined>(undefined);
+  protected _lastRequest?: DataRequest; // The last data request made to the data source
+  protected _loadingRequest?: DataRequest; // The current data request being processed
+  protected _rowStates = new Map<any, { expanded: boolean }>();
+  protected _formatString = formatString;
+  protected _dataSource!: DataSource;
+  protected _pagingFormatter!: TableComponentPagingFormatter;
+  protected _lastError?: any;
+
   /**
    * The data source for the table.
    * This can be an array of data, a function that returns an observable of data,
    * or an instance of DataSource.
    */
-  public source = input.required<DataSourceLike<any>>();
+  public readonly source = input.required<DataSourceLike<any>>();
 
   /**
    * If true, the table will automatically load data when initialized.
    * This is useful for tables that need to display data immediately without user interaction.
    */
-  public autoLoad = input(true, { transform: booleanAttribute });
+  public readonly autoLoad = input(true, { transform: booleanAttribute });
 
   /**
    * If true, the table will show row numbers.
    * This will add a column to the left of the table with the row numbers.
    */
-  public showRowNumbers = input(false, { transform: booleanAttribute });
+  public readonly showRowNumbers = input(false, { transform: booleanAttribute });
 
   /** 
    * If true, the table will show the header row.
    */
-  public showHeader = input(true, { transform: booleanAttribute });
+  public readonly showHeader = input(true, { transform: booleanAttribute });
 
   /**
    * If true, the table will support pagination.
    * If false, the table will load all records at once.
    */
-  public pageable = input<TablePagingOptions | undefined, TablePagingOptions | boolean>(undefined, {
+  public readonly pageable = input<TablePagingOptions | undefined, TablePagingOptions | boolean>(undefined, {
     transform: v => {
       if (v === undefined || v === null || v === false) {
         return undefined;
@@ -85,40 +104,40 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * If true, the table will support sorting.
    * This will add a sort icon to each column header.
    */
-  public sortable = input(true, { transform: booleanAttribute });
+  public readonly sortable = input(true, { transform: booleanAttribute });
 
   /**
    * The CSS class to apply to the table element.
    * This can be used to apply custom styles to the table.
    */
-  public tableClass = input<string | string[]>();
+  public readonly tableClass = input<string | string[]>();
 
   /**
    * The CSS class to apply to the header element.
    */
-  public headerClass = input<string>();
+  public readonly headerClass = input<string>();
 
   /**
    * The caption of the table.
    */
-  public caption = input<string>();
+  public readonly caption = input<string>();
 
   /**
    * The height of the table in pixels.
    * This can be used to set a fixed height for the table.
    */
-  public height = input<number>();
+  public readonly height = input<number>();
 
   /**
    * If true, the table will support filtering.
    * This will add a filter input to each column header.
    */
-  public filterable = input(false, { transform: booleanAttribute });
+  public readonly filterable = input(false, { transform: booleanAttribute });
 
   /**
    * The indicator to show while the table is loading data for the first time.
    */
-  public loadingIndicator = input<'none' | 'simple' | 'spinner', boolean | 'none' | 'simple' | 'spinner'>('spinner', {
+  public readonly loadingIndicator = input<'none' | 'simple' | 'spinner', boolean | 'none' | 'simple' | 'spinner'>('spinner', {
     transform: v => {
       if (typeof v === 'boolean') {
         return v ? 'spinner' : 'none';
@@ -132,7 +151,7 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
    * This cover is not displayed when the table is loading for the first time.
    * Instead, the table will show a loading based on loadingIndicator settings.
    */
-  public loadingCover = input<'none' | 'simple' | 'spinner', boolean | 'none' | 'simple' | 'spinner'>('spinner', {
+  public readonly loadingCover = input<'none' | 'simple' | 'spinner', boolean | 'none' | 'simple' | 'spinner'>('spinner', {
     transform: v => {
       if (typeof v === 'boolean') {
         return v ? 'spinner' : 'none';
@@ -142,30 +161,6 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
   });
 
   // @Input() rowColor?: (row: any) => BootstrapColor;
-
-  @ContentChildren(TableColumnDirective)
-  protected _columns!: QueryList<TableColumnDirective>;
-
-  @ContentChild(TableDetailRowDirective)
-  protected _detailRow?: TableDetailRowDirective;
-
-  protected _dataResult = signal<DataResult | undefined>(undefined);
-  protected _lastRequest?: DataRequest; // The last data request made to the data source
-  protected _loadingRequest?: DataRequest; // The current data request being processed
-  protected _rowStates = new Map<any, { expanded: boolean }>();
-  protected _formatString = formatString;
-  private _changeSubscription?: Subscription;
-  protected _dataSource!: DataSource;
-  protected _pagingFormatter!: TableComponentPagingFormatter;
-  protected _lastError?: any;
-
-
-  constructor(protected _ls: LocalizationService, private _destroyRef: DestroyRef) {
-  }
-
-  ngOnInit(): void {
-
-  }
 
   ngAfterContentInit(): void {
     this._dataSource = dataSourceAttribute(this.source());
@@ -210,9 +205,9 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
     if (this.sortable()) {
       let col = this._columns.find(c => c.sortable() && c.sortDirection() != 'none' && (c.field() != '' || c.fieldName() != ''));
       if (col) {
-        sort = { 
-          field: col.fieldName() ?? col.field()!, 
-          asc: col.sortDirection() === 'asc' 
+        sort = {
+          field: col.fieldName() ?? col.field()!,
+          asc: col.sortDirection() === 'asc'
         }
       }
     }
@@ -252,7 +247,6 @@ export class TableComponent implements OnInit, AfterContentInit, OnDestroy {
 
     return value;
   }
-
 
   protected _onPageChange(pageIndex: number) {
     this.load(pageIndex);

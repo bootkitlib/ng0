@@ -107,7 +107,7 @@ export class DropdownComponent {
     }
 
     @HostListener('document:click', ['$event'])
-    private _onDocumentClick(e: MouseEvent) {
+    protected _onDocumentClick(e: MouseEvent) {
         const splitButtonClicked = e.target === this._splitButton?.nativeElement;
         const mainButtonClicked = e.target === this._mainButton?.nativeElement;
         const toggleClicked = this.split() ? splitButtonClicked : mainButtonClicked;

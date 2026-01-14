@@ -40,7 +40,7 @@ export class DropdownLinkComponent {
 
 
     @HostListener('click', ['$event'])
-    private _onClick(e: MouseEvent) {
+    protected _onClick(e: MouseEvent) {
         if (this.disabled()) {
             e.preventDefault();
             e.stopPropagation();

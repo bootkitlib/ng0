@@ -1,6 +1,5 @@
 import { Directive, Input, TemplateRef } from '@angular/core';
 
-
 @Directive({
   selector: '[ng0-table-detail-row]',
   standalone: true,

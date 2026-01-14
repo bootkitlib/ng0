@@ -15,10 +15,10 @@ export class CodeComponent {
   private _domSanitizer = inject(DomSanitizer);
 
   /** Code formatter name */
-  formatter = input.required<string>();
+  public formatter = input.required<string>();
 
   /** Code */
-  code = input.required<string>();
+  public code = input.required<string>();
 
   protected _safeHtml = computed(() => {
     var frmt = this._formatters.find(this.formatter());

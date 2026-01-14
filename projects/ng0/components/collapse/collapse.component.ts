@@ -25,15 +25,15 @@ export class CollapseComponent {
      * Indicates whether the host element is collapsed. 
      * @model 
      */
-    public collapsed = model(false);
+    public readonly collapsed = model(false);
 
     /** Animation timings for collapse/expand animations. 
      * @input 
      */
-    public timings = input<string | number>('0.2s');
+    public readonly timings = input<string | number>('0.2s');
 
     @HostBinding('@collapseExpand')
-    private get _collapseExpand() {
+    protected get _collapseExpand() {
         return { value: this.collapsed() ? 'collapsed' : 'expanded', params: { timings: this.timings() } };
     }
 }

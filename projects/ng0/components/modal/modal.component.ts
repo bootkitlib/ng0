@@ -11,6 +11,8 @@ import { ModalCloseRequest } from './types';
     imports: [CommonModule]
 })
 export class ModalComponent {
+    protected readonly _modalStatic = signal(false);
+
     /**
      * Is modal scrollable?
      */
@@ -38,11 +40,6 @@ export class ModalComponent {
      * Emitted when the backdrop is clicked.
      */
     @Output() public backdropClick = new EventEmitter<Event>();
-
-    protected readonly _modalStatic = signal(false);
-
-    constructor() {
-    }
 
     protected _onBackdropClick(event: MouseEvent) {
         this.closeRequest.emit({ reason: 'backdrop', event });

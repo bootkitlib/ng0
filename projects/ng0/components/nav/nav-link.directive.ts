@@ -1,4 +1,4 @@
-import { Directive, ElementRef, HostBinding, HostListener, Renderer2, input } from '@angular/core';
+import { Directive, ElementRef, HostBinding, HostListener, Renderer2, inject, input } from '@angular/core';
 import { NavDirective } from './nav.directive';
 import { NavItemDirective } from './nav-item.directive';
 
@@ -8,21 +8,23 @@ import { NavItemDirective } from './nav-item.directive';
       standalone: true,
 })
 export class NavLinkDirective {
-      constructor(public elementRef: ElementRef, private _nav: NavDirective, private _navItem: NavItemDirective) {
-      }
+      private _nav = inject(NavDirective);
+      private _navItem = inject(NavItemDirective);
+      public elementRef = inject(ElementRef);
+
 
       @HostListener('click')
-      private _onClick() {
+      protected _onClick() {
             this._nav.activeItem.set(this._navItem.id());
       }
 
       @HostBinding('class.active') 
-      private get _active() {
+      protected get _active() {
             return this._nav.activeItem() === this._navItem.id();
       }
 
       @HostBinding('class.disabled') 
-      private get _disabled() {
+      protected get _disabled() {
             return this._nav.disabled() || this._navItem.disabled();
       }
 }

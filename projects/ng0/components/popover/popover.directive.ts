@@ -95,37 +95,37 @@ export class PopoverDirective implements OnInit, OnDestroy {
         return positions;
     }
 
-    @HostListener('click') private _onClick(): void {
+    @HostListener('click') protected _onClick(): void {
         if (this.triggerBy() === 'click') {
             this._toggleOverlay()
         }
     }
 
-    @HostListener('dblclick') private _onDblclick(): void {
+    @HostListener('dblclick') protected _onDblclick(): void {
         if (this.triggerBy() === 'dblclick') {
             this._toggleOverlay()
         }
     }
 
-    @HostListener('mouseenter') private _onMouseEnter(): void {
+    @HostListener('mouseenter') protected _onMouseEnter(): void {
         if (this.triggerBy() === 'hover') {
             this._toggleOverlay()
         }
     }
 
-    @HostListener('mouseleave') private _onMouseLeave(): void {
+    @HostListener('mouseleave') protected _onMouseLeave(): void {
         if (this.triggerBy() === 'hover') {
             this._toggleOverlay()
         }
     }
 
-    @HostListener('focus') private _onFocus(): void {
+    @HostListener('focus') protected _onFocus(): void {
         if (this.triggerBy() === 'focus') {
             this._toggleOverlay()
         }
     }
 
-    @HostListener('focusout') private _onFocusout(): void {
+    @HostListener('focusout') protected _onFocusout(): void {
         if (this.triggerBy() === 'focus') {
             this._toggleOverlay()
         }

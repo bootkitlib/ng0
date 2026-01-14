@@ -8,24 +8,28 @@ import { HttpService } from '@bootkit/ng0/http';
   standalone: true,
   host: {
     '[class.disabled]': 'disabled()',
-    '[prop.disabled]': 'disabled()',
+    '[attr.disabled]': 'disabled()',
     '[attr.aria-disabled]': 'disabled()',
     '[attr.tabindex]': 'disabled() ? "-1" : "" ',
   }
 })
-export class ButtonDirective implements OnInit, OnDestroy {
+export class ButtonDirective implements OnInit {
   private _loadingElement: any;
+  private _element = inject(ElementRef);
+  private _renderer = inject(Renderer2);
+  private _http = inject(HttpService);
+  private _destroyRef = inject(DestroyRef);
 
   /**
    * The IDs of the HTTP requests that this button listens to.
    * If one of these requests is in progress, it will show a loading indicator or will be disabled based on 'showLoading' and 'disableOnLoading' properties.
    */
-  public request = input<string | string[] | undefined>(undefined);
+  public readonly request = input<string | string[] | undefined>(undefined);
 
   /** 
    * Whether the button is disabled or not.
    */
-  public disabled = model<boolean>(false);
+  public readonly disabled = model<boolean>(false);
 
   /**
    * Whether to wait for the HTTP response before enabling the button again.
@@ -33,22 +37,14 @@ export class ButtonDirective implements OnInit, OnDestroy {
    * This is useful for preventing multiple clicks while waiting for a response.
    * Default is true.
    */
-  public disableDuringRequest = input(true, { transform: booleanAttribute });
+  public readonly disableDuringRequest = input(true, { transform: booleanAttribute });
 
   /**
    * Whether to show a loading indicator when the HTTP request is in progress.
    * If true, a loading spinner will be displayed on the button while the request is being processed.
    * Default is true.
    */
-  public loadingIndicator = input(false, { transform: booleanAttribute });
-
-  private _element = inject(ElementRef);
-  private _renderer = inject(Renderer2);
-  private _http = inject(HttpService);
-  private _destroyRef = inject(DestroyRef);
-
-  constructor() {
-  }
+  public readonly loadingIndicator = input(false, { transform: booleanAttribute });
 
   ngOnInit(): void {
     this._renderer.setStyle(this._element.nativeElement, "position", "relative");
@@ -80,7 +76,6 @@ export class ButtonDirective implements OnInit, OnDestroy {
   //   if (!this._disabled) {
   //   }
   // }
-
   private _showLoading() {
     this._loadingElement = this._renderer.createElement("div");
     ["spinner-grow", "spinner-grow-sm", "text-warning"].forEach(s => this._renderer.addClass(this._loadingElement, s));
@@ -92,8 +87,5 @@ export class ButtonDirective implements OnInit, OnDestroy {
 
   private _hideLoading() {
     this._renderer.removeChild(this._element.nativeElement, this._loadingElement);
-  }
-
-  ngOnDestroy(): void {
   }
 }

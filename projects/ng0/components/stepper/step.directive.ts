@@ -6,7 +6,7 @@ import { Directive, input, TemplateRef } from '@angular/core';
       standalone: true
 })
 export class StepDirective {
-      public id = input.required<any>({alias: 'iscStep'});
+      public readonly id = input.required<any>({alias: 'ng0Step'});
 
       constructor(public readonly templateRef: TemplateRef<any>) {
       }
