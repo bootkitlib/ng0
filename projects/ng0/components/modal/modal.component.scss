@@ -1,0 +1,21 @@
+  .modal {
+    display: block;
+  }
+
+  .modal-backdrop {
+    opacity: .5;
+  }
+
+  @keyframes backdrop-fade-in {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: .5;
+    }
+  }
+
+  .backdrop-fade-in {
+    animation-name: backdrop-fade-in;
+  }

@@ -6,6 +6,10 @@ import { ModalCloseRequest } from './types';
     selector: 'ng0-modal',
     exportAs: 'ng0Modal',
     templateUrl: 'modal.component.html',
+    styleUrls: [
+        '../../animations.css',
+        './modal.component.scss'
+    ],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule]

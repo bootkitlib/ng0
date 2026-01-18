@@ -1,5 +1,5 @@
 import { trigger, style, transition, animate, state } from '@angular/animations';
-import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, ChangeDetectorRef, HostBinding, Renderer2, ElementRef, TemplateRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, ChangeDetectorRef, HostBinding, Renderer2, ElementRef, TemplateRef, inject } from '@angular/core';
 import { ToastConfig } from './types';
 import { CommonModule } from '@angular/common';
 import { ToastRef } from './toast-ref';
@@ -9,6 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     selector: 'ng0-toast',
     exportAs: 'ng0Toast',
     templateUrl: 'toast.component.html',
+    styleUrls: ['../../animations.css'],
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
@@ -28,25 +29,23 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     ],
 })
 export class ToastComponent implements OnInit {
-    public toastRef!: ToastRef;
+    private readonly _changeDetectorRef = inject(ChangeDetectorRef);
+    private readonly _renderer = inject(Renderer2);
+    private readonly _elementRef = inject(ElementRef);
+    private readonly _destroyRef = inject(DestroyRef);
+
     protected _config!: ToastConfig;
     @HostBinding('@host') protected _show = true;
     protected _hasBodyTemplate!: boolean;
     protected _hasHeaderTemplate!: boolean;
 
-    constructor(
-        private _changeDetectorRef: ChangeDetectorRef,
-        private _renderer: Renderer2,
-        private _elementRef: ElementRef,
-        private _destroyRef: DestroyRef) {
-            
-    }
+    public toastRef!: ToastRef;
 
     ngOnInit(): void {
         this._config = this.toastRef.config;
         this._hasHeaderTemplate = this._config.header instanceof TemplateRef;
         this._hasBodyTemplate = this._config.body instanceof TemplateRef;
-        
+
         let style = this._config.style ?? 'success';
         ['toast', 'show', `text-bg-${style}`].forEach(x => this._renderer.addClass(this._elementRef.nativeElement, x));
         this.toastRef.closed.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(x => {

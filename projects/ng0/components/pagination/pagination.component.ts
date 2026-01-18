@@ -17,35 +17,35 @@ export class PaginationComponent {
   /**
    * Total number of records.
    */
-  public totalRecords = input.required<number>();
+  public readonly totalRecords = input.required<number>();
 
   /**
    * Page size. Number of items in each page.
    */
-  public pageSize = input<number>(10);
+  public readonly pageSize = input<number>(10);
 
   /** 
    * Selected page Index. starts from 1.
    */
-  public selectedPage = input<number | undefined>(1);
+  public readonly selectedPage = input<number | undefined>(1);
 
   /**
    * Maximum number of visible pages.
    * Default is 10.
    */
-  public maxVisiblePages = input<number>(10);
+  public readonly maxVisiblePages = input<number>(10);
 
   /**
    * Show first and last buttons.
    * Default is true.
    */
-  public showNextPreviousButtons = input<boolean | undefined>(true);
+  public readonly showNextPreviousButtons = input<boolean | undefined>(true);
 
   /**
    * Show first and last buttons.
    * Default is true.
    */
-  public showFirstLastButtons = input<boolean | undefined>(true);
+  public readonly showFirstLastButtons = input<boolean | undefined>(true);
 
   /**
    * Total number of pages.
@@ -58,7 +58,7 @@ export class PaginationComponent {
    * Emits the selected page index when a page is clicked.
    * The index starts from 1.
    */
-  @Output() public itemClick = new EventEmitter<number>();
+  @Output() public readonly itemClick = new EventEmitter<number>();
 
   protected _totalPagesCount!: number;
 

@@ -1,10 +1,9 @@
 import { Overlay } from '@angular/cdk/overlay';
 import { ComponentPortal } from '@angular/cdk/portal';
-import { Injectable, Injector } from '@angular/core';
+import { inject, Injectable, Injector } from '@angular/core';
 import { ToastComponent } from './toast.component';
 import { ToastConfig } from './types';
 import { ToastRef } from './toast-ref';
-
 
 /**
  * Service for displaying toast notifications in the application.
@@ -38,17 +37,12 @@ import { ToastRef } from './toast-ref';
   providedIn: 'root'
 })
 export class ToastService {
-  private _toastRef?: ToastRef;
-
-  constructor(private _overlayService: Overlay, private _injector: Injector) { }
+  private readonly _overlayService = inject(Overlay);
+  private readonly _injector = inject(Injector);
 
   open(body: string, header?: string, style?: string): ToastRef;
   open(config: ToastConfig): ToastRef;
   open(p: any): ToastRef {
-    if (this._toastRef) {
-      this._toastRef.close();
-    }
-
     const config: ToastConfig =
       typeof p === 'object' ? p :
         { body: arguments[0], header: arguments[1], style: arguments[2] } as ToastConfig;
@@ -87,12 +81,13 @@ export class ToastService {
     });
 
     var componentRef = overlayRef.attach(portal);
-    componentRef.instance.toastRef = this._toastRef = new ToastRef(config, overlayRef);
+    let toastRef = new ToastRef(config, overlayRef);
+    componentRef.instance.toastRef = toastRef;
 
     setTimeout(() => {
-      this._toastRef?.close();
+      toastRef.close();
     }, config?.duration ?? 3000);
 
-    return this._toastRef;
+    return toastRef;
   }
 }

@@ -1,11 +1,11 @@
 @let fullscreenValue=fullscreen();
 @let sizeValue=size();
 
-<div class="modal"
+<div class="modal ng0-animated"
      (click)="$event.target == $event.currentTarget ? _onBackdropClick($event): ''"
      [class.modal-static]="_modalStatic()"
-     animate.enter="zoom-in"
-     animate.leave="zoom-out">
+     animate.enter="ng0-zoom-in"
+     animate.leave="ng0-zoom-out">
 
   <div class="modal-dialog"
        [class]="{
@@ -26,73 +26,7 @@
     </div>
   </div>
 </div>
-<div class="modal-backdrop"
-     animate.enter="fade-in"
-     animate.leave="fade-out">
+<div class="modal-backdrop ng0-animated "
+     animate.enter="backdrop-fade-in"
+     animate.leave="backdrop-fade-in">
 </div>
-
-<style>
-  .modal {
-    display: block;
-  }
-
-  .modal-backdrop {
-    opacity: .5;
-  }
-
-  @keyframes fade-in {
-    from {
-      opacity: 0;
-    }
-
-    to {
-      opacity: .5;
-    }
-  }
-
-  @keyframes fade-out {
-    from {
-      opacity: .5;
-    }
-
-    to {
-      opacity: 0;
-    }
-  }
-
-  .fade-in {
-    animation: fade-in 0.3s;
-  }
-
-  .fade-out {
-    animation: fade-out 0.3s;
-  }
-
-  @keyframes zoom-in {
-    from {
-      transform: scale(.8);
-    }
-
-    to {
-      transform: scale(1);
-    }
-  }
-
-  @keyframes zoom-out {
-    from {
-      transform: scale(1);
-    }
-
-    to {
-      transform: scale(.8);
-    }
-  }
-
-  .zoom-in {
-    animation: zoom-in 0.3s;
-  }
-
-  .zoom-out {
-    animation: zoom-out 0.3s;
-  }
-</style>
