@@ -2,28 +2,38 @@ import { OverlayRef } from "@angular/cdk/overlay";
 import { Subject, timer } from "rxjs";
 import { ToastConfig } from "./types";
 
+/**
+ * A reference to a toast component
+ */
 export class ToastRef {
-    private _isOpen = true;
+    private _closed = false;
+    private _disposed = false;
     private _closedSubject = new Subject<any>();
+
     public closed = this._closedSubject.asObservable();
 
     constructor(public readonly config: ToastConfig, private overlayRef: OverlayRef) {
     }
 
-    public get isOpen() {
-        return this._isOpen;
+    public isOpen() {
+        return !this._closed;
     }
 
+    /**
+     * Close the toast.
+     */
     public close() {
-        if (this._isOpen) {
+        if (!this._closed) {
             this._closedSubject.next(0);
-            this._isOpen = false;
+            this._closed = true;
+        }
+    }
 
-            // Wait to ':leave' animation is done and then dispose the overlay
-            timer(100).subscribe(x => {
-                this.overlayRef.detach();
-                this.overlayRef.dispose();
-            });
+    public dispose() {
+        if (!this._disposed) {
+            this.overlayRef.detach();
+            this.overlayRef.dispose();
+            this._disposed = true;
         }
     }
 }

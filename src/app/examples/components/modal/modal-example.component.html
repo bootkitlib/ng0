@@ -11,8 +11,7 @@
         </h4>
 
         <!-- Basic -->
-        @if (showSimple()) {
-        <ng0-modal (backdropClick)="showSimple.set(false)" (closeRequest)="showSimple.set(false)">
+        <ng0-modal [open]="showSimple()" (backdropClick)="showSimple.set(false)" (closeRequest)="showSimple.set(false)">
           <div class="modal-body">
             <p>
               This is a simple modal. <br>
@@ -20,12 +19,12 @@
 
             </p>
           </div>
-        </ng0-modal>
-        }
+        </ng0-modal>a
+
 
         <!-- With header & footer -->
-        @if (showHeaderFooter()) {
-        <ng0-modal (backdropClick)="showHeaderFooter.set(false)" (closeRequest)="showHeaderFooter.set(false)">
+        <ng0-modal [open]="showHeaderFooter()" (backdropClick)="showHeaderFooter.set(false)"
+                   (closeRequest)="showHeaderFooter.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">Header / Footer</h1>
             <button class="btn-close" (click)="showHeaderFooter.set(false)"></button>
@@ -38,11 +37,9 @@
             <button class="btn btn-secondary">Save changes</button>
           </div>
         </ng0-modal>
-        }
 
         <!-- Static backdrop (shake, no close on backdrop click or ESC press) -->
-        @if (showStatic()) {
-        <ng0-modal>
+        <ng0-modal [open]="showStatic()">
           <div class="modal-header">
             <h1 class="modal-title fs-5">Static backdrop</h1>
             <button class="btn-close" (click)="showStatic.set(false)"></button>
@@ -54,11 +51,11 @@
             <button class="btn btn-secondary" (click)="showStatic.set(false)">OK</button>
           </div>
         </ng0-modal>
-        }
+
 
         <!-- No backdrop action (click does nothing), still closes on Esc -->
-        @if (showBackdrop()) {
-        <ng0-modal backdrop="none" (closeRequest)="$event.reason == 'backdrop' ? showBackdrop.set(false) : ''">
+        <ng0-modal [open]="showBackdrop()" backdrop="none"
+                   (closeRequest)="$event.reason == 'backdrop' ? showBackdrop.set(false) : ''">
           <div class="modal-header">
             <h1 class="modal-title fs-5">Click backdrop to close!</h1>
             <button class="btn-close" (click)="showBackdrop.set(false)"></button>
@@ -67,11 +64,10 @@
             <p>Click backdrop to close this dialog! ESC is ignored.</p>
           </div>
         </ng0-modal>
-        }
+
 
         <!-- Esc -->
-        @if (showEsc()) {
-        <ng0-modal (closeRequest)="$event.reason == 'escape' ? showEsc.set(false) : ''">
+        <ng0-modal [open]="showEsc()" (closeRequest)="$event.reason == 'escape' ? showEsc.set(false) : ''">
           <div class="modal-header">
             <h1 class="modal-title fs-5">Press Esc to close!</h1>
             <button class="btn-close" (click)="showEsc.set(false)"></button>
@@ -80,8 +76,6 @@
             <p>Press Esc to close this modal. backdrop clicks are ignored. </p>
           </div>
         </ng0-modal>
-        }
-
       </div>
 
       <div class="card-footer">
@@ -102,42 +96,40 @@
           Modals have 4 different sizes: <code>sm</code>, <code>default</code>, <code>lg</code> and <code>xl</code>.
         </p>
 
-        @if (showSm()) {
-        <ng0-modal size="sm" (backdropClick)="showSm.set(false)" (closeRequest)="showSm.set(false)">
+        <ng0-modal [open]="showSm()" size="sm" (backdropClick)="showSm.set(false)" (closeRequest)="showSm.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">size="sm"</h1>
             <button class="btn-close" (click)="showSm.set(false)"></button>
           </div>
           <div class="modal-body">Small dialog</div>
         </ng0-modal>
-        }
-        @if (showDefault()) {
-        <ng0-modal size="default" (backdropClick)="showDefault.set(false)" (closeRequest)="showDefault.set(false)">
+
+        <ng0-modal [open]="showDefault()" size="default" (backdropClick)="showDefault.set(false)"
+                   (closeRequest)="showDefault.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">size="default"</h1>
             <button class="btn-close" (click)="showDefault.set(false)"></button>
           </div>
           <div class="modal-body">Default dialog</div>
         </ng0-modal>
-        }
-        @if (showLg()) {
-        <ng0-modal size="lg" (backdropClick)="showLg.set(false)" (closeRequest)="showLg.set(false)">
+
+        <ng0-modal [open]="showLg()" size="lg" (backdropClick)="showLg.set(false)" (closeRequest)="showLg.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">size="lg"</h1>
             <button class="btn-close" (click)="showLg.set(false)"></button>
           </div>
           <div class="modal-body">Large dialog</div>
         </ng0-modal>
-        }
-        @if (showXl()) {
-        <ng0-modal size="xl" (backdropClick)="showXl.set(false)" (closeRequest)="showXl.set(false)">
+
+
+        <ng0-modal [open]="showXl()" size="xl" (backdropClick)="showXl.set(false)" (closeRequest)="showXl.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">size="xl"</h1>
             <button class="btn-close" (click)="showXl.set(false)"></button>
           </div>
           <div class="modal-body">Extra large dialog</div>
         </ng0-modal>
-        }
+
       </div>
 
       <div class="card-footer">
@@ -157,18 +149,16 @@
           Modals can be vertically centered and/or have a scrollable body.
         </p>
 
-        @if (showCentered()) {
-        <ng0-modal [centered]="true" (backdropClick)="showCentered.set(false)" (closeRequest)="showCentered.set(false)">
+        <ng0-modal [open]="showCentered()" [centered]="true" (backdropClick)="showCentered.set(false)"
+                   (closeRequest)="showCentered.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">Centered</h1>
             <button class="btn-close" (click)="showCentered.set(false)"></button>
           </div>
           <div class="modal-body">This dialog is vertically centered.</div>
         </ng0-modal>
-        }
 
-        @if (showScrollable()) {
-        <ng0-modal [scrollable]="true" (backdropClick)="showScrollable.set(false)"
+        <ng0-modal [open]="showScrollable()" [scrollable]="true" (backdropClick)="showScrollable.set(false)"
                    (closeRequest)="showScrollable.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">Scrollable</h1>
@@ -178,7 +168,6 @@
             <p *ngFor="let i of longList">{{ i }} — Lorem ipsum dolor sit amet…</p>
           </div>
         </ng0-modal>
-        }
       </div>
 
       <div class="card-footer">
@@ -196,8 +185,7 @@
           Modals can be displayed in full screen mode on all or specific breakpoints.
         </p>
 
-        @if (showFsAlways()) {
-        <ng0-modal fullscreen="always" (backdropClick)="showFsAlways.set(false)"
+        <ng0-modal [open]="showFsAlways()" fullscreen="always" (backdropClick)="showFsAlways.set(false)"
                    (closeRequest)="showFsAlways.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">fullscreen="always"</h1>
@@ -205,52 +193,53 @@
           </div>
           <div class="modal-body">Always full-screen on all breakpoints.</div>
         </ng0-modal>
-        }
-        @if (showFsSm()) {
-        <ng0-modal fullscreen="sm" (backdropClick)="showFsSm.set(false)" (closeRequest)="showFsSm.set(false)">
+
+        <ng0-modal [open]="showFsSm()" fullscreen="sm" (backdropClick)="showFsSm.set(false)"
+                   (closeRequest)="showFsSm.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">fullscreen="sm"</h1>
             <button class="btn-close" (click)="showFsSm.set(false)"></button>
           </div>
           <div class="modal-body">Full-screen on ≤ sm.</div>
         </ng0-modal>
-        }
-        @if (showFsMd()) {
-        <ng0-modal fullscreen="md" (backdropClick)="showFsMd.set(false)" (closeRequest)="showFsMd.set(false)">
+
+
+        <ng0-modal [open]="showFsMd()" fullscreen="md" (backdropClick)="showFsMd.set(false)"
+                   (closeRequest)="showFsMd.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">fullscreen="md"</h1>
             <button class="btn-close" (click)="showFsMd.set(false)"></button>
           </div>
           <div class="modal-body">Full-screen on ≤ md.</div>
         </ng0-modal>
-        }
-        @if (showFsLg()) {
-        <ng0-modal fullscreen="lg" (backdropClick)="showFsLg.set(false)" (closeRequest)="showFsLg.set(false)">
+
+        <ng0-modal [open]="showFsLg()" fullscreen="lg" (backdropClick)="showFsLg.set(false)"
+                   (closeRequest)="showFsLg.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">fullscreen="lg"</h1>
             <button class="btn-close" (click)="showFsLg.set(false)"></button>
           </div>
           <div class="modal-body">Full-screen on ≤ lg.</div>
         </ng0-modal>
-        }
-        @if (showFsXl()) {
-        <ng0-modal fullscreen="xl" (backdropClick)="showFsXl.set(false)" (closeRequest)="showFsXl.set(false)">
+
+        <ng0-modal [open]="showFsXl()" fullscreen="xl" (backdropClick)="showFsXl.set(false)"
+                   (closeRequest)="showFsXl.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">fullscreen="xl"</h1>
             <button class="btn-close" (click)="showFsXl.set(false)"></button>
           </div>
           <div class="modal-body">Full-screen on ≤ xl.</div>
         </ng0-modal>
-        }
-        @if (showFsXxl()) {
-        <ng0-modal fullscreen="xxl" (backdropClick)="showFsXxl.set(false)" (closeRequest)="showFsXxl.set(false)">
+
+
+        <ng0-modal [open]="showFsXxl()" fullscreen="xxl" (backdropClick)="showFsXxl.set(false)"
+                   (closeRequest)="showFsXxl.set(false)">
           <div class="modal-header">
             <h1 class="modal-title fs-5">fullscreen="xxl"</h1>
             <button class="btn-close" (click)="showFsXxl.set(false)"></button>
           </div>
           <div class="modal-body">Full-screen on ≤ xxl.</div>
         </ng0-modal>
-        }
 
       </div>
       <div class="card-footer">

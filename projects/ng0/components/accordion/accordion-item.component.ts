@@ -10,13 +10,13 @@ import { AccordionComponent } from './accordion.component';
     changeDetection: ChangeDetectionStrategy.OnPush,
     styles: `:host {display: block;}`,
     imports: [
-        CollapseComponent
+        CollapseComponent,
     ]
 })
 export class AccordionItemComponent {
-    private _element = inject(ElementRef);
-    private _renderer = inject(Renderer2);
-    private _accordion = inject(AccordionComponent);
+    private readonly _element = inject(ElementRef);
+    private readonly _renderer = inject(Renderer2);
+    private readonly _accordion = inject(AccordionComponent);
 
     /**
      * The header text of the accordion item.
@@ -26,7 +26,7 @@ export class AccordionItemComponent {
     /**
      * Whether the accordion item is collapsed or expanded.
      */
-    public readonly collapsed = model(true);
+    public readonly collapsed = model(true, {});
 
     constructor() {
         this._renderer.addClass(this._element.nativeElement, 'accordion-item');

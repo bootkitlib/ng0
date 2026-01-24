@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CollapseModule } from '@bootkit/ng0/components/collapse';
 
 @Component({

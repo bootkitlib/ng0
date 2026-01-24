@@ -1,14 +1,13 @@
-import { Component, ContentChild, inject, model } from '@angular/core';
+import { Component, model } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { VerticalMenuComponent } from './vertical-menu.component';
-import { CollapseDirective } from '@bootkit/ng0/components/collapse';
+import { CollapseComponent } from '@bootkit/ng0/components/collapse';
 
 @Component({
     selector: 'ng0-vmenu-item-children, ng0-vmenu-children',
     templateUrl: './item-children.component.html',
     exportAs: 'ng0VmenuItemChildren',
     standalone: true,
-    imports: [CommonModule, CollapseDirective],
+    imports: [CommonModule, CollapseComponent, CollapseComponent],
     host: {
         '[class.ng0-expanded]': 'expanded()'
     }

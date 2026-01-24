@@ -1,0 +1,36 @@
+@keyframes ng0-toast-enter {
+    from {
+        opacity: 0;
+        transform: scale(.6);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes ng0-toast-leave {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    to {
+        opacity: 0;
+        transform: scale(.6);
+    }
+}
+
+ng0-toast {
+    animation-duration: 0.1s;
+    animation-fill-mode: both;
+}
+
+.ng0-toast-enter {
+    animation-name: ng0-toast-enter;
+}
+
+.ng0-toast-leave {
+    animation-name: ng0-toast-leave;
+}

@@ -1,0 +1,28 @@
+:root {
+    --ng0-collapse-transition-duration: .2s;
+    --ng0-collapse-transition-timing-function: ease-out;
+}
+
+ng0-collapse {
+    display: grid;
+    grid-template-rows: 1fr;
+
+    overflow: hidden;
+    transition: grid-template-rows var(--ng0-collapse-transition-duration);
+    transition-timing-function: var(--ng0-collapse-transition-timing-function);
+
+    // transition
+    &.ng0-collapsed {
+        grid-template-rows: 0fr;
+
+        .ng0-collapse-content {
+            visibility: hidden;
+        }
+    }
+}
+
+.ng0-collapse-content {
+    min-height: 0;
+    visibility: visible;
+    transition: visibility .2s;
+}

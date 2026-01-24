@@ -1,5 +1,4 @@
-import { ChangeDetectionStrategy, Component, HostBinding, input, model } from '@angular/core';
-import { trigger, state, style, animate, transition } from '@angular/animations';
+import { ChangeDetectionStrategy, Component, input, ViewEncapsulation } from '@angular/core';
 
 /**
  * A component that provides collapse and expand functionality. 
@@ -7,33 +6,18 @@ import { trigger, state, style, animate, transition } from '@angular/animations'
 @Component({
     selector: 'ng0-collapse',
     templateUrl: './collapse.component.html',
+    styleUrl: './collapse.component.scss',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    styles: `:host{display :block; overflow: hidden}`,
-    animations: [
-        trigger('collapseExpand', [
-            state('collapsed', style({ height: 0, opacity: 0, })),
-            state('expanded', style({ height: '*', opacity: '*', })),
-            transition('collapsed <=> expanded', [
-                animate('{{timings}}')
-            ])
-        ])
-    ]
+    encapsulation: ViewEncapsulation.None,
+    host: {
+        '[class.ng0-collapsed]': 'collapsed()'
+    }
 })
 export class CollapseComponent {
     /**
      * Indicates whether the host element is collapsed. 
      * @model 
      */
-    public readonly collapsed = model(false);
-
-    /** Animation timings for collapse/expand animations. 
-     * @input 
-     */
-    public readonly timings = input<string | number>('0.2s');
-
-    @HostBinding('@collapseExpand')
-    protected get _collapseExpand() {
-        return { value: this.collapsed() ? 'collapsed' : 'expanded', params: { timings: this.timings() } };
-    }
+    public readonly collapsed = input(false);
 }

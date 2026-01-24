@@ -42,11 +42,12 @@ export class ToastService {
 
   open(body: string, header?: string, style?: string): ToastRef;
   open(config: ToastConfig): ToastRef;
-  open(p: any): ToastRef {
+  open(args: any): ToastRef {
     const config: ToastConfig =
-      typeof p === 'object' ? p :
+      typeof args === 'object' ? args :
         { body: arguments[0], header: arguments[1], style: arguments[2] } as ToastConfig;
 
+    config.style = config.style ?? 'success';
     var portal = new ComponentPortal(ToastComponent, null, this._injector);
 
     // Position

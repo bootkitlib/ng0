@@ -1,6 +1,4 @@
-import { trigger, style, transition, animate, state } from '@angular/animations';
-import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, ChangeDetectorRef, HostBinding, Renderer2, ElementRef, TemplateRef, inject } from '@angular/core';
-import { ToastConfig } from './types';
+import { Component, OnInit, ChangeDetectionStrategy, DestroyRef, ChangeDetectorRef, Renderer2, ElementRef, TemplateRef, inject, ViewEncapsulation, HostBinding, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ToastRef } from './toast-ref';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -9,24 +7,13 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     selector: 'ng0-toast',
     exportAs: 'ng0Toast',
     templateUrl: 'toast.component.html',
-    styleUrls: ['../../animations.css'],
+    styleUrls: ['./toast.component.scss'],
     standalone: true,
+    encapsulation: ViewEncapsulation.None,
     changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         CommonModule,
-    ],
-    animations: [
-        trigger('host', [
-            transition(':enter', [
-                style({ opacity: 0, transform: 'scale(.85)' }),
-                animate('.1s', style({ opacity: '1', transform: 'scale(1)' })),
-            ]),
-            state('false', style({ opacity: 0, transform: 'scale(.85)' })),
-            transition('true => false', [
-                animate('.1s'),
-            ]),
-        ]),
-    ],
+    ]
 })
 export class ToastComponent implements OnInit {
     private readonly _changeDetectorRef = inject(ChangeDetectorRef);
@@ -34,23 +21,34 @@ export class ToastComponent implements OnInit {
     private readonly _elementRef = inject(ElementRef);
     private readonly _destroyRef = inject(DestroyRef);
 
-    protected _config!: ToastConfig;
-    @HostBinding('@host') protected _show = true;
-    protected _hasBodyTemplate!: boolean;
     protected _hasHeaderTemplate!: boolean;
+    protected _hasBodyTemplate!: boolean;
+    protected _closed = false;
 
     public toastRef!: ToastRef;
 
     ngOnInit(): void {
-        this._config = this.toastRef.config;
-        this._hasHeaderTemplate = this._config.header instanceof TemplateRef;
-        this._hasBodyTemplate = this._config.body instanceof TemplateRef;
+        const elm = this._elementRef.nativeElement;
 
-        let style = this._config.style ?? 'success';
-        ['toast', 'show', `text-bg-${style}`].forEach(x => this._renderer.addClass(this._elementRef.nativeElement, x));
+        this._hasHeaderTemplate = this.toastRef.config.header instanceof TemplateRef;
+        this._hasBodyTemplate = this.toastRef.config.body instanceof TemplateRef;
+
+        const hostCss = ['toast', 'show', 'ng0-toast-enter', `text-bg-${this.toastRef.config.style}`];
+        hostCss.forEach(cssClass => this._renderer.addClass(elm, cssClass));
+
         this.toastRef.closed.pipe(takeUntilDestroyed(this._destroyRef)).subscribe(x => {
-            this._show = false;
-            this._changeDetectorRef.markForCheck();
+            this._renderer.addClass(elm, 'ng0-toast-leave');
+            this._closed = true;
         })
     }
+
+    @HostListener('animationend')
+    protected _onHostAnimationend() {
+        if (this._closed) {
+            this.toastRef.dispose();
+        }
+    }
+
+
+
 }

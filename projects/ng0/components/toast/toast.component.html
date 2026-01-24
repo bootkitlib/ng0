@@ -1,19 +1,21 @@
-@if(this._config.header) {
+@let config = this.toastRef.config;
+
+@if(config.header) {
 <div class="toast-header">
     @if(_hasHeaderTemplate) {
-    <ng-container [ngTemplateOutlet]="$any(_config.header)"></ng-container>
+    <ng-container [ngTemplateOutlet]="$any(config.header)"></ng-container>
     }@else {
-    @if(_config.icon) {
-    <span class="me-2" [ngClass]="_config.icon"></span>
+    @if(config.icon) {
+    <span class="me-2" [ngClass]="config.icon"></span>
     }
 
-    <strong class="me-auto">{{this._config.header}}</strong>
+    <strong class="me-auto">{{config.header}}</strong>
 
-    @if(_config.hint) {
-    <small>{{_config.hint}}</small>
+    @if(config.hint) {
+    <small>{{config.hint}}</small>
     }
 
-    @if(_config.closeButton == undefined || _config.closeButton) {
+    @if(config.closeButton == undefined || config.closeButton) {
     <button
             type="button"
             class="btn-close"
@@ -25,12 +27,12 @@
 </div>
 }
 
-@if(this._config.body) {
+@if(config.body) {
 <div class="toast-body">
     @if(_hasBodyTemplate) {
-    <ng-container [ngTemplateOutlet]="$any(_config.body)"></ng-container>
+    <ng-container [ngTemplateOutlet]="$any(config.body)"></ng-container>
     }@else {
-    {{this._config.body}}
+    {{config.body}}
     }
 </div>
 }

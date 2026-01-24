@@ -1,11 +1,12 @@
 @let fullscreenValue=fullscreen();
 @let sizeValue=size();
 
-<div class="modal ng0-animated"
+@if(open()) {
+<div class="modal"
      (click)="$event.target == $event.currentTarget ? _onBackdropClick($event): ''"
      [class.modal-static]="_modalStatic()"
-     animate.enter="ng0-zoom-in"
-     animate.leave="ng0-zoom-out">
+     animate.enter="ng0-modal-enter"
+     animate.leave="ng0-modal-leave">
 
   <div class="modal-dialog"
        [class]="{
@@ -26,7 +27,9 @@
     </div>
   </div>
 </div>
-<div class="modal-backdrop ng0-animated "
-     animate.enter="backdrop-fade-in"
-     animate.leave="backdrop-fade-in">
+
+<div class="modal-backdrop"
+     animate.enter="ng0-modal-backdrop-enter"
+     animate.leave="ng0-modal-backdrop-leave">
 </div>
+}

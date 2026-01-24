@@ -1,21 +1,71 @@
-  .modal {
-    display: block;
+@keyframes ng0-modal-enter {
+  from {
+    opacity: 0;
+    transform: scale(.6);
   }
 
-  .modal-backdrop {
-    opacity: .5;
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ng0-modal-leave {
+  from {
+    opacity: 1;
+    transform: scale(1);
   }
 
-  @keyframes backdrop-fade-in {
-    from {
-      opacity: 0;
-    }
+  to {
+    opacity: 0;
+    transform: scale(.5);
+  }
+}
 
-    to {
-      opacity: .5;
-    }
+@keyframes ng0-modal-backdrop-enter {
+  from {
+    opacity: 0;
   }
 
-  .backdrop-fade-in {
-    animation-name: backdrop-fade-in;
+  to {
+    opacity: 0.5;
   }
+}
+
+@keyframes ng0-modal-backdrop-leave {
+  from {
+    opacity: 0.5;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.modal {
+  display: block;
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+}
+
+.ng0-modal-enter {
+  animation-name: ng0-modal-enter;
+}
+
+.ng0-modal-leave {
+  animation-name: ng0-modal-leave;
+}
+
+.modal-backdrop {
+  animation-duration: 0.3s;
+  animation-fill-mode: both;
+  opacity: 0.5;
+}
+
+.ng0-modal-backdrop-enter {
+  animation-name: ng0-modal-backdrop-enter;
+}
+
+.ng0-modal-backdrop-leave {
+  animation-name: ng0-modal-backdrop-leave;
+}
