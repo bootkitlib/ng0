@@ -16,20 +16,18 @@ import { HTTP_SERVICE_CONFIG } from './provide';
  */
 @Injectable()
 export class HttpService {
-  private _eventsSubject = new Subject<HttpRequestEvent>();
+  private readonly _config = inject(HTTP_SERVICE_CONFIG);
+  private readonly _http = inject(HttpClient);
+  private readonly _transferState = inject(TransferState);
+  private readonly _injector = inject(Injector);
+  private readonly _platformId: Object = inject(PLATFORM_ID);
+  private readonly _eventsSubject = new Subject<HttpRequestEvent>();
   private _baseUrl?: string;
 
-  public events = this._eventsSubject.asObservable();
+  public readonly events = this._eventsSubject.asObservable();
   public defaultHeaders?: HttpHeaders;
 
-  private readonly _config = inject(HTTP_SERVICE_CONFIG);
-
-  constructor(
-    private http: HttpClient,
-    private transferState: TransferState,
-    private injector: Injector,
-    @Inject(PLATFORM_ID) private platformId: object,
-  ) {
+  constructor() {
     this._baseUrl = this._config.baseUrl ?? '';
   }
 
@@ -47,11 +45,11 @@ export class HttpService {
     }
 
     this._eventsSubject.next({ type: 'Send', url, options });
-    let obs = this.http.get<T>(this._makeUrl(url, options), options as any).pipe(
+    let obs = this._http.get<T>(this._makeUrl(url, options), options as any).pipe(
       tap(result => {
-        if (isPlatformServer(this.platformId) && options?.transferState) {
+        if (isPlatformServer(this._platformId) && options?.transferState) {
           const key = makeStateKey<T>(options.id);
-          this.transferState.set(key, result as T);
+          this._transferState.set(key, result as T);
         }
       })
     );
@@ -82,7 +80,7 @@ export class HttpService {
     }
 
     const URL = this._makeUrl(url, options);
-    let obs = runInInjectionContext<Observable<DataResult<T>>>(this.injector, resolver.bind(null, URL, request, options));
+    let obs = runInInjectionContext<Observable<DataResult<T>>>(this._injector, resolver.bind(null, URL, request, options));
     if (!(obs instanceof Observable)) {
       throw Error('HttpDataRequestResolver should return an observable.');
     }
@@ -101,7 +99,7 @@ export class HttpService {
     this._verifyOptions(options);
     this._eventsSubject.next({ type: 'Send', url, options });
     const BODY = this._makeBody(body, options);
-    let obs = this.http.post(this._makeUrl(url, options), BODY, options as any) as Observable<T>;
+    let obs = this._http.post(this._makeUrl(url, options), BODY, options as any) as Observable<T>;
     return this._handleEvents<T>(obs, url, options);
   }
 
@@ -116,7 +114,7 @@ export class HttpService {
     this._verifyOptions(options);
     this._eventsSubject.next({ type: 'Send', url, options });
     const BODY = this._makeBody(body, options);
-    let obs = this.http.put(this._makeUrl(url, options), BODY, options as any) as Observable<T>;
+    let obs = this._http.put(this._makeUrl(url, options), BODY, options as any) as Observable<T>;
     return this._handleEvents<T>(obs, url, options);
   }
 
@@ -129,7 +127,7 @@ export class HttpService {
   public delete<T>(url: string, options?: HttpRequestOptions): Observable<T> {
     this._verifyOptions(options);
     this._eventsSubject.next({ type: 'Send', url, options });
-    let obs = this.http.delete(this._makeUrl(url, options), options as any)
+    let obs = this._http.delete(this._makeUrl(url, options), options as any)
     return this._handleEvents<T>(obs, url, options);
   }
 
@@ -184,22 +182,22 @@ export class HttpService {
         throw Error('To use transferState, set request id')
       }
 
-      if (this.transferState && (options.observe == 'events' || options.observe == 'response')) {
+      if (this._transferState && (options.observe == 'events' || options.observe == 'response')) {
         throw Error('TransferState is only supported with observe == body.');
       }
     }
   }
 
   private _findInTransferState<T>(options?: HttpRequestOptions): { found: boolean, data: T | undefined } {
-    if (!options?.transferState || isPlatformServer(this.platformId)) {
+    if (!options?.transferState || isPlatformServer(this._platformId)) {
       return { found: false, data: undefined };
     }
 
     const key = makeStateKey<T>(options.id);
-    if (this.transferState.hasKey(key)) {
-      const data = this.transferState.get<T>(key, null!);
+    if (this._transferState.hasKey(key)) {
+      const data = this._transferState.get<T>(key, null!);
       if ((options.transferState as any)?.['clearAfterUse']) {
-        this.transferState.remove(key); // Free memory
+        this._transferState.remove(key); // Free memory
       }
 
       return { found: true, data: data };

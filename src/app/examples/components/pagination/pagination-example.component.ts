@@ -12,5 +12,5 @@ import { PaginationModule } from '@bootkit/ng0/components/pagination';
     ]
 })
 export class PopoverExampleComponent {
-    selectedPage = 1;
+    selectedPage = 0;
 }

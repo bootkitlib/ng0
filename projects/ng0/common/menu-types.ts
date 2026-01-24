@@ -6,6 +6,7 @@ export interface MenuItem {
     id?: any;
     disabled?: boolean;
     show?: boolean;
+    active?: boolean;
     claim?: ClaimLike;
     text?: string;
     expanded?: boolean;

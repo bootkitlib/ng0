@@ -1,2 +1,2 @@
 export  *  from './counter';
-export  *  from './css-manager';
+export  *  from './style-manager';

@@ -33,8 +33,7 @@ export class DataRequest {
  */
 export interface DataRequestPage {
     /**
-     * Index of the page.
-     * If zeroBased is true, the index starts from 0.
+     * Zero-based index of the page.
      */
     index: number;
 
@@ -42,11 +41,6 @@ export interface DataRequestPage {
      * Size of the page, i.e., number of items in each page.
      */
     size: number;
-
-    /**
-     * Indicates if the index is zero-based.
-     */
-    zeroBased: boolean;
 }
 
 /**

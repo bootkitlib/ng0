@@ -4,7 +4,7 @@ import { DOCUMENT } from '@angular/common';
 @Injectable({
   providedIn: 'root'
 })
-export class CssManager {
+export class StyleManager {
   private readonly _rendererFactory = inject(RendererFactory2);
   private readonly _document: Document = inject(DOCUMENT);
   private readonly _renderer = this._rendererFactory.createRenderer(null, null);
