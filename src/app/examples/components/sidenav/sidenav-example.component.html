@@ -17,9 +17,10 @@
                        [position]="examples.basicUsage.sidenav1.position()"
                        [open]="examples.basicUsage.sidenav1.open()"
                        [size]="examples.basicUsage.sidenav1.size"
-
+                       [fixedInViewport]="false"
                        [hasBackdrop]="examples.basicUsage.sidenav1.hasBackdrop()"
-                       (backdropClick)="examples.basicUsage.sidenav1.open.set(false)">
+                       (backdropClick)="examples.basicUsage.sidenav1.open.set(false)"
+                       zIndex="200">
             Sidenav 1 content. <br>
             I'm an ordinary sidenav. <br>
             <button class="btn btn-light" (click)="examples.basicUsage.sidenav1.open.set(false)">Close</button>
@@ -32,9 +33,10 @@
                        [position]="examples.basicUsage.sidenav2.position()"
                        [open]="examples.basicUsage.sidenav2.open()"
                        [size]="examples.basicUsage.sidenav2.size"
-                       [fixedInViewport]="true"
+                       [fixedInViewport]="false"
                        [hasBackdrop]="examples.basicUsage.sidenav2.hasBackdrop()"
-                       (backdropClick)="examples.basicUsage.sidenav2.open.set(false)">
+                       (backdropClick)="examples.basicUsage.sidenav2.open.set(false)"
+                       zIndex="100">
             Sidenav 2 content. <br>
             I'm Fixed in viewport. <br>
 

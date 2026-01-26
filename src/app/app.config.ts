@@ -1,8 +1,6 @@
 import { ApplicationConfig, inject, provideAppInitializer, provideBrowserGlobalErrorListeners, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { routes } from './app.routes';
-// import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideAnimations } from '@angular/platform-browser/animations';
 import { HttpClient, provideHttpClient } from '@angular/common/http';
 import { HttpDataRequestResolver, provideHttpService } from '@bootkit/ng0/http';
 import { map } from 'rxjs';
@@ -27,7 +25,6 @@ const appHttpDataRequestResolver: HttpDataRequestResolver = (url, request, optio
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideAnimations(),
     provideZoneChangeDetection({ eventCoalescing: false }),
     // provideRouter(routes, withDebugTracing()),
     provideRouter(routes),

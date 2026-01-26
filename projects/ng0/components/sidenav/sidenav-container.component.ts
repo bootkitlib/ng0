@@ -1,4 +1,4 @@
-import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, EventEmitter, inject, Output, PLATFORM_ID, QueryList, ViewEncapsulation } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChildren, inject, PLATFORM_ID, QueryList, ViewEncapsulation } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { SidenavComponent } from './sidenav.component';
 import { SidenavPosition } from './types';
@@ -23,17 +23,12 @@ import { SidenavPosition } from './types';
   }
 })
 export class SidenavContainerComponent implements AfterViewInit {
-  private _platformId = inject(PLATFORM_ID);
-  protected _isPlatformServer = isPlatformServer(this._platformId)
+  private readonly _platformId = inject(PLATFORM_ID);
+  protected readonly _isPlatformServer = isPlatformServer(this._platformId)
   protected _isTransitionEnabled = false;
   @ContentChildren(SidenavComponent) protected _sidenavs!: QueryList<SidenavComponent>;
 
-  /**
-   * Emitted when the backdrop is clicked.
-   */
-  @Output() public backdropClick = new EventEmitter();
-
-  public changeDetectorRef = inject(ChangeDetectorRef);
+  public readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   protected _getPadding(position: SidenavPosition) {
     let openSidenavs = this._sidenavs.filter(x => x.open() && x.mode() == 'push');

@@ -1,6 +1,5 @@
-import { booleanAttribute, numberAttribute, Component, ComponentRef, effect, ElementRef, EventEmitter, input, OnDestroy, Output, Renderer2, ViewContainerRef, inject, ChangeDetectionStrategy, ViewEncapsulation, PLATFORM_ID, Inject, DOCUMENT } from '@angular/core';
+import { booleanAttribute, numberAttribute, Component, effect, ElementRef, EventEmitter, input, OnDestroy, Output, Renderer2, ViewContainerRef, inject, ChangeDetectionStrategy, ViewEncapsulation, PLATFORM_ID, Inject, DOCUMENT, OnInit, Injector, AfterViewInit } from '@angular/core';
 import { SidenavMode, SidenavPosition, SidenavSize } from './types';
-import { BackdropComponent } from '@bootkit/ng0/components/backdrop';
 import { isPlatformServer } from '@angular/common';
 import { SidenavContainerComponent } from './sidenav-container.component';
 import { Observable, Subscription, throttleTime } from 'rxjs';
@@ -16,6 +15,9 @@ import { Observable, Subscription, throttleTime } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
   host: {
+    "[class.ng0-sidenav-open]": "open()",
+    "[class.ng0-sidenav-fixed]": "fixedInViewport()",
+    "[class.ng0-sidenav-has-backdrop]": "hasBackdrop()",
     "[style.width]": "position() == 'start' || position() == 'end' ? _getFixedSize() : undefined",
     "[style.height]": "undefined",
     "[style.z-index]": "zIndex()",
@@ -23,20 +25,18 @@ import { Observable, Subscription, throttleTime } from 'rxjs';
     "[class.ng0-sidenav-end]": "position() == 'end'",
     "[class.ng0-sidenav-top]": "position() == 'top'",
     "[class.ng0-sidenav-bottom]": "position() == 'bottom'",
-    "[class.ng0-sidenav-open]": "open()",
     "[class.ng0-sidenav-small]": "size() == 'small'",
     "[class.ng0-sidenav-medium]": "size() == 'medium'",
     "[class.ng0-sidenav-large]": "size() == 'large'",
     "[class.ng0-sidenav-full]": "size() == 'full'",
-    "[class.ng0-sidenav-fixed]": "fixedInViewport()",
   }
 })
 export class SidenavComponent implements OnDestroy {
   private _bodyOverflowStyle?: string;
-  private _sidenavContainer = inject(SidenavContainerComponent);
-  private _vcr = inject(ViewContainerRef);
-  private _renderer = inject(Renderer2);
-  private _backdropRef?: ComponentRef<BackdropComponent>;
+  private readonly _sidenavContainer = inject(SidenavContainerComponent);
+  private readonly _document = inject(DOCUMENT);
+  private readonly _renderer = inject(Renderer2);
+  private _backdropRef!: HTMLDivElement;
   private _backdropClickHandlerUnlisten?: () => void;
   private _platformId = inject(PLATFORM_ID);
   protected _isPlatformServer = isPlatformServer(this._platformId)
@@ -62,7 +62,7 @@ export class SidenavComponent implements OnDestroy {
    * Whether the sidenav has a backdrop.
    * The backdrop is shown only when the sidenav is open and mode is 'over'.
    */
-  public readonly hasBackdrop = input(true, { transform: booleanAttribute });
+  public readonly hasBackdrop = input(false, { transform: booleanAttribute });
 
   /**
    * Sidenav z-index.
@@ -100,15 +100,53 @@ export class SidenavComponent implements OnDestroy {
   @Output() public readonly backdropClick = new EventEmitter<PointerEvent>();
 
   constructor() {
+    this._createBackdrop();
+
     effect(() => {
-      var hasBackdrop = this.hasBackdrop();
+      const fixed = this.fixedInViewport();
+      const cssClass = 'ng0-sidenav-backdrop-fullscreen';
+
+      if (fixed) {
+        this._renderer.addClass(this._backdropRef, cssClass);
+      } else {
+        this._renderer.removeClass(this._backdropRef, cssClass);
+      }
+    })
+
+    effect(() => {
+      const zIndex = this.zIndex();
+      if (isFinite(zIndex)) {
+        this._renderer.setStyle(this._backdropRef, 'z-index', zIndex);
+      } else {
+        this._renderer.removeStyle(this._backdropRef, 'z-index');
+      }
+    })
+
+    effect(() => {
+      console.log('eff')
+
       var mode = this.mode();
       var open = this.open();
+      var hasBackdrop = this.hasBackdrop();
 
-      if (mode == 'over' && hasBackdrop && open) {
-        this._createBackdrop();
+      const cssClass = 'ng0-sidenav-backdrop-show';
+      if (mode == 'over' && open && hasBackdrop) {
+        this._renderer.addClass(this._backdropRef, cssClass);
+
+        // disable body scroll when sidenav is open and fixedInViewport is true
+        if (!this._isPlatformServer && this.fixedInViewport()) {
+          const body = this._document.getElementsByTagName('body')[0];
+          this._bodyOverflowStyle = body.style.overflow;
+          this._renderer.setStyle(body, 'overflow', 'hidden');
+        }
       } else {
-        this._destroyBackdrop();
+        this._renderer.removeClass(this._backdropRef, cssClass);
+
+        // restore body scroll when sidenav is closed
+        if (!this._isPlatformServer && this.fixedInViewport()) {
+          const body = document.getElementsByTagName('body')[0];
+          this._renderer.setStyle(body, 'overflow', this._bodyOverflowStyle);
+        }
       }
     });
 
@@ -121,6 +159,7 @@ export class SidenavComponent implements OnDestroy {
         });
     }
   }
+
 
   _getFixedSize(): string | undefined {
     let size = this.size();
@@ -143,44 +182,22 @@ export class SidenavComponent implements OnDestroy {
   }
 
   private _createBackdrop() {
-    if (this._backdropRef) return;
-
-    this._backdropRef = this._vcr.createComponent(BackdropComponent);
-    const backdropElm = this._backdropRef.location.nativeElement;
-    this._backdropRef.instance.fixed.set(this.fixedInViewport());
-    if (this.zIndex() != undefined) {
-      this._renderer.setStyle(backdropElm, 'z-index', this.zIndex());
-    }
-    this._backdropClickHandlerUnlisten = this._renderer.listen(backdropElm, 'click', (e) => {
+    this._backdropRef = this._renderer.createElement('div');
+    ['ng0-sidenav-backdrop', 'ng0-sidenav-backdrop-show'].forEach(x => this._renderer.addClass(this._backdropRef, x));
+    this._backdropClickHandlerUnlisten = this._renderer.listen(this._backdropRef, 'click', (e) => {
       this.backdropClick.emit(e);
     });
 
     // Move backdrop element before Host element
     const hostElm = this.elmentRef.nativeElement;
     const parentElm = hostElm.parentNode;
-    this._renderer.insertBefore(parentElm, backdropElm, hostElm);
-
-
-    // disable body scroll when sidenav is open and fixedInViewport is true
-    if (!this._isPlatformServer && this.fixedInViewport()) {
-      const body = document.getElementsByTagName('body')[0];
-      this._bodyOverflowStyle = body.style.overflow;
-      body.style.overflow = 'hidden';
-      this._renderer.setStyle(body, 'overflow', 'hidden');
-    }
+    this._renderer.insertBefore(parentElm, this._backdropRef, hostElm);
   }
 
   private _destroyBackdrop() {
     this._backdropClickHandlerUnlisten?.();
-    this._backdropRef?.destroy();
+    this._backdropRef?.remove();
     this._backdropClickHandlerUnlisten = undefined;
-    this._backdropRef = undefined;
-
-    // restore body scroll when sidenav is closed
-    if (!this._isPlatformServer && this.fixedInViewport()) {
-      const body = document.getElementsByTagName('body')[0];
-      this._renderer.setStyle(body, 'overflow', this._bodyOverflowStyle);
-    }
   }
 
   ngOnDestroy(): void {

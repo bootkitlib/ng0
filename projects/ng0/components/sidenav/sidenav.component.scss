@@ -1,3 +1,7 @@
+:root {
+  --ng0-sidenav-backdrop-background: rgba(0, 0, 0, 0.5);
+}
+
 ng0-sidenav {
   position: absolute;
   will-change: transform, width, height;
@@ -5,6 +9,26 @@ ng0-sidenav {
   // Before angular load the component and assign other classes to the sidenav (.ng0-sidenav-start, ...), 
   // we should hide the sidenav to avoid flash
   display: none;
+}
+
+.ng0-sidenav-backdrop {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: transparent;
+  transition: background-color var(--ng0-sidenav-transition-duration);
+  pointer-events: none;
+
+  &.ng0-sidenav-backdrop-fullscreen {
+    position: fixed;
+  }
+
+  &.ng0-sidenav-backdrop-show {
+    background-color: var(--ng0-sidenav-backdrop-background) !important;
+    pointer-events: all;
+  }
 }
 
 .ng0-sidenav-transition ng0-sidenav {

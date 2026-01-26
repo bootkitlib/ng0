@@ -21,16 +21,16 @@ export class SidenavExampleComponent {
             sidenav1: {
                 position: signal<SidenavPosition>('start'),
                 open: signal(false),
-                mode: signal<SidenavMode>('push'),
+                mode: signal<SidenavMode>('over'),
                 size: '200px',
-                hasBackdrop: signal(false)
+                hasBackdrop: signal(true)
             },
             sidenav2: {
                 position: signal<SidenavPosition>('start'),
                 open: signal(false),
-                mode: signal<SidenavMode>('push'),
+                mode: signal<SidenavMode>('over'),
                 size: '50%',
-                hasBackdrop: signal(false)
+                hasBackdrop: signal(true)
             }
         }
     }
