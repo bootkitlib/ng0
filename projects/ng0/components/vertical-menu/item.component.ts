@@ -1,4 +1,4 @@
-import { Component, ContentChild, EventEmitter, input, Output } from '@angular/core';
+import { Component, ContentChild, EventEmitter, input, Output, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { VerticalMenuItemChildrenComponent } from './item-children.component';
 import { RouterModule } from '@angular/router';
@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
   selector: 'ng0-vmenu-item',
   templateUrl: './item.component.html',
   styleUrl: './item.component.scss',
+  encapsulation: ViewEncapsulation.None,
   standalone: true,
   imports: [CommonModule, RouterModule],
   host: {
@@ -27,7 +28,7 @@ export class VerticalMenuItemComponent {
 
   @Output() public itemClick = new EventEmitter<PointerEvent>();
 
-  protected _onContentClick(e: PointerEvent) {
+  protected _onExpanderClick(e: PointerEvent) {
     if (this.children != null) {
       this.children.expanded.update(x => !x);
     }

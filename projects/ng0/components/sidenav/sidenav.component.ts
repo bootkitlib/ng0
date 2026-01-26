@@ -123,8 +123,6 @@ export class SidenavComponent implements OnDestroy {
     })
 
     effect(() => {
-      console.log('eff')
-
       var mode = this.mode();
       var open = this.open();
       var hasBackdrop = this.hasBackdrop();

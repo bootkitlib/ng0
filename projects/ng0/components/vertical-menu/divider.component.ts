@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'ng0-vmenu-divider',
   template: '',
   standalone: true,
-  styles: `:host {display: block; height: 1px; background-color: lightgray; margin: 1rem 0; }`
+  styles: `:host {display: block; height: 1px; background-color: var(--bs-border-color); margin: 1rem 0; }`
 })
 export class VerticalMenuDividerComponent {
 }

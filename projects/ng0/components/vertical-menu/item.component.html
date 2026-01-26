@@ -1,27 +1,33 @@
-<div class="ng0-vmenu-item-content" (click)="_onContentClick($event)">
-    @if(icon()) {
-    <i class="ng0-vmenu-item-icon" [ngClass]="icon()"></i>
-    }
-
-    @if(text()) {
-    <span class="ng0-vmenu-item-text">
-        @if(link()) {
-        <a
-           [routerLink]="link()"
-           [attr.target]="target()"
-           routerLinkActive="active"
-           (isActiveChange)="_onActiveChange($event)">{{text()}}</a>
-        }@else {
-        {{text()}}
+<div class="ng0-vmenu-item-content">
+    @if(children) {
+    <div class="ng0-vmenu-item-expander" (click)="_onExpanderClick($event)">
+        @if(icon()) {
+        <span class="ng0-vmenu-item-icon">
+            <i [ngClass]="icon()"></i>
+        </span>
         }
-    </span>
-    }
-
-    @if(children != null) {
-    <div class="ng0-vmenu-item-expander">
-        >
+        <span class="ng0-vmenu-item-text">
+            {{text()}}
+        </span>
+        <div class="ng0-vmenu-item-expander-icon">
+            >
+        </div>
     </div>
+    }@else {
+    <a class="ng0-vmenu-item-link"
+       [routerLink]="link()"
+       [attr.target]="target()"
+       routerLinkActive="active"
+       (isActiveChange)="_onActiveChange($event)">
+        @if(icon()) {
+        <span class="ng0-vmenu-item-icon">
+            <i [ngClass]="icon()"></i>
+        </span>
+        }
+
+        {{text()}}
+    </a>
     }
 </div>
 
-<ng-content></ng-content>
+<ng-content select="ng0-vmenu-children"></ng-content>

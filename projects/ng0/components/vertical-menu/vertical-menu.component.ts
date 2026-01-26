@@ -35,11 +35,6 @@ export class VerticalMenuComponent {
    */
   public readonly showExpanderIcon = input(true);
 
-  /**
-   * collapse timings
-   */
-  public readonly collapseTimings = input<string | number>('0.15s');
-
   // @ContentChild(VerticalMenuArrowDirective, { descendants: false })
 
   protected _onActiveChange(item: MenuItem, isActive: boolean) {
