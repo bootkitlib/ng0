@@ -9,25 +9,24 @@
                 </p>
 
                 <ng0-vmenu>
-                    <ng0-vmenu-group label="Group 1">
-                        <ng0-vmenu-item text="Item 1" [link]="['.']"></ng0-vmenu-item>
-                        <ng0-vmenu-item text="Item 2"></ng0-vmenu-item>
-                        <ng0-vmenu-item text="Click Me" (itemClick)="_onItemClick()"></ng0-vmenu-item>
-                    </ng0-vmenu-group>
+                    <ng0-vmenu-header>Header 1</ng0-vmenu-header>
+                    <ng0-vmenu-item text="Item 1" [link]="['.']"></ng0-vmenu-item>
+                    <ng0-vmenu-item text="Item 2"></ng0-vmenu-item>
+                    <ng0-vmenu-item text="Click Me" (itemClick)="_onItemClick()"></ng0-vmenu-item>
                     <ng0-vmenu-divider></ng0-vmenu-divider>
                     <ng0-vmenu-item text="Parent 1">
-                        <ng0-vmenu-children>
+                        <ng0-vmenu-item-children>
                             <ng0-vmenu-item text="Item 1.1"></ng0-vmenu-item>
-                        </ng0-vmenu-children>
+                        </ng0-vmenu-item-children>
                     </ng0-vmenu-item>
                     <ng0-vmenu-item text="Parent 2">
-                        <ng0-vmenu-children>
+                        <ng0-vmenu-item-children>
                             <ng0-vmenu-item text="Parent 2.1">
-                                <ng0-vmenu-children>
+                                <ng0-vmenu-item-children>
                                     <ng0-vmenu-item text="Item 2.1.1" [link]="['.']"></ng0-vmenu-item>
-                                </ng0-vmenu-children>
+                                </ng0-vmenu-item-children>
                             </ng0-vmenu-item>
-                        </ng0-vmenu-children>
+                        </ng0-vmenu-item-children>
                     </ng0-vmenu-item>
                 </ng0-vmenu>
             </div>

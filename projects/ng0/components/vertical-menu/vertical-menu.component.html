@@ -2,26 +2,34 @@
 
 <ng-content></ng-content>
 
-<ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: items()}" />
+<ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: items()}"></ng-container>
 
 <ng-template #menuItemTemplate let-items>
     @for (item of items; track $index) {
+    @let itemType = item.type || 'item';
+
     @if ((!item.claim) || (user && user.hasClaim(item.claim))) {
-    @switch (item.type) {
+
+    @switch (itemType) {
     @case('divider') {
     <ng0-vmenu-divider></ng0-vmenu-divider>
     }
-    @case('group') {
-    <ng0-vmenu-group [text]="item.text">
-        <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children}" />
-    </ng0-vmenu-group>
+    @case('header') {
+    <ng0-vmenu-header>{{item.text()}}</ng0-vmenu-header>
     }
     @case('item') {
-    <ng0-vmenu-item [text]="item.text" [link]="item.routerLink" [target]="item.target">
-        @if (item.children != undefined) {
-        <ng0-vmenu-item-children [(expanded)]="item.expanded">
-            <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }" />
-        </ng0-vmenu-item-children>
+    <ng0-vmenu-item
+                    [text]="item.text"
+                    [link]="item.link"
+                    [href]="item.href"
+                    [icon]="item.icon"
+                    [active]="item.active"
+                    [target]="item.target">
+        @if(item.children?.length) {
+        <ng0-vmenu-children>
+            <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }">
+            </ng-container>
+        </ng0-vmenu-children>
         }
     </ng0-vmenu-item>
     }

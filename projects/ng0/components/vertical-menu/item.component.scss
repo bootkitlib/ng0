@@ -6,8 +6,7 @@ ng0-vmenu-item {
     border-radius: 0.3rem;
     transition: background-color .3s;
 
-    // &:hover:not(:has(a.active))
-    &:hover:not(:has(a.active)) {
+    &:hover:not(:has(a.ng0-active)) {
         background-color: var(--bs-light);
     }
 }
@@ -20,6 +19,13 @@ ng0-vmenu-item {
     color: inherit;
 }
 
+.ng0-vmenu-item-expander.ng0-expanded {
+    .ng0-vmenu-item-expander-icon {
+        transform: rotateZ(90deg);
+    }
+}
+
+
 .ng0-vmenu-item-link {
     text-decoration: none;
 
@@ -28,15 +34,23 @@ ng0-vmenu-item {
     }
 }
 
-// Active category
-ng0-vmenu-item:has(a.active) .ng0-vmenu-item-expander {
-    font-weight: 500;
+.ng0-vmenu-item-text {
+    flex-grow: 1;
 }
 
-.ng0-vmenu-item-icon {
+.ng0-vmenu-item-expander-icon {
+    transition: transform var(--ng0-collapse-transition-duration);
     // margin-inline-end: .5rem;
 }
 
-.ng0-vmenu-item-text {
-    flex-grow: 1;
+// Active items
+ng0-vmenu-item.ng0-active,
+ng0-vmenu-item.ng0-active-route {
+    .ng0-vmenu-item-content {
+        font-weight: 500;
+    }
+}
+
+.ng0-vmenu-item-link.ng0-active {
+    color: var(--bs-primary);
 }

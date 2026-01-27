@@ -1,16 +1,16 @@
 import { NgModule } from '@angular/core';
 import { VerticalMenuItemComponent } from './item.component';
 import { VerticalMenuComponent } from './vertical-menu.component';
-import { VerticalMenuItemChildrenComponent } from './item-children.component';
 import { VerticalMenuDividerComponent } from './divider.component';
-import { VerticalMenuGroupComponent } from './group.component';
+import { VerticalMenuHeaderComponent } from './header.component';
+import { VerticalMenuItemChildrenComponent } from './item-children.component';
 
 const items = [
-  VerticalMenuDividerComponent,
-  VerticalMenuGroupComponent,
-  VerticalMenuItemChildrenComponent,
-  VerticalMenuItemComponent,
   VerticalMenuComponent,
+  VerticalMenuItemComponent,
+  VerticalMenuItemChildrenComponent,
+  VerticalMenuDividerComponent,
+  VerticalMenuHeaderComponent
 ];
 
 @NgModule({

@@ -1,33 +1,43 @@
+@let itemTemplate = _menuState.itemTemplate();
+
 <div class="ng0-vmenu-item-content">
-    @if(children) {
-    <div class="ng0-vmenu-item-expander" (click)="_onExpanderClick($event)">
+    @if(hasChildren()) {
+    <div class="ng0-vmenu-item-expander"
+         [class.ng0-expanded]="isExpanded()"
+         (click)="_onExpanderClick($event)">
+        @if(itemTemplate) {
+        <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: this }"></ng-container>
+        }@else {
         @if(icon()) {
-        <span class="ng0-vmenu-item-icon">
-            <i [ngClass]="icon()"></i>
-        </span>
+        <i class="ng0-vmenu-item-icon" [ngClass]="icon()"></i>
         }
         <span class="ng0-vmenu-item-text">
             {{text()}}
         </span>
         <div class="ng0-vmenu-item-expander-icon">
-            >
+            ❯
         </div>
+        }
+
     </div>
     }@else {
     <a class="ng0-vmenu-item-link"
        [routerLink]="link()"
+       [attr.href]="href()"
        [attr.target]="target()"
-       routerLinkActive="active"
-       (isActiveChange)="_onActiveChange($event)">
-        @if(icon()) {
-        <span class="ng0-vmenu-item-icon">
-            <i [ngClass]="icon()"></i>
-        </span>
-        }
+       routerLinkActive="ng0-active"
+       (isActiveChange)="_onRouteChange($event)">
 
+        @if(itemTemplate) {
+        <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: this }"></ng-container>
+        }@else {
+        @if(icon()) {
+        <i class="ng0-vmenu-item-icon" [ngClass]="icon()"></i>
+        }
         {{text()}}
+        }
     </a>
     }
 </div>
 
-<ng-content select="ng0-vmenu-children"></ng-content>
+<ng-content></ng-content>
