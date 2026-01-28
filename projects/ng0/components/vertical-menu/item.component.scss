@@ -15,12 +15,13 @@ ng0-vmenu-item {
 .ng0-vmenu-item-link {
     padding: 0.2rem 0.5rem;
     display: flex;
+    align-items: baseline;
     cursor: pointer;
     color: inherit;
 }
 
 .ng0-vmenu-item-expander.ng0-expanded {
-    .ng0-vmenu-item-expander-icon {
+    .ng0-vmenu-item-expand-icon {
         transform: rotateZ(90deg);
     }
 }
@@ -38,7 +39,7 @@ ng0-vmenu-item {
     flex-grow: 1;
 }
 
-.ng0-vmenu-item-expander-icon {
+.ng0-vmenu-item-expand-icon {
     transition: transform var(--ng0-collapse-transition-duration);
     // margin-inline-end: .5rem;
 }
@@ -53,4 +54,19 @@ ng0-vmenu-item.ng0-active-route {
 
 .ng0-vmenu-item-link.ng0-active {
     color: var(--bs-primary);
+}
+
+.ng0-vmenu-item-end {
+    margin-inline-start: auto;
+}
+
+.ng0-vmenu-item-tag {
+    margin-inline-start: 1rem;
+    padding: 0 .4rem;
+    border-radius: .4rem;
+    font-size: small;
+    font-weight: normal;
+    // border: 1px solid var(--bs-secondary-subtle);
+    color: var(--bs-dark);
+    background-color: var(--bs-warning);
 }

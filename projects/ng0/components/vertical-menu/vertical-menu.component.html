@@ -15,21 +15,24 @@
     <ng0-vmenu-divider></ng0-vmenu-divider>
     }
     @case('header') {
-    <ng0-vmenu-header>{{item.text()}}</ng0-vmenu-header>
+    <ng0-vmenu-header>{{item.text}}</ng0-vmenu-header>
     }
     @case('item') {
     <ng0-vmenu-item
                     [text]="item.text"
-                    [link]="item.link"
+                    [tag]="item.tag"
+                    [tagClass]="item.tagClass"
+                    [link]="item.routerLink"
+                    [routerLinkActiveOptions]="item.routerLinkActiveOptions ?? {exact: true}"
                     [href]="item.href"
                     [icon]="item.icon"
                     [active]="item.active"
                     [target]="item.target">
         @if(item.children?.length) {
-        <ng0-vmenu-children>
+        <ng0-vmenu-item-children>
             <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }">
             </ng-container>
-        </ng0-vmenu-children>
+        </ng0-vmenu-item-children>
         }
     </ng0-vmenu-item>
     }

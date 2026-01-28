@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { VerticalMenuModule } from '@bootkit/ng0/components/vertical-menu';
+import { menuItems } from './menu-items';
 
 @Component({
   selector: 'app-layout-sidenav',
@@ -8,10 +10,10 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    RouterModule
+    RouterModule,
+    VerticalMenuModule
   ]
 })
 export class AppSidenavComponent {
-
-
+  menuItems = menuItems;
 }

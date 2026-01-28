@@ -8,7 +8,7 @@ import { VerticalMenuDividerComponent } from './divider.component';
 import { VerticalMenuHeaderComponent } from './header.component';
 import { VerticalMenuState } from './vertical-menu-state';
 import { VerticalMenuItemTemplateDirective } from './item-template.directive';
-import { VerticalMenuItemChildrenComponent } from "dist/ng0/components/vertical-menu";
+import { VerticalMenuItemChildrenComponent } from './item-children.component';
 
 @Component({
   selector: 'ng0-vmenu, ng0-vertical-menu',

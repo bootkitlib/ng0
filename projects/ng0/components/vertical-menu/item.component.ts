@@ -1,6 +1,6 @@
 import { booleanAttribute, Component, ContentChildren, EventEmitter, inject, input, Output, QueryList, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { IsActiveMatchOptions, RouterModule } from '@angular/router';
 import { VerticalMenuItemState } from './item-state';
 import { VerticalMenuState } from './vertical-menu-state';
 
@@ -25,12 +25,15 @@ export class VerticalMenuItemComponent {
   @ContentChildren(VerticalMenuItemComponent) protected _children!: QueryList<VerticalMenuItemComponent>;
 
   public readonly text = input<string>();
+  public readonly tag = input<string>();
+  public readonly tagClass = input<string | string[]>();
   public readonly icon = input<string>();
 
   /**
    * Router link
    */
   public readonly link = input<string | string[]>();
+  public readonly routerLinkActiveOptions = input<{ exact: boolean } | IsActiveMatchOptions>({ exact: true });
   public readonly href = input<string>();
   public readonly target = input<'_blank' | '_parent' | '_self' | '_top'>('_blank');
   public readonly active = input(false, { transform: booleanAttribute });
@@ -50,7 +53,7 @@ export class VerticalMenuItemComponent {
   public hasChildren(): boolean {
     return this._menuItemState.hasChildren();
   }
-  
+
   public isExpanded(): boolean {
     return this._menuItemState.expanded();
   }

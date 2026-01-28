@@ -1,3 +1,4 @@
+import { IsActiveMatchOptions } from "@angular/router";
 import { ClaimLike } from "./security-types";
 
 /** Menu item  */
@@ -9,10 +10,13 @@ export interface MenuItem {
     active?: boolean;
     claim?: ClaimLike;
     text?: string;
+    tag?: string;
+    tagClass?: string | string[];
     expanded?: boolean;
     icon?: string;
     children?: MenuItem[];
     routerLink?: string | string[];
+    routerLinkActiveOptions?: { exact: boolean } | IsActiveMatchOptions;
     href?: string;
     target?: '_blank' | '_parent' | '_self' | '_top';
     data?: any;

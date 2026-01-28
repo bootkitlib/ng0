@@ -11,12 +11,21 @@
         @if(icon()) {
         <i class="ng0-vmenu-item-icon" [ngClass]="icon()"></i>
         }
+
         <span class="ng0-vmenu-item-text">
             {{text()}}
         </span>
-        <div class="ng0-vmenu-item-expander-icon">
-            ❯
+
+        @if(tag()) {
+        <span class="ng0-vmenu-item-tag" [ngClass]="tagClass()">{{tag()}}</span>
+        }
+
+        <div class="ng0-vmenu-item-end">
+            <div class="ng0-vmenu-item-expand-icon">
+                ❯
+            </div>
         </div>
+
         }
 
     </div>
@@ -26,6 +35,7 @@
        [attr.href]="href()"
        [attr.target]="target()"
        routerLinkActive="ng0-active"
+       [routerLinkActiveOptions]="routerLinkActiveOptions()"
        (isActiveChange)="_onRouteChange($event)">
 
         @if(itemTemplate) {
@@ -34,7 +44,12 @@
         @if(icon()) {
         <i class="ng0-vmenu-item-icon" [ngClass]="icon()"></i>
         }
+
         {{text()}}
+
+        @if(tag()) {
+        <span class="ng0-vmenu-item-tag" [ngClass]="tagClass()">{{tag()}}</span>
+        }
         }
     </a>
     }
