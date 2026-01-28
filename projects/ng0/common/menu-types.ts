@@ -2,22 +2,42 @@ import { IsActiveMatchOptions } from "@angular/router";
 import { ClaimLike } from "./security-types";
 
 /** Menu item  */
-export interface MenuItem {
-    type?: 'item' | 'divider' | 'header';
+export interface MenuItemBase {
+    type?: string; // 'node', 'header', 'divider' or any other string;
     id?: any;
-    disabled?: boolean;
     show?: boolean;
-    active?: boolean;
     claim?: ClaimLike;
+    cssClass?: string;
+    data?: any;
+}
+
+export interface NodeMenuItem {
+    type?: 'node';
+    disabled?: boolean;
     text?: string;
-    tag?: string;
-    tagClass?: string | string[];
-    expanded?: boolean;
     icon?: string;
+    expanded?: boolean;
     children?: MenuItem[];
     routerLink?: string | string[];
     routerLinkActiveOptions?: { exact: boolean } | IsActiveMatchOptions;
     href?: string;
     target?: '_blank' | '_parent' | '_self' | '_top';
-    data?: any;
+    tag?: string;
+    tagCssClass?: string | string[];
 }
+
+export interface HeaderMenuItem {
+    type: 'header';
+    disabled?: boolean;
+    text?: string;
+    icon?: string;
+    tag?: string;
+    tagCssClass?: string | string[];
+}
+
+export interface DividerMenuItem extends MenuItemBase {
+    type: 'divider';
+}
+
+
+export type MenuItem = NodeMenuItem | HeaderMenuItem | DividerMenuItem;

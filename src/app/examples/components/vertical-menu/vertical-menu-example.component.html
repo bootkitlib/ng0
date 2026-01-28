@@ -1,3 +1,5 @@
+@let user = _userStore.user();
+
 <div class="row g-4">
     <div class="col-xl-12">
         <div class="card">
@@ -10,12 +12,14 @@
 
                 <ng0-vmenu>
                     <ng0-vmenu-header>Header 1</ng0-vmenu-header>
-                    <ng0-vmenu-item text="Item 1" [link]="['.']"></ng0-vmenu-item>
-                    <ng0-vmenu-item text="Item 2"></ng0-vmenu-item>
-                    <ng0-vmenu-item text="Click Me" (itemClick)="_onItemClick()"></ng0-vmenu-item>
+                    <ng0-vmenu-item text="Item 1" [link]="['.']" tag="Tag 1"></ng0-vmenu-item>
+                    <ng0-vmenu-item text="Item 2" tag="Tag 2"></ng0-vmenu-item>
+                    <ng0-vmenu-item text="Item 3" tag="Click Me!" (itemClick)="_onItemClick()"
+                                    tagCssClass="text-bg-danger"></ng0-vmenu-item>
                     <ng0-vmenu-divider></ng0-vmenu-divider>
                     <ng0-vmenu-item text="Parent 1">
                         <ng0-vmenu-item-children>
+                            <ng0-vmenu-header>Header 1</ng0-vmenu-header>
                             <ng0-vmenu-item text="Item 1.1"></ng0-vmenu-item>
                         </ng0-vmenu-item-children>
                     </ng0-vmenu-item>
@@ -43,11 +47,56 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Using MenuItem[] as source</h4>
-                <p>
+                <!-- <p>
                     You
-                </p>
+                </p> -->
 
-                <ng0-vmenu [items]="_menuItems"></ng0-vmenu>
+                <ng0-vmenu [items]="_menuItems1"></ng0-vmenu>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Item permissions</h4>
+                <!-- <p>
+                    You
+                </p> -->
+
+                <ng0-vmenu [items]="_menuItems2"></ng0-vmenu>
+            </div>
+
+            <div class="card-footer">
+                <h6>
+                    User Identity:
+                </h6>
+
+                <ul>
+                    <li>
+                        User:
+                        @if(user) {
+                        {{user | json}}
+                        }@else {
+                        undifined
+                        }
+                    </li>
+
+                    <!-- @if(user) {
+                    <li>
+                        Claims:
+                        {{user.claims | json}}
+                    </li>
+                    } -->
+                </ul>
+
+            </div>
+
+            <div class="card-footer">
+                <button class="btn btn-secondary me-2" (click)="_setUser()">Set User</button>
+                <button class="btn btn-secondary me-2" (click)="_clearUser()">Clear User</button>
+                <button class="btn btn-secondary me-2" (click)="addAdminClaim()">Add 'admin' claim</button>
+                <button class="btn btn-secondary me-2" (click)="addBartenderClaim()">Add 'bartender' claim</button>
             </div>
         </div>
     </div>

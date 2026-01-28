@@ -15,7 +15,7 @@ export const menuItems: MenuItem[] = [
       { text: 'Dropdown', routerLink: '/examples/components/dropdown' },
       { text: 'FormField', routerLink: '/examples/components/formfield' },
       { text: 'List', routerLink: '/examples/components/list' },
-      { text: 'Modal', routerLink: '/examples/components/modal', tag: 'Updated', tagClass: 'text-bg-secondary' },
+      { text: 'Modal', routerLink: '/examples/components/modal', tag: 'Updated',},
       { text: 'Offcanvas', routerLink: '/examples/components/offcanvas' },
       { text: 'Overlay', routerLink: '/examples/components/overlay' },
       { text: 'Pagination', routerLink: '/examples/components/pagination' },
@@ -26,8 +26,8 @@ export const menuItems: MenuItem[] = [
       { text: 'Table', routerLink: '/examples/components/table' },
       { text: 'Tabs', routerLink: '/examples/components/tabs' },
       { text: 'Toast', routerLink: '/examples/components/toast' },
-      { text: 'Tooltip', routerLink: '/examples/components/tooltip', tag: 'Updated', tagClass: 'text-bg-secondary' },
-      { text: 'Vertical Menu', routerLink: '/examples/components/vertical-menu', tag: 'New' },
+      { text: 'Tooltip', routerLink: '/examples/components/tooltip', tag: 'Updated', },
+      { text: 'Vertical Menu', routerLink: '/examples/components/vertical-menu', tag: 'New', tagCssClass: 'text-bg-warning'  },
     ]
   },
   {

@@ -6,7 +6,7 @@
 
 <ng-template #menuItemTemplate let-items>
     @for (item of items; track $index) {
-    @let itemType = item.type || 'item';
+    @let itemType = item.type || 'node';
 
     @if ((!item.claim) || (user && user.hasClaim(item.claim))) {
 
@@ -17,17 +17,17 @@
     @case('header') {
     <ng0-vmenu-header>{{item.text}}</ng0-vmenu-header>
     }
-    @case('item') {
+    @case('node') {
     <ng0-vmenu-item
                     [text]="item.text"
                     [tag]="item.tag"
-                    [tagClass]="item.tagClass"
+                    [tagCssClass]="item.tagCssClass"
                     [link]="item.routerLink"
                     [routerLinkActiveOptions]="item.routerLinkActiveOptions ?? {exact: true}"
                     [href]="item.href"
                     [icon]="item.icon"
-                    [active]="item.active"
-                    [target]="item.target">
+                    [target]="item.target"
+                    [ngClass]="item.cssClass">
         @if(item.children?.length) {
         <ng0-vmenu-item-children>
             <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }">

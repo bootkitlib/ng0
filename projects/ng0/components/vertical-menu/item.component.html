@@ -1,10 +1,10 @@
 @let itemTemplate = _menuState.itemTemplate();
 
-<div class="ng0-vmenu-item-content">
+<div class="ng0-vmenu-item-content" (click)="_onContentClick($event)">
     @if(hasChildren()) {
     <div class="ng0-vmenu-item-expander"
          [class.ng0-expanded]="isExpanded()"
-         (click)="_onExpanderClick($event)">
+         >
         @if(itemTemplate) {
         <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: this }"></ng-container>
         }@else {
@@ -17,7 +17,7 @@
         </span>
 
         @if(tag()) {
-        <span class="ng0-vmenu-item-tag" [ngClass]="tagClass()">{{tag()}}</span>
+        <span class="ng0-vmenu-item-tag" [ngClass]="tagCssClass()">{{tag()}}</span>
         }
 
         <div class="ng0-vmenu-item-end">
@@ -48,7 +48,7 @@
         {{text()}}
 
         @if(tag()) {
-        <span class="ng0-vmenu-item-tag" [ngClass]="tagClass()">{{tag()}}</span>
+        <span class="ng0-vmenu-item-tag" [ngClass]="tagCssClass()">{{tag()}}</span>
         }
         }
     </a>

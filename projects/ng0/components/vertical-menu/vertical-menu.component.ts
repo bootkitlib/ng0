@@ -15,9 +15,7 @@ import { VerticalMenuItemChildrenComponent } from './item-children.component';
   templateUrl: './vertical-menu.component.html',
   standalone: true,
   styles: `:host {display: block}`,
-  providers: [
-    VerticalMenuState
-  ],
+  providers: [VerticalMenuState],
   imports: [
     CommonModule,
     RouterModule,

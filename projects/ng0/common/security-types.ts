@@ -16,3 +16,5 @@ export interface ClaimObject {
  * 
  */
 export type ClaimLike = string | ClaimObject;
+
+export type ShowCondition = ClaimObject | 'set' | 'unset';

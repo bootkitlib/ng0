@@ -15,8 +15,7 @@ import { VerticalMenuState } from './vertical-menu-state';
   host: {
     '[class.ng0-has-children]': 'hasChildren()',
     '[class.ng0-expanded]': 'isExpanded()',
-    '[class.ng0-active]': 'active()',
-    '[class.ng0-active-route]': 'hasActiveRoute()'
+    '[class.ng0-has-active-route]': 'hasActiveRoute()'
   }
 })
 export class VerticalMenuItemComponent {
@@ -26,7 +25,7 @@ export class VerticalMenuItemComponent {
 
   public readonly text = input<string>();
   public readonly tag = input<string>();
-  public readonly tagClass = input<string | string[]>();
+  public readonly tagCssClass = input<string | string[]>();
   public readonly icon = input<string>();
 
   /**
@@ -36,7 +35,6 @@ export class VerticalMenuItemComponent {
   public readonly routerLinkActiveOptions = input<{ exact: boolean } | IsActiveMatchOptions>({ exact: true });
   public readonly href = input<string>();
   public readonly target = input<'_blank' | '_parent' | '_self' | '_top'>('_blank');
-  public readonly active = input(false, { transform: booleanAttribute });
 
   @Output() public readonly itemClick = new EventEmitter<PointerEvent>();
 
@@ -58,7 +56,7 @@ export class VerticalMenuItemComponent {
     return this._menuItemState.expanded();
   }
 
-  protected _onExpanderClick(e: PointerEvent) {
+  protected _onContentClick(e: PointerEvent) {
     if (this.hasChildren()) {
       this._menuItemState.expanded.update(x => !x);
     }
