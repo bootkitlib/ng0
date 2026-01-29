@@ -1,4 +1,4 @@
-import { Directive, Renderer2, ElementRef, OnInit, OnDestroy, input, DestroyRef, model, booleanAttribute, inject } from '@angular/core';
+import { Directive, Renderer2, ElementRef, OnInit, input, DestroyRef, model, booleanAttribute, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpService } from '@bootkit/ng0/http';
 
@@ -8,9 +8,9 @@ import { HttpService } from '@bootkit/ng0/http';
   standalone: true,
   host: {
     '[class.disabled]': 'disabled()',
-    '[attr.disabled]': 'disabled()',
-    '[attr.aria-disabled]': 'disabled()',
-    '[attr.tabindex]': 'disabled() ? "-1" : "" ',
+    '[attr.disabled]': 'disabled() ? "" : undefined',
+    '[attr.aria-disabled]': 'disabled() ? "" : undefined',
+    '[attr.tabindex]': 'disabled() ? "-1" : undefined',
   }
 })
 export class ButtonDirective implements OnInit {
@@ -29,7 +29,7 @@ export class ButtonDirective implements OnInit {
   /** 
    * Whether the button is disabled or not.
    */
-  public readonly disabled = model<boolean>(false);
+  public readonly disabled = model(false);
 
   /**
    * Whether to wait for the HTTP response before enabling the button again.

@@ -18,6 +18,7 @@ export interface NodeMenuItem extends MenuItemBase {
     icon?: string;
     expanded?: boolean;
     children?: MenuItem[];
+    parent?: NodeMenuItem;
     routerLink?: string | string[];
     routerLinkActiveOptions?: { exact: boolean } | IsActiveMatchOptions;
     href?: string;
