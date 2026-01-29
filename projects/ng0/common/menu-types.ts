@@ -11,7 +11,7 @@ export interface MenuItemBase {
     data?: any;
 }
 
-export interface NodeMenuItem {
+export interface NodeMenuItem extends MenuItemBase {
     type?: 'node';
     disabled?: boolean;
     text?: string;
@@ -26,7 +26,7 @@ export interface NodeMenuItem {
     tagCssClass?: string | string[];
 }
 
-export interface HeaderMenuItem {
+export interface HeaderMenuItem extends MenuItemBase {
     type: 'header';
     disabled?: boolean;
     text?: string;
@@ -38,6 +38,5 @@ export interface HeaderMenuItem {
 export interface DividerMenuItem extends MenuItemBase {
     type: 'divider';
 }
-
 
 export type MenuItem = NodeMenuItem | HeaderMenuItem | DividerMenuItem;

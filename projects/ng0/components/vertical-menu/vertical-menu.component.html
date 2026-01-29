@@ -1,4 +1,4 @@
-@let user = _userStore.user();
+<!-- @let user = _userStore.user(); -->
 
 <ng-content></ng-content>
 
@@ -8,7 +8,7 @@
     @for (item of items; track $index) {
     @let itemType = item.type || 'node';
 
-    @if ((!item.claim) || (user && user.hasClaim(item.claim))) {
+    <!-- @if ((!item.claim) || (user && user.hasClaim(item.claim))) { -->
 
     @switch (itemType) {
     @case('divider') {
@@ -37,6 +37,6 @@
     </ng0-vmenu-item>
     }
     }
-    }
+    <!-- } -->
     }
 </ng-template>
