@@ -4,18 +4,20 @@ import { MenuItem } from '@bootkit/ng0/common';
 import { VerticalMenuModule } from '@bootkit/ng0/components/vertical-menu';
 import { menuItems1, menuItems2 } from './menu-items';
 import { User, UserStore } from '@bootkit/ng0/security';
+import { ButtonDirective } from '@bootkit/ng0/components/button';
 
 @Component({
     selector: 'app-examples-vertical-menu',
     templateUrl: './vertical-menu-example.component.html',
     standalone: true,
     imports: [
-        CommonModule,
-        VerticalMenuModule,
-    ]
+    CommonModule,
+    VerticalMenuModule,
+    ButtonDirective
+]
 })
 export class VerticalMenuExampleComponent {
-    _userStore = inject(UserStore);
+    _userStore = inject<UserStore<User>>(UserStore);
 
     _menuItems1 = menuItems1;
     _menuItems2 = menuItems2;
@@ -32,11 +34,11 @@ export class VerticalMenuExampleComponent {
     }
 
     addBartenderClaim() {
-        throw new Error('Method not implemented.');
+        this._userStore.user()?.addClaim('bartender');
     }
 
-    addAdminClaim() {
-        this._user!.claims.set(['admin']);
+    addSalespersonClaim() {
+        this._userStore.user()?.addClaim('salesperson');
     }
 
     _clearUser() {
@@ -45,7 +47,7 @@ export class VerticalMenuExampleComponent {
     }
 
     _setUser() {
-        this._user = new User(['admin']);
+        this._user = new User([]);
         this._userStore.user.set(this._user);
     }
 }

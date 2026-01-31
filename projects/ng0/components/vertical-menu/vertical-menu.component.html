@@ -1,5 +1,3 @@
-<!-- @let user = _userStore.user(); -->
-
 <ng-content></ng-content>
 
 <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: items()}"></ng-container>
@@ -8,35 +6,41 @@
     @for (item of items; track $index) {
     @let itemType = item.type || 'node';
 
-    <!-- @if ((!item.claim) || (user && user.hasClaim(item.claim))) { -->
-
-    @switch (itemType) {
-    @case('divider') {
-    <ng0-vmenu-divider></ng0-vmenu-divider>
-    }
-    @case('header') {
-    <ng0-vmenu-header>{{item.text}}</ng0-vmenu-header>
-    }
-    @case('node') {
-    <ng0-vmenu-item
-                    [text]="item.text"
-                    [tag]="item.tag"
-                    [tagCssClass]="item.tagCssClass"
-                    [link]="item.routerLink"
-                    [routerLinkActiveOptions]="item.routerLinkActiveOptions ?? {exact: true}"
-                    [href]="item.href"
-                    [icon]="item.icon"
-                    [target]="item.target"
-                    [ngClass]="item.cssClass">
-        @if(item.children?.length) {
-        <ng0-vmenu-item-children>
-            <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }">
-            </ng-container>
-        </ng0-vmenu-item-children>
+    <ng-container *ng0User="item.user">
+        @switch (itemType) {
+        @case('divider') {
+        <ng0-vmenu-divider></ng0-vmenu-divider>
         }
-    </ng0-vmenu-item>
-    }
-    }
-    <!-- } -->
+        @case('header') {
+        <ng0-vmenu-header>{{item.text}}</ng0-vmenu-header>
+        }
+        @case('node') {
+        <ng0-vmenu-item
+                        [text]="item.text"
+                        [tag]="item.tag"
+                        [tagCssClass]="item.tagCssClass"
+                        [link]="item.routerLink"
+                        [routerLinkActiveOptions]="item.routerLinkActiveOptions ?? {exact: true}"
+                        [href]="item.href"
+                        [icon]="item.icon"
+                        [target]="item.target"
+                        [ngClass]="item.cssClass">
+            @if(item.children?.length) {
+            <ng0-vmenu-item-children>
+                <ng-container *ngTemplateOutlet="menuItemTemplate; context: { $implicit: item.children }">
+                </ng-container>
+            </ng0-vmenu-item-children>
+            }
+        </ng0-vmenu-item>
+        }
+        }
+    </ng-container>
     }
 </ng-template>
+
+
+<style>
+    :host {
+        display: block;
+    }
+</style>

@@ -17,4 +17,11 @@ export interface ClaimObject {
  */
 export type ClaimLike = string | ClaimObject;
 
-export type ShowCondition = ClaimObject | 'set' | 'unset';
+/**
+ * Represents a condition to check against a user.
+ * It can be a ClaimLike or a boolean value.
+ * - If it's a ClaimLike, it checks if the user has the specified claim(s).
+ * - If it's true, it checks if there is a logged-in user.
+ * - If it's false, it checks if there is no logged-in user. 
+ */
+export type UserCondition = ClaimLike | boolean;

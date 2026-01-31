@@ -9,6 +9,24 @@ export class User {
         this.claims.set(claims);
     }
 
+    public addClaim(claim: string): boolean {
+        let currentClaims = this.claims();
+        if (currentClaims.includes(claim)) {
+            return false;
+        }
+        this.claims.set([...currentClaims, claim]);
+        return true;
+    }
+
+    public removeClaim(claim: string): boolean {
+        let currentClaims = this.claims();
+        if (!currentClaims.includes(claim)) {
+            return false;
+        }
+        this.claims.set(currentClaims.filter(x => x !== claim));
+        return true;
+    }
+
     public hasAllClaims(claims: string[]): boolean {
         return claims.every(x => this.claims().some(y => x === y));
     }

@@ -8,12 +8,17 @@
                 <p>
                     The vertical menu component is used to create a vertical navigation menu with expandable and
                     collapsible items.
-                </p>
 
+                    In this example, we create a vertical menu with several items, including headers, dividers, and 
+                    nested items.
+                </p>
+            </div>
+
+            <div class="card-footer">
                 <ng0-vmenu>
                     <ng0-vmenu-header>Header 1</ng0-vmenu-header>
-                    <ng0-vmenu-item text="Item 1" [link]="['.']" tag="Tag 1"></ng0-vmenu-item>
-                    <ng0-vmenu-item text="Item 2" tag="Tag 2"></ng0-vmenu-item>
+                    <ng0-vmenu-item text="Item 1" [link]="['.']" tag="Item 1 tag"></ng0-vmenu-item>
+                    <ng0-vmenu-item text="Item 2" tag="Item 2 tag"></ng0-vmenu-item>
                     <ng0-vmenu-item text="Item 3" tag="Click Me!" (itemClick)="_onItemClick()"
                                     tagCssClass="text-bg-danger"></ng0-vmenu-item>
                     <ng0-vmenu-divider></ng0-vmenu-divider>
@@ -47,10 +52,12 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Using MenuItem[] as source</h4>
-                <!-- <p>
-                    You
-                </p> -->
-
+                <p>
+                    You can also provide menu items using an array of MenuItem objects.
+                    This is useful when you want to generate the menu dynamically or load it from a configuration.
+                </p>
+            </div>
+            <div class="card-footer">
                 <ng0-vmenu [items]="_menuItems1"></ng0-vmenu>
             </div>
         </div>
@@ -59,44 +66,87 @@
     <div class="col-xl-12">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Item permissions</h4>
-                <!-- <p>
-                    You
-                </p> -->
+                <h4 class="card-title">Show conditions</h4>
+                <p>
+                    You can control the visibility of menu items based on user claims. <br>
+                    In this example, some menu items are only visible if the user has specific claims such as
+                    'salesperson' or
+                    'bartender'.
+                    This is done using the <code>user</code> property of the MenuItem interface.
+                    Available values for user property are:
+                </p>
 
-                <ng0-vmenu [items]="_menuItems2"></ng0-vmenu>
+                <ul>
+                    <li>
+                        <code>user: null</code> - Item is always visible, regardless of user identity.
+                    </li>
+                    <li>
+                        <code>user: true</code> - Item is visible only if the user is authenticated.
+                    </li>
+                    <li>
+                        <code>user: false</code> - Item is visible only if the user is not authenticated.
+                    </li>
+                    <li>
+                        <code>user: {{'{'}} any: ['claim1', 'claim2'] {{'}'}} </code> - Item is visible if the user has
+                        at least one of the specified claims.
+                    </li>
+
+                    <li>
+                        <code>user: {{'{'}} all: ['claim1', 'claim2'] {{'}'}} </code> - Item is visible if the user has
+                        all of the specified claims.
+                    </li>
+                </ul>
             </div>
 
+            <div class="card-footer">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <p>
+                            Vertical menu with items that have show conditions based on user identity:
+                        </p>
+                        <ng0-vmenu [items]="_menuItems2"></ng0-vmenu>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <p>
+                            Menu items (MenuItem[]):
+                        </p>
+                        <textarea class="form-control" rows="10">{{_menuItems2 | json}}</textarea>
+                    </div>
+                </div>
+
+            </div>
             <div class="card-footer">
                 <h6>
                     User Identity:
                 </h6>
 
-                <ul>
-                    <li>
-                        User:
-                        @if(user) {
-                        {{user | json}}
-                        }@else {
-                        undifined
-                        }
-                    </li>
+                <div>
+                    User: <br>
+                    <code>{{user | json}}</code>
+                </div>
 
-                    <!-- @if(user) {
-                    <li>
-                        Claims:
-                        {{user.claims | json}}
-                    </li>
-                    } -->
-                </ul>
 
+                @if(user) {
+                <div class="mt-2">
+                    Claims: <code>{{user.claims() | json}}</code>
+                </div>
+                }
             </div>
 
             <div class="card-footer">
-                <button class="btn btn-secondary me-2" (click)="_setUser()">Set User</button>
-                <button class="btn btn-secondary me-2" (click)="_clearUser()">Clear User</button>
-                <button class="btn btn-secondary me-2" (click)="addAdminClaim()">Add 'admin' claim</button>
-                <button class="btn btn-secondary me-2" (click)="addBartenderClaim()">Add 'bartender' claim</button>
+                <button ng0Button class="btn btn-secondary me-2" (click)="_setUser()" [disabled]="user != null">
+                    Set User
+                </button>
+                <button ng0Button class="btn btn-secondary me-2" (click)="_clearUser()" [disabled]="user == null">
+                    Clear User
+                </button>
+                <button ng0Button class="btn btn-secondary me-2" (click)="addSalespersonClaim()" [disabled]="!user">
+                    Add 'salesperson' claim
+                </button>
+                <button ng0Button class="btn btn-secondary me-2" (click)="addBartenderClaim()" [disabled]="!user">
+                    Add 'bartender' claim
+                </button>
             </div>
         </div>
     </div>

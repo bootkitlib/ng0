@@ -26,7 +26,6 @@ ng0-vmenu-item {
     }
 }
 
-
 .ng0-vmenu-item-link {
     text-decoration: none;
 
@@ -35,9 +34,9 @@ ng0-vmenu-item {
     }
 }
 
-.ng0-vmenu-item-text {
-    flex-grow: 1;
-}
+// .ng0-vmenu-item-text {
+//     // flex-grow: 1;
+// }
 
 .ng0-vmenu-item-expand-icon {
     transition: transform var(--ng0-collapse-transition-duration);

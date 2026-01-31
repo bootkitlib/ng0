@@ -2,6 +2,9 @@ import { Directive, TemplateRef, ViewContainerRef, input, effect, inject } from 
 import { UserStore } from './user-store';
 import { ClaimLike } from '@bootkit/ng0/common';
 
+/**
+ * @deprecated user ng0User instead
+ */
 @Directive({
   selector: '[ng0Claim]',
   exportAs: 'ng0Claim',

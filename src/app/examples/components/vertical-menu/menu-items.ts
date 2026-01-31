@@ -34,24 +34,43 @@ export const menuItems1: MenuItem[] = [
 export const menuItems2: MenuItem[] = [
     {
         text: 'Item 1',
-        tag: 'No permission',
+        tag: 'No show condition - always visible',
         routerLink: '.',
     },
     {
         text: 'Item 2',
-        tag: 'Requires user identity',
+        tag: 'Requires user to be NOT authenticated',
         routerLink: '.',
+        user: false,
     },
     {
         text: 'Item 3',
-        tag: 'Requires "admin" claim',
+        tag: 'Requires user to be authenticated',
         routerLink: '.',
-        // claim: {},
+        user: true,
     },
     {
-        text: 'Item 2',
-        tag: 'Requires user identity',
-        claim: {},
+        text: 'Item 4',
+        tag: 'Requires user to have "salesperson" claim',
+        routerLink: '.',
+        user: 'salesperson',
+    },
+    {
+        text: 'Item 5',
+        tag: 'Requires user to have both "salesperson" and "bartender" claims',
+        routerLink: '.',
+        user: { all: ['salesperson', 'bartender'] },
+    },
+    {
+        text: 'Item 6',
+        tag: 'Requires user to have either "salesperson" or "bartender" claims',
+        routerLink: '.',
+        user: { any: ['salesperson', 'bartender'] },
+    },
+    {
+        text: 'Sales',
+        tag: 'Requires user to have "salesperson" claim',
+        user: 'salesperson',
         children: [
             {
                 text: 'Item 2.1',

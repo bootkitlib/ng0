@@ -1,14 +1,20 @@
 import { IsActiveMatchOptions } from "@angular/router";
-import { ClaimLike } from "./security-types";
+import { ClaimLike, UserCondition } from "./security-types";
 
 /** Menu item  */
 export interface MenuItemBase {
     type?: string; // 'node', 'header', 'divider' or any other string;
     id?: any;
     show?: boolean;
+
+    /**
+     * @deprecated use 'show' instead
+     */
     claim?: ClaimLike;
     cssClass?: string;
     data?: any;
+
+    user?: UserCondition;
 }
 
 export interface NodeMenuItem extends MenuItemBase {
@@ -18,7 +24,7 @@ export interface NodeMenuItem extends MenuItemBase {
     icon?: string;
     expanded?: boolean;
     children?: MenuItem[];
-    parent?: NodeMenuItem;
+    parent?: MenuItem;
     routerLink?: string | string[];
     routerLinkActiveOptions?: { exact: boolean } | IsActiveMatchOptions;
     href?: string;
