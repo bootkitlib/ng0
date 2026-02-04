@@ -3,7 +3,7 @@ import { UserStore } from './user-store';
 import { ClaimLike } from '@bootkit/ng0/common';
 
 /**
- * @deprecated user ng0User instead
+ * @deprecated use *ng0User instead
  */
 @Directive({
   selector: '[ng0Claim]',

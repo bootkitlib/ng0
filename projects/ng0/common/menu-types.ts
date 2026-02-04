@@ -8,7 +8,7 @@ export interface MenuItemBase {
     show?: boolean;
 
     /**
-     * @deprecated use 'show' instead
+     * @deprecated use 'user' instead
      */
     claim?: ClaimLike;
     cssClass?: string;

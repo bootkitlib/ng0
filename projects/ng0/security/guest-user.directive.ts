@@ -1,6 +1,9 @@
 import { Directive, TemplateRef, ViewContainerRef, effect } from '@angular/core';
 import { UserStore } from './user-store';
 
+/**
+ * @deprecated use *ng0User directive instead
+ */
 @Directive({
   selector: '[ng0GuestUser]',
   exportAs: 'ng0GuestUser',
