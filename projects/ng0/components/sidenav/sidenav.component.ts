@@ -158,7 +158,6 @@ export class SidenavComponent implements OnDestroy {
     }
   }
 
-
   _getFixedSize(): string | undefined {
     let size = this.size();
     let t = typeof size;
@@ -194,7 +193,7 @@ export class SidenavComponent implements OnDestroy {
 
   private _destroyBackdrop() {
     this._backdropClickHandlerUnlisten?.();
-    this._backdropRef?.remove();
+    this._renderer.removeChild(this._elementRef.nativeElement.parentNode, this._backdropRef);
     this._backdropClickHandlerUnlisten = undefined;
   }
 

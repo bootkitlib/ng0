@@ -67,8 +67,8 @@ export class Layout1Component {
     options.mode = options.mode ?? this.defaultSidenavMode();
     options.position = options.position ?? this.defaultSidenavPosition();
     options.size = options.size ?? this.defaultSidenavSize();
-    options.hasBackdrop = options.hasBackdrop ?? this.defaultSidenavHasBackdrop();
-    options.closeOnBackdropClick = options.closeOnBackdropClick ?? this.defaultSidenavCloseOnBackdropClick();
+    options.hasBackdrop = options.hasBackdrop == null ? this.defaultSidenavHasBackdrop() : options.hasBackdrop
+    options.closeOnBackdropClick = options.closeOnBackdropClick == null ? options.closeOnBackdropClick : this.defaultSidenavCloseOnBackdropClick();
 
     const sidenavRef = new Layout1SecondarySidenav(template, options);
     this._secondarySidenavs().push(sidenavRef);

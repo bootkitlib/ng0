@@ -17,7 +17,7 @@ export class Layout1ExampleComponent {
     protected _sidenav1!: Layout1SecondarySidenav;
 
     _showSidenav1(template: TemplateRef<any>) {
-        this._sidenav1 = this._layoutManager.pushSidenav(template, { closeOnBackdropClick: true });
+        this._sidenav1 = this._layoutManager.pushSidenav(template, { hasBackdrop: true, closeOnBackdropClick: true });
 
         this._sidenav1.disposed.subscribe((result: any) => {
             console.log('Sidenav 1 disposed', result);
