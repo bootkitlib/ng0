@@ -9,7 +9,7 @@
                     The vertical menu component is used to create a vertical navigation menu with expandable and
                     collapsible items.
 
-                    In this example, we create a vertical menu with several items, including headers, dividers, and 
+                    In this example, we create a vertical menu with several items, including headers, dividers, and
                     nested items.
                 </p>
             </div>
@@ -147,6 +147,36 @@
                 <button ng0Button class="btn btn-secondary me-2" (click)="addBartenderClaim()" [disabled]="!user">
                     Add 'bartender' claim
                 </button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-xl-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Item Template</h4>
+                <p>
+                    You can customize the appearance of menu items using the <code>ng0VerticalMenuItemTemplate</code>
+                    directive. This allows you to define a custom template for rendering menu items, giving you
+                    full control over their layout and styling.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <ng0-vmenu [items]="_menuItems1">
+                    <ng-template ng0VerticalMenuItemTemplate let-item>
+                        <div class="d-flex align-items-center flex-fill">
+                            <span>{{item.text()}}</span>
+
+                            @if(item.hasChildren()) {
+                            <span class="ms-auto">
+                                {{item.isExpanded() ? '[-]' : '[+]'}}
+                            </span>
+                            }
+                        </div>
+                    </ng-template>
+                </ng0-vmenu>
             </div>
         </div>
     </div>
