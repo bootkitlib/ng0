@@ -39,7 +39,7 @@
        (isActiveChange)="_onRouteChange($event)">
 
         @if(itemTemplate) {
-        <ng-container *ngTemplateOutlet="itemTemplate; context: { $implicit: this }"></ng-container>
+        <ng-container *ngTemplateOutlet="itemTemplate; context: _getItemTemplateContext()"></ng-container>
         }@else {
         @if(icon()) {
         <i class="ng0-vmenu-item-icon" [ngClass]="icon()"></i>

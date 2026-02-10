@@ -67,5 +67,9 @@ export class VerticalMenuItemComponent {
   protected _onRouteChange(isActive: boolean) {
     this._menuItemState.routeActivated.set(isActive);
   }
+
+  protected _getItemTemplateContext() {
+    return { $implicit: this }
+  }
 }
 
