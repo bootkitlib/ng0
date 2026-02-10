@@ -38,7 +38,6 @@ ng0-sidenav {
   left: 0;
   right: 0;
   background-color: var(--ng0-sidenav-backdrop-background) !important;
-  // transition: background-color var(--ng0-sidenav-transition-duration);
   pointer-events: all;
 
   &.ng0-sidenav-backdrop-fullscreen {
@@ -46,18 +45,18 @@ ng0-sidenav {
   }
 
   &.ng0-sidenav-backdrop-opening {
-    animation: backdropFadeIn var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-duration) forwards;
+    animation: backdropFadeIn var(--ng0-sidenav-animation-duration) var(--ng0-sidenav-animation-function) forwards;
   }
 
   &.ng0-sidenav-backdrop-closing {
-    animation: backdropFadeOut var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-duration) forwards;
+    animation: backdropFadeOut var(--ng0-sidenav-animation-duration) var(--ng0-sidenav-animation-function) forwards;
   }
 }
 
 .ng0-sidenav-transition ng0-sidenav {
-  transition: transform var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-function),
-    width var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-function),
-    height var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-function);
+  transition: transform var(--ng0-sidenav-animation-duration) var(--ng0-sidenav-animation-function),
+    width var(--ng0-sidenav-animation-duration) var(--ng0-sidenav-animation-function),
+    height var(--ng0-sidenav-animation-duration) var(--ng0-sidenav-animation-function);
 }
 
 .ng0-sidenav-fixed {

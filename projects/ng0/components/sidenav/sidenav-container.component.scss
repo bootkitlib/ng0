@@ -1,6 +1,6 @@
 :root {
-  --ng0-sidenav-transition-duration: 200ms; 
-  --ng0-sidenav-transition-duration: ease-out;
+  --ng0-sidenav-animation-duration: 200ms; 
+  --ng0-sidenav-animation-function: ease-out;
 }
 
 ng0-sidenav-container {
@@ -10,7 +10,7 @@ ng0-sidenav-container {
   will-change: padding;
 
   &.ng0-sidenav-transition {
-    transition: padding var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-function);
+    transition: padding var(--ng0-sidenav-animation-duration) var(--ng0-sidenav-animation-function);
   }
 
   &.ng0-sidenav-content-hidden ng0-sidenav-content {
