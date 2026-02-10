@@ -3,7 +3,7 @@ $active-bg-color: color-mix(in srgb, var(--bs-primary), white 85%);
 $hover-bg-color: color-mix(in srgb, var(--bs-primary), white 95%);
 
 :root {
-    --ng0-select-dropdown-duration: 150ms;
+    --ng0-select-dropdown-duration: 100ms;
     --ng0-select-dropdown-timing-function: ease-out;
 }
 
