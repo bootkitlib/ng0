@@ -2,6 +2,34 @@ $selected-bg-color: var(--bs-primary);
 $active-bg-color: color-mix(in srgb, var(--bs-primary), white 85%);
 $hover-bg-color: color-mix(in srgb, var(--bs-primary), white 95%);
 
+:root {
+    --ng0-select-dropdown-duration: 150ms;
+    --ng0-select-dropdown-timing-function: ease-out;
+}
+
+@keyframes dropdownEnter {
+    from {
+        opacity: 0;
+        transform: scaleY(0);
+    }
+
+    to {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+@keyframes dropdownLeave {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+
 ng0-select {
     user-select: none;
     -webkit-user-select: none;
@@ -30,12 +58,15 @@ ng0-select {
 
 .ng0-select-dropdown {
     display: flex;
+    width: 100%;
     flex-direction: column;
     background-color: var(--bs-body-bg);
     border: 1px solid var(--bs-border-color);
     border-radius: var(--bs-border-radius);
     overflow-y: auto;
     margin: var(--bs-focus-ring-width, 0) 0;
+    transform-origin: top;
+    animation: dropdownEnter var(--ng0-select-dropdown-duration) var(--ng0-select-dropdown-timing-function) forwards;
     // box-shadow: var(--bs-focus-ring-x, 0) var(--bs-focus-ring-y, 0) var(--bs-focus-ring-blur, 0) var(--bs-focus-ring-width) var(--bs-focus-ring-color);
 }
 
@@ -64,6 +95,7 @@ ng0-select-list {
     ng0-list-item {
         padding: 0.5rem;
         display: flex;
+        user-select: none;
 
         &.selected {
             background-color: $selected-bg-color;

@@ -1,7 +1,5 @@
 :root {
   --ng0-sidenav-backdrop-background: rgba(0, 0, 0, 0.5);
-  --ng0-sidenav-backdrop-animation-duration: 300ms;
-  --ng0-sidenav-backdrop-animation-timing-function: ease;
 }
 
 @keyframes backdropFadeIn {
@@ -48,11 +46,11 @@ ng0-sidenav {
   }
 
   &.ng0-sidenav-backdrop-opening {
-    animation: backdropFadeIn var(--ng0-sidenav-backdrop-animation-duration) var(--ng0-sidenav-backdrop-animation-timing-function) forwards;
+    animation: backdropFadeIn var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-duration) forwards;
   }
 
   &.ng0-sidenav-backdrop-closing {
-    animation: backdropFadeOut var(--ng0-sidenav-backdrop-animation-duration) var(--ng0-sidenav-backdrop-animation-timing-function) forwards;
+    animation: backdropFadeOut var(--ng0-sidenav-transition-duration) var(--ng0-sidenav-transition-duration) forwards;
   }
 }
 

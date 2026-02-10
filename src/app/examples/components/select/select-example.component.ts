@@ -41,7 +41,7 @@ export class SelectExampleComponent {
     ];
 
     localDatasource1 = new LocalDataSource(["Option 1", "Option 2", "Option 3"]);
-    fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult(this.personList1)).pipe(delay(3000)))
+    fakeRemoteDataSource1 = new RemoteDataSource(req => of(new DataResult(this.personList1)).pipe(delay(1)))
 
     examples = {
         stringArray: {

@@ -40,7 +40,7 @@ import {
 export class SelectComponent implements ControlValueAccessor {
     // private _resizeObserver?: ResizeObserver;
     private _viewpoerRulerSubscription?: Subscription;
-    private _injector = inject(EnvironmentInjector);
+    private readonly _injector = inject(EnvironmentInjector);
     @ViewChild('filterInput') private _filterElementRef?: ElementRef;
     @ViewChild(ListComponent) private _listComponent?: ListComponent;
     private _changeCallback!: (value: any) => void;
@@ -155,7 +155,7 @@ export class SelectComponent implements ControlValueAccessor {
     @Output() public readonly itemSelect = new EventEmitter<ItemSelectEvent>();
 
     constructor() {
-        ['ng0-select', 'form-select'].forEach(c => this._renderer.addClass(this._elementRef.nativeElement, c));
+        ['form-select'].forEach(c => this._renderer.addClass(this._elementRef.nativeElement, c));
         this._scrollStrategy = this._overlay.scrollStrategies.block();
 
         effect(() => {
