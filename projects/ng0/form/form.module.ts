@@ -1,22 +1,15 @@
 import { NgModule } from '@angular/core';
-import { EqualWithValidatorDirective } from './validation/validators/equal-with/equal-with.directive';
-import { UrlValidatorDirective } from './validation/validators/url/url-validator.directive';
-import { CustomValidatorDirective } from './validation/validators/custom/custom-validator.directive';
-import { MinValidatorDirective } from './validation/validators/min/min-validator.directive';
-import { MaxValidatorDirective } from './validation/validators/max/max-validator.directive';
 import { NumberDirective } from './number.directive';
+import { FileValueAccessor } from './file-value-accessor';
+import { ValidationModule } from './validation';
 
 const items = [
+  ValidationModule,
+
   // ErrorDirective,
   // FirstErrorDirective,
   NumberDirective,
-
-  // Validators
-  MinValidatorDirective,
-  MaxValidatorDirective,
-  EqualWithValidatorDirective,
-  UrlValidatorDirective,
-  CustomValidatorDirective,
+  FileValueAccessor,
 ];
 
 @NgModule({

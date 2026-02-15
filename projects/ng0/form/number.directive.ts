@@ -118,7 +118,7 @@ export class NumberDirective implements ControlValueAccessor {
   }
 
   @HostListener('keydown', ['$event'])
-  private _onKeyDown(event: KeyboardEvent) {
+  protected _onKeyDown(event: KeyboardEvent) {
     const key = event.key;
     const state = this._getInputState();
 
@@ -139,7 +139,7 @@ export class NumberDirective implements ControlValueAccessor {
   }
 
   @HostListener('input', ['$event.target.value'])
-  private _onInput(value: string) {
+  protected _onInput(value: string) {
     if (value === '') {
       this._value = undefined;
       this._onChangeCallback?.(undefined);
@@ -194,7 +194,7 @@ export class NumberDirective implements ControlValueAccessor {
   }
 
   @HostListener('blur')
-  private _onBlur() {
+  protected _onBlur() {
     if (this._value !== undefined) {
       let formattedValue = this._formatNumber(this._value);
       this._setProperty('value', formattedValue);
@@ -204,7 +204,7 @@ export class NumberDirective implements ControlValueAccessor {
   }
 
   @HostListener('paste', ['$event'])
-  private _onPaste(event: ClipboardEvent) {
+  protected _onPaste(event: ClipboardEvent) {
     // event.
     // value = value.trim();
   }

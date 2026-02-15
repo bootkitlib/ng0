@@ -58,6 +58,7 @@ export const menuItems: MenuItem[] = [
       { text: 'NumberDirective', routerLink: '/examples/form/number-directive' },
       { text: 'FocusDirective' },
       { text: 'DisableCountdownDirective' },
+      { text: 'FileValueAccessor', routerLink: '/examples/form/file-value-accessor' },
       {
         text: 'Validation',
         children: [
