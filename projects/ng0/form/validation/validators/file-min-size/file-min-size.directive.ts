@@ -4,7 +4,7 @@ import { fileMinSizeValidator } from './file-min-size-validator';
 
 @Directive({
   selector: '[ngModel][ng0File][ng0FileMinSize]',
-  exportAs: 'ng0MinFileSize',
+  exportAs: 'ng0FileMinSize',
   standalone: true,
   providers: [{ provide: NG_VALIDATORS, useExisting: FileMinSizeValidatorDirective, multi: true, }],
 })

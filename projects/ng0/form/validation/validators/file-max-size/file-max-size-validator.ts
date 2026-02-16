@@ -1,6 +1,10 @@
 import { AbstractControl, ValidatorFn } from '@angular/forms';
 
 export function fileMaxSizeValidator(size: number): ValidatorFn {
+  if (size == null || size <= 0) {
+    throw new Error('Size must be a positive number');
+  }
+
   return (control: AbstractControl): { [key: string]: any } | null => {
     let file = control?.value;
 

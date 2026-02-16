@@ -27,7 +27,8 @@ export const FA_IR_LOCALE = new Locale({
                 minlength: (e) => `حداقل ${e.requiredLength} کاراکتر`,
                 maxlength: (e) => `حداکثر ${e.requiredLength} کاراکتر`,
                 email: (e) => `ایمیل نامعتبر است`,
-                maxFileSize: (e) => `حداکثر ${e.max} بایت`,
+                fileMinSize: (e) => `حداقل ${formatNumber(e.min / 1024 / 1024)} مگابایت ${e.fileList ? `(${e.file.name})` : ''}`,
+                fileMaxSize: (e) => `حداکثر ${formatNumber(e.max / 1024 / 1024)} مگابایت ${e.fileList ? `(${e.file.name})` : ''}`,
             }
         }
     },

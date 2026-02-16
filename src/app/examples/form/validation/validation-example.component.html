@@ -1,0 +1,137 @@
+<div class="row g-4">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">
+                    Basic Validation
+                </h4>
+                <p>
+                    To display validation errors, the form controls must have a name and be bound to a model using
+                    <code>ngModel</code>. <br>
+                    Put inputs inside a ng0-form-field to display error messages and apply validation styles.
+
+                </p>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <ng0-form-field label="Minimum 5 characters">
+                            <input type="text" class="form-control" name="a1" [(ngModel)]="a1" minlength="5">
+                        </ng0-form-field>
+                    </div>
+
+                    <div class="col-md-4">
+                        <ng0-form-field label="Maximum 10 characters">
+                            <input type="text" class="form-control" name="a2" [(ngModel)]="a2" maxlength="10">
+                        </ng0-form-field>
+                    </div>
+
+                    <div class="col-md-4">
+                        <ng0-form-field label="Minimum 5">
+                            <input type="number" class="form-control" name="a3" [(ngModel)]="a3" min="5">
+                        </ng0-form-field>
+                    </div>
+
+                    <div class="col-md-4">
+                        <ng0-form-field label="Maximum 5">
+                            <input type="number" class="form-control" name="a4" [(ngModel)]="a4" max="5">
+                        </ng0-form-field>
+                    </div>
+
+                    <div class="col-md-4">
+                        <ng0-form-field label="Required">
+                            <input type="text" class="form-control" name="a5" [(ngModel)]="a5" required>
+                        </ng0-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">
+                    File Validation
+                </h4>
+                <p>
+                    The following validators are available for file inputs:
+                </p>
+                <ul>
+                    <li><code>ng0FileMinSize</code>: Minimum file size in bytes.</li>
+                    <li><code>ng0FileMaxSize</code>: Maximum file size in bytes.</li>
+                    <li><code>accept</code>: Allowed file extensions (e.g. .jpg, .png).</li>
+                </ul>
+                <p>
+                    Note: The file size validators require the <code>ng0File</code> directive to work properly.
+                </p>
+            </div>
+
+            <div class="card-footer">
+                <h6>Single File</h6>
+                <p>
+                    Select one file to see the validation in action.
+                    The file size validators will display an error message if the selected file does not meet the
+                    specified size requirements. The file extension validator will display an error message if the
+                    selected file does not have an allowed extension.
+                </p>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <ng0-form-field label="Minimum Size 512KB">
+                            <input type="file" ng0File [ng0FileMinSize]="512*1024" class="form-control" name="f1"
+                                   [(ngModel)]="f1">
+                        </ng0-form-field>
+                    </div>
+
+                    <div class="col-md-4">
+                        <ng0-form-field label="Maximum Size 1MB">
+                            <input type="file" ng0File [ng0FileMaxSize]="1024*1024" class="form-control" name="f2"
+                                   [(ngModel)]="f2">
+                        </ng0-form-field>
+                    </div>
+
+                    <div class="col-md-4">
+                        <ng0-form-field label="Allowed file extensions: .jpg, .png">
+                            <input type="file" ng0File [ng0FileExtension]="['jpg', 'png']" class="form-control"
+                                   name="f3" [(ngModel)]="f3">
+                        </ng0-form-field>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card-footer">
+                <h6>Multiple Files</h6>
+                <p>
+                    Select one or more files to see the validation in action.
+                    If multiple files are selected, the validators will check each file against the specified criteria
+                    and display an error message if any file does not meet the requirements.
+                </p>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <ng0-form-field label="Minimum Size 512KB">
+                            <input type="file" multiple ng0File [ng0FileMinSize]="512*1024" class="form-control"
+                                   name="fm1"
+                                   [(ngModel)]="fm1">
+                        </ng0-form-field>
+                    </div>
+
+                    <div class="col-md-4">
+                        <ng0-form-field label="Maximum Size 1MB">
+                            <input type="file" multiple ng0File [ng0FileMaxSize]="1024*1024" class="form-control"
+                                   name="fm2"
+                                   [(ngModel)]="fm2">
+                        </ng0-form-field>
+                    </div>
+
+                    <div class="col-md-4">
+                        <ng0-form-field label="Allowed file extensions: .jpg, .png">
+                            <input type="file" multiple ng0File [ng0FileExtension]="['jpg', 'png']" class="form-control"
+                                   name="fm3" [(ngModel)]="fm3">
+                        </ng0-form-field>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -55,27 +55,11 @@ export const menuItems: MenuItem[] = [
   {
     text: 'Form',
     children: [
+      { text: 'Validation', routerLink: '/examples/form/validation' },
       { text: 'NumberDirective', routerLink: '/examples/form/number-directive' },
       { text: 'FocusDirective' },
       { text: 'DisableCountdownDirective' },
       { text: 'FileValueAccessor', routerLink: '/examples/form/file-value-accessor' },
-      {
-        text: 'Validation',
-        children: [
-          { text: 'ErrorsDirective' },
-          { text: 'FirstErrorDirective' },
-          {
-            text: 'Validators',
-            children: [
-              { text: 'Custom' },
-              { text: 'Equal With' },
-              { text: 'Exact Length' },
-              { text: 'File Size' },
-              { text: 'URL' },
-            ]
-          }
-        ]
-      }
     ]
   },
 

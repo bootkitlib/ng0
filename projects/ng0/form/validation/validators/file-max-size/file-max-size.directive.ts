@@ -4,7 +4,7 @@ import { fileMaxSizeValidator } from './file-max-size-validator';
 
 @Directive({
   selector: '[ngModel][ng0File][ng0FileMaxSize]',
-  exportAs: 'ng0MaxFileSize',
+  exportAs: 'ng0FileMaxSize',
   standalone: true,
   providers: [{ provide: NG_VALIDATORS, useExisting: FileMaxSizeValidatorDirective, multi: true, }],
 })

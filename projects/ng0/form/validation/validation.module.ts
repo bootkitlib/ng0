@@ -6,18 +6,22 @@ import { MinValidatorDirective } from './validators/min/min-validator.directive'
 import { MaxValidatorDirective } from './validators/max/max-validator.directive';
 import { FileMaxSizeValidatorDirective } from './validators/file-max-size/file-max-size.directive';
 import { FileMinSizeValidatorDirective } from './validators/file-min-size/file-min-size.directive';
+import { FileExtensionValidatorDirective } from './validators/file-extension/file-extension.directive';
 
 
 const items = [
+  // Validators
   MinValidatorDirective,
   MaxValidatorDirective,
-  
   FileMinSizeValidatorDirective,
   FileMaxSizeValidatorDirective,
-  
+  FileExtensionValidatorDirective,
   EqualWithValidatorDirective,
   UrlValidatorDirective,
   CustomValidatorDirective,
+
+
+  // Directives
 ];
 
 @NgModule({
