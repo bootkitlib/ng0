@@ -14,7 +14,6 @@ const items = [
 
 /**
  * FormModule
- * @description
  * 
  */
 @NgModule({
