@@ -1,4 +1,4 @@
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, DestroyRef, HostBinding, inject, input, model, OnDestroy, OnInit, QueryList, signal } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, DestroyRef, HostBinding, inject, input, model, numberAttribute, OnDestroy, OnInit, QueryList, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TableColumnDirective } from './table-column.directive';
 import { TableDetailRowDirective } from './table-detail-row.directive';
@@ -99,6 +99,29 @@ export class TableComponent implements AfterContentInit, OnDestroy {
       return v;
     }
   });
+
+  /**
+   * The currently selected page in the table.
+   */
+  public readonly pageIndex = input(0, { transform: numberAttribute });
+
+  /**
+   * The number of records to display per page.
+   */
+  public readonly pageSize = input(10, { transform: numberAttribute });
+
+  /**
+   * Maximum number of visible pages in the pagination controls.
+   * Default is 10.
+   */
+  public readonly maxVisiblePages = input(10, { transform: numberAttribute });
+
+  /**
+   * If true, the table will show pagination controls at the bottom.
+   * This will allow users to navigate between pages of data.
+   * @default true
+   */
+  public readonly showPagingControls = input(true, { transform: booleanAttribute });
 
   /**
    * If true, the table will support sorting.
