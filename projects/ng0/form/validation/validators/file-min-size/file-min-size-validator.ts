@@ -6,28 +6,32 @@ export function fileMinSizeValidator(size: number): ValidatorFn {
   }
 
   return (control: AbstractControl): { [key: string]: any } | null => {
-    let value = control?.value;
+    let value = control?.value as FileList | File | undefined;
 
-    if (value instanceof FileList) {
-      for (let i = 0; i < value.length; i++) {
-        if (value[i].size < size) {
+    if (value instanceof File) {
+      return value.size < size ? {
+        fileMinSize: {
+          file: value,
+          min: size,
+          multiple: false
+        }
+      } : null;
+    } else if ((value as FileList)?.length > 0) {
+      const fileList = value as FileList;
+
+      for (let i = 0; i < fileList.length; i++) {
+        if (fileList[i].size < size) {
           return {
             fileMinSize: {
-              file: value[i],
-              fileList: value,
+              file: fileList[i],
+              fileList: fileList,
               min: size,
+              multiple: true
             }
           };
         }
       }
       return null;
-    } else if (value instanceof File) {
-      return value.size < size ? {
-        fileMinSize: {
-          file: value,
-          min: size,
-        }
-      } : null;
     } else {
       return null;
     }

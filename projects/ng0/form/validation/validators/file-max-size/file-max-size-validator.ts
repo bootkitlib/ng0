@@ -6,15 +6,34 @@ export function fileMaxSizeValidator(size: number): ValidatorFn {
   }
 
   return (control: AbstractControl): { [key: string]: any } | null => {
-    let file = control?.value;
+    let value = control?.value as FileList | File | undefined;
 
-    const res = (file instanceof File && file.size > size) ? {
-      fileMaxSize: {
-        file: file,
-        max: size,
+    if (value instanceof File) {
+      return value.size > size ? {
+        fileMinSize: {
+          file: value,
+          min: size,
+          multiple: false
+        }
+      } : null;
+    } else if ((value as FileList)?.length > 0) {
+      const fileList = value as FileList;
+
+      for (let i = 0; i < fileList.length; i++) {
+        if (fileList[i].size > size) {
+          return {
+            fileMinSize: {
+              file: fileList[i],
+              fileList: fileList,
+              min: size,
+              multiple: true
+            }
+          };
+        }
       }
-    } : null;
-
-    return res;
+      return null;
+    } else {
+      return null;
+    }
   };
 }
