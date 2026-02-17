@@ -1,11 +1,12 @@
 @let $dataResult = _dataResult();
 @let $pageable = pageable();
-@let $pageIndex = _lastRequest?.page?.index ?? 1;
+@let $pageIndex = pageIndex();
+@let $pageSize = pageSize();
 @let $data = $dataResult?.data;
 @let $anyRecords = $data && $data.length > 0;
 @let $totalRecordsCount = $dataResult?.total;
-@let $firstRecord = $pageable ? ($pageable.pageSize! * ($pageIndex - 1) + 1) : 1;
-@let $lastRecord = $data ? $firstRecord + $data.length - 1 : 1;
+@let $firstRecordIndex = $pageable ? ($pageSize * $pageIndex) : 0;
+@let $lastRecordIndex = $data ? $firstRecordIndex + $data.length - 1 : 1;
 @let $isLoading = _dataSource.isLoading();
 @let $isFirstLoad = $dataResult == undefined;
 @let $columnsCount = _columns.length + (showRowNumbers() ? 1 : 0);
@@ -198,7 +199,7 @@
 
     @if (showRowNumbers()) {
     <td class="ng0-table-row-number">
-      {{ $firstRecord + $index }}
+      {{ $firstRecordIndex + $index + 1}}
     </td>
     }
 
@@ -253,17 +254,17 @@
 </ng-template>
 
 <ng-template #footerTemplate>
-  @if ($pageable && $pageable.showPagingControls && $anyRecords && $totalRecordsCount! > 0) {
+  @if ($pageable && showPagingControls() && $anyRecords && $totalRecordsCount! > 0) {
   <div class="ng0-table-pagination me-2">
     <ng0-pagination
                     class="mb-0 d-inline-block"
-                    [showFirstLastButtons]="$pageable.showFirstLastButtons == true"
-                    [showNextPreviousButtons]="$pageable.showNextPreviousButtons == true"
+                    [showFirstLastButtons]="showFirstLastButtons()"
+                    [showNextPreviousButtons]="showNextPreviousButtons()"
                     [totalRecords]="$totalRecordsCount!"
-                    [pageSize]="$pageable.pageSize!"
-                    [selectedPage]="$pageIndex"
+                    [pageSize]="pageSize()"
+                    [selectedPage]="pageIndex()"
                     (itemClick)="_onPageChange($event)"
-                    [maxVisiblePages]="$pageable.maxVisiblePages!">
+                    [maxVisiblePages]="maxVisiblePages()">
       <ng-container ngProjectAs="first">
         <ng-content select="paging-first">
           {{ "first" | ng0Translate }}
@@ -290,7 +291,7 @@
     </ng0-pagination>
   </div>
 
-  @if ($pageable.showPageSizeOptions || $pageable.showPageSizeOptions == undefined) {
+  @if (pageSizeOptions()) {
   <div class="ng0-table-paging-options">
     <select name="pageSizeOptions" class="form-select w-auto d-inline-block">
       <option [ngValue]="10" selected>10</option>
@@ -298,11 +299,11 @@
   </div>
   }
 
-  @if ($pageable.showPagingInfo == undefined || $pageable.showPagingInfo) {
+  @if (showPagingInfo()) {
   <div class="ng0-table-paging-info ms-auto">
     <ng-content select="paging-info">
       {{
-      _pagingFormatter({firstRecord: $firstRecord, lastRecord: $lastRecord, totalRecords: $totalRecordsCount!,
+      _pagingFormatter({firstRecord: $firstRecordIndex, lastRecord: $lastRecordIndex, totalRecords: $totalRecordsCount!,
       currentPage: $pageIndex!})
       }}
     </ng-content>
