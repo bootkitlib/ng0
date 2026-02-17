@@ -1,4 +1,4 @@
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, computed, ContentChild, ContentChildren, DestroyRef, HostBinding, inject, input, model, numberAttribute, OnDestroy, OnInit, QueryList, signal } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, DestroyRef, HostBinding, inject, input, model, numberAttribute, OnDestroy, QueryList, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TableColumnDirective } from './table-column.directive';
 import { TableDetailRowDirective } from './table-detail-row.directive';
@@ -7,9 +7,8 @@ import { FormsModule } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { formatString } from '@bootkit/ng0/common';
 import { LocalizationModule, LocalizationService, TableComponentPagingFormatter } from '@bootkit/ng0/localization';
-import { DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataResult, DataSource, dataSourceAttribute, DataSourceLike, LogicalOperator } from '@bootkit/ng0/data';
+import { DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataResult, DataSource, dataSourceAttribute, DataSourceLike } from '@bootkit/ng0/data';
 import { PaginationComponent } from '@bootkit/ng0/components/pagination';
-import { TablePagingOptions } from './types';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { NumberDirective } from '@bootkit/ng0/form';
 
@@ -35,8 +34,8 @@ import { NumberDirective } from '@bootkit/ng0/form';
   ]
 })
 export class TableComponent implements AfterContentInit, OnDestroy {
-  protected _ls = inject(LocalizationService);
-  private _destroyRef = inject(DestroyRef);
+  protected readonly _ls = inject(LocalizationService);
+  private readonly _destroyRef = inject(DestroyRef);
   private _changeSubscription?: Subscription;
 
   @ContentChildren(TableColumnDirective)
@@ -45,7 +44,7 @@ export class TableComponent implements AfterContentInit, OnDestroy {
   @ContentChild(TableDetailRowDirective)
   protected _detailRow?: TableDetailRowDirective;
 
-  protected _dataResult = signal<DataResult | undefined>(undefined);
+  protected readonly _dataResult = signal<DataResult | undefined>(undefined);
   protected _lastRequest?: DataRequest; // The last data request made to the data source
   protected _loadingRequest?: DataRequest; // The current data request being processed
   protected _rowStates = new Map<any, { expanded: boolean }>();
@@ -80,39 +79,24 @@ export class TableComponent implements AfterContentInit, OnDestroy {
 
   /**
    * If true, the table will support pagination.
-   * If false, the table will load all records at once.
    */
-  public readonly pageable = input<TablePagingOptions | undefined, TablePagingOptions | boolean>(undefined, {
-    transform: v => {
-      if (v === undefined || v === null || v === false) {
-        return undefined;
-      }
-
-      if (v === true) {
-        v = {};
-      }
-
-      v.pageIndex = v.pageIndex ?? 1;
-      v.pageSize = v.pageSize ?? 10;
-      v.maxVisiblePages = v.maxVisiblePages ?? 10;
-      v.showPagingControls = v.showPagingControls ?? true;
-      return v;
-    }
-  });
+  public readonly pageable = input(false, { transform: booleanAttribute });
 
   /**
    * The currently selected page in the table.
+   * @default 0
    */
-  public readonly pageIndex = input(0, { transform: numberAttribute });
+  public readonly pageIndex = model(0);
 
   /**
    * The number of records to display per page.
+   * @default 10
    */
-  public readonly pageSize = input(10, { transform: numberAttribute });
+  public readonly pageSize = model(10);
 
   /**
    * Maximum number of visible pages in the pagination controls.
-   * Default is 10.
+   * @default 10
    */
   public readonly maxVisiblePages = input(10, { transform: numberAttribute });
 
@@ -124,13 +108,39 @@ export class TableComponent implements AfterContentInit, OnDestroy {
   public readonly showPagingControls = input(true, { transform: booleanAttribute });
 
   /**
+   * Whether to show the first and last buttons in the pagination controls.
+   * @default true
+   */
+  public readonly showFirstLastButtons = input(false, { transform: booleanAttribute });
+
+  /**
+   * Whetheer to show the next and previous buttons in the pagination controls.
+   * @default true
+   */
+  public readonly showNextPreviousButtons = input(false, { transform: booleanAttribute });
+
+  /**
+   * Array of page size options to display in the page size selector.
+   * If not provided, the default page size options will be used.
+   * @default true
+   */
+  public readonly pageSizeOptions = input<number[] | undefined>([10, 25, 50, 100]);
+
+  /**
+   * Whether to show paging info at the bottom of the table.
+   * This will show the number of records displayed and total records.
+   * @default true
+   */
+  public readonly showPagingInfo = input(true, { transform: booleanAttribute });
+
+  /**
    * If true, the table will support sorting.
    * This will add a sort icon to each column header.
    */
   public readonly sortable = input(true, { transform: booleanAttribute });
 
   /**
-   * The CSS class to apply to the table element.
+   * The CSS class to apply to the internal table element.
    * This can be used to apply custom styles to the table.
    */
   public readonly tableClass = input<string | string[]>();
@@ -196,13 +206,15 @@ export class TableComponent implements AfterContentInit, OnDestroy {
     // });
 
     if (this.autoLoad()) {
-      this.load(this.pageable()?.pageIndex);
+      this.load();
     }
   }
 
   /**
-   * Load data for the specified page index (optional).
-   * @param pageIndex The page index to load.
+   * Loads data from the data source based on the current state of the table (pagination, sorting, filtering).
+   * This method can be called manually to refresh the data in the table.
+   * It will construct a DataRequest object based on the current pagination, sorting, and filtering settings,
+   * and then call the load method of the data source with that request.
    */
   public load(pageIndex?: number) {
     let page: DataRequestPage | undefined;
@@ -218,9 +230,13 @@ export class TableComponent implements AfterContentInit, OnDestroy {
     }
 
     if (this.pageable()) {
+      if (pageIndex != undefined) {
+        this.pageIndex.set(pageIndex);
+      }
+
       page = {
-        index: pageIndex || this._lastRequest?.page?.index || 0,
-        size: this._lastRequest?.page?.size || 10,
+        index: this.pageIndex(),
+        size: this.pageSize(),
       };
     }
 
