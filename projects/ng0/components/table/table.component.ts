@@ -11,6 +11,7 @@ import { DataRequest, DataRequestFilter, DataRequestPage, DataRequestSort, DataR
 import { PaginationComponent } from '@bootkit/ng0/components/pagination';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { NumberDirective } from '@bootkit/ng0/form';
+import { ItemSelectEvent, SelectComponent } from '@bootkit/ng0/components/select';
 
 /**
  * A generic table component that can display data in a tabular format.
@@ -30,7 +31,8 @@ import { NumberDirective } from '@bootkit/ng0/form';
     LocalizationModule,
     PaginationComponent,
     NumberDirective,
-    OverlayModule
+    OverlayModule,
+    SelectComponent
   ]
 })
 export class TableComponent implements AfterContentInit, OnDestroy {
@@ -45,20 +47,18 @@ export class TableComponent implements AfterContentInit, OnDestroy {
   protected _detailRow?: TableDetailRowDirective;
 
   protected readonly _dataResult = signal<DataResult | undefined>(undefined);
-  protected _lastRequest?: DataRequest; // The last data request made to the data source
-  protected _loadingRequest?: DataRequest; // The current data request being processed
+  protected readonly _error = signal(undefined);
   protected _rowStates = new Map<any, { expanded: boolean }>();
   protected _formatString = formatString;
-  protected _dataSource!: DataSource;
   protected _pagingFormatter!: TableComponentPagingFormatter;
-  protected _lastError?: any;
+
 
   /**
    * The data source for the table.
    * This can be an array of data, a function that returns an observable of data,
    * or an instance of DataSource.
    */
-  public readonly source = input.required<DataSourceLike<any>>();
+  public readonly source = input.required<DataSource<any>, DataSourceLike<any>>({ transform: dataSourceAttribute });
 
   /**
    * If true, the table will automatically load data when initialized.
@@ -170,33 +170,16 @@ export class TableComponent implements AfterContentInit, OnDestroy {
   /**
    * The indicator to show while the table is loading data for the first time.
    */
-  public readonly loadingIndicator = input<'none' | 'simple' | 'spinner', boolean | 'none' | 'simple' | 'spinner'>('spinner', {
-    transform: v => {
-      if (typeof v === 'boolean') {
-        return v ? 'spinner' : 'none';
-      }
-      return v;
-    }
-  });
+  public readonly loadingIndicator = input<'none' | 'simple' | 'spinner'>('spinner');
 
   /** If true, the table will show a loading cover while data is being loaded.
    * This can be used to prevent user interaction with the table while loading.
    * This cover is not displayed when the table is loading for the first time.
    * Instead, the table will show a loading based on loadingIndicator settings.
    */
-  public readonly loadingCover = input<'none' | 'simple' | 'spinner', boolean | 'none' | 'simple' | 'spinner'>('spinner', {
-    transform: v => {
-      if (typeof v === 'boolean') {
-        return v ? 'spinner' : 'none';
-      }
-      return v;
-    }
-  });
-
-  // @Input() rowColor?: (row: any) => BootstrapColor;
+  public readonly loadingCover = input<'none' | 'simple' | 'spinner'>('spinner');
 
   ngAfterContentInit(): void {
-    this._dataSource = dataSourceAttribute(this.source());
     const locale = this._ls.get();
     this._pagingFormatter = locale?.definition.components?.table?.pagingInfo ??
       ((o) => `Showing ${o.firstRecord}-${o.lastRecord} of ${o.totalRecords} records`);
@@ -217,8 +200,8 @@ export class TableComponent implements AfterContentInit, OnDestroy {
    * and then call the load method of the data source with that request.
    */
   public load(pageIndex?: number) {
-    let page: DataRequestPage | undefined;
     let filters: DataRequestFilter[] = [];
+    let page: DataRequestPage | undefined;
     let sort: DataRequestSort | undefined;
 
     if (this.filterable()) {
@@ -250,19 +233,15 @@ export class TableComponent implements AfterContentInit, OnDestroy {
       }
     }
 
-    this._loadingRequest = new DataRequest({ page, filters, sort, select: [], computeTotal: true });
+    var request = new DataRequest({ page, filters, sort, select: [], computeTotal: true });
 
-    this._dataSource.load(this._loadingRequest)
+    this.source().load(request)
       .pipe(takeUntilDestroyed(this._destroyRef)).subscribe({
         next: result => {
           this._dataResult.set(result);
-          this._lastRequest = this._loadingRequest;
-          this._loadingRequest = undefined;
-          this._lastError = undefined;
+          this._error.set(undefined);
         }, error: err => {
-          this._lastError = err;
-          this._lastRequest = this._loadingRequest;
-          this._loadingRequest = undefined;
+          this._error.set(err);
         }
       });
   }
@@ -272,7 +251,7 @@ export class TableComponent implements AfterContentInit, OnDestroy {
    */
   @HostBinding('class.ng0-loading')
   public get isLoading() {
-    return this._dataSource.isLoading;
+    return this.source().isLoading;
   }
 
   protected _getCellValue(row: any, col: TableColumnDirective) {
@@ -316,6 +295,11 @@ export class TableComponent implements AfterContentInit, OnDestroy {
   protected _onSelectFilterOperator(col: TableColumnDirective, filterOperator: string) {
     col.filterOperator.set(filterOperator);
     this._columns.forEach(x => x.showFilterOperators.set(false));
+    this.load(0);
+  }
+
+  _onPageSizeOptionsItemSelect(e: ItemSelectEvent) {
+    this.pageSize.set(e.value);
     this.load(0);
   }
 

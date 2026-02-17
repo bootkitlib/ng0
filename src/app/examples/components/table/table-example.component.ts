@@ -1,10 +1,10 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, isPlatformServer } from '@angular/common';
+import { Component, inject, PLATFORM_ID } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { TableModule } from '@bootkit/ng0/components/table';
-import { LocalDataSource, RemoteDataSource, DataLoader, DataRequest, DataResult, DataSourceLike } from '@bootkit/ng0/data';
+import { DataLoader, DataRequest, DataResult, LocalDataSource } from '@bootkit/ng0/data';
 import { HttpService } from '@bootkit/ng0/http';
-import { delay, map, of } from 'rxjs';
+import { delay, of } from 'rxjs';
 import { Array1, Array2 } from './data';
 
 interface ProductDataResult {
@@ -25,8 +25,14 @@ interface ProductDataResult {
     ],
 })
 export class DataTableExampleComponent {
-    source1: DataSourceLike = Array1;
-    source2: DataSourceLike<any> = req => this.httpService.getDataResult('products', req);
+    _platformId = inject(PLATFORM_ID);
+    _isServer = isPlatformServer(this._platformId);
+    _delay = this._isServer ? 0 : 100; // No delay on server to speed up SSR rendering.
+
+    array1 = Array1;
+    dataLoader1: DataLoader = (req: DataRequest) =>
+        new LocalDataSource(Array2).load(req).pipe(delay(this._delay));
+
     // source3 = new ArrayDataSource(Array2);
 
     constructor(private httpService: HttpService) {

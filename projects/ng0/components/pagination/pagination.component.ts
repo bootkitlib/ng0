@@ -1,7 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectionStrategy, input, computed, Output, EventEmitter } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, computed, Output, EventEmitter, booleanAttribute, numberAttribute } from '@angular/core';
 import { TranslatePipe } from '@bootkit/ng0/localization';
 
+/**
+ * Pagination component for displaying page numbers and navigation controls.
+ * It calculates the total number of pages based on the total records and page size,
+ * and determines which page numbers to display based on the selected page and maximum visible pages.
+ */
 @Component({
   selector: 'ng0-pagination',
   exportAs: 'ng0Pagination',
@@ -17,35 +22,37 @@ export class PaginationComponent {
   /**
    * Total number of records.
    */
-  public readonly totalRecords = input.required<number>();
+  public readonly totalRecords = input.required({ transform: numberAttribute });
 
   /**
    * Page size. Number of items in each page.
+   * @default 10
    */
-  public readonly pageSize = input<number>(10);
+  public readonly pageSize = input(10, { transform: numberAttribute });
 
   /** 
    * Zero-based index of the selected page.
+   * @default 0
    */
-  public readonly selectedPage = input<number>(0);
+  public readonly selectedPage = input(0, { transform: numberAttribute });
 
   /**
    * Maximum number of visible pages.
-   * Default is 10.
+   * @default 10
    */
-  public readonly maxVisiblePages = input<number>(10);
+  public readonly maxVisiblePages = input(10, { transform: numberAttribute });
 
   /**
    * Show first and last buttons.
-   * Default is true.
+   * @default true
    */
-  public readonly showNextPreviousButtons = input<boolean | undefined>(true);
+  public readonly showNextPreviousButtons = input(true, { transform: booleanAttribute });
 
   /**
    * Show first and last buttons.
-   * Default is true.
+   * @default true
    */
-  public readonly showFirstLastButtons = input<boolean | undefined>(true);
+  public readonly showFirstLastButtons = input(true, { transform: booleanAttribute });
 
   /**
    * Total number of pages.
@@ -105,11 +112,4 @@ export class PaginationComponent {
 
     return indices;
   });
-
-  public _onPageChange(pageIndex: number) {
-    debugger
-    console.log('click')
-    this.itemClick.emit(pageIndex);
-  }
-
 }

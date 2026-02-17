@@ -7,7 +7,6 @@
 @let $totalRecordsCount = $dataResult?.total;
 @let $firstRecordIndex = $pageable ? ($pageSize * $pageIndex) : 0;
 @let $lastRecordIndex = $data ? $firstRecordIndex + $data.length - 1 : 1;
-@let $isLoading = _dataSource.isLoading();
 @let $isFirstLoad = $dataResult == undefined;
 @let $columnsCount = _columns.length + (showRowNumbers() ? 1 : 0);
 @let $tableLocale = _ls.get()?.definition?.components?.table;
@@ -27,7 +26,7 @@
     }
 
     <tbody>
-      @if ($isLoading && $isFirstLoad && loadingIndicator()) {
+      @if (isLoading() && $isFirstLoad && loadingIndicator()) {
       <tr class="ng0-table-loading-row">
         <td [attr.colspan]="$columnsCount">
           @switch (loadingIndicator()) {
@@ -50,7 +49,7 @@
         </td>
       </tr>
       }
-      } @else if (_lastError) {
+      } @else if (_error()) {
       <ng-container *ngTemplateOutlet="nowDataTemplate"></ng-container>
       }
       }
@@ -62,7 +61,7 @@
   <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
 </div>
 
-@if ($isLoading && !$isFirstLoad && loadingCover()) {
+@if (isLoading() && !$isFirstLoad && loadingCover()) {
 <div class="ng0-table-loading-cover text-center">
   @if (loadingCover() == 'spinner') {
   <div class="spinner-border" role="status"></div>
@@ -293,9 +292,10 @@
 
   @if (pageSizeOptions()) {
   <div class="ng0-table-paging-options">
-    <select name="pageSizeOptions" class="form-select w-auto d-inline-block">
+    <ng0-select [source]="pageSizeOptions()" (itemSelect)="_onPageSizeOptionsItemSelect($event)"></ng0-select>
+    <!-- <select name="pageSizeOptions" class="form-select w-auto d-inline-block">
       <option [ngValue]="10" selected>10</option>
-    </select>
+    </select> -->
   </div>
   }
 
@@ -303,7 +303,8 @@
   <div class="ng0-table-paging-info ms-auto">
     <ng-content select="paging-info">
       {{
-      _pagingFormatter({firstRecord: $firstRecordIndex, lastRecord: $lastRecordIndex, totalRecords: $totalRecordsCount!,
+      _pagingFormatter({firstRecord: $firstRecordIndex + 1, lastRecord: $lastRecordIndex + 1, totalRecords:
+      $totalRecordsCount!,
       currentPage: $pageIndex!})
       }}
     </ng-content>
