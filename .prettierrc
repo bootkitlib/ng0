@@ -1,9 +1,11 @@
 {
   "printWidth": 100,
+  "tabWidth": 4,
   "singleQuote": true,
   "trailingComma": "all",
   "quoteProps": "preserve",
   "bracketSpacing": false,
+  "bracketSameLine": true,
   "arrowParens": "avoid",
   "embeddedLanguageFormatting": "off",
   "overrides": [
@@ -13,4 +15,5 @@
         "parser": "angular"
       }
     }
-  ]}
+  ]
+}

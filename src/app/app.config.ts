@@ -8,6 +8,7 @@ import { DataResult } from '@bootkit/ng0/data';
 import { LocalizationService } from '@bootkit/ng0/localization';
 import { APP_FA_IR_LOCALE } from './common/locales/fa-ir';
 import { provideClientHydration } from '@angular/platform-browser';
+import { APP_EN_US_LOCALE } from './common/locales/en-us';
 
 const appHttpDataRequestResolver: HttpDataRequestResolver = (url, request, options) => {
   let http = inject(HttpClient);
@@ -31,7 +32,7 @@ export const appConfig: ApplicationConfig = {
     provideClientHydration(),
     provideHttpClient(),
     provideHttpService({
-      baseUrl: 'https://dummyjson.com/',
+      baseUrl: '',
       dataRequestResolver: appHttpDataRequestResolver,
     }),
     // { provide: NZ_I18N, useValue: en_US },
@@ -39,7 +40,7 @@ export const appConfig: ApplicationConfig = {
     // { provide: APP_CONFIGURATION, useValue: APP_CONFIGS },
     provideAppInitializer(() => {
       var localizationService = inject(LocalizationService);
-      localizationService.add(APP_FA_IR_LOCALE);
+      localizationService.add(APP_EN_US_LOCALE);
     }),
   ]
 };

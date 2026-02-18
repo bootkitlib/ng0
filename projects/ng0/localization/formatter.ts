@@ -26,11 +26,27 @@ export function defaultFormatter(obj: any): string {
 
 /**
  * Creates a field formatter that retrieves the value of a specified field from an object.
- * @param field The field name to retrieve.
+ * @param field The field name to retrieve. Supports nested fields using dot notation (e.g., "user.name").
  * @returns An ObjectFormatter function.
  */
 export function createFieldFormatter(field: string): ObjectFormatter {
-    return (obj: any) => obj?.[field];
+    var subFields = field.split('.');
+    // let value = row[subFields[0]];
+    // for (let i = 1; i < subFields.length; i++) {
+    //   if (value == null) break;
+    //   value = value[subFields[i]];
+    // }
+
+    // return value;
+
+    return (obj: any) => {
+        let value = obj?.[subFields[0]];
+        for (let i = 1; i < subFields.length; i++) {
+            if (value == null) break;
+            value = value?.[subFields[i]];
+        }
+        return value;
+    }
 }
 
 /**
@@ -95,28 +111,28 @@ export function createDateFormatter(
 ): ObjectFormatter;
 export function createDateFormatter(options?: Intl.DateTimeFormatOptions): ObjectFormatter;
 export function createDateFormatter(options?: any): ObjectFormatter {
+    const locale = inject(LocalizationService, { optional: true })?.get();
     let intlOptions: Intl.DateTimeFormatOptions;
 
-    if (options && (typeof options === 'object')) {
-        intlOptions = options;
+    if (arguments.length == 0 || (typeof arguments[0] == 'object')) {
+        intlOptions = { ...locale?.definition.intl?.date, ...options };
     } else {
         intlOptions = {
             dateStyle: arguments[0],
             timeStyle: arguments[1],
             timeZone: arguments[2]?.[0],
             timeZoneName: arguments[2]?.[1],
-            calendar: arguments[3]
+            calendar: arguments[3],
         }
     }
 
-    const locale = inject(LocalizationService, { optional: true })?.get();
     let intlFormatter: Intl.DateTimeFormat;
 
     try {
         intlFormatter = new Intl.DateTimeFormat(locale?.name, intlOptions as Intl.DateTimeFormatOptions);
         return (d: string | number | Date) => intlFormatter.format(new Date(d));
     } catch (err) {
-        console.warn('Invalid date format options:', intlOptions, err);
+        console.warn('Date formatter options are invalid. A fallback formatter will be used.', intlOptions, err);
         // Return a fallback formatter
         return (d: string | number | Date) => new Date(d).toLocaleString()
     }
@@ -161,10 +177,19 @@ export function createLocaleFormatter(formatterName: string): ObjectFormatter {
  * @returns An ObjectFormatter function.
  */
 export function createCompositeFormatter(...formatters: ObjectFormatterLike[]): ObjectFormatter {
+    if (!Array.isArray(formatters) || formatters.length == 0) {
+        throw Error('Composite formatter requires a non-empty array of formatters');
+    }
+
     const formattersFuncs = formatters.map(item => createObjectFormatter(item as any));
-    return (obj: any) => formattersFuncs.reduce(
-        (previous, current, index) => index == 0 ? current(obj) : current(previous)
-    );
+
+    return (obj: any) => {
+        let result = formattersFuncs[0](obj);
+        for (let index = 1; index < formatters.length; index++) {
+            result = formattersFuncs[index](result);
+        }
+        return result;
+    }
 }
 
 /**
@@ -195,10 +220,12 @@ export function createObjectFormatter(formatter: ObjectFormatterLike, ...params:
             }
         case 'object':
             if (Array.isArray(formatter) && formatter.length > 0) {
-                if (formatter[0] == 'C') {
-                    return createCompositeFormatter(formatter.slice(1))
+                const formatterSymbols = ['#', '$', '@', '*'];
+
+                if (formatterSymbols.includes(formatter[0])) {
+                    return createObjectFormatter(formatter[0], ...formatter.slice(1));
                 } else {
-                    return createObjectFormatter(formatter[0] as string, ...formatter.slice(1));
+                    return createCompositeFormatter(...formatter)
                 }
             }
             break;

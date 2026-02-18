@@ -49,6 +49,11 @@ export interface LocaleDefinition {
   /** Does this locale belongs to a RTL language */
   readonly rtl?: boolean;
 
+  /** Intl API default options */
+  intl?: {
+    date?: Intl.DateTimeFormatOptions
+  }
+
   /** Locale dictionary */
   dictionary?: LocaleDictionary;
   enums?: LocaleEnums,

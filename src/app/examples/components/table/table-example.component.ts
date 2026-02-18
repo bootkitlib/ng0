@@ -6,6 +6,7 @@ import { DataLoader, DataRequest, DataResult, LocalDataSource } from '@bootkit/n
 import { HttpService } from '@bootkit/ng0/http';
 import { delay, of } from 'rxjs';
 import { Array1, Array2 } from './data';
+import { Sexuality } from 'src/app/common/enums';
 
 interface ProductDataResult {
     products: any[];
@@ -27,8 +28,9 @@ interface ProductDataResult {
 export class DataTableExampleComponent {
     _platformId = inject(PLATFORM_ID);
     _isServer = isPlatformServer(this._platformId);
-    _delay = this._isServer ? 0 : 100; // No delay on server to speed up SSR rendering.
+    _delay = this._isServer ? 0 : 1000; // No delay on server to speed up SSR rendering.
 
+    Sexuality = Sexuality;
     array1 = Array1;
     dataLoader1: DataLoader = (req: DataRequest) =>
         new LocalDataSource(Array2).load(req).pipe(delay(this._delay));

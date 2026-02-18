@@ -2,14 +2,15 @@ import { Component, ElementRef, Renderer2, input, signal, model, HostListener, i
 import { CommonModule } from '@angular/common';
 import { dataSourceAttribute, DataSource, DataSourceLike, DataRequest } from '@bootkit/ng0/data';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, ViewportRuler } from '@angular/cdk/overlay';
+import { ConnectedPosition, FlexibleConnectedPositionStrategy, Overlay, OverlayModule, ScrollStrategy, STANDARD_DROPDOWN_BELOW_POSITIONS, ViewportRuler } from '@angular/cdk/overlay';
 import { Subscription } from 'rxjs';
-import { objectFormatterAttribute, defaultFormatter, LocalizationService } from '@bootkit/ng0/localization';
+import { objectFormatterAttribute, defaultFormatter } from '@bootkit/ng0/localization';
 import { ListComponent, ListModule, ListItemSelectEvent } from '@bootkit/ng0/components/list';
 import {
     CssClassAttribute, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter,
     IdGeneratorAttribute, defaultFilter, filterPredicateAttribute
 } from '@bootkit/ng0/common';
+import { getConnectedPositions } from '../overlay';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
@@ -48,10 +49,9 @@ export class SelectComponent implements ControlValueAccessor {
     protected readonly _sourceItems = signal<any[] | undefined>(undefined);
     protected readonly _selectedItems = new Set<any>();
     protected readonly _isDisabled = signal<boolean>(false);
-    protected _positionStrategy!: FlexibleConnectedPositionStrategy;
     protected _scrollStrategy!: ScrollStrategy;
+    protected _positions: ConnectedPosition[];
     private readonly _overlay = inject(Overlay);
-    private readonly _localizationService = inject(LocalizationService);
     protected readonly _elementRef = inject(ElementRef<HTMLDivElement>);
     protected readonly _filterValue = signal('');
     private readonly _renderer = inject(Renderer2);
@@ -157,6 +157,8 @@ export class SelectComponent implements ControlValueAccessor {
     constructor() {
         ['form-select'].forEach(c => this._renderer.addClass(this._elementRef.nativeElement, c));
         this._scrollStrategy = this._overlay.scrollStrategies.block();
+        this._positions = STANDARD_DROPDOWN_BELOW_POSITIONS;
+        // this._positions = getConnectedPositions('bottom', 'start', true);
 
         effect(() => {
             let source = this.source();

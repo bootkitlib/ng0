@@ -62,11 +62,11 @@ export interface TablePagingOptions {
 }
 
 /** 
- * Type of the table cell.
+ * Type of the table column.
  * This can be a primitive type like 'number', 'currency', 'date', 'time',
  * or an object with specific formatting options.
  */
-export type TableCellType = 'text' | 'number' | 'currency' | 'date' | 'time' | {
+export type TableColumnType = 'text' | 'number' | 'currency' | 'date' | 'time' | {
 
     /** Enum formatting options */
     enum?: {

@@ -3,8 +3,14 @@ import { Locale } from '@bootkit/ng0/localization';
 const formatNumber = (n: number) => n.toLocaleString();
 
 export const EN_US_LOCALE = new Locale({
-    name: 'en-US',
+    name: 'en',
     rtl: false,
+    intl: {
+        date: {
+            year: 'numeric',
+            calendar: 'persian'
+        }
+    },
     dictionary: {
         ok: 'Ok',
         cancel: 'Cancel',

@@ -1,5 +1,6 @@
 <p>
-    Formatters are used to format data for display purposes, such as dates, numbers, and currencies.<br>
+    Formatters are used to format data for display purposes, such as dates, numbers, and
+    currencies.<br />
     You can use built-in formatters or create your own custom formatters.
 </p>
 
@@ -11,123 +12,167 @@
             <div class="card-body">
                 <h4 class="card-title">Date formatter</h4>
                 <p>
-                    Date formatter formats date values for display purposes.<br>
-                    A date formatter accepts dates of type Date, number (timestamp), or string (ISO 8601 date
-                    string).<br>
+                    Date formatter formats date values for display purposes.<br />
+                    A date formatter accepts dates of type Date, number (timestamp), or string (ISO
+                    8601 date string).<br />
                 </p>
 
                 <ol>
                     <li>
-                        Using predefined styles for date and time:<br>
+                        Using predefined styles for date and time:<br />
 
-                        <mark>['@', dateStyle?: string , timeStyle?: string, zone?: [name, display?], calendar?:
-                            string]</mark>
+                        <mark
+                            >['@', dateStyle?: string , timeStyle?: string, zone?: [name, display?],
+                            calendar?: string]</mark
+                        >
                         <ul>
+                            <li>dateStyle: 'short' | 'medium' | 'long' | 'full',</li>
+                            <li>timeStyle: 'short' | 'medium' | 'long' | 'full',</li>
+                            <li>zone: [name: string, display: string],</li>
                             <li>
-                                dateStyle: 'short' | 'medium' | 'long' | 'full',
-                            </li>
-                            <li>
-                                timeStyle: 'short' | 'medium' | 'long' | 'full',
-                            </li>
-                            <li>
-                                zone: [name: string, display: string],
-                            </li>
-                            <li>
-                                calendar: string. <br>
+                                calendar: string. <br />
                                 The calendar to use, such as "chinese", "gregory", "persian",
                             </li>
                         </ul>
-
                     </li>
                     <li>
-                        Using custom Intl.DateTimeFormatOptions to specify detailed formatting options.<br>
+                        Using custom Intl.DateTimeFormatOptions to specify detailed formatting
+                        options.<br />
 
                         <mark>['@', {{"{"}} ...Intl.DateTimeFormatOptions {{"}"}}]</mark>
                     </li>
                 </ol>
             </div>
             <div class="card-footer">
-                <h6 class="card-title">Date</h6>
-                <p>
-                    To display only the date, you can provide the dateStyle parameter.<br>
-                </p>
+                <h6 class="card-title">Date only</h6>
+                <p>To display only the date, you can provide the dateStyle parameter.<br /></p>
 
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: "@"<br>
-                        <span class="text-info">Formatted Value = {{examples.date.value1 | ng0Format: "@"}}</span>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: "@"<br />
+                        <span class="text-info"
+                            >Formatted Value = {{examples.date.value1 | ng0Format: "@"}}</span
+                        >
                     </div>
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', 'short'] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', 'short'] <br />
                         <span class="text-info">
                             Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'short']}}
                         </span>
                     </div>
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', 'medium'] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', 'medium'] <br />
                         <span class="text-info">
                             Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'medium']}}
                         </span>
                     </div>
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', 'long'] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', 'long'] <br />
                         <span class="text-info">
                             Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'long']}}
                         </span>
                     </div>
+
+                    <div class="col-xl-6">
+                        Numeric value (Epoch) = {{examples.date.value2 | json}} <br />
+                        Formatter: ['@'] <br />
+                        <span class="text-info">
+                            {{examples.date.value2 | ng0Format: ['@']}}
+                        </span>
+                    </div>
                 </div>
             </div>
+
+            <div class="card-footer">
+                <h6 class="card-title">Time only</h6>
+                <p>
+                    To display only the time, set dateStyle parameter to undefined and provide a
+                    timeStyle parameter.
+                </p>
+
+                <div class="row g-4">
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', undefined, 'short'] <br />
+                        <span class="text-info">
+                            Formatted Value =
+                            {{examples.date.value1 | ng0Format: ['@', undefined, 'short']}}
+                        </span>
+                    </div>
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@',undefined, 'medium'] <br />
+                        <span class="text-info">
+                            Formatted Value =
+                            {{examples.date.value1 | ng0Format: ['@', undefined, 'medium']}}
+                        </span>
+                    </div>
+                    <div class="col-xl-6">
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@',undefined, 'long'] <br />
+                        <span class="text-info">
+                            Formatted Value =
+                            {{examples.date.value1 | ng0Format: ['@',undefined, 'long']}}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
             <div class="card-footer">
                 <h6 class="card-title">Date and time</h6>
 
                 <p>
-                    To display both date and time, you can provide additional parameters to customize the date
-                    formatting.<br>
+                    To display both date and time, you can provide additional parameters to
+                    customize the date formatting.<br />
                 </p>
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', 'short', 'short'] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', 'short', 'short'] <br />
                         <span class="text-info">
-                            Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'short', 'short']}}
+                            Formatted Value =
+                            {{examples.date.value1 | ng0Format: ['@', 'short', 'short']}}
                         </span>
                     </div>
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', 'short', 'medium'] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', 'short', 'medium'] <br />
                         <span class="text-info">
-                            Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'short', 'medium']}}</span>
+                            Formatted Value =
+                            {{examples.date.value1 | ng0Format: ['@', 'short', 'medium']}}</span
+                        >
                     </div>
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', 'short', 'long'] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', 'short', 'long'] <br />
                         <span class="text-info">
-                            Formatted Value = {{examples.date.value1 | ng0Format: ['@', 'short', 'long']}}</span>
+                            Formatted Value =
+                            {{examples.date.value1 | ng0Format: ['@', 'short', 'long']}}</span
+                        >
                     </div>
                 </div>
             </div>
 
             <div class="card-footer">
                 <h6 class="card-title">Time zone</h6>
-                <p>
-                    You can specify the time zone to format the date and time accordingly.<br>
-                </p>
+                <p>You can specify the time zone to format the date and time accordingly.<br /></p>
 
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', undefined, undefined, ['Asia/Tehran', 'long' ]] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', undefined, undefined, ['Asia/Tehran', 'long' ]] <br />
                         <span class="text-info">
                             {{examples.date.value1 | ng0Format: ['@', undefined, undefined, ['Asia/Tehran', 'long' ]]}}
                         </span>
                     </div>
+
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', undefined, undefined, ['America/New_York', 'long' ]] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', undefined, undefined, ['America/New_York', 'long' ]] <br />
                         <span class="text-info">
                             {{examples.date.value1 | ng0Format: ['@', undefined, undefined, ['America/New_York', 'long'
                             ]]}}
@@ -138,22 +183,20 @@
 
             <div class="card-footer">
                 <h6 class="card-title">Calendar</h6>
-                <p>
-                    You can specify the calendar system to format the date accordingly.<br>
-                </p>
+                <p>You can specify the calendar system to format the date accordingly.<br /></p>
 
                 <div class="row g-4">
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', 'medium', 'long', 'medium', 'gregory'] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', 'medium', 'long', 'medium', 'gregory'] <br />
                         <span class="text-info d-inline-block" style="direction: rtl;">
                             {{examples.date.value1 | ng0Format: ['@', 'long', 'medium', undefined, 'gregory']}}
                         </span>
                     </div>
 
                     <div class="col-xl-6">
-                        Value = {{examples.date.value1 | json}} <br>
-                        Formatter: ['@', 'medium', 'long', 'medium', 'persian'] <br>
+                        Value = {{examples.date.value1 | json}} <br />
+                        Formatter: ['@', 'medium', 'long', 'medium', 'persian'] <br />
                         <span class="text-info d-inline-block" style="direction: rtl;">
                             {{examples.date.value1 | ng0Format: ['@', 'long', 'medium', undefined, 'persian']}}
                         </span>
@@ -167,20 +210,20 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title">Number formatter</h4>
-                <p>
-                    Number formatter formats numeric values for display purposes.<br>
-                </p>
+                <p>Number formatter formats numeric values for display purposes.<br /></p>
 
                 <div class="row">
                     <div class="col-xl-4">
-                        Value = {{123456789 | json}} <br>
-                        Formatter: '#'<br>
+                        Value = {{123456789 | json}} <br />
+                        Formatter: '#'<br />
                         <span class="text-info">Formatted Value = {{123456 | ng0Format: '#'}}</span>
                     </div>
                     <div class="col-xl-4">
-                        Value = {{12345.12 | json}} <br>
-                        Formatter: '#' <br>
-                        <span class="text-info">Formatted Value = {{12345.12 | ng0Format: '#'}}</span>
+                        Value = {{12345.12 | json}} <br />
+                        Formatter: '#' <br />
+                        <span class="text-info"
+                            >Formatted Value = {{12345.12 | ng0Format: '#'}}</span
+                        >
                     </div>
                 </div>
             </div>
@@ -188,8 +231,9 @@
             <div class="card-footer">
                 <h6>Use with parameters:</h6>
                 <p>
-                    You can provide additional parameters to customize the number formatting.<br>
-                    Create an array with the formatter name as the first element, followed by the parameters.<br>
+                    You can provide additional parameters to customize the number formatting.<br />
+                    Create an array with the formatter name as the first element, followed by the
+                    parameters.<br />
                 </p>
 
                 <div class="text-danger my-3">
@@ -198,26 +242,36 @@
 
                 <div class="row g-4">
                     <div class="col-xl-4">
-                        Value = {{0 | json}} <br>
-                        Formatter: ['#', 5, 2] <br>
-                        <span class="text-info">Formatted Value = {{0 | ng0Format: ['#', 5, 2]}}</span>
+                        Value = {{0 | json}} <br />
+                        Formatter: ['#', 5, 2] <br />
+                        <span class="text-info"
+                            >Formatted Value = {{0 | ng0Format: ['#', 5, 2]}}</span
+                        >
                     </div>
                     <div class="col-xl-4">
-                        Value = {{-1.5 | json}} <br>
-                        Formatter: ['#', 2, 3] <br>
-                        <span class="text-info">Formatted Value = {{-1.5 | ng0Format: ['#', 3, 3]}}</span>
+                        Value = {{-1.5 | json}} <br />
+                        Formatter: ['#', 2, 3] <br />
+                        <span class="text-info"
+                            >Formatted Value = {{-1.5 | ng0Format: ['#', 3, 3]}}</span
+                        >
                     </div>
                     <div class="col-xl-4">
-                        Value = {{-1.123456789 | json}} <br>
-                        Formatter: ['#', 2, undefined, 5] <br>
-                        <span class="text-info">Formatted Value = {{-1.123456789 | ng0Format: ['#', 2, undefined,
-                            5]}}</span>
+                        Value = {{-1.123456789 | json}} <br />
+                        Formatter: ['#', 2, undefined, 5] <br />
+                        <span class="text-info"
+                            >Formatted Value =
+                            {{-1.123456789 | ng0Format: ['#', 2, undefined,
+                            5]}}</span
+                        >
                     </div>
                     <div class="col-xl-4">
-                        Value = {{12345678.123456789 | json}} <br>
-                        Formatter: ['#', 2, 3, undefined, false] <br>
-                        <span class="text-info">Formatted Value = {{ 12345678.0 | ng0Format: ['#', 2, 3, undefined,
-                            false] }}</span>
+                        Value = {{12345678.123456789 | json}} <br />
+                        Formatter: ['#', 2, 3, undefined, false] <br />
+                        <span class="text-info"
+                            >Formatted Value =
+                            {{ 12345678.0 | ng0Format: ['#', 2, 3, undefined,
+                            false] }}</span
+                        >
                     </div>
                 </div>
             </div>
@@ -229,12 +283,13 @@
             <div class="card-body">
                 <h4 class="card-title">Field formatter</h4>
                 <p>
-                    A field formatter formats an object by extracting a specific field from it.<br>
-                    This example shows how to use a formatter to display the 'name' field of an object.
+                    A field formatter formats an object by extracting a specific field from it.<br />
+                    This example shows how to use a formatter to display the 'name' field of an
+                    object.
                 </p>
 
-                Value = {{object1 | json}} <br>
-                Formatter = 'name' <br>
+                Value = {{object1 | json}} <br />
+                Formatter = 'name' <br />
 
                 <span class="text-info">
                     Formatted Value = {{object1 | ng0Format:'name' | json}}
@@ -248,12 +303,14 @@
             <div class="card-body">
                 <h4 class="card-title">Array index formatter</h4>
                 <p>
-                    An array index formatter formats an array by extracting the element at a specific index.<br>
-                    This example shows how to use a formatter to display the element at index 1 of an array.
+                    An array index formatter formats an array by extracting the element at a
+                    specific index.<br />
+                    This example shows how to use a formatter to display the element at index 1 of
+                    an array.
                 </p>
 
-                Value = {{examples.indexFormatter.value | json}} <br>
-                Formatter: 2 <br>
+                Value = {{examples.indexFormatter.value | json}} <br />
+                Formatter: 2 <br />
 
                 <span class="text-info">
                     Formatted Value = {{examples.indexFormatter.value | ng0Format: 2}}
@@ -267,7 +324,7 @@
             <div class="card-body">
                 <h4 class="card-title">Currency formatter</h4>
                 <p>
-                    Currency formatter formats numeric values as currency for display purposes.<br>
+                    Currency formatter formats numeric values as currency for display purposes.<br />
                 </p>
 
                 Not implemented!
@@ -280,19 +337,18 @@
             <div class="card-body">
                 <h4 class="card-title">Locale Formatters</h4>
                 <p>
-                    A locale formatter formats a value into a human-readable string based on the app Locale.<br>
-                    A Locale formatter starts with the <mark class="fw-bold">*</mark> character followed by
-                    the formatter name.<br>
-                    This example shows how to use locale formatters to format enums.
-                    .<br>
+                    A locale formatter formats a value into a human-readable string based on the app
+                    Locale.<br />
+                    A Locale formatter starts with the <mark class="fw-bold">*</mark> character
+                    followed by the formatter name.<br />
+                    This example shows how to use locale formatters to format enums. .<br />
                 </p>
-
             </div>
 
             <div class="card-footer">
                 <h6>Formatting Enums</h6>
-                Value = {{examples.enumFormatter.value | json}} <br>
-                Formatter = "*SexualityEnum" <br>
+                Value = {{examples.enumFormatter.value | json}} <br />
+                Formatter = "*SexualityEnum" <br />
 
                 <span class="text-info">
                     Formatted Value = {{examples.enumFormatter.value | ng0Format: "*SexualityEnum"}}
@@ -306,16 +362,16 @@
             <div class="card-body">
                 <h4 class="card-title">Composite formatters</h4>
                 <p>
-                    A Composite formatter is a series of formatters that are applied sequentially to transform data
-                    through multiple stages.<br>
-                    Each formatter in the chain processes the output of the previous formatter, allowing for complex
-                    data transformations.<br>
-                    This example shows how to combine multiple formatters to achieve the desired output format.
+                    A Composite formatter is a series of formatters that are applied sequentially to
+                    transform data through multiple stages.<br />
+                    Each formatter in the chain processes the output of the previous formatter,
+                    allowing for complex data transformations.<br />
+                    This example shows how to combine multiple formatters to achieve the desired
+                    output format.
                 </p>
 
                 Not implemented!
             </div>
         </div>
-
     </div>
 </div>

@@ -1,93 +1,100 @@
-import { booleanAttribute, ContentChild, Directive, input, model, OnInit, signal, TemplateRef } from '@angular/core';
-import { TableCellType } from './types';
+import { booleanAttribute, ContentChild, Directive, EnvironmentInjector, inject, input, model, OnInit, signal, TemplateRef } from '@angular/core';
+import { TableColumnType } from './types';
+import { defaultFormatter, objectFormatterAttribute } from '@bootkit/ng0/localization';
 
 @Directive({
   selector: 'ng0-table-col',
   standalone: true,
 })
 export class TableColumnDirective implements OnInit {
+  private readonly _injector = inject(EnvironmentInjector);
+      
   /**
    * The field in the data source to bind to. If not set, the column will not display any data.
+   * @deprecated Use formatBy input.
    */
-  field = input<string>();
+  public readonly field = input<string>();
+
+  /**
+   * A fromatter to convert each item to a string for display.
+   * This can be a function, a string (field name), or an array of formatters.
+   * If not set, the default formatter will be used, which simply calls toString() on the value.
+   */
+  public readonly formatBy = input(defaultFormatter, {
+    transform: objectFormatterAttribute(this._injector)
+  });
 
   /**
    * The title of the column. This will be displayed in the header row.
    */
-  title = input<string>();
+  public readonly title = input<string>();
 
   /**
    * Text to display in the cell if the value is null or undefined.
    */
-  emptyCellText = input<string>();
+  public readonly emptyCellText = input<string>();
 
   /**
    * Type of the table cell.
    */
-  type = input<TableCellType>('text');
+  public readonly type = input<TableColumnType>('text');
 
   /**
    * CSS class(es) to apply to the table cell.
    */
-  cellClass = input<string | string[] | { [klass: string]: any; } | null>();
+  public readonly cellClass = input<string | string[] | { [klass: string]: any; } | null>();
 
   /** 
    * @deprecated Use `cellClass` instead.
    */
-  bold = input(false, { transform: booleanAttribute });
+  public readonly bold = input(false, { transform: booleanAttribute });
 
   /** 
    * @deprecated Use `cellClass` instead.
    */
-  shrink = input(false, { transform: booleanAttribute });
+  public readonly shrink = input(false, { transform: booleanAttribute });
 
   /**
    * If true, the column will support filtering.
    */
-  filterable = input(false, { transform: booleanAttribute });
-
+  public readonly filterable = input(false, { transform: booleanAttribute });
+  
   /**
    * The current filter value of the column.
    */
-  filterValue = model<any>();
-
-  /**
-   * The field to use for filtering. If not set, the `field` property will be used.
-   * @deprecated Use `fieldName` instead.
-   */
-  filterField = input<string>();
+  public readonly filterValue = model<any>();
 
   /**
    * The current filter operator of the column.
    */
-  filterOperator = model<string>();
+  public readonly filterOperator = model<string>();
 
   /**
    * The list of filter operators to show in the filter dropdown. If not set, a default list will be used based on the column type.
    */
-  filterOperators = input<string[]>();
+  public readonly filterOperators = input<string[]>();
 
   /**
    * If true, the filter operators dropdown will be shown.
    */
-  showFilterOperators = signal(false);
+  public readonly showFilterOperators = signal(false);
 
   /**
    * The name of the field in the data source. If not set, the `field` property will be used.
    */
-  fieldName = input<string>();
+  public readonly fieldName = input<string>();
 
   /**
    * If true, the column will support sorting.
    */
-  public sortable = input(false, { transform: booleanAttribute });
+  public readonly sortable = input(false, { transform: booleanAttribute });
 
   /**
    * The current sort direction of the column.
    */
-  public sortDirection = model<'none' | 'asc' | 'desc'>('none');
+  public readonly sortDirection = model<'none' | 'asc' | 'desc'>('none');
 
-  @ContentChild(TemplateRef) template?: TemplateRef<any>;
+  @ContentChild(TemplateRef) public readonly template?: TemplateRef<any>;
 
   constructor() {
   }

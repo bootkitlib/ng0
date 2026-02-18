@@ -37,6 +37,7 @@ export class FormattersExampleComponent {
         },
         date: {
             value1: new Date(),
+            value2: Date.now(), // Epoch time (numeric value), 
         }
     }
 }

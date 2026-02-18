@@ -12,316 +12,338 @@
 @let $tableLocale = _ls.get()?.definition?.components?.table;
 
 <div class="table-responsive" [style.height]="height()" [class.table-scrollable]="height()! > 0">
-  <table class="table" [ngClass]="tableClass()">
-    @if (caption()) {
-    <caption>{{caption()}}</caption>
-    }
+    <table class="table" [ngClass]="tableClass()">
+        @if (caption()) {
+            <caption>
+                {{caption()}}
+            </caption>
+        }
 
-    @if (showHeader()) {
-    <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
-    }
+        @if (showHeader()) {
+            <ng-container *ngTemplateOutlet="headerTemplate"></ng-container>
+        }
 
-    @if (filterable()) {
-    <ng-container *ngTemplateOutlet="filtersTemplate"></ng-container>
-    }
+        @if (filterable()) {
+            <ng-container *ngTemplateOutlet="filtersTemplate"></ng-container>
+        }
 
-    <tbody>
-      @if (isLoading() && $isFirstLoad && loadingIndicator()) {
-      <tr class="ng0-table-loading-row">
-        <td [attr.colspan]="$columnsCount">
-          @switch (loadingIndicator()) {
-          @case ('spinner') {
-          <div class="text-center">
-            <div class="spinner-border" role="status"></div>
-          </div>
-          }
-          }
-        </td>
-      </tr>
-      } @else {
-      @if ($data) {
-      @if ($data.length > 0) {
-      <ng-container *ngTemplateOutlet="dataRowsTemplate"></ng-container>
-      } @else {
-      <tr class="ng0-table-no-records-row">
-        <td [attr.colSpan]="$columnsCount" class="text-center p-2">
-          {{ $tableLocale?.noRecords ?? 'No Records.' }}
-        </td>
-      </tr>
-      }
-      } @else if (_error()) {
-      <ng-container *ngTemplateOutlet="nowDataTemplate"></ng-container>
-      }
-      }
-    </tbody>
-  </table>
+        <tbody>
+            @if (isLoading() && $isFirstLoad && loadingIndicator()) {
+                <tr class="ng0-table-loading-row">
+                    <td [attr.colspan]="$columnsCount">
+                        @switch (loadingIndicator()) {
+                            @case ('spinner') {
+                                <div class="text-center">
+                                    <div class="spinner-border" role="status"></div>
+                                </div>
+                            }
+                        }
+                    </td>
+                </tr>
+            } @else {
+                @if ($data) {
+                    @if ($data.length > 0) {
+                        <ng-container *ngTemplateOutlet="dataRowsTemplate" />
+                    } @else {
+                        <tr class="ng0-table-no-records-row">
+                            <td [attr.colSpan]="$columnsCount" class="text-center p-2">
+                                {{ $tableLocale?.noRecords ?? 'No Records.' }}
+                            </td>
+                        </tr>
+                    }
+                } @else if (_error()) {
+                    <ng-container *ngTemplateOutlet="nowDataTemplate"></ng-container>
+                }
+            }
+        </tbody>
+    </table>
 </div>
 
 <div class="ng0-table-footer d-flex align-items-baseline">
-  <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
+    <ng-container *ngTemplateOutlet="footerTemplate"></ng-container>
 </div>
 
 @if (isLoading() && !$isFirstLoad && loadingCover()) {
-<div class="ng0-table-loading-cover text-center">
-  @if (loadingCover() == 'spinner') {
-  <div class="spinner-border" role="status"></div>
-  }
-</div>
+    <div class="ng0-table-loading-cover text-center">
+        @if (loadingCover() == 'spinner') {
+            <div class="spinner-border" role="status"></div>
+        }
+    </div>
 }
 
 <ng-template #filtersTemplate>
-  <thead>
-    <tr>
-      @if (_detailRow) {
-      <th></th>
-      }
-
-      @if (showRowNumbers()) {
-      <th></th>
-      }
-
-      @for (col of _columns; track $index) {
-      <th>
-        @if(col.filterable() && (col.field() || col.filterValue())) {
-
-        <div class="input-group">
-          @switch (col.type()) {
-          @case ('text') {
-          <input [name]="'filter-' + col.field"
-                 type="search"
-                 [maxlength]="50"
-                 class="form-control form-control-sm"
-                 [(ngModel)]="col.filterValue"
-                 (keydown.enter)="load(0)">
-          }
-          @case ('number') {
-          <input [name]="'datatablecol-' + col.field"
-                 type="search"
-                 ng0Number
-                 class="form-control form-control-sm"
-                 [(ngModel)]="col.filterValue"
-                 (keydown.enter)="load(0)">
-          }
-          }
-
-          <button class="btn btn-outline-light"
-                  style="border-color: var(--bs-border-color);"
-                  cdkOverlayOrigin
-                  #trigger="cdkOverlayOrigin"
-                  (click)="_onToggleFilterOperator(col)">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 3H5C3.58579 3 2.87868 3 2.43934 3.4122C2 3.8244 2 4.48782 2 5.81466V6.50448C2 7.54232 2 8.06124 2.2596 8.49142C2.5192 8.9216 2.99347 9.18858 3.94202 9.72255L6.85504 11.3624C7.49146 11.7206 7.80967 11.8998 8.03751 12.0976C8.51199 12.5095 8.80408 12.9935 8.93644 13.5872C9 13.8722 9 14.2058 9 14.8729L9 17.5424C9 18.452 9 18.9067 9.25192 19.2613C9.50385 19.6158 9.95128 19.7907 10.8462 20.1406C12.7248 20.875 13.6641 21.2422 14.3321 20.8244C15 20.4066 15 19.4519 15 17.5424V14.8729C15 14.2058 15 13.8722 15.0636 13.5872C15.1959 12.9935 15.488 12.5095 15.9625 12.0976C16.1903 11.8998 16.5085 11.7206 17.145 11.3624L20.058 9.72255C21.0065 9.18858 21.4808 8.9216 21.7404 8.49142C22 8.06124 22 7.54232 22 6.50448V5.81466C22 4.48782 22 3.8244 21.5607 3.4122C21.1213 3 20.4142 3 19 3Z"
-                    stroke="#1C274C" stroke-width="1.5" />
-            </svg>
-          </button>
-        </div>
-
-        <ng-template
-                     cdkConnectedOverlay
-                     [cdkConnectedOverlayOrigin]="trigger"
-                     [cdkConnectedOverlayOpen]="col.showFilterOperators()"
-                     (overlayOutsideClick)="col.showFilterOperators.set(false)"
-                     (detach)="col.showFilterOperators.set(false)">
-          <ul class="dropdown-menu show" animate.enter="fade-in">
-            @for (item of col.getFilterOperators(); track $index) {
-            <li>
-              <button class="dropdown-item" [class.active]="item == col.filterOperator()"
-                      (click)="_onSelectFilterOperator(col, item)">
-                {{_ls.get()?.definition?.data?.logicalOperators?.[item] ?? item }}
-              </button>
-            </li>
+    <thead>
+        <tr>
+            @if (_detailRow) {
+                <th></th>
             }
-          </ul>
-        </ng-template>
-        }
-      </th>
-      }
-    </tr>
-  </thead>
+
+            @if (showRowNumbers()) {
+                <th></th>
+            }
+
+            @for (col of _columns; track $index) {
+                <th>
+                    @if (col.filterable() && (col.field() || col.filterValue())) {
+                        <div class="input-group">
+                            @switch (col.type()) {
+                                @case ('text') {
+                                    <input
+                                        [name]="'filter-' + col.field"
+                                        type="search"
+                                        [maxlength]="50"
+                                        class="form-control form-control-sm"
+                                        [(ngModel)]="col.filterValue"
+                                        (keydown.enter)="load(0)" />
+                                }
+                                @case ('number') {
+                                    <input
+                                        [name]="'datatablecol-' + col.field"
+                                        type="search"
+                                        ng0Number
+                                        class="form-control form-control-sm"
+                                        [(ngModel)]="col.filterValue"
+                                        (keydown.enter)="load(0)" />
+                                }
+                            }
+
+                            <button
+                                class="btn btn-outline-light"
+                                style="border-color: var(--bs-border-color);"
+                                cdkOverlayOrigin
+                                #trigger="cdkOverlayOrigin"
+                                (click)="_onToggleFilterOperator(col)">
+                                <ng0-icon-filter1 />
+                            </button>
+                        </div>
+
+                        <ng-template
+                            cdkConnectedOverlay
+                            [cdkConnectedOverlayOrigin]="trigger"
+                            [cdkConnectedOverlayOpen]="col.showFilterOperators()"
+                            (overlayOutsideClick)="col.showFilterOperators.set(false)"
+                            (detach)="col.showFilterOperators.set(false)">
+                            <ul class="dropdown-menu show" animate.enter="fade-in">
+                                @for (item of col.getFilterOperators(); track $index) {
+                                    <li>
+                                        <button
+                                            class="dropdown-item"
+                                            [class.active]="item == col.filterOperator()"
+                                            (click)="_onSelectFilterOperator(col, item)">
+                                            {{_ls.get()?.definition?.data?.logicalOperators?.[item] ?? item }}
+                                        </button>
+                                    </li>
+                                }
+                            </ul>
+                        </ng-template>
+                    }
+                </th>
+            }
+        </tr>
+    </thead>
 </ng-template>
 
 <ng-template #headerTemplate>
-  <thead [ngClass]="headerClass()">
-    <tr>
-      @if (_detailRow) {
-      <th></th>
-      }
+    <thead [ngClass]="headerClass()">
+        <tr>
+            @if (_detailRow) {
+                <th></th>
+            }
 
-      @if (showRowNumbers()) {
-      <th class="row-number text-muted">#</th>
-      }
+            @if (showRowNumbers()) {
+                <th class="row-number text-muted">#</th>
+            }
 
-      @for (col of _columns; track $index) {
-      <th
-          (click)="col.toggleSortDirection(); load()"
-          [class.sortable]="sortable() && col.sortable()"
-          [ngClass]="{ 
-            'sort-asc': col.sortDirection() == 'asc', 
-            'sort-desc': col.sortDirection() == 'desc',
-            'sort-none': col.sortDirection() == 'none'
-          }">
-        {{ col.title() }}
+            @for (col of _columns; track $index) {
+                <th
+                    (click)="col.toggleSortDirection(); load()"
+                    [class.sortable]="sortable() && col.sortable()"
+                    [ngClass]="{ 
+                        'sort-asc': col.sortDirection() == 'asc', 
+                        'sort-desc': col.sortDirection() == 'desc',
+                        'sort-none': col.sortDirection() == 'none'
+                        }">
+                    {{ col.title() }}
 
-        @if(sortable() && col.sortable()) {
-        <svg class="ng0-table-sort-icon"
-             width="24"
-             height="24"
-             viewBox="0 0 24 24" fill="none"
-             xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 7L12 16" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" />
-          <path d="M8 13L12 17L16 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round" />
-        </svg>
-        }
-      </th>
-      }
-    </tr>
-  </thead>
+                    @if (sortable() && col.sortable()) {
+                        <svg
+                            class="ng0-table-sort-icon"
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M12 7L12 16"
+                                stroke="currentColor"
+                                stroke-width="1"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path
+                                d="M8 13L12 17L16 13"
+                                stroke="currentColor"
+                                stroke-width="2"
+                                stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    }
+                </th>
+            }
+        </tr>
+    </thead>
 </ng-template>
 
 <ng-template #dataRowsTemplate>
-  @for (row of $data; track $index) {
-  <tr [class.table-active]="isRowExpanded(row)">
-    @if (_detailRow) {
-    <td class="detail-row-expander">
-      @if (_detailRow.showCallback == null || _detailRow.showCallback(row)) {
-      <button class="btn" (click)="_onToggleRowDetailClick(row)">
-        @if (isRowExpanded(row)) {
-        <i class="far fa-minus"></i>
-        } @else {
-        <i class="far fa-plus"></i>
+    @for (row of $data; track $index) {
+        <tr [class.table-active]="isRowExpanded(row)">
+            @if (_detailRow) {
+                <td class="detail-row-expander">
+                    @if (_detailRow.showCallback == null || _detailRow.showCallback(row)) {
+                        <button class="btn" (click)="_onToggleRowDetailClick(row)">
+                            @if (isRowExpanded(row)) {
+                                <i class="far fa-minus"></i>
+                            } @else {
+                                <i class="far fa-plus"></i>
+                            }
+                        </button>
+                    }
+                </td>
+            }
+
+            @if (showRowNumbers()) {
+                <td class="ng0-table-row-number">
+                    {{ $firstRecordIndex + $index + 1}}
+                </td>
+            }
+
+            @for (col of _columns; track $index) {
+                <td
+                    [ngClass]="col.cellClass()"
+                    [class.shrinked]="col.shrink()"
+                    [class.fw-bold]="col.bold()">
+                    @if (col.template) {
+                        <ng-container *ngTemplateOutlet="col.template; context: { $implicit: row }">
+                        </ng-container>
+                    } @else if (col.field()) {
+                        @let cellValue = _getCellValue(row, col);
+
+                        @if (
+                            (cellValue === null || cellValue === undefined) && col.emptyCellText()
+                        ) {
+                            {{ col.emptyCellText() }}
+                        } @else {
+                            @if (col.type()) {
+                                @let type = $any(col.type());
+
+                                @if (type == "date") {
+                                    {{ cellValue | ng0Date }}
+                                } @else if (type == "number") {
+                                    {{ cellValue | number }}
+                                } @else if (type == "currency") {
+                                    {{ cellValue | currency }}
+                                } @else if (type.enum) {
+                                    {{ cellValue | ng0TranslateEnum: type.enum.name : type.enum.fallback }}
+                                } @else if (type.boolean || type == "boolean") {
+                                    {{ cellValue | ng0LocalizeBool: type.boolean.false ?? "false" : type.boolean.false ?? "true" }}
+                                } @else {
+                                    {{ cellValue }}
+                                }
+                            }
+                        }
+                    } @else if(col.formatBy()) {
+                        {{col.formatBy()(row)}}
+                    } 
+                </td>
+            }
+        </tr>
+
+        @if (_detailRow && isRowExpanded(row)) {
+            <tr class="detail-row">
+                <td
+                    [attr.colspan]="_columns.length + (showRowNumbers() ? 1 : 0) + 1"
+                    class="ps-2 pb-4">
+                    <ng-container
+                        *ngTemplateOutlet="_detailRow.templateRef; context: { $implicit: row }"></ng-container>
+                </td>
+            </tr>
         }
-      </button>
-      }
-    </td>
     }
-
-    @if (showRowNumbers()) {
-    <td class="ng0-table-row-number">
-      {{ $firstRecordIndex + $index + 1}}
-    </td>
-    }
-
-    @for (col of _columns; track $index) {
-    <td
-        [ngClass]="col.cellClass()"
-        [class.shrinked]="col.shrink()"
-        [class.fw-bold]="col.bold()">
-      @if (col.template) {
-      <ng-container *ngTemplateOutlet="col.template; context: { $implicit: row }">
-      </ng-container>
-      } @else if (col.field()) {
-      @let cellValue = _getCellValue(row, col);
-
-      @if ((cellValue === null || cellValue === undefined) && col.emptyCellText()) {
-      {{ col.emptyCellText() }}
-      } @else {
-      @if (col.type()) {
-      @let type = $any(col.type());
-
-      @if (type == "date") {
-      {{ cellValue | ng0Date }}
-      } @else if (type == "number") {
-      {{ cellValue | number }}
-      } @else if (type == "currency") {
-      {{ cellValue | currency }}
-      } @else if (type.enum) {
-      {{ cellValue | ng0TranslateEnum: type.enum.name : type.enum.fallback }}
-      } @else if (type.boolean || type == "boolean") {
-      {{ cellValue | ng0LocalizeBool: type.boolean.false ?? "false" : type.boolean.false ?? "true" }}
-      }@else {
-      {{ cellValue }}
-      }
-      }
-      }
-      }
-    </td>
-    }
-  </tr>
-
-  @if (_detailRow && isRowExpanded(row)) {
-  <tr class="detail-row">
-    <td
-        [attr.colspan]="_columns.length + (showRowNumbers() ? 1 : 0) + 1"
-        class="ps-2 pb-4">
-      <ng-container
-                    *ngTemplateOutlet="_detailRow.templateRef; context: { $implicit: row }"></ng-container>
-    </td>
-  </tr>
-  }
-  }
 </ng-template>
 
 <ng-template #footerTemplate>
-  @if ($pageable && showPagingControls() && $anyRecords && $totalRecordsCount! > 0) {
-  <div class="ng0-table-pagination me-2">
-    <ng0-pagination
-                    class="mb-0 d-inline-block"
-                    [showFirstLastButtons]="showFirstLastButtons()"
-                    [showNextPreviousButtons]="showNextPreviousButtons()"
-                    [totalRecords]="$totalRecordsCount!"
-                    [pageSize]="pageSize()"
-                    [selectedPage]="pageIndex()"
-                    (itemClick)="_onPageChange($event)"
-                    [maxVisiblePages]="maxVisiblePages()">
-      <ng-container ngProjectAs="first">
-        <ng-content select="paging-first">
-          {{ "first" | ng0Translate }}
-        </ng-content>
-      </ng-container>
+    @if ($pageable && showPagingControls() && $anyRecords && $totalRecordsCount! > 0) {
+        <div class="ng0-table-pagination me-2">
+            <ng0-pagination
+                class="mb-0 d-inline-block"
+                [showFirstLastButtons]="showFirstLastButtons()"
+                [showNextPreviousButtons]="showNextPreviousButtons()"
+                [totalRecords]="$totalRecordsCount!"
+                [pageSize]="pageSize()"
+                [selectedPage]="pageIndex()"
+                (itemClick)="_onPageChange($event)"
+                [maxVisiblePages]="maxVisiblePages()">
+                <ng-container ngProjectAs="first">
+                    <ng-content select="paging-first">
+                        {{ "first" | ng0Translate }}
+                    </ng-content>
+                </ng-container>
 
-      <ng-container ngProjectAs="last">
-        <ng-content select="paging-last">
-          {{ "last" | ng0Translate }}
-        </ng-content>
-      </ng-container>
+                <ng-container ngProjectAs="last">
+                    <ng-content select="paging-last">
+                        {{ "last" | ng0Translate }}
+                    </ng-content>
+                </ng-container>
 
-      <ng-container ngProjectAs="next">
-        <ng-content select="paging-next">
-          {{ "next" | ng0Translate }}
-        </ng-content>
-      </ng-container>
+                <ng-container ngProjectAs="next">
+                    <ng-content select="paging-next">
+                        {{ "next" | ng0Translate }}
+                    </ng-content>
+                </ng-container>
 
-      <ng-container ngProjectAs="previous">
-        <ng-content select="paging-previous">
-          {{ "previous" | ng0Translate }}
-        </ng-content>
-      </ng-container>
-    </ng0-pagination>
-  </div>
+                <ng-container ngProjectAs="previous">
+                    <ng-content select="paging-previous">
+                        {{ "previous" | ng0Translate }}
+                    </ng-content>
+                </ng-container>
+            </ng0-pagination>
+        </div>
 
-  @if (pageSizeOptions()) {
-  <div class="ng0-table-paging-options">
-    <ng0-select [source]="pageSizeOptions()" (itemSelect)="_onPageSizeOptionsItemSelect($event)"></ng0-select>
-    <!-- <select name="pageSizeOptions" class="form-select w-auto d-inline-block">
+        @if (pageSizeOptions()) {
+            <div class="ng0-table-paging-options">
+                <ng0-select
+                    name="pageSize"
+                    [source]="pageSizeOptions()"
+                    [(ngModel)]="pageSize"
+                    (itemSelect)="_onPageSizeOptionsItemSelect($event)"></ng0-select>
+                <!-- <select name="pageSizeOptions" class="form-select w-auto d-inline-block">
       <option [ngValue]="10" selected>10</option>
     </select> -->
-  </div>
-  }
+            </div>
+        }
 
-  @if (showPagingInfo()) {
-  <div class="ng0-table-paging-info ms-auto">
-    <ng-content select="paging-info">
-      {{
+        @if (showPagingInfo()) {
+            <div class="ng0-table-paging-info ms-auto">
+                <ng-content select="paging-info">
+                    {{
       _pagingFormatter({firstRecord: $firstRecordIndex + 1, lastRecord: $lastRecordIndex + 1, totalRecords:
       $totalRecordsCount!,
       currentPage: $pageIndex!})
-      }}
-    </ng-content>
-  </div>
-  }
-  }
+                    }}
+                </ng-content>
+            </div>
+        }
+    }
 </ng-template>
 
 <ng-template #nowDataTemplate>
-  <tr class="ng0-table-error-row">
-    <td [attr.colSpan]="$columnsCount" class="p-2">
-      <div class="d-flex align-items-baseline">
-        <span>{{ $tableLocale?.loadError ?? 'Error loading data.' }} </span>
-        <button (click)="load()" class="btn btn-warning ms-auto">
-          {{ "retry" | ng0Translate }}
-        </button>
-      </div>
-    </td>
-  </tr>
+    <tr class="ng0-table-error-row">
+        <td [attr.colSpan]="$columnsCount" class="p-2">
+            <div class="d-flex align-items-baseline">
+                <span>{{ $tableLocale?.loadError ?? 'Error loading data.' }} </span>
+                <button (click)="load()" class="btn btn-warning ms-auto">
+                    {{ "retry" | ng0Translate }}
+                </button>
+            </div>
+        </td>
+    </tr>
 </ng-template>

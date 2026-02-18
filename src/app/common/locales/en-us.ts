@@ -30,16 +30,21 @@ export const APP_EN_US_LOCALE = EN_US_LOCALE.extend({
     },
     formatters: {
         'boolean': ['No', 'Yes'],
-        'boolean:ActiveInactive': ['Inactive', 'Active'],
-        'YesNoboolean': ['No', 'Yes'],
-        'TrueFalseBoolean:': ['False', 'True'],
-        'EnableDisableBoolean': ['Disabled', 'Enabled'],
-        'OnOffBoolean': ['Off', 'On'],
+        'BooleanActiveInactive': ['Inactive', 'Active'],
+        'BooleanYesNo': ['No', 'Yes'],
+        'BooleanTrueFalse': ['False', 'True'],
+        'BooleanEnableDisable': ['Disabled', 'Enabled'],
+        'BooleanOnOff': ['Off', 'On'],
+        'SexualityEnum': {
+            'Male': 'Male (Localized)',
+            'Female': 'Female (Localized)',
+            'Other': 'Other (Localized)',
+        }
     },
     components: {
         table: {
             noRecords: 'No records found.',
-            pagingInfo: (info) => `Showingsdsd ${formatNumber(info.firstRecord)}-${formatNumber(info.lastRecord)} of ${formatNumber(info.totalRecords!)} records`
+            pagingInfo: (info) => `Showing ${formatNumber(info.firstRecord)}-${formatNumber(info.lastRecord)} of ${formatNumber(info.totalRecords!)} records`
         }
     }
 });

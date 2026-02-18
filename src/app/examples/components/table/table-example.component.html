@@ -2,21 +2,50 @@
     <div class="col-md-12">
         <div class="card h-100">
             <div class="card-body">
-                <h4>Bind to object array</h4>
+                <h4>Bind to array</h4>
                 <p>
-                    This data table is bound to an array of objects defined in the component. It demonstrates basic
-                    data binding and column configuration.
+                    This data table is bound to an array of objects defined in the component. It
+                    demonstrates basic data binding and column configuration.
+                    <br />
+                    Use formatBy to format rows. The value of formatBy can be a string representing
+                    a property path (e.g., "nested.value") or a function that takes the row data as
+                    input and returns the formatted value. The formatted value will be displayed in
+                    the corresponding table cell.
                 </p>
-                <ng0-table [source]="array1">
-                    <ng0-table-col field="id" type="number" title="Id" [bold]="true"
-                                   [filterable]="true"></ng0-table-col>
-                    <ng0-table-col field="name" title="name" [filterable]="true"></ng0-table-col>
-                    <ng0-table-col field="description" title="description" [filterable]="true"></ng0-table-col>
-                    <ng0-table-col cellClass="text-end" [shrink]="true">
-                        <ng-template let-row>
-                            <a type="button" class="btn btn-secondary">View</a>
-                        </ng-template>
+
+                <p>
+                    The table supports various formatters for different data types.
+                    See:
+                    <a routerLink="/examples/localization/formatters">Localization/formatters</a> 
+
+                </p>
+
+                <ul>
+
+                </ul>
+
+                <ng0-table [source]="array1" [showRowNumbers]="true">
+                    <ng0-table-col formatBy="name" title="Name"></ng0-table-col>
+                    <ng0-table-col [formatBy]="['boolean1', '*BooleanOnOff']" title="Boolean1"></ng0-table-col>
+                    <ng0-table-col [formatBy]="['boolean2', '*BooleanEnableDisable']" title="Boolean2"></ng0-table-col>
+                    <ng0-table-col [formatBy]="['sexuality', '*SexualityEnum']" title="Sexuality (Enum)"></ng0-table-col>
+                    <ng0-table-col formatBy="nested.value" title="Nested Value"></ng0-table-col>
+                    <ng0-table-col [formatBy]="['date1', ['@']]" title="Date1"></ng0-table-col>
+                    <ng0-table-col [formatBy]="['date1', ['@', 'short']]" title="Date1"></ng0-table-col>
+
+                    <!-- 
+                    These type of binding is deprecated. don't use "field" property.
+                    -->
+
+                    <!-- <ng0-table-col
+                        field="name"
+                        title="Depricated binding 1">
                     </ng0-table-col>
+
+                    <ng0-table-col
+                        field="nested.value"
+                        title="Depricated binding 2">
+                    </ng0-table-col> -->
                 </ng0-table>
             </div>
         </div>
@@ -27,26 +56,19 @@
             <div class="card-body">
                 <h4>Bind to remote data</h4>
                 <p>
-                    This data table is bound to a remote data source. It demonstrates how to use the table with
-                    server-side data, including pagination, sorting, and filtering.
+                    This data table is bound to a remote data source. It demonstrates how to use the
+                    table with server-side data, including pagination, sorting, and filtering.
                 </p>
 
-                <ng0-table [source]="dataLoader1" [pageable]="true" [pageSize]="3">
-                    <ng0-table-col field="name" title="name" [filterable]="true"></ng0-table-col>
-                    <ng0-table-col field="description" title="description" [filterable]="true"></ng0-table-col>
-
-                    <ng0-table-col cellClass="text-end" [shrink]="true">
-                        <ng-template let-row>
-                            <a type="button" class="btn btn-secondary" [routerLink]="['..', row.id, 'edit']">View</a>
-                        </ng-template>
-                    </ng0-table-col>
-
-                    <!-- <ng-container ngProjectAs="paging-first"> << </ng-container>
-    <ng-container ngProjectAs="paging-last">>></ng-container>
-    <ng-container ngProjectAs="paging-next"> > </ng-container>
-    <ng-container ngProjectAs="paging-previous"> < </ng-container> -->
+                <ng0-table
+                    [source]="dataLoader1"
+                    [pageable]="true"
+                    [pageSize]="3"
+                    [pageSizeOptions]="[3,6,9]">
+                    <ng0-table-col formatBy="id" type="number" title="Id"></ng0-table-col>
+                    <ng0-table-col formatBy="name" title="name"></ng0-table-col>
+                    <ng0-table-col formatBy="nested.value" title="nested.value"></ng0-table-col>
                 </ng0-table>
-
             </div>
         </div>
     </div>
@@ -54,19 +76,34 @@
     <div class="col-md-12">
         <div class="card">
             <div class="card-body">
-                <h4>Bind to array</h4>
+                <h4>Sort</h4>
+                <p>
+                    This data table demonstrates sorting functionality. Click on the column headers
+                    to sort the data in ascending or descending order.
+                </p>
 
-                <ng0-table [source]="array1" [pageable]="true" [loadingIndicator]="'spinner'" [showHeader]="true"
-                           [filterable]="true" [autoLoad]="true" [height]="200" [showRowNumbers]="true">
-                    <ng0-table-col field="id" type="number" title="Id" [bold]="true"
-                                   [filterable]="true"></ng0-table-col>
-                    <ng0-table-col field="name" title="name" [filterable]="true"></ng0-table-col>
-                    <ng0-table-col field="description" title="description" [filterable]="true"></ng0-table-col>
+                <ng0-table [source]="array1" [sortable]="true">
+                    <ng0-table-col
+                        field="id"
+                        type="number"
+                        title="Id"
+                        [bold]="true"
+                        [sortable]="true"></ng0-table-col>
+                    <ng0-table-col field="name" title="name" [sortable]="true"></ng0-table-col>
+                    <ng0-table-col
+                        field="description"
+                        title="description"
+                        [sortable]="true"></ng0-table-col>
                     <!-- <ng0-table-col field="id" [type]="{enum: {name: 'Enum1' }}" title="Enum"></ng0-table-col> -->
 
                     <ng0-table-col cellClass="text-end" [shrink]="true">
                         <ng-template let-row>
-                            <a type="button" class="btn btn-secondary" [routerLink]="['..', row.id, 'edit']">View</a>
+                            <a
+                                type="button"
+                                class="btn btn-secondary"
+                                [routerLink]="['..', row.id, 'edit']"
+                                >View</a
+                            >
                         </ng-template>
                     </ng0-table-col>
 
@@ -75,7 +112,25 @@
     <ng-container ngProjectAs="paging-next"> > </ng-container>
     <ng-container ngProjectAs="paging-previous"> < </ng-container> -->
                 </ng0-table>
+            </div>
+        </div>
+    </div>
 
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h4>Filters</h4>
+                <p></p>
+
+                <ng0-table [source]="array1" [filterable]="true">
+                    <ng0-table-col formatBy="id" title="Id" [filterable]="true">
+                    </ng0-table-col>
+
+                    <ng0-table-col formatBy="name" title="name" [filterable]="true"></ng0-table-col>
+
+                    <ng0-table-col formatBy="description" title="description" [filterable]="true">
+                    </ng0-table-col>
+                </ng0-table>
             </div>
         </div>
     </div>

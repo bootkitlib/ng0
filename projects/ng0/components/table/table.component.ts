@@ -3,7 +3,7 @@ import { Subscription } from 'rxjs';
 import { TableColumnDirective } from './table-column.directive';
 import { TableDetailRowDirective } from './table-detail-row.directive';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, NgModel } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { formatString } from '@bootkit/ng0/common';
 import { LocalizationModule, LocalizationService, TableComponentPagingFormatter } from '@bootkit/ng0/localization';
@@ -12,6 +12,7 @@ import { PaginationComponent } from '@bootkit/ng0/components/pagination';
 import { OverlayModule } from '@angular/cdk/overlay';
 import { NumberDirective } from '@bootkit/ng0/form';
 import { ItemSelectEvent, SelectComponent } from '@bootkit/ng0/components/select';
+import { Filter1Icon } from '@bootkit/ng0/icons';
 
 /**
  * A generic table component that can display data in a tabular format.
@@ -32,7 +33,8 @@ import { ItemSelectEvent, SelectComponent } from '@bootkit/ng0/components/select
     PaginationComponent,
     NumberDirective,
     OverlayModule,
-    SelectComponent
+    SelectComponent,
+    Filter1Icon
   ]
 })
 export class TableComponent implements AfterContentInit, OnDestroy {
@@ -207,7 +209,7 @@ export class TableComponent implements AfterContentInit, OnDestroy {
     if (this.filterable()) {
       this._columns.forEach(col => {
         if (col.filterable() && col.filterValue() != '' && col.filterValue() != undefined) {
-          filters.push({ field: col.fieldName() ?? col.filterField() ?? col.field(), value: col.filterValue(), operator: col.filterOperator() });
+          filters.push({ field: col.fieldName() ?? col.field(), value: col.filterValue(), operator: col.filterOperator() });
         }
       });
     }
