@@ -10,7 +10,6 @@ import {
     CssClassAttribute, equalityComparerAttribute, defaultEqualityComparer, valueWriterAttribute, defaultValueWriter,
     IdGeneratorAttribute, defaultFilter, filterPredicateAttribute
 } from '@bootkit/ng0/common';
-import { getConnectedPositions } from '../overlay';
 
 /**
  * Select component that allows users to choose an option from a dropdown list.
