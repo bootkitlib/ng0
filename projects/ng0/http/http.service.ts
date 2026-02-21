@@ -177,13 +177,13 @@ export class HttpService {
   }
 
   private _verifyOptions(options?: HttpRequestOptions) {
-    if (options) {
-      if (options.transferState && !options.id) {
+    if (options?.transferState) {
+      if (!options.id) {
         throw Error('To use transferState, set request id')
       }
 
-      if (this._transferState && (options.observe == 'events' || options.observe == 'response')) {
-        throw Error('TransferState is only supported with observe == body.');
+      if (options.observe == 'events' || options.observe == 'response') {
+        throw Error('TransferState is only supported with observe "body".');
       }
     }
   }
