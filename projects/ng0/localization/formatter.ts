@@ -92,16 +92,49 @@ export function createNumberFormatter(
 
 /**
  * Creates a currency formatter.
- * @param minFractions 
- * @param maxFractions 
- * @returns 
+ * @param currency The ISO 4217 currency code (e.g., "USD", "EUR", "IRR").
+ * @param minimumIntegerDigits Minimum number of integer digits to use. Default is 1.
+ * @param minimumFractionDigits Minimum number of fraction digits to use. Default is 1.
+ * @param maximumFractionDigits Maximum number of fraction digits to use. Default is 2.
+ * @param notation The notation to use. Default is 'standard'.
+ * @param currencySign The currency sign to use. Default is 'standard'.
+ * @returns An ObjectFormatter function.
  */
-export function createCurrencyFormatter(minFractions = 1, maxFractions = 2): ObjectFormatter {
-    return (n: number, minFractions, maxFractions) => Number.isFinite(n) ? n.toString() : '';
+export function createCurrencyFormatter(
+    currency?: string,
+    notation?: 'standard' | 'scientific' | 'engineering' | 'compact',
+    minimumIntegerDigits?: number,
+    minimumFractionDigits?: number,
+    maximumFractionDigits?: number,
+    currencySign?: 'standard' | 'accounting'
+): ObjectFormatter {
+    let locale = inject(LocalizationService, { optional: true })?.get();
+    const localeName = locale?.definition.name || 'en-US';
+
+    const f = new Intl.NumberFormat(localeName, {
+        style: 'currency',
+        currency: currency,
+        notation: notation,
+        currencySign: currencySign,
+        minimumIntegerDigits: minimumIntegerDigits,
+        minimumFractionDigits: minimumFractionDigits,
+        maximumFractionDigits: maximumFractionDigits,
+    })
+
+    return (n: number) => Number.isFinite(n) ? f.format(n) : '';
 }
 
 /**
  * Creates a date formatter.
+ * The formatter can be created using predefined styles or custom Intl.DateTimeFormatOptions.
+ * Predefined styles:
+ * - dateStyle: 'short' | 'medium' | 'long' | 'full'
+ * - timeStyle: 'short' | 'medium' | 'long' | 'full'
+ * - zone: [name, display?] (e.g., ['UTC', 'short'])
+ * - calendar: string (e.g., 'gregory', 'persian', 'islamic')
+ * #### Custom options:
+ * - Any valid Intl.DateTimeFormatOptions can be used for custom formatting.
+ * @returns An ObjectFormatter function.
  */
 export function createDateFormatter(
     dateStyle?: 'short' | 'medium' | 'long' | 'full',
@@ -113,16 +146,20 @@ export function createDateFormatter(options?: Intl.DateTimeFormatOptions): Objec
 export function createDateFormatter(options?: any): ObjectFormatter {
     const locale = inject(LocalizationService, { optional: true })?.get();
     let intlOptions: Intl.DateTimeFormatOptions;
+    let localeOptions = locale?.definition.date?.options;
+    let length = arguments.length;
 
-    if (arguments.length == 0 || (typeof arguments[0] == 'object')) {
-        intlOptions = { ...locale?.definition.intl?.date, ...options };
+    if (length == 0) {
+        intlOptions = { ...localeOptions };
+    } else if (length == 1 && typeof arguments[0] == 'object') {
+        intlOptions = { ...localeOptions, ...arguments[0] };
     } else {
         intlOptions = {
-            dateStyle: arguments[0],
-            timeStyle: arguments[1],
-            timeZone: arguments[2]?.[0],
-            timeZoneName: arguments[2]?.[1],
-            calendar: arguments[3],
+            dateStyle: length > 0 ? arguments[0] : localeOptions?.dateStyle,
+            timeStyle: length > 1 ? arguments[1] : localeOptions?.timeStyle,
+            timeZone: length > 2 ? arguments[2]?.[0] : localeOptions?.timeZone,
+            timeZoneName: length > 2 ? arguments[2]?.[1] : localeOptions?.timeZoneName,
+            calendar: length > 3 ? arguments[3] : localeOptions?.calendar,
         }
     }
 
@@ -194,8 +231,13 @@ export function createCompositeFormatter(...formatters: ObjectFormatterLike[]): 
 
 /**
  * Creates an ObjectFormatter from various ObjectFormatterLike types.
- * @param formatter The ObjectFormatterLike value to convert. 
- * @param locale Optional locale object for locale-based formatting.
+ * @param formatter The ObjectFormatterLike value to convert.
+ * A formatter can be:
+ * - A function: used directly as the formatter.
+ * - A number: creates an index formatter that retrieves the value at the specified index from an array.
+ * - A string: can be a field name (e.g., "user.name"), a predefined formatter symbol ("#", "$", "@"), or a locale formatter name (e.g., "*date").
+ * - An array: if the first element is a predefined formatter symbol, it creates a formatter using that symbol and the rest of the elements as parameters. 
+ * Otherwise, it creates a composite formatter that applies each element in sequence.
  * @param params Additional parameters for the formatter.
  * @returns An ObjectFormatter function.
  */
@@ -206,7 +248,7 @@ export function createObjectFormatter(formatter: ObjectFormatterLike, ...params:
         case 'number':
             return createIndexFormatter(formatter);
         case 'string':
-            switch (formatter[0]) {
+            switch (formatter) {
                 case '#':
                     return createNumberFormatter(...params);
                 case '$':

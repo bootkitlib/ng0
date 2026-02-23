@@ -10,7 +10,7 @@ import { createObjectFormatter, ObjectFormatterLike } from './formatter';
   pure: true
 })
 export class FormatPipe implements PipeTransform {
-  private _injector = inject(EnvironmentInjector);
+  private readonly _injector = inject(EnvironmentInjector);
     
   transform(obj: any, formatter: ObjectFormatterLike, ...params: any[]): any {
     const frmtFunc = runInInjectionContext(this._injector, createObjectFormatter.bind(null, formatter, ...params));

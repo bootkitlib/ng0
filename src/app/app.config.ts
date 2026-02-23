@@ -40,7 +40,8 @@ export const appConfig: ApplicationConfig = {
     // { provide: APP_CONFIGURATION, useValue: APP_CONFIGS },
     provideAppInitializer(() => {
       var localizationService = inject(LocalizationService);
-      localizationService.add(APP_EN_US_LOCALE);
+      // localizationService.add(APP_EN_US_LOCALE);
+      localizationService.add(APP_FA_IR_LOCALE);
     }),
   ]
 };

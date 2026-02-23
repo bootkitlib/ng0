@@ -50,8 +50,12 @@ export interface LocaleDefinition {
   readonly rtl?: boolean;
 
   /** Intl API default options */
-  intl?: {
-    date?: Intl.DateTimeFormatOptions
+  date?: {
+    /**
+     * Default options for Intl.DateTimeFormat API. 
+     * For more info: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DateTimeFormat#parameters
+     */
+    options?: Intl.DateTimeFormatOptions
   }
 
   /** Locale dictionary */

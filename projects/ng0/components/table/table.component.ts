@@ -1,4 +1,4 @@
-import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, Component, ContentChild, ContentChildren, DestroyRef, HostBinding, inject, input, model, numberAttribute, OnDestroy, QueryList, signal } from '@angular/core';
+import { AfterContentInit, booleanAttribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChild, ContentChildren, DestroyRef, HostBinding, inject, input, model, numberAttribute, OnDestroy, QueryList, signal } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { TableColumnDirective } from './table-column.directive';
 import { TableDetailRowDirective } from './table-detail-row.directive';
@@ -40,6 +40,8 @@ import { Filter1Icon } from '@bootkit/ng0/icons';
 export class TableComponent implements AfterContentInit, OnDestroy {
   protected readonly _ls = inject(LocalizationService);
   private readonly _destroyRef = inject(DestroyRef);
+  protected _changeDetectorRef = inject(ChangeDetectorRef);
+
   private _changeSubscription?: Subscription;
 
   @ContentChildren(TableColumnDirective)
@@ -193,6 +195,14 @@ export class TableComponent implements AfterContentInit, OnDestroy {
     if (this.autoLoad()) {
       this.load();
     }
+  }
+
+  /**
+   * Manually triggers a refresh of the table. This can be used to update the table's display after making changes to the data or state.
+   * It will mark the component for check, which will cause Angular to re-render the component and update the displayed data.
+   */
+  public refresh(): void {
+    this._changeDetectorRef.markForCheck();
   }
 
   /**

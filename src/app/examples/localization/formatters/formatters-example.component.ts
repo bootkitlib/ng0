@@ -38,6 +38,7 @@ export class FormattersExampleComponent {
         date: {
             value1: new Date(),
             value2: Date.now(), // Epoch time (numeric value), 
+            value3: new Date().toISOString(), // ISO 8601 string
         }
     }
 }

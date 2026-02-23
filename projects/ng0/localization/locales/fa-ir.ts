@@ -3,8 +3,14 @@ import { Locale } from '@bootkit/ng0/localization';
 const formatNumber = (n: number) => n.toLocaleString();
 
 export const FA_IR_LOCALE = new Locale({
-    name: 'fa-IR',
+    name: 'fa',
     rtl: true,
+    date: {
+        options: {
+            // year: '2-digit',
+            calendar: 'persian'
+        }
+    },
     dictionary: {
         ok: 'تایید',
         cancel: 'لغو',
