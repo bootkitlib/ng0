@@ -1,5 +1,4 @@
 import { Locale } from '@bootkit/ng0/localization';
-
 const formatNumber = (n: number) => n.toLocaleString();
 
 export const EN_US_LOCALE = new Locale({
@@ -27,6 +26,9 @@ export const EN_US_LOCALE = new Locale({
                 minlength: (e) => `Minimum length: ${e.requiredLength}`,
                 maxlength: (e) => `Maximum length: ${e.requiredLength}`,
                 email: (e) => `Invalid email`,
+                fileMinSize: (e) => `Minimum ${formatNumber(e.min / 1024 / 1024)} MB${e.fileList ? ` (${e.file.name})` : ''}`,
+                fileMaxSize: (e) => `Maximum ${formatNumber(e.max / 1024 / 1024)} MB${e.fileList ? ` (${e.file.name})` : ''}`,
+                fileExtension: (e) => `Invalid file type`,
             }
         }
     },

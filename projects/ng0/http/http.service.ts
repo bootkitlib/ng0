@@ -1,10 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpEvent, HttpEventType, HttpHeaders } from '@angular/common/http';
 import { Observable, of, Subject, tap } from 'rxjs';
 import { HttpRequestOptions, HttpRequestEvent } from './types';
 import { inject, Inject, Injectable, Injector, makeStateKey, PLATFORM_ID, runInInjectionContext, TransferState } from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 import { DataRequest, DataResult } from '@bootkit/ng0/data';
 import { HTTP_SERVICE_CONFIG } from './provide';
+import { toFormData } from './to-form-data';
 
 /**
  * HttpService provides a simple HTTP client for making requests.
@@ -136,38 +137,22 @@ export class HttpService {
   }
 
   private _makeBody(body: any, options?: HttpRequestOptions) {
-    if (options?.contentType === 'multipart/form-data') {
-      const formData = new FormData();
-      for (const key in body) {
-        if (body.hasOwnProperty(key)) {
-          const field = body[key];
-          let value;
-
-          if (typeof field === 'string' || field instanceof File || field instanceof Blob) {
-            value = field;
-          } else if (typeof field === 'number') {
-            value = field.toString();
-          } else if (typeof field === 'object') {
-            value = JSON.stringify(field);
-          }
-
-          if (value) {
-            formData.append(key, value);
-          }
-        }
-      }
-
-      return formData;
-    }
-
-    return body;
+    return options?.contentType === 'multipart/form-data' ? toFormData(body) : body;
   }
 
   private _handleEvents<T>(o: Observable<any>, url: string, options?: HttpRequestOptions): Observable<T> {
     return o.pipe(
       tap({
-        next: r => {
-          this._eventsSubject.next({ type: 'Complete', url, options, response: r });
+        next: (e: any) => {
+          if (options?.observe === 'events') {
+            if (e?.type === HttpEventType.DownloadProgress || e?.type === HttpEventType.UploadProgress) {
+              this._eventsSubject.next({ type: 'Progress', url, options });
+            } else {
+              this._eventsSubject.next({ type: 'Complete', url, options, response: e });
+            }
+          } else {
+            this._eventsSubject.next({ type: 'Complete', url, options, response: e });
+          }
         },
         error: e => {
           this._eventsSubject.next({ type: 'Error', url, options, error: e });

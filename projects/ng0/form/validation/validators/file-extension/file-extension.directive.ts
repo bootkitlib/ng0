@@ -4,7 +4,7 @@ import { fileExtensionValidator } from './file-extension-validator';
 
 @Directive({
   selector: '[ngModel][ng0File][ng0FileExtension]',
-  exportAs: 'ng0MaxFileSize',
+  exportAs: 'ng0FileExtension',
   standalone: true,
   providers: [{ provide: NG_VALIDATORS, useExisting: FileExtensionValidatorDirective, multi: true, }],
 })
@@ -12,7 +12,7 @@ export class FileExtensionValidatorDirective implements Validator {
   /**
    * Allowed file extensions.
    */
-  public readonly allowedExtensions = input.required<string[]>({ alias: 'ng0FileExtension' });
+  public readonly allowedExtensions = input.required<string[] | undefined>({ alias: 'ng0FileExtension' });
 
   validate(control: AbstractControl): ValidationErrors | null {
     return fileExtensionValidator(this.allowedExtensions())(control);

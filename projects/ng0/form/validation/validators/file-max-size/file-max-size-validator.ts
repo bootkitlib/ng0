@@ -10,9 +10,9 @@ export function fileMaxSizeValidator(size: number): ValidatorFn {
 
     if (value instanceof File) {
       return value.size > size ? {
-        fileMinSize: {
+        fileMaxSize: {
           file: value,
-          min: size,
+          max: size,
           multiple: false
         }
       } : null;
@@ -22,10 +22,10 @@ export function fileMaxSizeValidator(size: number): ValidatorFn {
       for (let i = 0; i < fileList.length; i++) {
         if (fileList[i].size > size) {
           return {
-            fileMinSize: {
+            fileMaxSize: {
               file: fileList[i],
               fileList: fileList,
-              min: size,
+              max: size,
               multiple: true
             }
           };

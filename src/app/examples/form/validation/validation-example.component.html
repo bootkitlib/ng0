@@ -58,10 +58,10 @@
                 <ul>
                     <li><code>ng0FileMinSize</code>: Minimum file size in bytes.</li>
                     <li><code>ng0FileMaxSize</code>: Maximum file size in bytes.</li>
-                    <li><code>accept</code>: Allowed file extensions (e.g. .jpg, .png).</li>
+                    <li><code>ng0FileExtension</code>: Allowed file extensions (e.g. .jpg, .png).</li>
                 </ul>
                 <p>
-                    Note: The file size validators require the <code>ng0File</code> directive to work properly.
+                    Note: These validators require the <code>ng0File</code> directive to be placed on the input element.
                 </p>
             </div>
 
@@ -76,7 +76,7 @@
 
                 <div class="row">
                     <div class="col-md-4">
-                        <ng0-form-field label="Minimum Size 512KB">
+                        <ng0-form-field label="Minimum Size 0.5MB">
                             <input type="file" ng0File [ng0FileMinSize]="512*1024" class="form-control" name="f1"
                                    [(ngModel)]="f1">
                         </ng0-form-field>
