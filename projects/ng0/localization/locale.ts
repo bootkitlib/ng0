@@ -1,6 +1,7 @@
 import { LocaleDefinition } from "./locale-definition";
 import { TranslatedValidationError } from "./types";
 import { ObjectFormatter } from "./formatter";
+import { all } from 'deepmerge';
 
 /** Locale */
 export class Locale {
@@ -111,7 +112,8 @@ export class Locale {
    * Clones and extends this object and returns a new Locale (without modifying this object).
    */
   extend(definition?: Omit<LocaleDefinition, 'name' | 'rtl'>): Locale {
-    return new Locale({ ...this.definition, ...definition });
+    const newDefinition = all([this.definition, definition || {}]) as LocaleDefinition;
+    return new Locale(newDefinition);
   }
 
   /**

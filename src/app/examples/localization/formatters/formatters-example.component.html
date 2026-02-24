@@ -7,77 +7,6 @@
 </div>
 
 <div class="row g-4 mt-3">
-        <div class="col-lg-12">
-        <div class="card">
-            <div class="card-body">
-                <h4 class="card-title">Currency formatter</h4>
-                <p>
-                    Currency formatter formats numeric values as currency for display purposes.<br />
-                </p>
-
-                <div class="row">
-                    <div class="col-xl-4">
-                        Value = {{123456789 | json}} <br />
-                        Formatter: '$'<br />
-                        <span class="text-info">Formatted Value = {{123456 | ng0Format: '$':'USD':undefined}}</span>
-                    </div>
-                    <div class="col-xl-4">
-                        Value = {{12345.12 | json}} <br />
-                        Formatter: '$' <br />
-                        <span class="text-info"
-                            >Formatted Value = {{12345.12 | ng0Format: '$':'USD'}}</span
-                        >
-                    </div>
-                </div>
-            </div>
-
-            <div class="card-footer">
-                <h6>Use with parameters:</h6>
-                <p>
-                    You can provide additional parameters to customize the currency formatting.<br />
-                </p>
-
-                <div class="text-danger my-3">
-                    '$':currency:notation:minimumIntegerDigits:minimumFractionDigits:maximumFractionDigits:currencySign
-                </div>
-
-                <div class="row g-4">
-                    <div class="col-xl-4">
-                        Value = {{0 | json}} <br />
-                        Formatter: '#':5:2 <br />
-                        <span class="text-info"
-                            >Formatted Value = {{0 | ng0Format: '#':5:2}}</span
-                        >
-                    </div>
-                    <div class="col-xl-4">
-                        Value = {{-1.5 | json}} <br />
-                        Formatter: '#':2:3 <br />
-                        <span class="text-info"
-                            >Formatted Value = {{-1.5 | ng0Format: '#':2:3}}</span
-                        >
-                    </div>
-                    <div class="col-xl-4">
-                        Value = {{-1.123456789 | json}} <br />
-                        Formatter: '#':2:undefined:5 <br />
-                        <span class="text-info"
-                            >Formatted Value =
-                            {{-1.123456789 | ng0Format: '#':2:undefined:5}}</span
-                        >
-                    </div>
-                    <div class="col-xl-4">
-                        Value = {{12345678.123456789 | json}} <br />
-                        Formatter: '#':2:3:undefined:false <br />
-                        <span class="text-info"
-                            >Formatted Value =
-                            {{ 12345678.0 | ng0Format: '#':2:3:undefined:false}}</span
-                        >
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-
     <div class="col-lg-12">
         <div class="card">
             <div class="card-body">
@@ -114,9 +43,7 @@
                     <div class="col-xl-4">
                         Value = {{0 | json}} <br />
                         Formatter: '#':5:2 <br />
-                        <span class="text-info"
-                            >Formatted Value = {{0 | ng0Format: '#':5:2}}</span
-                        >
+                        <span class="text-info">Formatted Value = {{0 | ng0Format: '#':5:2}}</span>
                     </div>
                     <div class="col-xl-4">
                         Value = {{-1.5 | json}} <br />
@@ -129,8 +56,7 @@
                         Value = {{-1.123456789 | json}} <br />
                         Formatter: '#':2:undefined:5 <br />
                         <span class="text-info"
-                            >Formatted Value =
-                            {{-1.123456789 | ng0Format: '#':2:undefined:5}}</span
+                            >Formatted Value = {{-1.123456789 | ng0Format: '#':2:undefined:5}}</span
                         >
                     </div>
                     <div class="col-xl-4">
@@ -146,6 +72,77 @@
         </div>
     </div>
 
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title">Currency formatter</h4>
+                <p>
+                    Currency formatter formats numeric values as currency for display purposes.<br />
+                </p>
+
+                <div class="row">
+                    <div class="col-xl-4">
+                        Value = {{123456789 | json}} <br />
+                        Formatter: '$':'USD'<br />
+                        <span class="text-info"
+                            >Formatted Value = {{123456 | ng0Format: '$':'USD':undefined}}</span
+                        >
+                    </div>
+                    <div class="col-xl-4">
+                        Value = {{12345.12 | json}} <br />
+                        Formatter: '$':'IRR' <br />
+                        <span class="text-info"
+                            >Formatted Value = {{12345.12 | ng0Format: '$':'IRR'}}</span
+                        >
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer">
+                <h6>Use with parameters:</h6>
+                <p>
+                    You can provide additional parameters to customize the currency formatting.<br />
+                </p>
+
+                <div class="text-danger my-3">
+                    '$':currency:notation:minimumIntegerDigits:minimumFractionDigits:maximumFractionDigits:currencySign
+                </div>
+
+                <div class="row g-4">
+                    <div class="col-xl-4">
+                        Value = {{1.5 | json}} <br />
+                        Formatter: '$':'USD':'standard' <br />
+                        <span class="text-info"
+                            >Formatted Value = {{1.5 | ng0Format: '$':'USD':'standard'}}</span
+                        >
+                    </div>
+                    <div class="col-xl-4">
+                        Value = {{1.5 | json}} <br />
+                        Formatter: '$':'USD':'compact' <br />
+                        <span class="text-info"
+                            >Formatted Value = {{1.5 | ng0Format: '$':'USD':'compact'}}</span
+                        >
+                    </div>
+                    <div class="col-xl-4">
+                        Value = {{1.19 | json}} <br />
+                        Formatter: '$':'USD':'standard':8:3:6 <br />
+                        <span class="text-info"
+                            >Formatted Value =
+                            {{1.19 | ng0Format: '$':'USD':'standard':8:3:6}}</span
+                        >
+                    </div>
+                    <div class="col-xl-4">
+                        Value = {{12345678.123456789 | json}} <br />
+                        Formatter: '$':'USD':'standard':6:2:4 <br />
+                        <span class="text-info"
+                            >Formatted Value =
+                            {{ 12345678.123456789 | ng0Format: '$':'USD':'standard':6:2:4}}</span
+                        >
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="col-lg-12">
         <div class="card">
@@ -161,9 +158,7 @@
                     <li>
                         Using predefined styles for date and time:<br />
 
-                        <mark
-                            >@:dateStyle:timeStyle:zone:[name, display]:calendar</mark
-                        >
+                        <mark>@:dateStyle:timeStyle:zone:[name, display]:calendar</mark>
                         <ul>
                             <li>dateStyle: 'short' | 'medium' | 'long' | 'full',</li>
                             <li>timeStyle: 'short' | 'medium' | 'long' | 'full',</li>
@@ -184,8 +179,8 @@
 
                 <p>
                     The date formatter uses the Intl.DateTimeFormat API under the hood, which
-                    provides a wide range of options for customizing the date and time formatting.<br />
-                                        
+                    provides a wide range of options for customizing the date and time
+                    formatting.<br />
                 </p>
             </div>
             <div class="card-footer">
@@ -377,12 +372,10 @@
                             {{examples.date.value1 | ng0Format: '@':'long':'medium':undefined:'islamic'}}
                         </span>
                     </div>
-                    
                 </div>
             </div>
         </div>
     </div>
-
 
     <div class="col-lg-12">
         <div class="card">

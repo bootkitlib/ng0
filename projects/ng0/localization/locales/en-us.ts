@@ -5,13 +5,6 @@ const formatNumber = (n: number) => n.toLocaleString();
 export const EN_US_LOCALE = new Locale({
     name: 'en',
     rtl: false,
-    date: {
-        options: {
-            // timeStyle: 'full'
-            // year: '2-digit',
-            // calendar: 'islamic'
-        }
-    },
     dictionary: {
         ok: 'Ok',
         cancel: 'Cancel',

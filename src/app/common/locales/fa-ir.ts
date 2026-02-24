@@ -33,12 +33,13 @@ export const APP_FA_IR_LOCALE = FA_IR_LOCALE.extend({
             'Other': 'سایر',
         }
     },
-    // form: {
-    //     validation: {
-    //         errors: {
-    //         }
-    //     }
-    // },
+    form: {
+        validation: {
+            errors: {
+                // required: (e) => `sdfsdf`,
+            }
+        }
+    },
     formatters: {
         'Boolean': ['خیر', 'بله'],
         'CorrectIncorrectBoolean': ['غلط', 'صحیح'],
@@ -46,7 +47,7 @@ export const APP_FA_IR_LOCALE = FA_IR_LOCALE.extend({
         'TrueFalseBoolean:': ['غلط', 'درست'],
         'EnableDisableBoolean': ['غیرفعال', 'فعال'],
         'OnOffBoolean': ['خاموش', 'روشن'],
-        
+
         'SexualityEnum': {
             'Male': 'مرد',
             'Female': 'زن',

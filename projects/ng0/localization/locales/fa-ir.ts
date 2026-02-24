@@ -7,7 +7,6 @@ export const FA_IR_LOCALE = new Locale({
     rtl: true,
     date: {
         options: {
-            // year: '2-digit',
             calendar: 'persian'
         }
     },

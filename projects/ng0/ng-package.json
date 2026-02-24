@@ -1,6 +1,9 @@
 {
   "$schema": "../../node_modules/ng-packagr/ng-package.schema.json",
   "dest": "../../dist/ng0",
+  "allowedNonPeerDependencies": [
+    "deepmerge"
+  ],
   "lib": {
     "entryFile": "src/public-api.ts"
   }

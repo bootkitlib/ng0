@@ -1,6 +1,6 @@
 {
   "name": "@bootkit/ng0",
-  "version": "0.0.0-alpha.52",
+  "version": "0.0.0-alpha.53",
   "description": "Angular+Bootstrap Component Library",
   "homepage": "https://bootkitlib.github.io/",
   "author": "BootKit",
@@ -22,7 +22,8 @@
     "@angular/cdk": ">=20.2.0"
   },
   "dependencies": {
-    "tslib": "^2.3.0"
+    "tslib": "^2.3.0",
+    "deepmerge": "^4.3.1"
   },
   "sideEffects": false
 }
